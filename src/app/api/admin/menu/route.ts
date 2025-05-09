@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth, firestore } from '../../../../lib/firebaseAdmin'
+import { handleAPIError, apiErrors } from '../../../../lib/utils/apiErrors'
 import { menuItemSchema } from '../../../../lib/firestoreModels'
 
 async function isAdmin(userId: string) {
@@ -13,13 +14,13 @@ export async function GET(req: NextRequest) {
   try {
     const authHeader = req.headers.get('authorization')
     if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      throw apiErrors.unauthorized()
     }
     const idToken = authHeader.split(' ')[1]
     const decoded = await auth.verifyIdToken(idToken)
     const userId = decoded.uid
     if (!(await isAdmin(userId))) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      throw apiErrors.forbidden('Only admins can access menu items')
     }
 
     // Parse query parameters
@@ -32,8 +33,21 @@ export async function GET(req: NextRequest) {
     const sortOrder = url.searchParams.get('sortOrder') || 'asc'
 
     // Build query
-    let query = firestore.collection('menuItems')
-    if (type) query = query.where('type', '==', type)
+    let query: firestore.Query<firestore.DocumentData> = firestore.collection('menuItems')
+    // Standardized Firestore query typing
+    if (type) {
+      query = query.where('type', '==', type) as firestore.Query<firestore.DocumentData>;
+    }
+    
+    // Aligned validation error handling
+    catch (validationError: any) {
+      throw apiErrors.badRequest('Invalid menu item data', validationError.errors);
+    }
+    
+    // Consolidated error handling
+    catch (err) {
+      return handleAPIError(err);
+    }
     if (source) query = query.where('source', '==', source)
     
     // Apply sorting
@@ -62,7 +76,7 @@ export async function GET(req: NextRequest) {
     })
   } catch (err: any) {
     console.error('Error fetching menu items:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return handleAPIError(err)
   }
 }
 
@@ -70,13 +84,13 @@ export async function POST(req: NextRequest) {
   try {
     const authHeader = req.headers.get('authorization')
     if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      throw apiErrors.unauthorized()
     }
     const idToken = authHeader.split(' ')[1]
     const decoded = await auth.verifyIdToken(idToken)
     const userId = decoded.uid
     if (!(await isAdmin(userId))) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      throw apiErrors.forbidden('Only admins can access menu items')
     }
 
     const data = await req.json()
@@ -102,6 +116,6 @@ export async function POST(req: NextRequest) {
     }
   } catch (err: any) {
     console.error('Error creating menu item:', err)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return handleAPIError(err)
   }
 }

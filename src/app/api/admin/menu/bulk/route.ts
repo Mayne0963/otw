@@ -65,8 +65,8 @@ export async function POST(req: NextRequest) {
       // First, verify all documents exist and validate update data
       const verificationPromises = batchItems.map(async item => {
         try {
-          const docRef = firestore.collection('menuItems').doc(item.id)
-          const docSnap = await docRef.get()
+          const docRef = firestore.collection('menuItems').doc(item.id);
+          const docSnap = await docRef.get();
 
           if (!docSnap.exists) {
             throw apiErrors.notFound(`Menu item ${item.id} not found`)

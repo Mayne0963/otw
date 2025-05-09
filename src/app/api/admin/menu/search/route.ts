@@ -40,10 +40,10 @@ export async function GET(req: NextRequest) {
       q: url.searchParams.get('q'),
       type: url.searchParams.get('type'),
       source: url.searchParams.get('source'),
-      minPrice: url.searchParams.get('minPrice') ? parseFloat(url.searchParams.get('minPrice')!) : undefined,
-      maxPrice: url.searchParams.get('maxPrice') ? parseFloat(url.searchParams.get('maxPrice')!) : undefined,
-      limit: url.searchParams.get('limit') ? parseInt(url.searchParams.get('limit')!) : undefined,
-      page: url.searchParams.get('page') ? parseInt(url.searchParams.get('page')!) : undefined
+      minPrice: url.searchParams.get('minPrice') ? parseFloat(url.searchParams.get('minPrice')?.toString() || '') : undefined,
+      maxPrice: url.searchParams.get('maxPrice') ? parseFloat(url.searchParams.get('maxPrice')?.toString() || '') : undefined,
+      limit: url.searchParams.get('limit') ? parseInt(url.searchParams.get('limit')?.toString() || '50') : 50,
+      page: url.searchParams.get('page') ? parseInt(url.searchParams.get('page')?.toString() || '1') : 1
     }
 
     const params = searchParamsSchema.parse(rawParams)
@@ -53,9 +53,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Build base query
-    let baseQuery = firestore.collection('menuItems')
-    if (params.type) baseQuery = baseQuery.where('type', '==', params.type)
-    if (params.source) baseQuery = baseQuery.where('source', '==', params.source)
+    let baseQuery: firestore.Query<firestore.DocumentData> = firestore.collection('menuItems')
+    if (params.type) baseQuery = baseQuery.where('type', '==', params.type) as firestore.Query<firestore.DocumentData>
+    if (params.source) baseQuery = baseQuery.where('source', '==', params.source) as firestore.Query<firestore.DocumentData>
     
     // Execute query
     const snapshot = await baseQuery.get()
@@ -112,4 +112,4 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     return handleAPIError(err)
   }
-} 
+}
