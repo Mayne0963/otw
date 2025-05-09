@@ -17,7 +17,7 @@ const bulkOperationSchema = z.object({
 
 async function isAdmin(userId: string) {
   const userSnap = await firestore.collection('users').doc(userId).get()
-  return userSnap.exists && userSnap.data().role === 'admin'
+  return userSnap.exists && userSnap.data()?.role === 'admin'
 }
 
 export async function POST(req: NextRequest) {
@@ -161,4 +161,4 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return handleAPIError(err)
   }
-} 
+}
