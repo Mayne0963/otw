@@ -4,7 +4,7 @@ import { menuItemSchema } from '../../../../lib/firestoreModels'
 
 async function isAdmin(userId: string) {
   const userSnap = await firestore.collection('users').doc(userId).get()
-  return userSnap.exists && userSnap.data().role === 'admin'
+  return userSnap.exists && userSnap.data()?.role === 'admin'
 }
 
 export const dynamic = "force-dynamic"
@@ -104,4 +104,4 @@ export async function POST(req: NextRequest) {
     console.error('Error creating menu item:', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
-} 
+}
