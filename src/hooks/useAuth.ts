@@ -1,0 +1,1051 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import type { User } from "../types"
+import {
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
+  sendPasswordResetEmail,
+  updateEmail as updateFirebaseEmail,
+  updatePassword as updateFirebasePassword,
+  deleteUser,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  type UserCredential,
+  updateProfile as updateFirebaseProfile,
+} from "firebase/auth"
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"
+import { auth, db, storage } from "../lib/api"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+
+const supabase = createClientComponentClient()
+
+// Custom error types
+export class AuthError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public originalError?: any,
+  ) {
+    super(message)
+    this.name = "AuthError"
+  }
+}
+
+// Image validation and compression
+const validateImage = (file: File): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.src = URL.createObjectURL(file)
+
+    img.onload = () => {
+      URL.revokeObjectURL(img.src)
+
+      // Check dimensions
+      if (img.width < 100 || img.height < 100) {
+        reject(new AuthError("Image dimensions must be at least 100x100 pixels", "storage/invalid-dimensions"))
+      }
+
+      // Check aspect ratio (between 0.5 and 2)
+      const aspectRatio = img.width / img.height
+      if (aspectRatio < 0.5 || aspectRatio > 2) {
+        reject(new AuthError("Image aspect ratio must be between 0.5 and 2", "storage/invalid-aspect-ratio"))
+      }
+
+      resolve()
+    }
+
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src)
+      reject(new AuthError("Failed to load image", "storage/invalid-image"))
+    }
+  })
+}
+
+const compressImage = async (
+  file: File,
+  options: {
+    maxWidth?: number
+    maxHeight?: number
+    quality?: number
+    format?: "jpeg" | "png" | "webp"
+  } = {},
+): Promise<File> => {
+  const { maxWidth = 800, maxHeight = 800, quality = 0.8, format = "jpeg" } = options
+
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.src = URL.createObjectURL(file)
+
+    img.onload = () => {
+      URL.revokeObjectURL(img.src)
+
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+
+      if (!ctx) {
+        reject(new AuthError("Failed to create canvas context", "storage/compression-error"))
+        return
+      }
+
+      // Calculate new dimensions
+      let width = img.width
+      let height = img.height
+
+      if (width > maxWidth) {
+        height = (height * maxWidth) / width
+        width = maxWidth
+      }
+
+      if (height > maxHeight) {
+        width = (width * maxHeight) / height
+        height = maxHeight
+      }
+
+      canvas.width = width
+      canvas.height = height
+
+      // Draw and compress
+      ctx.drawImage(img, 0, 0, width, height)
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new AuthError("Failed to compress image", "storage/compression-error"))
+            return
+          }
+          resolve(new File([blob], file.name, { type: `image/${format}` }))
+        },
+        `image/${format}`,
+        quality,
+      )
+    }
+
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src)
+      reject(new AuthError("Failed to load image", "storage/invalid-image"))
+    }
+  })
+}
+
+const cropImage = async (
+  file: File,
+  crop: {
+    x: number
+    y: number
+    width: number
+    height: number
+  },
+): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.src = URL.createObjectURL(file)
+
+    img.onload = () => {
+      URL.revokeObjectURL(img.src)
+
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+
+      if (!ctx) {
+        reject(new AuthError("Failed to create canvas context", "storage/crop-error"))
+        return
+      }
+
+      canvas.width = crop.width
+      canvas.height = crop.height
+
+      ctx.drawImage(img, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height)
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new AuthError("Failed to crop image", "storage/crop-error"))
+            return
+          }
+          resolve(new File([blob], file.name, { type: file.type }))
+        },
+        file.type,
+        1,
+      )
+    }
+
+    img.onerror = () => {
+      URL.revokeObjectURL(img.src)
+      reject(new AuthError("Failed to load image", "storage/invalid-image"))
+    }
+  })
+}
+
+export const useAuth = () => {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<AuthError | null>(null)
+  const router = useRouter()
+
+  // Initialize auth state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        // Get user data from Firestore
+        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid))
+        if (userDoc.exists()) {
+          setUser(userDoc.data() as User)
+        } else {
+          // Create user document if it doesn't exist
+          const newUser = {
+            id: firebaseUser.uid,
+            email: firebaseUser.email,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }
+          await setDoc(doc(db, "users", firebaseUser.uid), newUser)
+          setUser(newUser as User)
+        }
+      } else {
+        setUser(null)
+      }
+      setLoading(false)
+    })
+
+    return () => unsubscribe()
+  }, [])
+
+  // Sign in with email and password
+  const signIn = async (email: string, password: string) => {
+    try {
+      setLoading(true)
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+
+      // Get user data from Firestore
+      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid))
+      if (userDoc.exists()) {
+        setUser(userDoc.data() as User)
+      } else {
+        // Create user document if it doesn't exist
+        const newUser = {
+          id: userCredential.user.uid,
+          email: userCredential.user.email,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+        await setDoc(doc(db, "users", userCredential.user.uid), newUser)
+        setUser(newUser as User)
+      }
+
+      router.push("/dashboard")
+    } catch (err: any) {
+      setError({
+        code: "SIGN_IN_ERROR",
+        message: err.message || "Failed to sign in",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Sign up with email and password
+  const signUp = async (email: string, password: string, userData: Partial<User>) => {
+    try {
+      setLoading(true)
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+
+      if (userCredential.user) {
+        const newUser = {
+          id: userCredential.user.uid,
+          email: userCredential.user.email,
+          ...userData,
+          membershipTier: "none",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }
+
+        await setDoc(doc(db, "users", userCredential.user.uid), newUser)
+      }
+    } catch (err: any) {
+      setError({
+        code: "SIGN_UP_ERROR",
+        message: err.message || "Failed to sign up",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Sign out
+  const signOut = async () => {
+    try {
+      setLoading(true)
+      await auth.signOut()
+      setUser(null)
+      router.push("/")
+    } catch (err: any) {
+      setError({
+        code: "SIGN_OUT_ERROR",
+        message: err.message || "Failed to sign out",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Update user profile
+  const updateProfile = async (updates: Partial<User>) => {
+    try {
+      setLoading(true)
+      if (!user) throw new Error("No user logged in")
+
+      await updateDoc(doc(db, "users", user.id), {
+        ...updates,
+        updatedAt: new Date().toISOString(),
+      })
+
+      setUser((prev) => (prev ? { ...prev, ...updates } : null))
+    } catch (err: any) {
+      setError({
+        code: "UPDATE_PROFILE_ERROR",
+        message: err.message || "Failed to update profile",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Update user preferences
+  const updatePreferences = async (preferences: User["preferences"]) => {
+    try {
+      setLoading(true)
+      if (!user) throw new Error("No user logged in")
+
+      const { error } = await supabase
+        .from("users")
+        .update({
+          preferences,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", user.id)
+
+      if (error) throw error
+
+      setUser((prev) => (prev ? { ...prev, preferences } : null))
+    } catch (err: any) {
+      setError({
+        code: "UPDATE_PREFERENCES_ERROR",
+        message: err.message || "Failed to update preferences",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Update notification settings
+  const updateNotificationSettings = async (settings: User["notificationSettings"]) => {
+    try {
+      setLoading(true)
+      if (!user) throw new Error("No user logged in")
+
+      const { error } = await supabase
+        .from("users")
+        .update({
+          notificationSettings: settings,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", user.id)
+
+      if (error) throw error
+
+      setUser((prev) => (prev ? { ...prev, notificationSettings: settings } : null))
+    } catch (err: any) {
+      setError({
+        code: "UPDATE_NOTIFICATION_SETTINGS_ERROR",
+        message: err.message || "Failed to update notification settings",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Add activity to history
+  const addActivity = async (activity: User["activityHistory"][0]) => {
+    try {
+      setLoading(true)
+      if (!user) throw new Error("No user logged in")
+
+      const { error } = await supabase
+        .from("users")
+        .update({
+          activityHistory: [...(user.activityHistory || []), activity],
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", user.id)
+
+      if (error) throw error
+
+      setUser((prev) =>
+        prev
+          ? {
+              ...prev,
+              activityHistory: [...(prev.activityHistory || []), activity],
+            }
+          : null,
+      )
+    } catch (err: any) {
+      setError({
+        code: "ADD_ACTIVITY_ERROR",
+        message: err.message || "Failed to add activity",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Save an item
+  const saveItem = async (item: User["savedItems"][0]) => {
+    try {
+      setLoading(true)
+      if (!user) throw new Error("No user logged in")
+
+      const { error } = await supabase
+        .from("users")
+        .update({
+          savedItems: [...(user.savedItems || []), item],
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", user.id)
+
+      if (error) throw error
+
+      setUser((prev) =>
+        prev
+          ? {
+              ...prev,
+              savedItems: [...(prev.savedItems || []), item],
+            }
+          : null,
+      )
+    } catch (err: any) {
+      setError({
+        code: "SAVE_ITEM_ERROR",
+        message: err.message || "Failed to save item",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Remove a saved item
+  const removeSavedItem = async (itemId: string) => {
+    try {
+      setLoading(true)
+      if (!user) throw new Error("No user logged in")
+
+      const { error } = await supabase
+        .from("users")
+        .update({
+          savedItems: user.savedItems?.filter((item) => item.itemId !== itemId),
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", user.id)
+
+      if (error) throw error
+
+      setUser((prev) =>
+        prev
+          ? {
+              ...prev,
+              savedItems: prev.savedItems?.filter((item) => item.itemId !== itemId),
+            }
+          : null,
+      )
+    } catch (err: any) {
+      setError({
+        code: "REMOVE_SAVED_ITEM_ERROR",
+        message: err.message || "Failed to remove saved item",
+        originalError: err,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Helper function to handle Firebase errors
+  const handleFirebaseError = (err: any): AuthError => {
+    const errorCode = err.code || "unknown"
+    let errorMessage = "An error occurred during authentication"
+
+    switch (errorCode) {
+      case "auth/user-not-found":
+        errorMessage = "No user found with this email"
+        break
+      case "auth/wrong-password":
+        errorMessage = "Incorrect password"
+        break
+      case "auth/email-already-in-use":
+        errorMessage = "Email is already registered"
+        break
+      case "auth/weak-password":
+        errorMessage = "Password is too weak"
+        break
+      case "auth/invalid-email":
+        errorMessage = "Invalid email address"
+        break
+      case "auth/account-exists-with-different-credential":
+        errorMessage = "An account already exists with the same email address but different sign-in credentials"
+        break
+      case "auth/popup-closed-by-user":
+        errorMessage = "Sign-in popup was closed before completing the sign-in"
+        break
+      case "auth/cancelled-popup-request":
+        errorMessage = "Sign-in popup was cancelled"
+        break
+      case "auth/popup-blocked":
+        errorMessage = "Sign-in popup was blocked by the browser"
+        break
+      case "auth/network-request-failed":
+        errorMessage = "Network error occurred"
+        break
+      case "auth/requires-recent-login":
+        errorMessage = "Please sign in again to perform this action"
+        break
+      case "auth/too-many-requests":
+        errorMessage = "Too many attempts. Please try again later"
+        break
+      case "auth/operation-not-allowed":
+        errorMessage = "This operation is not allowed"
+        break
+      case "auth/invalid-verification-code":
+        errorMessage = "Invalid verification code"
+        break
+      case "auth/invalid-verification-id":
+        errorMessage = "Invalid verification ID"
+        break
+      case "auth/missing-verification-code":
+        errorMessage = "Missing verification code"
+        break
+      case "auth/missing-verification-id":
+        errorMessage = "Missing verification ID"
+        break
+      case "storage/object-not-found":
+        errorMessage = "File not found"
+        break
+      case "storage/unauthorized":
+        errorMessage = "Unauthorized to access this file"
+        break
+      case "storage/canceled":
+        errorMessage = "Upload canceled"
+        break
+      case "storage/unknown":
+        errorMessage = "Unknown storage error"
+        break
+      case "storage/invalid-dimensions":
+        errorMessage = "Image dimensions must be at least 100x100 pixels"
+        break
+      case "storage/invalid-aspect-ratio":
+        errorMessage = "Image aspect ratio must be between 0.5 and 2"
+        break
+      case "storage/invalid-image":
+        errorMessage = "Invalid image file"
+        break
+      case "storage/compression-error":
+        errorMessage = "Failed to compress image"
+        break
+      case "storage/crop-error":
+        errorMessage = "Failed to crop image"
+        break
+      case "storage/filter-error":
+        errorMessage = "Failed to apply image filter"
+        break
+      case "storage/invalid-crop-dimensions":
+        errorMessage = "Invalid crop dimensions"
+        break
+      case "storage/invalid-filter":
+        errorMessage = "Invalid image filter"
+        break
+      default:
+        errorMessage = err.message || "An unknown error occurred"
+    }
+
+    return new AuthError(errorMessage, errorCode, err)
+  }
+
+  // Helper function to handle social login
+  const handleSocialLogin = async (provider: any, providerName: string): Promise<UserCredential> => {
+    try {
+      setLoading(true)
+      setError(null)
+      const result = await signInWithPopup(auth, provider)
+
+      if (result.user) {
+        // Check if user exists in Supabase
+        const { data: existingUser, error: userError } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", result.user.uid)
+          .single()
+
+        if (userError && userError.code !== "PGRST116") {
+          // PGRST116 is "not found" error
+          throw userError
+        }
+
+        if (!existingUser) {
+          // Create new user record in Supabase
+          const { error: insertError } = await supabase.from("users").insert([
+            {
+              id: result.user.uid,
+              email: result.user.email,
+              name: result.user.displayName || "",
+              membershipTier: "none",
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          ])
+
+          if (insertError) throw insertError
+        }
+      }
+
+      return result
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Enhanced Profile Picture Upload
+  const uploadProfilePicture = async (
+    file: File,
+    options: {
+      crop?: {
+        x: number
+        y: number
+        width: number
+        height: number
+      }
+      maxWidth?: number
+      maxHeight?: number
+      quality?: number
+      format?: "jpeg" | "png" | "webp"
+    } = {},
+  ) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (!auth.currentUser) {
+        throw new AuthError("User not authenticated", "auth/user-not-found")
+      }
+
+      // Validate file type and size
+      if (!file.type.startsWith("image/")) {
+        throw new AuthError("File must be an image", "storage/invalid-file-type")
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB limit
+        throw new AuthError("File size must be less than 5MB", "storage/file-too-large")
+      }
+
+      // Validate image dimensions and aspect ratio
+      await validateImage(file)
+
+      // Process image
+      let processedFile = file
+
+      if (options.crop) {
+        processedFile = await cropImage(file, options.crop)
+      }
+
+      processedFile = await compressImage(processedFile, {
+        maxWidth: options.maxWidth,
+        maxHeight: options.maxHeight,
+        quality: options.quality,
+        format: options.format,
+      })
+
+      // Delete old profile picture if exists
+      if (user?.profileImage) {
+        try {
+          const oldImageRef = ref(storage, user.profileImage)
+          await deleteObject(oldImageRef)
+        } catch (err) {
+          // Ignore error if file doesn't exist
+          console.warn("Error deleting old profile picture:", err)
+        }
+      }
+
+      // Upload new profile picture
+      const fileExtension = processedFile.name.split(".").pop()
+      const fileName = `profile-pictures/${auth.currentUser.uid}.${fileExtension}`
+      const storageRef = ref(storage, fileName)
+      await uploadBytes(storageRef, processedFile)
+      const downloadURL = await getDownloadURL(storageRef)
+
+      // Update Firebase profile
+      await updateFirebaseProfile(auth.currentUser, {
+        photoURL: downloadURL,
+      })
+
+      // Update Supabase user data
+      const { error: userError } = await supabase
+        .from("users")
+        .update({
+          profileImage: downloadURL,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", auth.currentUser.uid)
+
+      if (userError) throw userError
+
+      // Update local state
+      setUser((prev) => (prev ? { ...prev, profileImage: downloadURL } : null))
+
+      return downloadURL
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Delete Profile Picture
+  const deleteProfilePicture = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (!auth.currentUser) {
+        throw new AuthError("User not authenticated", "auth/user-not-found")
+      }
+
+      if (!user?.profileImage) {
+        throw new AuthError("No profile picture to delete", "storage/object-not-found")
+      }
+
+      // Delete from Firebase Storage
+      const imageRef = ref(storage, user.profileImage)
+      await deleteObject(imageRef)
+
+      // Update Firebase profile
+      await updateFirebaseProfile(auth.currentUser, {
+        photoURL: null,
+      })
+
+      // Update Supabase user data
+      const { error: userError } = await supabase
+        .from("users")
+        .update({
+          profileImage: null,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", auth.currentUser.uid)
+
+      if (userError) throw userError
+
+      // Update local state
+      setUser((prev) => (prev ? { ...prev, profileImage: null } : null))
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Additional User Data Management
+  const updateUserPreferences = async (preferences: Partial<User["preferences"]>) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (!auth.currentUser) {
+        throw new AuthError("User not authenticated", "auth/user-not-found")
+      }
+
+      // Update Supabase user data
+      const { error: userError } = await supabase
+        .from("users")
+        .update({
+          preferences: {
+            ...user?.preferences,
+            ...preferences,
+          },
+          updatedAt: new Date().toISOString(),
+        })
+        .eq("id", auth.currentUser.uid)
+
+      if (userError) throw userError
+
+      // Update local state
+      setUser((prev) =>
+        prev
+          ? {
+              ...prev,
+              preferences: {
+                ...prev.preferences,
+                ...preferences,
+              },
+            }
+          : null,
+      )
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const updateActivityHistory = async (activity: {
+    type: string
+    description: string
+    metadata?: any
+  }) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (!auth.currentUser) {
+        throw new AuthError("User not authenticated", "auth/user-not-found")
+      }
+
+      // Add activity to Supabase
+      const { error: activityError } = await supabase.from("user_activities").insert([
+        {
+          userId: auth.currentUser.uid,
+          type: activity.type,
+          description: activity.description,
+          metadata: activity.metadata,
+          createdAt: new Date().toISOString(),
+        },
+      ])
+
+      if (activityError) throw activityError
+
+      // Update local state
+      setUser((prev) =>
+        prev
+          ? {
+              ...prev,
+              activityHistory: [
+                ...(prev.activityHistory || []),
+                {
+                  ...activity,
+                  createdAt: new Date().toISOString(),
+                },
+              ],
+            }
+          : null,
+      )
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const updateSavedItems = async (item: {
+    type: string
+    itemId: string
+    metadata?: any
+  }) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (!auth.currentUser) {
+        throw new AuthError("User not authenticated", "auth/user-not-found")
+      }
+
+      // Add saved item to Supabase
+      const { error: savedItemError } = await supabase.from("saved_items").insert([
+        {
+          userId: auth.currentUser.uid,
+          type: item.type,
+          itemId: item.itemId,
+          metadata: item.metadata,
+          createdAt: new Date().toISOString(),
+        },
+      ])
+
+      if (savedItemError) throw savedItemError
+
+      // Update local state
+      setUser((prev) =>
+        prev
+          ? {
+              ...prev,
+              savedItems: [
+                ...(prev.savedItems || []),
+                {
+                  ...item,
+                  createdAt: new Date().toISOString(),
+                },
+              ],
+            }
+          : null,
+      )
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Social Login Methods
+  const signInWithGoogle = () => handleSocialLogin(new GoogleAuthProvider(), "Google")
+  const signInWithFacebook = () => handleSocialLogin(new FacebookAuthProvider(), "Facebook")
+  const signInWithApple = () => handleSocialLogin(new OAuthProvider("apple.com"), "Apple")
+
+  // Email/Password Methods
+  const signOutEmail = async (email: string, password: string) => {
+    try {
+      setLoading(true)
+      setError(null)
+      await auth.signInWithEmailAndPassword(email, password)
+      await signOut()
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const resetPassword = async (email: string) => {
+    try {
+      setLoading(true)
+      setError(null)
+      await sendPasswordResetEmail(auth, email)
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const updateEmail = async (newEmail: string) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (auth.currentUser) {
+        await updateFirebaseEmail(auth.currentUser, newEmail)
+
+        // Update email in Supabase
+        const { error: userError } = await supabase
+          .from("users")
+          .update({
+            email: newEmail,
+            updatedAt: new Date().toISOString(),
+          })
+          .eq("id", auth.currentUser.uid)
+
+        if (userError) throw userError
+
+        // Update local state
+        setUser((prev) => (prev ? { ...prev, email: newEmail } : null))
+      }
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const updatePassword = async (newPassword: string) => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (auth.currentUser) {
+        await updateFirebasePassword(auth.currentUser, newPassword)
+      }
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const deleteAccount = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      if (auth.currentUser) {
+        // Delete user data from Supabase
+        const { error: userError } = await supabase.from("users").delete().eq("id", auth.currentUser.uid)
+
+        if (userError) throw userError
+
+        // Delete Firebase user
+        await deleteUser(auth.currentUser)
+        setUser(null)
+      }
+    } catch (err) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return {
+    user,
+    loading,
+    error,
+    signIn,
+    signUp,
+    signOut,
+    updateProfile,
+    signInWithGoogle,
+    signInWithFacebook,
+    signInWithApple,
+    resetPassword,
+    updateEmail,
+    updatePassword,
+    deleteAccount,
+    uploadProfilePicture,
+    deleteProfilePicture,
+    updateUserPreferences,
+    updateNotificationSettings,
+    updateActivityHistory,
+    updateSavedItems,
+    signOutEmail,
+    addActivity,
+    saveItem,
+    removeSavedItem,
+  }
+}

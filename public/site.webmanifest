@@ -1,0 +1,56 @@
+{
+  "name": "OTW - On The Way",
+  "short_name": "OTW",
+  "description": "Food delivery, groceries, and local rides with community-driven service",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/maskable-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#c22126",
+  "background_color": "#0A0A0A",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Order Food",
+      "short_name": "Food",
+      "description": "Order food from local restaurants",
+      "url": "/restaurants",
+      "icons": [{ "src": "/icons/food.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Book a Ride",
+      "short_name": "Ride",
+      "description": "Book a local ride",
+      "url": "/otw/rides",
+      "icons": [{ "src": "/icons/ride.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.otw.app",
+      "id": "com.otw.app"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/otw/id123456789"
+    }
+  ]
+}

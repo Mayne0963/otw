@@ -1,0 +1,116 @@
+/* Cross-browser compatibility fixes */
+
+/* Fix for Firefox flexbox issues */
+@supports (-moz-appearance: none) {
+  .flex {
+    min-height: 0;
+  }
+
+  .service-card {
+    height: 100%;
+  }
+}
+
+/* Fix for Safari border radius overflow */
+@supports (-webkit-overflow-scrolling: touch) {
+  .rounded-lg,
+  .rounded-full {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Fix for iOS input styling */
+  input,
+  textarea {
+    -webkit-appearance: none;
+    border-radius: 4px;
+  }
+}
+
+/* Fix for Edge and IE grid issues */
+@supports (-ms-ime-align: auto) {
+  .grid {
+    display: -ms-grid;
+  }
+
+  .grid-cols-1 {
+    -ms-grid-columns: 1fr;
+  }
+
+  .grid-cols-2 {
+    -ms-grid-columns: 1fr 1fr;
+  }
+
+  .grid-cols-3 {
+    -ms-grid-columns: 1fr 1fr 1fr;
+  }
+
+  .grid-cols-4 {
+    -ms-grid-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+/* Fix for older browsers that don't support CSS variables */
+@supports not (--custom: property) {
+  body {
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  .btn-primary {
+    background-color: #c1272d;
+  }
+
+  .btn-secondary {
+    background-color: #ffd700;
+  }
+}
+
+/* Fix for browsers that don't support backdrop-filter */
+@supports not (backdrop-filter: blur(10px)) {
+  .backdrop-blur-md {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+  }
+}
+
+/* Fix for browsers that don't support focus-visible */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid #c1272d;
+  outline-offset: 2px;
+}
+
+/* Ensure SVG compatibility */
+svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Fix for transition support */
+@supports not (transition: transform 0.3s) {
+  .transition-all,
+  .transition-colors,
+  .transition-opacity,
+  .transition-transform {
+    transition: none !important;
+  }
+}
+
+/* Fix for object-fit support */
+@supports not (object-fit: cover) {
+  .object-cover {
+    position: relative;
+  }
+
+  .object-cover img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+  }
+}

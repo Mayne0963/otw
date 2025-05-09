@@ -1,0 +1,53 @@
+/*
+Refactoring Notes:
+- Most rules are being replaced by Tailwind utility classes in the JSX components.
+- The goal is to remove reliance on !important and this separate CSS file.
+- Touch target rule (min-height/width: 44px) and iOS zoom fix (font-size: 16px) will be handled via Tailwind classes or potentially in globals.css if applicable universally.
+*/
+
+/* @media (max-width: 640px) { */
+/* .mobile-only { display: block; } -> Handled by `block sm:hidden` in JSX */
+/* .desktop-only { display: none; } -> Handled by `hidden sm:block` etc. in JSX */
+/* h1 { font-size: 2rem !important; } -> Handled by responsive text utilities (e.g., `text-3xl sm:text-4xl`) in JSX */
+/* h2 { font-size: 1.75rem !important; } -> Handled by responsive text utilities (e.g., `text-2xl sm:text-3xl`) in JSX */
+/* .hero-section { min-height: 70vh !important; } -> Handled by `min-h-[80vh] sm:min-h-[70vh]` in JSX */
+/* .section { padding-top: 3rem !important; padding-bottom: 3rem !important; } -> Handled by `py-12 sm:py-16 md:py-20` in JSX */
+/* .container { padding-left: 1rem !important; padding-right: 1rem !important; } -> Handled by default `px-4` in Tailwind */
+/* .py-16 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; } -> Handled by `py-10 sm:py-16` in JSX */
+/* .gap-8 { gap: 1.5rem !important; } -> Handled by `gap-6 sm:gap-8` in JSX */
+/* .mb-12 { margin-bottom: 2rem !important; } -> Handled by `mb-8 sm:mb-12` in JSX */
+/* main { padding-top: 5rem !important; } -> Handled by `pt-20` in layout.jsx */
+/* } */
+
+/* @media (min-width: 641px) and (max-width: 768px) { */
+/* h1 { font-size: 2.25rem !important; } -> Handled by responsive text utilities in JSX */
+/* h2 { font-size: 1.875rem !important; } -> Handled by responsive text utilities in JSX */
+/* } */
+
+/* @media (min-width: 769px) and (max-width: 1024px) { */
+/* .container { padding-left: 2rem !important; padding-right: 2rem !important; } -> Handled by `lg:px-8` in Tailwind */
+/* } */
+
+/* @media (max-width: 768px) { */
+/* .grid { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; } -> Handled by `grid-cols-1 md:grid-cols-X` in JSX */
+/* .md\:flex-row { flex-direction: column !important; } -> Handled by `flex-col md:flex-row` in JSX */
+/* .md\:w-1\/2 { width: 100% !important; } -> Handled by `w-full md:w-1/2` in JSX */
+/* .service-card { margin-bottom: 1.5rem; } -> Handled by `mb-6 md:mb-0` in JSX */
+
+/* Touch-friendly improvements - Apply min-h-[44px] min-w-[44px] directly or in globals.css */
+/* button, .btn-primary, .btn-secondary, a { min-height: 44px; min-width: 44px; } */
+
+/* iOS zoom fix - Apply text-base to inputs */
+/* input, select, textarea { font-size: 16px !important; } */
+
+/* footer .grid { gap: 2.5rem !important; } -> Handled by `gap-10 md:gap-8 lg:gap-12` in Footer.jsx */
+/* } */
+
+/* Keep this rule for now, will address via Tailwind later or in globals.css */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+}
