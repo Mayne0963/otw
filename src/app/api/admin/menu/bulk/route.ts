@@ -132,6 +132,7 @@ export async function POST(req: NextRequest) {
         } catch (err) {
           // Move all items in this batch to failed
           verifiedItems.forEach(item => {
+            if (!item) return
             results.success = results.success.filter(s => s.id !== item.id)
             results.failed.push({ 
               id: item.id,
