@@ -74,8 +74,10 @@ interface MenuItemData {
   name: string;
   description: string;
   price: number;
-  category: string;
+  type: "classic" | "infused";
+  source: "broskis" | "partner";
   image?: string;
+  id?: string;
   [key: string]: any;
 }
 
