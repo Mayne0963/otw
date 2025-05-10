@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
         const doc = await menuRef.doc(id).get();
         if (!doc.exists) throw new Error(`Menu item not found: ${id}`);
         const data = doc.data();
+        if (!data) throw new Error(`Menu item data is undefined: ${id}`);
         return {
           price_data: {
             currency: 'usd',
@@ -62,4 +63,4 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     return handleAPIError(err);
   }
-} 
+}
