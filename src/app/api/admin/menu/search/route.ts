@@ -16,8 +16,8 @@ const searchParamsSchema = z.object({
 })
 
 async function isAdmin(userId: string) {
-  const userSnap = await firestore.collection('users').doc(userId).get()
-  return userSnap.exists && userSnap.data().role === 'admin'
+  const userSnap = await firestore.collection('users').doc(userId).get();
+  return userSnap.exists && userSnap.data()?.role === 'admin';
 }
 
 export async function GET(req: NextRequest) {
