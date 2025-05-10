@@ -34,11 +34,11 @@ const handler = NextAuth({
   callbacks: {
     async session({ session, user }) {
       if (session.user) {
-        session.user.id = user.id
+        (session.user as typeof user & { id: string }).id = user.id
       }
       return session
     },
   },
 })
 
-export { handler as GET, handler as POST } 
+export { handler as GET, handler as POST }
