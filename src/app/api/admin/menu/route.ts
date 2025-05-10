@@ -70,6 +70,15 @@ export async function GET(req: NextRequest) {
   }
 }
 
+interface MenuItemData {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image?: string;
+  [key: string]: any;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const authHeader = req.headers.get('authorization')
@@ -78,22 +87,29 @@ export async function POST(req: NextRequest) {
     }
     const idToken = authHeader.split(' ')[1]
     const decoded = await auth.verifyIdToken(idToken)
+    if (!decoded || !decoded.uid) {
+      throw apiErrors.unauthorized('Invalid authentication token')
+    }
     const userId = decoded.uid
     if (!(await isAdmin(userId))) {
       throw apiErrors.forbidden('Only admins can access menu items')
     }
 
-    const data = await req.json()
-    
+    const data = await req.json() as unknown
+
     try {
-      const item = menuItemSchema.parse(data)
+      const item = menuItemSchema.parse(data) as MenuItemData
+      if (!item) {
+        throw apiErrors.badRequest('Invalid menu item data')
+      }
+
       const docRef = await firestore.collection('menuItems').add({
         ...item,
         createdAt: new Date(),
         updatedAt: new Date(),
         createdBy: userId
       })
-      
+
       // Return the created item with its ID
       const newDoc = await docRef.get()
       return NextResponse.json({ id: newDoc.id, ...newDoc.data() })

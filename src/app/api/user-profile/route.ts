@@ -1,6 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth, firestore } from '../../../lib/firebaseAdmin'
 
+interface UserData {
+  uid: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  rewardPoints?: number;
+}
+
+interface RewardData {
+  spinsRemaining?: number;
+  spinsUsed?: number;
+  prizeHistory?: Array<{prize: string; date: Date}>;
+  lastSpinTime?: Date;
+}
+
+interface OrderData {
+  userRef: string;
+  createdAt: Date;
+  [key: string]: any;
+}
+
 export const dynamic = "force-dynamic"
 
 export async function GET(req: NextRequest) {
@@ -18,11 +39,15 @@ export async function GET(req: NextRequest) {
     if (!userSnap.exists) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
-    const user = userSnap.data()
+    const user = userSnap.data() as UserData
+
+    if (!user) {
+      return NextResponse.json({ error: 'User data is empty' }, { status: 404 })
+    }
 
     // Get rewards
     const rewardSnap = await firestore.collection('rewards').doc(userId).get()
-    const rewards = rewardSnap.exists ? rewardSnap.data() : null
+    const rewards: RewardData | null = rewardSnap.exists ? rewardSnap.data() as RewardData : null
 
     // Get order history
     const ordersSnap = await firestore.collection('orders')
@@ -30,15 +55,15 @@ export async function GET(req: NextRequest) {
       .orderBy('createdAt', 'desc')
       .limit(20)
       .get()
-    const orders = ordersSnap.docs.map(doc => doc.data())
+    const orders: OrderData[] = ordersSnap.docs.map(doc => doc.data() as OrderData)
 
     return NextResponse.json({
       user: {
         uid: user.uid,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        rewardPoints: user.rewardPoints,
+        name: user.name || null,
+        email: user.email || null,
+        role: user.role || 'user',
+        rewardPoints: typeof user.rewardPoints === 'number' ? user.rewardPoints : 0,
       },
       rewards,
       orders,
@@ -66,4 +91,4 @@ export async function PATCH(req: NextRequest) {
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
-} 
+}

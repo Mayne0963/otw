@@ -3,6 +3,24 @@ import { stripe } from '../../../lib/stripe';
 import { firestore } from '../../../lib/firebaseAdmin';
 import { handleAPIError } from '../../../lib/utils/apiErrors';
 
+interface CartItem {
+  id: string;
+  quantity: number;
+}
+
+interface CheckoutRequestData {
+  cart: CartItem[];
+  userId: string;
+}
+
+interface MenuItem {
+  name: string;
+  description?: string;
+  price: number;
+  image?: string;
+  [key: string]: any;
+}
+
 if (!process.env.STRIPE_SECRET_KEY) {
   console.warn('Stripe environment variables are not set. Stripe functionality will be disabled.');
 }
@@ -16,12 +34,22 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { cart, userId } = await req.json() as {
-      cart: { id: string, quantity: number }[],
-      userId: string
-    };
+    const data = await req.json();
+    const { cart, userId } = data as CheckoutRequestData;
+
+    if (!userId || typeof userId !== 'string') {
+      return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
+    }
+
     if (!cart || !Array.isArray(cart) || cart.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
+    }
+
+    // Validate cart items
+    for (const item of cart) {
+      if (!item.id || typeof item.id !== 'string' || typeof item.quantity !== 'number' || item.quantity <= 0) {
+        return NextResponse.json({ error: 'Invalid cart item format' }, { status: 400 });
+      }
     }
 
     // Fetch menu items from Firestore
@@ -30,14 +58,16 @@ export async function POST(req: NextRequest) {
       cart.map(async ({ id, quantity }) => {
         const doc = await menuRef.doc(id).get();
         if (!doc.exists) throw new Error(`Menu item not found: ${id}`);
-        const data = doc.data();
+        const data = doc.data() as MenuItem | undefined;
         if (!data) throw new Error(`Menu item data is undefined: ${id}`);
+        if (typeof data.price !== 'number') throw new Error(`Invalid price for menu item: ${id}`);
+
         return {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: data.name,
-              description: data.description,
+              name: data.name || 'Unnamed Product',
+              description: data.description || '',
               images: data.image ? [data.image] : [],
             },
             unit_amount: Math.round(data.price * 100),
