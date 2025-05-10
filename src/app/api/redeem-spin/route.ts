@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     // Get rewards doc
     const rewardRef = firestore.collection('rewards').doc(userId)
     const rewardSnap = await rewardRef.get()
-    if (!rewardSnap.exists || !rewardSnap.data() || rewardSnap.data().spinsRemaining < 1) {
+    if (!rewardSnap.exists || !rewardSnap.data() || !rewardSnap.data()?.spinsRemaining || rewardSnap.data().spinsRemaining < 1) {
       return NextResponse.json({ error: 'No spins remaining' }, { status: 403 })
     }
 
