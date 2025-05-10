@@ -24,6 +24,9 @@ export const GET = withLogging(async (req: NextRequest) => {
     }
 
     const delivery = await getDeliveryStatus(deliveryId)
+    if (!delivery) {
+      return NextResponse.json({ error: 'Delivery not found' }, { status: 404 })
+    }
     if (delivery.userId !== userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
@@ -76,4 +79,4 @@ export const POST = withLogging(async (req: NextRequest) => {
     }
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
-}) 
+})
