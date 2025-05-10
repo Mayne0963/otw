@@ -34,25 +34,14 @@ export async function GET(req: NextRequest) {
 
     // Build query
     let query: firestore.Query<firestore.DocumentData> = firestore.collection('menuItems')
-    // Standardized Firestore query typing
     if (type) {
       query = query.where('type', '==', type) as firestore.Query<firestore.DocumentData>;
     }
-    
-    // Aligned validation error handling
-    catch (validationError: any) {
-      throw apiErrors.badRequest('Invalid menu item data', validationError.errors);
-    }
-    
-    // Consolidated error handling
-    catch (err) {
-      return handleAPIError(err);
-    }
     if (source) query = query.where('source', '==', source)
-    
+
     // Apply sorting
     query = query.orderBy(sortBy, sortOrder as 'asc' | 'desc')
-    
+
     // Apply pagination
     const startAt = (page - 1) * limit
     query = query.limit(limit).offset(startAt)
