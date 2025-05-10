@@ -33,15 +33,15 @@ export async function POST(req: NextRequest) {
     // Get rewards doc
     const rewardRef = firestore.collection('rewards').doc(userId)
     const rewardSnap = await rewardRef.get()
-    if (!rewardSnap.exists || !rewardSnap.data() || !rewardSnap.data()?.spinsRemaining || rewardSnap.data().spinsRemaining < 1) {
+    if (!rewardSnap.exists || !rewardSnap.data() || !rewardSnap.data()?.spinsRemaining || rewardSnap.data()?.spinsRemaining < 1) {
       return NextResponse.json({ error: 'No spins remaining' }, { status: 403 })
     }
 
     // Assign prize
     const prize = PRIZES[Math.floor(Math.random() * PRIZES.length)]
-    const prizeHistory = rewardSnap.data().prizeHistory || []
-    const spinsUsed = (rewardSnap.data().spinsUsed || 0) + 1
-    const spinsRemaining = rewardSnap.data().spinsRemaining - 1
+    const prizeHistory = rewardSnap.data()?.prizeHistory || []
+    const spinsUsed = (rewardSnap.data()?.spinsUsed || 0) + 1
+    const spinsRemaining = rewardSnap.data()?.spinsRemaining - 1
     const lastSpinTime = new Date()
 
     await rewardRef.set({
