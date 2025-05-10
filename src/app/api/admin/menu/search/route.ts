@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth, firestore } from '../../../../../lib/firebaseAdmin'
 import { handleAPIError, apiErrors } from '../../../../../lib/utils/apiErrors'
 import { z } from 'zod'
+import { Query, DocumentData } from 'firebase-admin/firestore'
 
 // Search query validation schema
 const searchParamsSchema = z.object({
@@ -53,9 +54,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Build base query
-    let baseQuery: firestore.Query<firestore.DocumentData> = firestore.collection('menuItems')
-    if (params.type) baseQuery = baseQuery.where('type', '==', params.type) as firestore.Query<firestore.DocumentData>
-    if (params.source) baseQuery = baseQuery.where('source', '==', params.source) as firestore.Query<firestore.DocumentData>
+    let baseQuery: Query<DocumentData> = firestore.collection('menuItems')
+    if (params.type) baseQuery = baseQuery.where('type', '==', params.type) as Query<DocumentData>
+    if (params.source) baseQuery = baseQuery.where('source', '==', params.source) as Query<DocumentData>
     
     // Execute query
     const snapshot = await baseQuery.get()

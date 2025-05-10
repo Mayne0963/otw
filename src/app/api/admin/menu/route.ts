@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth, firestore } from '../../../../lib/firebaseAdmin'
 import { handleAPIError, apiErrors } from '../../../../lib/utils/apiErrors'
 import { menuItemSchema } from '../../../../lib/firestoreModels'
+import { Query, DocumentData } from 'firebase-admin/firestore'
 
 async function isAdmin(userId: string) {
   const userSnap = await firestore.collection('users').doc(userId).get()
@@ -33,9 +34,9 @@ export async function GET(req: NextRequest) {
     const sortOrder = url.searchParams.get('sortOrder') || 'asc'
 
     // Build query
-    let query: firestore.Query<firestore.DocumentData> = firestore.collection('menuItems')
+    let query: Query<DocumentData> = firestore.collection('menuItems')
     if (type) {
-      query = query.where('type', '==', type) as firestore.Query<firestore.DocumentData>;
+      query = query.where('type', '==', type) as Query<DocumentData>;
     }
     if (source) query = query.where('source', '==', source)
 
