@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
     
     // Filter results in memory for text search and price range
     let results = snapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .map(doc => ({ id: doc.id, ...doc.data() }) as { id: string; name: string; description?: string; price: number })
       .filter(item => {
         const matchesSearch = !params.q || 
           item.name.toLowerCase().includes(params.q.toLowerCase()) || 
