@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
           // Update user rewards
           const rewardRef = firestore.collection('rewards').doc(userId || '');
           await rewardRef.set({
-            spinsRemaining: admin.firestore.FieldValue.increment(1),
+            spinsRemaining: admin.FieldValue.increment(1),
             lastSpinTime: new Date(),
           }, { merge: true });
         }
