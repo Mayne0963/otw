@@ -40,12 +40,13 @@ export async function handleWebhook(event: Stripe.Event) {
   switch (event.type) {
     case "payment_intent.succeeded":
       const paymentIntent = event.data.object as Stripe.PaymentIntent
-      await prisma.payments.create({
+      await prisma.order.create({
         data: {
-          stripeId: paymentIntent.id,
-          amount: paymentIntent.amount,
-          status: "succeeded",
-        },
+          userId: paymentIntent.metadata?.userId || "",
+          status: paymentIntent.status,
+          total: paymentIntent.amount_received / 100 // Stripe uses cents
+          // Add more fields if needed based on your schema
+        }
       })
       break
     case "payment_intent.payment_failed":

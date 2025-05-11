@@ -47,7 +47,7 @@ export default function ErrorPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Authentication Error</CardTitle>
           <CardDescription className="text-center">
-            {getErrorMessage(error)}
+            {getErrorMessage(typeof error === "string" ? error : null)}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center space-y-4">
