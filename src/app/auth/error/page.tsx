@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 export default function ErrorPage() {
   const searchParams = useSearchParams()
-  const error = searchParams.get('error')
+  const error = searchParams?.get('error')
 
   const getErrorMessage = (error: string | null) => {
     switch (error) {
@@ -59,4 +59,4 @@ export default function ErrorPage() {
       </Card>
     </div>
   )
-} 
+}
