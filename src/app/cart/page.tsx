@@ -103,7 +103,7 @@ export default function CartPage() {
                         {/* Display customizations if any */}
                         {hasCustomizations(item) && (
                           <div className="mt-2 text-sm text-gray-400">
-                            {Object.values(item.customizations)
+                            {item.customizations && Object.values(item.customizations)
                               .flat()
                               .map((option, index) => (
                                 <div key={index} className="flex justify-between">
