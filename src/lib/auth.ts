@@ -1,6 +1,8 @@
 import { NextAuthOptions } from "next-auth"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { prisma } from "./prisma"
+import { PrismaClient } from "@prisma/client"
+
+export const prisma = new PrismaClient()
 import EmailProvider from "next-auth/providers/email"
 import GoogleProvider from "next-auth/providers/google"
 
@@ -26,7 +28,12 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, token }) {
       if (token.sub) {
-        session.user.id = token.sub
+        session.user = {
+          name: session.user?.name,
+          email: session.user?.email,
+          image: session.user?.image,
+          id: token.sub
+        } as any
       }
       return session
     },

@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react"
-import { Map } from "../ui/map"
-import { Socket } from "socket.io-client"
+import dynamic from "next/dynamic"
+import type { Socket } from "socket.io-client"
+
+// Dynamically import the map component to avoid SSR issues
+const MapComponent = dynamic(() => import("@/components/maps/MapSearch"), {
+  ssr: false,
+  loading: () => <div className="h-[400px] w-full bg-gray-100 animate-pulse"></div>
+})
 
 interface Location {
   lat: number
@@ -33,10 +39,11 @@ export function LiveTracker({ orderId, socket }: LiveTrackerProps) {
 
   return (
     <div className="rounded-lg overflow-hidden">
-      <Map
-        center={location ? [location.lat, location.lng] : undefined}
-        zoom={15}
-        className="h-[400px] w-full"
+      <MapComponent
+        onLocationSelect={() => {}}
+        initialLatitude={location?.lat}
+        initialLongitude={location?.lng}
+        showSearchBox={false}
       />
       {eta && (
         <div className="mt-4 p-4 bg-gray-100 rounded">

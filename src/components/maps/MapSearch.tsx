@@ -61,9 +61,9 @@ export default function MapSearch({
 
   const onPlacesChanged = () => {
     if (searchBox) {
-      const places = searchBox.getPlaces()
-      if (places && places.length > 0) {
-        const place = places[0]
+      const place = searchBox.getPlace()
+      if (place && place.geometry) {
+        const selectedPlace = place
         if (place.geometry && place.geometry.location) {
           const location = place.geometry.location
           setSelectedLocation(location)
@@ -121,7 +121,7 @@ export default function MapSearch({
           </div>
           <Autocomplete
             onLoad={onSearchBoxLoad}
-            onPlacesChanged={onPlacesChanged}
+            onPlaceChanged={onPlacesChanged}
           >
             <input
               type="text"
@@ -168,4 +168,4 @@ export default function MapSearch({
       </div>
     </Card>
   )
-} 
+}

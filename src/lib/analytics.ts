@@ -16,9 +16,8 @@ interface AnalyticsProviderProps {
 
 export function AnalyticsProvider({ children }: AnalyticsProviderProps) {
   return (
-    <>
-      <VercelAnalytics />
+    <VercelAnalytics>
       {children}
-    </>
+    </VercelAnalytics>
   )
 }

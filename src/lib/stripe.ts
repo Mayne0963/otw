@@ -2,7 +2,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
 import { buffer } from 'micro';
 import type { NextApiRequest } from 'next';
-import { prisma } from '../lib/db'  // Updated import path
+import { prisma } from './db'  // Correct import path
 
 // Client-side Stripe instance
 export const getStripe = () => {
@@ -40,7 +40,7 @@ export async function handleWebhook(event: Stripe.Event) {
   switch (event.type) {
     case "payment_intent.succeeded":
       const paymentIntent = event.data.object as Stripe.PaymentIntent
-      await prisma.payment.create({
+      await prisma.payments.create({
         data: {
           stripeId: paymentIntent.id,
           amount: paymentIntent.amount,
