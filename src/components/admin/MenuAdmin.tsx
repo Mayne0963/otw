@@ -67,7 +67,7 @@ export default function MenuAdmin() {
   }
 
   async function handleEdit(item: MenuItem) {
-    setEditingId(item.id)
+    setEditingId(item.id ?? null)
     setEditItem({ ...item })
   }
 
@@ -192,4 +192,4 @@ export default function MenuAdmin() {
       )}
     </div>
   )
-} 
+}
