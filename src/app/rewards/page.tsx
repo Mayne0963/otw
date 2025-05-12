@@ -9,13 +9,14 @@ import RewardHistory from "../../components/rewards/RewardHistory"
 import SpinGame from "../../components/rewards/SpinGame"
 import RedeemModal from "../../components/rewards/RedeemModal"
 import { FaTrophy, FaGift, FaHistory, FaGamepad } from "react-icons/fa"
+import type { Reward } from "../../types/reward"
 
 export const dynamic = "force-dynamic"
 
 export default function RewardsPage() {
   const { points, tier, history } = useRewards()
   const [activeTab, setActiveTab] = useState("rewards")
-  const [selectedReward, setSelectedReward] = useState(null)
+  const [selectedReward, setSelectedReward] = useState<Reward | null>(null)
   const [showRedeemModal, setShowRedeemModal] = useState(false)
   const [showSpinGame, setShowSpinGame] = useState(false)
 
@@ -33,7 +34,7 @@ export default function RewardsPage() {
   const nextTier = getNextTierInfo()
 
   // Handle selecting a reward
-  const handleSelectReward = (reward) => {
+  const handleSelectReward = (reward: Reward) => {
     setSelectedReward(reward)
     setShowRedeemModal(true)
   }
@@ -45,7 +46,7 @@ export default function RewardsPage() {
   }
 
   // Group rewards by category
-  const categoryGroups = rewards.reduce((groups, reward) => {
+  const categoryGroups = rewards.reduce<Record<string, Reward[]>>((groups, reward) => {
     if (!groups[reward.category]) {
       groups[reward.category] = []
     }
@@ -141,7 +142,7 @@ export default function RewardsPage() {
                     {category.charAt(0).toUpperCase() + category.slice(1)} Rewards
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {categoryRewards.map((reward) => (
+                    {categoryRewards.map((reward: Reward) => (
                       <RewardCard
                         key={reward.id}
                         reward={reward}
