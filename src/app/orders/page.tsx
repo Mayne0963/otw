@@ -56,7 +56,7 @@ export default function OrderHistoryPage() {
                 </div>
                 <div className="p-4">
                   <div className="space-y-3">
-                    {order.items.map((item) => (
+                    {order.items.map((item: OrderItem) => (
                       <div key={item.id} className="flex justify-between">
                         <span>
                           {item.quantity} × {item.name}
@@ -89,3 +89,10 @@ export default function OrderHistoryPage() {
     </div>
   )
 }
+
+type OrderItem = {
+  id: string;
+  quantity: number;
+  name: string;
+  price: number;
+};
