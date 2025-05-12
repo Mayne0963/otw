@@ -7,10 +7,11 @@ import { useAgeVerification } from "../../lib/context/AgeVerificationContext"
 import { FaTimes, FaExclamationTriangle } from "react-icons/fa"
 
 interface AgeVerificationModalProps {
-  onClose: () => void
+  onClose: () => void;
+  onSuccess: () => void; // Added onSuccess prop
 }
 
-const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose }) => {
+const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose, onSuccess }) => { // Added onSuccess to destructuring
   const { verifyAge } = useAgeVerification()
   const [month, setMonth] = useState("")
   const [year, setYear] = useState("")
@@ -40,8 +41,9 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose }) 
     }
 
     // Call verifyAge without parameters as per the context implementation
-    verifyAge()
-    onClose()
+    verifyAge();
+    onSuccess(); // Call onSuccess after verification
+    onClose(); // Still call onClose to close the modal
   }
 
   return (
