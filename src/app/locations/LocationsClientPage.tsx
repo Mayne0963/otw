@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react"
 
-// REMOVE THIS:
-// import { locationData } from "../../data/location-data"
+import type { Location } from "../../types/location"
 
 type LocationsClientPageProps = {
-  locations: any[] // you can replace any[] with your real Location type later
+  locations: Location[]
 }
 
 export default function LocationsClientPage({ locations }: LocationsClientPageProps) {
@@ -49,5 +48,79 @@ export default function LocationsClientPage({ locations }: LocationsClientPagePr
     }
   }, [searchQuery, selectedState, locations])
 
-  // Everything else stays the same in your return JSX
+  // Return the JSX for the locations page
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Our Locations</h1>
+
+      <div className="mb-6 flex flex-col md:flex-row gap-4">
+        <input
+          type="text"
+          placeholder="Search locations..."
+          className="px-4 py-2 border rounded-md w-full md:w-1/2"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+
+        <select
+          className="px-4 py-2 border rounded-md w-full md:w-1/4"
+          value={selectedState}
+          onChange={(e) => setSelectedState(e.target.value)}
+        >
+          <option value="all">All States</option>
+          {states.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredLocations.map((location) => (
+          <div key={location.id} className="border rounded-lg overflow-hidden shadow-lg">
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-2">{location.name}</h2>
+              <p className="text-gray-600 mb-4">
+                {location.address}, {location.city}, {location.state} {location.zipCode}
+              </p>
+              <p className="font-medium mb-2">Phone: {location.phone}</p>
+
+              <div className="mb-4">
+                <h3 className="font-bold mb-1">Hours:</h3>
+                <ul>
+                  {location.hours.map((hour, index) => (
+                    <li key={index}>
+                      <span className="font-medium">{hour.day}:</span> {hour.hours}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mb-4">
+                <h3 className="font-bold mb-1">Features:</h3>
+                <div className="flex flex-wrap gap-2">
+                  {location.features.map((feature, index) => (
+                    <span key={index} className="bg-gray-200 text-gray-800 px-2 py-1 rounded-md text-sm">
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {location.notes && (
+                <p className="italic text-gray-600">{location.notes}</p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredLocations.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-xl">No locations found matching your criteria.</p>
+        </div>
+      )}
+    </div>
+  );
 }
