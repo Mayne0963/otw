@@ -114,10 +114,8 @@ export interface ChatContextType {
 
 // Age verification types
 export interface AgeVerificationContextType {
-  ageVerified: boolean
-  verifyAge: (month: number, year: number) => Promise<boolean>
-  isVerifying: boolean
-  error: string | null
+  isVerified: boolean
+  verifyAge: () => void
 }
 
 // Customization option types

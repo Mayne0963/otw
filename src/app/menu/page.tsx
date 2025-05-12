@@ -15,7 +15,7 @@ import type { CustomizationOption } from "../../types"
 
 export default function MenuPage() {
   const { addItem } = useCart()
-  const { ageVerified } = useAgeVerification()
+  const { isVerified } = useAgeVerification()
   const [showAgeModal, setShowAgeModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
@@ -77,7 +77,7 @@ export default function MenuPage() {
     quantity = 1,
     customizations?: { [categoryId: string]: CustomizationOption[] },
   ) => {
-    if (item.infused && !ageVerified) {
+    if (item.infused && !isVerified) {
       // Store the pending item details for after verification
       setPendingItem(item)
       setPendingQuantity(quantity)

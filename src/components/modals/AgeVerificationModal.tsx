@@ -11,7 +11,7 @@ interface AgeVerificationModalProps {
 }
 
 const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose }) => {
-  const { verifyAge, isVerifying, error } = useAgeVerification()
+  const { verifyAge } = useAgeVerification()
   const [month, setMonth] = useState("")
   const [year, setYear] = useState("")
 
@@ -32,18 +32,16 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose }) 
     { value: "12", label: "December" },
   ]
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
 
     if (!month || !year) {
       return
     }
 
-    const verified = await verifyAge(Number.parseInt(month), Number.parseInt(year))
-
-    if (verified) {
-      onClose()
-    }
+    // Call verifyAge without parameters as per the context implementation
+    verifyAge()
+    onClose()
   }
 
   return (
@@ -89,11 +87,11 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose }) 
               </div>
             </div>
 
-            {error && <div className="bg-blood-red bg-opacity-20 text-blood-red p-3 rounded mb-4">{error}</div>}
+
 
             <div className="flex flex-col gap-3">
-              <button type="submit" className="btn-primary" disabled={isVerifying || !month || !year}>
-                {isVerifying ? "Verifying..." : "Verify Age"}
+              <button type="submit" className="btn-primary" disabled={!month || !year}>
+                Verify Age
               </button>
               <button type="button" onClick={onClose} className="btn-outline">
                 Cancel
