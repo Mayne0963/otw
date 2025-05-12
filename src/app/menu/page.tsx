@@ -13,26 +13,44 @@ import CategoryFilter from "../../components/menu/CategoryFilter"
 import { menuItems, categories } from "../../data/menu-data"
 import type { CustomizationOption } from "../../types"
 
+interface DietaryFiltersState {
+  vegetarian: boolean
+  vegan: boolean
+  glutenFree: boolean
+  dairyFree: boolean
+}
+
 export default function MenuPage() {
   const { addItem } = useCart()
   const { isVerified } = useAgeVerification()
   const [showAgeModal, setShowAgeModal] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("all")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filteredItems, setFilteredItems] = useState(menuItems)
-  const [showFilters, setShowFilters] = useState(false)
-  const [priceRange, setPriceRange] = useState([0, 50])
-  const [dietaryFilters, setDietaryFilters] = useState({
+
+  // Added state initializations
+  const [searchQuery, setSearchQuery] = useState("");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50]);
+  const [dietaryFilters, setDietaryFilters] = useState<DietaryFiltersState>({
     vegetarian: false,
     vegan: false,
     glutenFree: false,
     dairyFree: false,
-  })
-  const [pendingItem, setPendingItem] = useState<any>(null)
-  const [pendingQuantity, setPendingQuantity] = useState(1)
-  const [pendingCustomizations, setPendingCustomizations] = useState<
-    { [categoryId: string]: CustomizationOption[] } | undefined
-  >(undefined)
+  });
+  const [filteredItems, setFilteredItems] = useState(menuItems); // Initialize with all menu items
+  const [showFilters, setShowFilters] = useState(false);
+  const [pendingItem, setPendingItem] = useState<any | null>(null);
+  const [pendingQuantity, setPendingQuantity] = useState<number>(1);
+  const [pendingCustomizations, setPendingCustomizations] = useState<{[categoryId: string]: CustomizationOption[]} | undefined>(undefined);
+
+  const handleVerificationSuccess = () => {
+    setShowAgeModal(false)
+    if (pendingItem) {
+      handleAddToCart(pendingItem, pendingQuantity, pendingCustomizations)
+      setPendingItem(null)
+      setPendingQuantity(1)
+      setPendingCustomizations(undefined)
+    }
+    // Potentially trigger other actions upon successful verification if needed
+  }
 
   // Filter menu items based on selected category, search query, and filters
   useEffect(() => {
@@ -125,23 +143,8 @@ export default function MenuPage() {
     })
   }
 
-  // Handle age verification success
-  const handleVerificationSuccess = () => {
-    setShowAgeModal(false)
-
-    // Process the pending item if it exists
-    if (pendingItem) {
-      handleAddToCart(pendingItem, pendingQuantity, pendingCustomizations)
-
-      // Clear pending item
-      setPendingItem(null)
-      setPendingQuantity(1)
-      setPendingCustomizations(undefined)
-    }
-  }
-
   // Handle dietary filter changes
-  const handleDietaryFilterChange = (filter: string) => {
+  const handleDietaryFilterChange = (filter: keyof DietaryFiltersState) => {
     setDietaryFilters((prev) => ({
       ...prev,
       [filter]: !prev[filter],
@@ -332,7 +335,12 @@ export default function MenuPage() {
 
       {/* Age Verification Modal */}
       {showAgeModal && (
-        <AgeVerificationModal onClose={() => setShowAgeModal(false)} onSuccess={handleVerificationSuccess} />
+        <AgeVerificationModal onClose={() => {
+          setShowAgeModal(false);
+          setPendingItem(null);
+          setPendingQuantity(1);
+          setPendingCustomizations(undefined);
+        }} onSuccess={handleVerificationSuccess} />
       )}
     </div>
   )

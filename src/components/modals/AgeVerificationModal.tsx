@@ -32,7 +32,7 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose }) 
     { value: "12", label: "December" },
   ]
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!month || !year) {
