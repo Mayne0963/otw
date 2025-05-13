@@ -3,6 +3,7 @@ import { auth, firestore } from '../../../../../lib/firebaseAdmin'
 import { menuItemSchema } from '../../../../../lib/firestoreModels'
 import { handleAPIError, apiErrors } from '../../../../../lib/utils/apiErrors'
 import { z } from 'zod'
+import { AuthUser, BulkOperationResult, VerifiedItem } from '../../../../../lib/types/firebase'
 
 export const dynamic = "force-dynamic"
 
@@ -17,7 +18,8 @@ const bulkOperationSchema = z.object({
 
 async function isAdmin(userId: string) {
   const userSnap = await firestore.collection('users').doc(userId).get()
-  return userSnap.exists && userSnap.data()?.role === 'admin'
+  const userData = userSnap.data()
+  return userSnap.exists && userData ? userData.role === 'admin' : false
 }
 
 export async function POST(req: NextRequest) {
@@ -28,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken)
+    const decoded = await auth.verifyIdToken(idToken) as AuthUser
     const userId = decoded.uid
 
     if (!(await isAdmin(userId))) {
@@ -49,10 +51,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const results: { 
-      success: Array<{ id: string; data?: any }>;
-      failed: Array<{ id: string; error: string }> 
-    } = {
+    const results: BulkOperationResult = {
       success: [],
       failed: []
     }
@@ -97,7 +96,7 @@ export async function POST(req: NextRequest) {
         }
       })
 
-      const verifiedItems = (await Promise.all(verificationPromises)).filter(Boolean)
+      const verifiedItems = (await Promise.all(verificationPromises)).filter(Boolean) as VerifiedItem[]
 
       // Apply batch operations for verified items
       for (const item of verifiedItems) {
@@ -131,7 +130,8 @@ export async function POST(req: NextRequest) {
           await batch.commit()
         } catch (err) {
           // Move all items in this batch to failed
-          verifiedItems.forEach(item => {
+          const errorMessage = err instanceof Error ? err.message : 'Unknown batch error'
+          verifiedItems.forEach((item: VerifiedItem) => {
             if (!item) return
             results.success = results.success.filter(s => s.id !== item.id)
             results.failed.push({ 

@@ -3,12 +3,14 @@ import { auth, firestore } from '../../../../../lib/firebaseAdmin'
 import { menuItemSchema } from '../../../../../lib/firestoreModels'
 import { handleAPIError, apiErrors } from '../../../../../lib/utils/apiErrors'
 import { withLogging } from '../../../../../lib/utils/withLogging'
+import { AuthUser } from '../../../../../lib/types/firebase'
 
 export const dynamic = "force-dynamic"
 
 async function isAdmin(userId: string) {
   const userSnap = await firestore.collection('users').doc(userId).get()
-  return userSnap.exists && userSnap.data()?.role === 'admin'
+  const userData = userSnap.data()
+  return userSnap.exists && userData ? userData.role === 'admin' : false
 }
 
 async function handleGet(req: NextRequest, { params }: { params: { id: string } }) {
@@ -19,7 +21,10 @@ async function handleGet(req: NextRequest, { params }: { params: { id: string } 
     }
 
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken)
+    const decoded = await auth.verifyIdToken(idToken) as AuthUser
+    if (!decoded.uid) {
+      throw apiErrors.unauthorized('Invalid authentication token')
+    }
     const userId = decoded.uid
 
     if (!(await isAdmin(userId))) {
@@ -46,7 +51,10 @@ async function handlePatch(req: NextRequest, { params }: { params: { id: string 
     }
 
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken)
+    const decoded = await auth.verifyIdToken(idToken) as AuthUser
+    if (!decoded.uid) {
+      throw apiErrors.unauthorized('Invalid authentication token')
+    }
     const userId = decoded.uid
 
     if (!(await isAdmin(userId))) {
@@ -58,7 +66,7 @@ async function handlePatch(req: NextRequest, { params }: { params: { id: string 
       throw apiErrors.notFound('Menu item not found')
     }
 
-    const data = await req.json()
+    const data = await req.json() as unknown
     const item = menuItemSchema.partial().parse(data)
     
     await firestore.collection('menuItems').doc(params.id).update({
@@ -82,7 +90,10 @@ async function handleDelete(req: NextRequest, { params }: { params: { id: string
     }
 
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken)
+    const decoded = await auth.verifyIdToken(idToken) as AuthUser
+    if (!decoded.uid) {
+      throw apiErrors.unauthorized('Invalid authentication token')
+    }
     const userId = decoded.uid
 
     if (!(await isAdmin(userId))) {

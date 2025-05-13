@@ -6,6 +6,11 @@ declare global {
       [elemName: string]: any
     }
   }
+  
+  interface Window {
+    dataLayer: unknown[];
+    gtag: (...args: unknown[]) => void;
+  }
 }
 
 export interface LayoutProps {

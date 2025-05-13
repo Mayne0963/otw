@@ -62,13 +62,13 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose, on
             <div className="w-16 h-16 bg-blood-red bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
               <FaExclamationTriangle className="text-blood-red text-2xl" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">Age Verification Required</h2>
-            <p className="text-gray-400">You must be 21 years or older to view and purchase infused products.</p>
+            <h2 id="age-verification-title" className="text-2xl font-bold mb-2">Age Verification Required</h2>
+            <p id="age-verification-description" className="text-gray-400">You must be 21 years or older to view and purchase infused products.</p>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="mb-6">
-              <label htmlFor="birth-month" className="block text-sm font-medium mb-2">Date of Birth</label>
+          <form onSubmit={handleSubmit} aria-labelledby="age-verification-title" aria-describedby="age-verification-description">
+            <div className="mb-6" role="group" aria-labelledby="birth-date-label">
+              <label id="birth-date-label" htmlFor="birth-month" className="block text-sm font-medium mb-2">Date of Birth</label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <select 

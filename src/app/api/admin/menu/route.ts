@@ -3,10 +3,12 @@ import { auth, firestore } from '../../../../lib/firebaseAdmin'
 import { handleAPIError, apiErrors } from '../../../../lib/utils/apiErrors'
 import { menuItemSchema } from '../../../../lib/firestoreModels'
 import { Query, DocumentData } from 'firebase-admin/firestore'
+import { AuthUser, MenuItemData } from '../../../../lib/types/firebase'
 
 async function isAdmin(userId: string) {
   const userSnap = await firestore.collection('users').doc(userId).get()
-  return userSnap.exists && userSnap.data()?.role === 'admin'
+  const userData = userSnap.data()
+  return userSnap.exists && userData ? userData.role === 'admin' : false
 }
 
 export const dynamic = "force-dynamic"
@@ -18,7 +20,7 @@ export async function GET(req: NextRequest) {
       throw apiErrors.unauthorized()
     }
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken)
+    const decoded = await auth.verifyIdToken(idToken) as AuthUser
     const userId = decoded.uid
     if (!(await isAdmin(userId))) {
       throw apiErrors.forbidden('Only admins can access menu items')
@@ -64,22 +66,13 @@ export async function GET(req: NextRequest) {
         totalPages: Math.ceil(total / limit)
       }
     })
-  } catch (err: any) {
+  } catch (err) {
     console.error('Error fetching menu items:', err)
     return handleAPIError(err)
   }
 }
 
-interface MenuItemData {
-  name: string;
-  description: string;
-  price: number;
-  type: "classic" | "infused";
-  source: "broskis" | "partner";
-  image?: string;
-  id?: string;
-  [key: string]: any;
-}
+// Using the MenuItemData interface from types/firebase.ts
 
 export async function POST(req: NextRequest) {
   try {
@@ -88,8 +81,8 @@ export async function POST(req: NextRequest) {
       throw apiErrors.unauthorized()
     }
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken)
-    if (!decoded || !decoded.uid) {
+    const decoded = await auth.verifyIdToken(idToken) as AuthUser
+    if (!decoded.uid) {
       throw apiErrors.unauthorized('Invalid authentication token')
     }
     const userId = decoded.uid
@@ -115,14 +108,14 @@ export async function POST(req: NextRequest) {
       // Return the created item with its ID
       const newDoc = await docRef.get()
       return NextResponse.json({ id: newDoc.id, ...newDoc.data() })
-    } catch (validationError: any) {
-      console.error('Validation error:', validationError)
-      return NextResponse.json({
-        error: 'Invalid menu item data',
-        details: validationError.errors
-      }, { status: 400 })
+    } catch (validationError) {
+    console.error('Validation error:', validationError)
+    return NextResponse.json({
+      error: 'Invalid menu item data',
+      details: validationError instanceof Error ? validationError.message : 'Unknown validation error'
+    }, { status: 400 })
     }
-  } catch (err: any) {
+  } catch (err) {
     console.error('Error creating menu item:', err)
     return handleAPIError(err)
   }

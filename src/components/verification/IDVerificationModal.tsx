@@ -6,6 +6,7 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { FaTimes, FaIdCard, FaCamera, FaCheck, FaExclamationTriangle } from "react-icons/fa"
 import { useAgeVerification } from "../../lib/context/AgeVerificationContext"
 import { auth } from "../../lib/services/firebase"
+import { onAuthStateChanged, User as FirebaseUser, Auth } from "firebase/auth"
 import Image from "next/image"
 
 interface IDVerificationModalProps {
@@ -26,8 +27,9 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
 
   // Get current user ID
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
+    // Ensure auth is properly typed as Auth
+    const unsubscribe = onAuthStateChanged(auth as Auth, (user: FirebaseUser | null) => {
+      if (user && user.uid) {
         setUserId(user.uid)
       } else {
         // Generate a local ID if no user is authenticated
@@ -42,8 +44,10 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
-      reader.onload = (event) => {
-        setIdImage(event.target?.result as string)
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        if (event.target && event.target.result) {
+          setIdImage(event.target.result as string)
+        }
       }
       reader.readAsDataURL(file)
     }
@@ -53,8 +57,10 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
-      reader.onload = (event) => {
-        setSelfieImage(event.target?.result as string)
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        if (event.target && event.target.result) {
+          setSelfieImage(event.target.result as string)
+        }
       }
       reader.readAsDataURL(file)
     }
@@ -83,7 +89,17 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
     setStep(step + 1)
   }, [step, idImage, selfieImage])
 
-  const handleVerification = async () => {
+  // Define the expected API response type
+  interface VerificationResponse {
+    success: boolean;
+    dob?: string;
+    isOver21?: boolean;
+    isAuthentic?: boolean;
+    facesMatch?: boolean;
+    message?: string;
+  }
+
+  const handleVerification = useCallback(async () => {
     if (!idImage || !selfieImage) {
       setError("Missing required information for verification")
       return
@@ -106,22 +122,22 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
         }),
       })
 
-      const result = await response.json()
+      const result = await response.json() as VerificationResponse
 
       if (result.success) {
         // If the API verification was successful, update the age verification context
         if (result.dob) {
           // Extract month and year from DOB
           const dobDate = new Date(result.dob)
-          const month = dobDate.getMonth() + 1 // JavaScript months are 0-indexed
-          const year = dobDate.getFullYear()
+          const month = String(dobDate.getMonth() + 1) // JavaScript months are 0-indexed
+          const year = String(dobDate.getFullYear())
 
           await verifyAge(month, year)
         } else {
           // If no DOB was returned, just verify with current date - 21 years
           const today = new Date()
-          const month = today.getMonth() + 1
-          const year = today.getFullYear() - 21
+          const month = String(today.getMonth() + 1)
+          const year = String(today.getFullYear() - 21)
 
           await verifyAge(month, year)
         }
@@ -129,11 +145,11 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
         setStep(4) // Success
       } else {
         // Handle different failure reasons
-        if (!result.isOver21) {
+        if (result.isOver21 === false) {
           setError("Age verification failed. You must be 21 or older.")
-        } else if (!result.isAuthentic) {
+        } else if (result.isAuthentic === false) {
           setError("ID verification failed. Please ensure your ID is valid and clearly visible.")
-        } else if (!result.facesMatch) {
+        } else if (result.facesMatch === false) {
           setError("Face verification failed. Please ensure your selfie clearly matches your ID photo.")
         } else {
           setError(result.message || "Verification failed. Please try again.")
@@ -148,21 +164,27 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
     } finally {
       setIsProcessing(false)
     }
-  }
+  }, [idImage, selfieImage, userId, verifyAge])
 
   const handleSuccess = useCallback(() => {
     onSuccess()
   }, [onSuccess])
 
+  // Non-async wrapper for the verification function
+  const handleVerificationClick = useCallback((): void => {
+    void handleVerification()
+  }, [handleVerification])
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80">
-      <div className="bg-[#1A1A1A] rounded-lg shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80" role="dialog" aria-modal="true" aria-labelledby="id-verification-title">
+      <div className="bg-[#1A1A1A] rounded-lg shadow-xl w-full max-w-md mx-4 relative animate-fade-in">
         <div className="relative p-6 border-b border-[#333333]">
-          <h2 className="text-xl font-bold pr-8">Age & Identity Verification</h2>
+            <h2 id="id-verification-title" className="text-xl font-bold pr-8">Age & Identity Verification</h2>
           <button
             onClick={onClose}
             className="absolute top-6 right-6 text-gray-400 hover:text-white"
             aria-label="Close"
+            type="button"
           >
             <FaTimes />
           </button>
@@ -177,13 +199,17 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
                 </div>
                 <h3 className="text-lg font-bold mb-2">Upload Your ID</h3>
                 <p className="text-gray-400">
-                  Please upload a clear photo of your government-issued ID (driver's license, passport, etc.)
+                  Please upload a clear photo of your government-issued ID (driver&apos;s license, passport, etc.)
                 </p>
               </div>
 
               <div
                 className={`border-2 border-dashed ${idImage ? "border-emerald-green" : "border-[#333333]"} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
                 onClick={triggerFileInput}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && triggerFileInput()}
+                role="button"
+                tabIndex={0}
+                aria-label="Upload ID photo"
               >
                 {idImage ? (
                   <div className="relative">
@@ -234,6 +260,10 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
               <div
                 className={`border-2 border-dashed ${selfieImage ? "border-emerald-green" : "border-[#333333]"} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
                 onClick={triggerSelfieInput}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && triggerSelfieInput()}
+                role="button"
+                tabIndex={0}
+                aria-label="Take a selfie photo"
               >
                 {selfieImage ? (
                   <div className="relative">
@@ -309,7 +339,11 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
               <p className="text-gray-400 mb-6">
                 Your identity has been verified and you are confirmed to be 21 or older.
               </p>
-              <button className="btn-primary w-full" onClick={handleSuccess}>
+              <button 
+                className="btn-primary w-full" 
+                onClick={handleSuccess}
+                aria-label="Continue to Infused Menu"
+              >
                 Continue to Infused Menu
               </button>
             </div>
@@ -326,10 +360,20 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
               </p>
               <p className="text-blood-red mb-6">{error || "Please ensure your ID is valid and clearly visible."}</p>
               <div className="flex gap-3">
-                <button className="btn-outline flex-1" onClick={onClose}>
+                <button 
+                  className="btn-outline flex-1" 
+                  onClick={onClose}
+                  type="button"
+                  aria-label="Cancel verification"
+                >
                   Cancel
                 </button>
-                <button className="btn-primary flex-1" onClick={() => setStep(1)}>
+                <button 
+                  className="btn-primary flex-1" 
+                  onClick={() => setStep(1)}
+                  type="button"
+                  aria-label="Try verification again"
+                >
                   Try Again
                 </button>
               </div>
@@ -341,15 +385,30 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
           <div className="p-6 bg-[#111111] border-t border-[#333333]">
             <div className="flex justify-between">
               {step > 1 ? (
-                <button className="btn-outline" onClick={() => setStep(step - 1)}>
-                  Back
-                </button>
+                <button 
+                className="btn-outline" 
+                onClick={() => setStep(step - 1)}
+                type="button"
+                aria-label="Go back to previous step"
+              >
+                Back
+              </button>
               ) : (
-                <button className="btn-outline" onClick={onClose}>
-                  Cancel
-                </button>
+                <button 
+                className="btn-outline" 
+                onClick={onClose}
+                type="button"
+                aria-label="Cancel verification"
+              >
+                Cancel
+              </button>
               )}
-              <button className="btn-primary" onClick={handleNextStep}>
+              <button 
+                className="btn-primary" 
+                onClick={handleNextStep}
+                type="button"
+                aria-label="Proceed to next step"
+              >
                 Next
               </button>
             </div>
@@ -358,7 +417,14 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
 
         {step === 3 && (
           <div className="p-6 bg-[#111111] border-t border-[#333333]">
-            <button className="btn-outline w-full" onClick={handleVerification} disabled={isProcessing}>
+            <button 
+              className="btn-outline w-full" 
+              onClick={handleVerificationClick} 
+              disabled={isProcessing}
+              aria-busy={isProcessing}
+              type="button"
+              aria-label={isProcessing ? "Verification in progress" : "Start verification process"}
+            >
               {isProcessing ? "Verifying..." : "Start Verification"}
             </button>
           </div>
