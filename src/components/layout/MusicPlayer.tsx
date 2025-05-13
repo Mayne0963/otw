@@ -1,7 +1,8 @@
 "use client"
 
-import type React from "react"
-import { useState, useRef } from "react"
+import React, { useState, useRef } from "react";
+import Image from 'next/image';
+
 import { FaPlay, FaPause, FaForward, FaBackward, FaVolumeUp, FaVolumeDown } from "react-icons/fa"
 import { useMediaPlayer } from "../../lib/context/MediaPlayerContext"
 import type { Track } from "../../types"
@@ -71,11 +72,15 @@ const MusicPlayer = () => {
 
   const handlePlayPause = () => {
     if (currentTrack) {
-      isPlaying ? pauseTrack() : playTrack(currentTrack)
+      if (isPlaying) {
+        pauseTrack();
+      } else {
+        playTrack(currentTrack);
+      }
     } else {
-      playTrack(currentPlaylist[0])
+      playTrack(currentPlaylist[0]);
     }
-  }
+  };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setVolume(Number(e.target.value))
@@ -97,11 +102,15 @@ const MusicPlayer = () => {
         {/* Track Info */}
         <div className="flex items-center">
           {currentTrack && currentTrack.coverImage && (
-            <img
-              src={currentTrack.coverImage || "/placeholder.svg"}
-              alt={currentTrack.title}
-              className="w-12 h-12 rounded object-cover mr-4"
-            />
+            <div className="relative w-12 h-12 rounded object-cover mr-4">
+              <Image
+                src={currentTrack.coverImage || "/placeholder.svg"}
+                alt={currentTrack.title}
+                layout="fill"
+                objectFit="cover"
+                className="rounded"
+              />
+            </div>
           )}
           <div>
             <p className="text-white font-bold">{currentTrack ? currentTrack.title : "No track selected"}</p>
@@ -158,7 +167,9 @@ const MusicPlayer = () => {
         </div>
 
         {/* Audio Element */}
-        {currentTrack && <audio ref={audioRef} src={currentTrack.url} autoPlay={isPlaying} onEnded={nextTrack} />}
+        {currentTrack && <audio ref={audioRef} src={currentTrack.url} autoPlay={isPlaying} onEnded={nextTrack}>
+          <track kind="captions" />
+        </audio>}
       </div>
     </div>
   )

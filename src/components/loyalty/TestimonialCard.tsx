@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import React from "react";
 
 import type React from "react"
 
@@ -51,11 +52,11 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
       </div>
       <div className="mb-4">
         <div className="flex mb-2">
-          {[...Array(5)].map((_, i) => (
+          {(Array(5).fill(0) as number[]).map((_, i) => (
             <FaStar key={i} className={i < testimonial.rating ? "text-gold-foil" : "text-gray-600"} size={16} />
           ))}
         </div>
-        <p className="text-gray-300 italic">"{testimonial.quote}"</p>
+        <p className="text-gray-300 italic">&quot;{testimonial.quote}&quot;</p>
       </div>
     </div>
   )

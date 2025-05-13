@@ -1,6 +1,7 @@
 "use client"
 
-import type React from "react"
+import React from "react"
+import Image from 'next/image'; // Import next/image
 
 import { useState } from "react"
 import { FaTimes, FaGift, FaCheck, FaExclamationTriangle } from "react-icons/fa"
@@ -72,11 +73,13 @@ const RedeemModal: React.FC<RedeemModalProps> = ({ reward, userPoints, onClose }
           {step === 1 ? (
             <>
               <div className="flex items-center mb-6">
-                <div className="w-20 h-20 bg-cover bg-center rounded-md overflow-hidden flex-shrink-0 mr-4">
-                  <img
+                <div className="w-20 h-20 bg-cover bg-center rounded-md overflow-hidden flex-shrink-0 mr-4 relative">
+                  {/* Replaced <img> with next/image */}
+                  <Image
                     src={reward.image || "/placeholder.svg"}
                     alt={reward.name}
-                    className="w-full h-full object-cover"
+                    layout="fill"
+                    objectFit="cover"
                   />
                 </div>
                 <div>
@@ -125,7 +128,7 @@ const RedeemModal: React.FC<RedeemModalProps> = ({ reward, userPoints, onClose }
                 </button>
                 <button
                   className="btn-primary flex-1"
-                  onClick={handleRedeem}
+                  onClick={() => { void handleRedeem(); }} // Added void to handle promise
                   disabled={!hasEnoughPoints || isRedeeming}
                 >
                   {isRedeeming ? (
@@ -166,7 +169,8 @@ const RedeemModal: React.FC<RedeemModalProps> = ({ reward, userPoints, onClose }
 
               <h3 className="text-xl font-bold mb-4">Reward Redeemed!</h3>
               <p className="text-gray-300 mb-6">
-                You've successfully redeemed {reward.name} for {reward.pointsRequired} points.
+                {/* Fixed unescaped entity */}
+                You&apos;ve successfully redeemed {reward.name} for {reward.pointsRequired} points.
               </p>
 
               <div className="bg-[#111111] p-6 rounded-lg mb-6">

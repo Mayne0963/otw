@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prepare": "husky"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.17.3",
@@ -105,10 +106,13 @@
     "eslint-config-next": "14.1.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.1.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
     "postcss": "^8.4.35",
     "prisma": "^5.10.0",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.3.3",
-    "typescript-eslint": "^8.32.1"
+    "typescript": "^5.8.3",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1"
   }
 }

@@ -59,9 +59,11 @@ export default function CartDropdown() {
                 <ShoppingBag className="h-12 w-12 text-gray-500" />
               </div>
               <p className="text-gray-400 mb-4">Your cart is empty</p>
-              <Button variant="primary" size="sm" href="/restaurants" onClick={() => setIsOpen(false)}>
-                Browse Restaurants
-              </Button>
+              <Link href="/restaurants" className="inline-block w-full" onClick={() => setIsOpen(false)}>
+                <Button variant="primary" size="sm">
+                  Browse Restaurants
+                </Button>
+              </Link>
             </div>
           ) : (
             <>

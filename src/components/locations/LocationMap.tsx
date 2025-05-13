@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import React from "react";
 
 import type React from "react"
 import { useEffect, useState } from "react"
@@ -18,12 +19,16 @@ const LocationMap: React.FC<LocationMapProps> = ({ locations, selectedLocation, 
   const [mapAvailable, setMapAvailable] = useState(false)
 
   useEffect(() => {
-    const checkMapAvailability = async () => {
+    interface MapAvailabilityResponse {
+  hasApiKey: boolean;
+}
+
+const checkMapAvailability = async () => {
       try {
         // Check if maps are available without exposing API key
-        const response = await fetch("/api/maps")
-        const data = await response.json()
-        setMapAvailable(data.hasApiKey)
+        const response = await fetch("/api/maps");
+        const data = await response.json() as MapAvailabilityResponse;
+        setMapAvailable(data.hasApiKey);
       } catch (error) {
         console.error("Error checking map availability:", error)
         setMapAvailable(false)
@@ -32,8 +37,8 @@ const LocationMap: React.FC<LocationMapProps> = ({ locations, selectedLocation, 
       }
     }
 
-    checkMapAvailability()
-  }, [])
+    void checkMapAvailability();
+  }, []);
 
   // Show loading state
   if (isLoading) {
@@ -57,7 +62,7 @@ const LocationMap: React.FC<LocationMapProps> = ({ locations, selectedLocation, 
           <FaMapMarkerAlt />
         </div>
         <h3 className="text-xl font-bold mb-2">Our Locations</h3>
-        {!mapAvailable && <p className="text-gray-400 mb-4">Find a Broski's Kitchen near you</p>}
+        {!mapAvailable && <p className="text-gray-400 mb-4">Find a Broski&apos;s Kitchen near you</p>}
       </div>
 
       <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
@@ -70,6 +75,13 @@ const LocationMap: React.FC<LocationMapProps> = ({ locations, selectedLocation, 
                 : "bg-gray-800 hover:bg-gray-700"
             }`}
             onClick={() => onMarkerClick(location)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                onMarkerClick(location);
+              }
+            }}
+            role="button"
+            tabIndex={0}
           >
             <h4 className="font-bold text-lg">{location.name}</h4>
             <p className="text-gray-300">{location.address}</p>

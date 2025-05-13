@@ -2,10 +2,11 @@
 
 import type React from "react"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { FaTimes, FaIdCard, FaCamera, FaCheck, FaExclamationTriangle } from "react-icons/fa"
 import { useAgeVerification } from "../../lib/context/AgeVerificationContext"
 import { auth } from "../../lib/services/firebase"
+import Image from "next/image"
 
 interface IDVerificationModalProps {
   onClose: () => void
@@ -37,7 +38,7 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
     return () => unsubscribe()
   }, [])
 
-  const handleIDUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleIDUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
@@ -46,9 +47,9 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
       }
       reader.readAsDataURL(file)
     }
-  }
+  }, [])
 
-  const handleSelfieUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelfieUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       const reader = new FileReader()
@@ -57,17 +58,17 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
       }
       reader.readAsDataURL(file)
     }
-  }
+  }, [])
 
-  const triggerFileInput = () => {
+  const triggerFileInput = useCallback(() => {
     fileInputRef.current?.click()
-  }
+  }, [])
 
-  const triggerSelfieInput = () => {
+  const triggerSelfieInput = useCallback(() => {
     selfieInputRef.current?.click()
-  }
+  }, [])
 
-  const handleNextStep = () => {
+  const handleNextStep = useCallback(() => {
     if (step === 1 && !idImage) {
       setError("Please upload an image of your ID")
       return
@@ -80,7 +81,7 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
 
     setError(null)
     setStep(step + 1)
-  }
+  }, [step, idImage, selfieImage])
 
   const handleVerification = async () => {
     if (!idImage || !selfieImage) {
@@ -149,9 +150,9 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
     }
   }
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
     onSuccess()
-  }
+  }, [onSuccess])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80">
@@ -186,7 +187,15 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
               >
                 {idImage ? (
                   <div className="relative">
-                    <img src={idImage || "/placeholder.svg"} alt="ID" className="max-h-48 mx-auto rounded" />
+                    <div className="relative h-48 w-full">
+                      <Image 
+                        src={idImage || "/placeholder.svg"} 
+                        alt="ID" 
+                        className="rounded object-contain" 
+                        fill
+                        sizes="(max-width: 768px) 100vw, 400px"
+                      />
+                    </div>
                     <div className="absolute top-2 right-2 bg-emerald-green rounded-full p-1">
                       <FaCheck className="text-black" />
                     </div>
@@ -228,7 +237,15 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({ onClose, onSu
               >
                 {selfieImage ? (
                   <div className="relative">
-                    <img src={selfieImage || "/placeholder.svg"} alt="Selfie" className="max-h-48 mx-auto rounded" />
+                    <div className="relative h-48 w-full">
+                      <Image 
+                        src={selfieImage || "/placeholder.svg"} 
+                        alt="Selfie" 
+                        className="rounded object-contain" 
+                        fill
+                        sizes="(max-width: 768px) 100vw, 400px"
+                      />
+                    </div>
                     <div className="absolute top-2 right-2 bg-emerald-green rounded-full p-1">
                       <FaCheck className="text-black" />
                     </div>

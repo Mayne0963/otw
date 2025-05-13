@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import React from "react";
 
 import type React from "react"
 
@@ -108,7 +109,7 @@ const TierBenefitsTable: React.FC = () => {
             </td>
           </tr>
           <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Chef's table access</td>
+            <td className="p-4">Chef&apos;s table access</td>
             <td className="p-4 text-center">
               <FaTimes className="mx-auto text-blood-red" />
             </td>

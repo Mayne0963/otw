@@ -37,11 +37,12 @@ const statusSteps = [
 
 export default function OrderTracker() {
   const [orderId, setOrderId] = useState("")
-  const [currentStatus, setCurrentStatus] = useState("received") // This would come from your backend
+  const [currentStatus] = useState("received") // Removed setCurrentStatus as it's unused
 
-  const handleTrack = async (e: React.FormEvent) => {
+  const handleTrack = (e: React.FormEvent) => { // Removed async
     e.preventDefault()
     // TODO: Implement tracking lookup
+    console.log('Tracking order:', orderId); // Added console log for now
   }
 
   return (
@@ -62,7 +63,7 @@ export default function OrderTracker() {
         <div className="absolute left-8 top-0 h-full w-0.5 bg-gray-700" />
 
         <div className="space-y-8">
-          {statusSteps.map((step, index) => {
+          {statusSteps.map((step) => { // Removed unused 'index' parameter
             const isActive = statusSteps
               .slice(0, statusSteps.findIndex((s) => s.id === currentStatus) + 1)
               .map((s) => s.id)

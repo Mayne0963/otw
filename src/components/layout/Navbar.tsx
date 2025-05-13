@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import React from 'react';
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
@@ -14,14 +15,14 @@ import {
   MapPin,
   Crown,
   HelpingHand,
-  ChevronDown,
-  LogOut,
-  Settings,
-  Clock,
-  Heart,
-  Search,
-  Bell,
-  MessageCircle,
+  // ChevronDown, // Unused
+  // LogOut,      // Unused
+  // Settings,    // Unused
+  // Clock,       // Unused
+  // Heart,       // Unused
+  // Search,      // Unused
+  // Bell,        // Unused
+  // MessageCircle, // Unused
 } from "lucide-react"
 import CartDropdown from "../cart/CartDropdown"
 import { useCart } from "../../lib/context/CartContext"
@@ -31,9 +32,9 @@ import { Logo } from "../ui/logo"
 import { useOnClickOutside } from "../../hooks/useOnClickOutside"
 import { cn } from "../../lib/utils"
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar"
-import NotificationCenter from '../notifications/NotificationCenter'
-import { signIn } from 'next-auth/react'
-import Image from 'next/image'
+import NotificationCenter from '../notifications/NotificationCenter';
+// import { signIn } from 'next-auth/react'; // Appears unused, auth handled by useFirebaseAuth and links
+import Image from 'next/image';
 
 const mainNavItems = [
   { name: "Home", href: "/", icon: <Home className="mr-3 h-4 w-4" /> },

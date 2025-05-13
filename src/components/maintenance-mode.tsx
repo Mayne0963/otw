@@ -1,4 +1,5 @@
-"use client"
+"use client";
+import React from "react";
 
 import type React from "react"
 
@@ -48,23 +49,27 @@ export function MaintenanceMode({ children }: MaintenanceModeProps) {
   }, [])
 
   if (!isMaintenanceMode) {
-    return <>{children}</>
+    return (
+      <div className="relative">
+        {children}
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-otw-black-950 text-white p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-4">
       <div className="max-w-md w-full mx-auto text-center">
         <div className="mb-8">
           <Logo size="large" variant="default" />
         </div>
 
-        <h1 className="text-3xl font-bold mb-4">We'll be right back!</h1>
+        <h1 className="text-3xl font-bold mb-4">We&apos;ll be right back!</h1>
 
         <p className="text-gray-400 mb-8">
-          We're currently performing scheduled maintenance to improve your experience. Please check back soon.
+          We&apos;re currently performing scheduled maintenance to improve your experience. Please check back soon.
         </p>
 
-        <div className="bg-otw-black-900 rounded-lg p-6 mb-8">
+        <div className="bg-gray-800 rounded-lg p-6 mb-8 shadow-lg border border-gray-700">
           <h2 className="text-xl font-semibold mb-4">Estimated completion</h2>
 
           <div className="flex justify-center gap-4 text-center">
@@ -83,7 +88,11 @@ export function MaintenanceMode({ children }: MaintenanceModeProps) {
           </div>
         </div>
 
-        <Button onClick={() => window.location.reload()} className="mb-8" variant="outline">
+        <Button
+          variant="outline"
+          className="mb-8 hover:bg-otw-gold/20 transition-colors"
+          onClick={() => window.location.reload()}
+        >
           <RefreshCw className="mr-2 h-4 w-4" />
           Refresh page
         </Button>
@@ -91,7 +100,7 @@ export function MaintenanceMode({ children }: MaintenanceModeProps) {
         <div className="text-sm text-gray-500">
           <p className="mb-4">Follow us for updates:</p>
           <div className="flex justify-center space-x-4">
-            <a href="https://instagram.com/otw" className="hover:text-otw-gold-600 transition-colors">
+            <a href="https://instagram.com/otw" className="hover:text-otw-gold transition-colors duration-200" style={{ transitionProperty: 'transform', transitionDuration: '200ms' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
               <Instagram size={24} />
             </a>
             <a href="https://twitter.com/otw" className="hover:text-otw-gold-600 transition-colors">

@@ -3,6 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAnalytics, isSupported } from "firebase/analytics";
+import { UserProfile } from '@/types';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -26,4 +27,20 @@ if (typeof window !== 'undefined') {
   isSupported().then(yes => yes && (analytics = getAnalytics(app)));
 }
 
-export { app, auth, db, storage, analytics }; 
+export { app, auth, db, storage, analytics };
+
+
+declare global {
+  interface Window {
+    firebase: typeof firebase;
+  }
+}
+
+export async function updateUserProfile(
+  userId: string, 
+  updates: Partial<UserProfile>
+): Promise<UserProfile> {
+  const docRef = doc(firestore, 'users', userId);
+  await updateDoc(docRef, updates);
+  return (await getDoc(docRef)).data() as UserProfile;
+}

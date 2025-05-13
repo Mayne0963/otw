@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { Button } from "../ui/button"
-import { Card } from "../ui/card"
+// import { Card } from "../ui/card" // Removed unused Card import
 import { Input } from "../ui/input"
 import { Textarea } from "../ui/textarea"
 import { Label } from "../ui/label"
@@ -16,15 +16,17 @@ const businessTypes = ["Restaurant", "Retail Store", "Service Provider", "Grocer
 export default function PartnerSignup() {
   const [uploading, setUploading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => { // Removed async
     e.preventDefault()
     // TODO: Implement form submission
+    console.log('Partner signup submitted'); // Added console log for now
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => { // Removed async
     if (!e.target.files?.length) return
     setUploading(true)
     // TODO: Implement file upload
+    console.log('File selected:', e.target.files[0].name); // Added console log for now
     setTimeout(() => setUploading(false), 1500) // Mock upload
   }
 
@@ -88,7 +90,7 @@ export default function PartnerSignup() {
                       type="file"
                       className="sr-only"
                       accept=".pdf,.doc,.docx,.xls,.xlsx"
-                      onChange={handleFileUpload}
+                      onChange={handleFileUpload} // Already non-async, no 'void' needed here as it's not a promise
                     />
                   </label>
                   <p className="text-xs text-gray-500 mt-1">PDF, DOC, XLS up to 10MB</p>

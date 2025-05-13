@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect, useRef } from 'react'
-import { Search, MapPin, Navigation } from 'lucide-react'
-import { useLoadScript, GoogleMap, Marker, Autocomplete } from '@react-google-maps/api'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import { Card } from '../ui/card'
+import React, { useState, useEffect, useRef } from 'react';
+import { Search, Navigation } from 'lucide-react';
+import { useLoadScript, GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Card } from '../ui/card';
 
-const libraries: ("places")[] = ["places"]
+const libraries: ("places")[] = ["places"];
 
 interface MapSearchProps {
   onLocationSelect?: (location: { lat: number; lng: number; address: string }) => void
@@ -61,9 +61,9 @@ export default function MapSearch({
 
   const onPlacesChanged = () => {
     if (searchBox) {
-      const place = searchBox.getPlace()
+      const place = searchBox.getPlace();
       if (place && place.geometry) {
-        const selectedPlace = place
+        // const selectedPlace = place; // Removed unused variable
         if (place.geometry && place.geometry.location) {
           const location = place.geometry.location
           setSelectedLocation(location)

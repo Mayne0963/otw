@@ -131,3 +131,27 @@ export interface CustomizationCategory {
   multiple: boolean
   options: CustomizationOption[]
 }
+
+export interface UserProfile {
+  uid: string;
+  displayName: string;
+  email: string;
+  photoURL?: string;
+  role: 'user' | 'admin';
+  rewardPoints: number;
+}
+
+export interface Restaurant {
+  id: string;
+  name: string;
+  cuisine: string;
+  rating: number;
+  deliveryTime: string;
+  imageUrl: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}

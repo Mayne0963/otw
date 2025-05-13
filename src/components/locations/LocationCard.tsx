@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react";
 
 import { FaMapMarkerAlt, FaPhone, FaClock, FaChevronRight } from "react-icons/fa"
 import type { Location } from "../../types/location"
@@ -28,12 +28,14 @@ const LocationCard: React.FC<LocationCardProps> = ({ location, isSelected, onSel
     const [openStr, closeStr] = todayHours.hours.split(" - ")
 
     const parseTimeStr = (timeStr: string) => {
-      const [time, period] = timeStr.split(" ")
-      let [hours, minutes] = time.split(":").map(Number)
-      if (period === "PM" && hours !== 12) hours += 12
-      if (period === "AM" && hours === 12) hours = 0
-      return hours * 100 + minutes
-    }
+      const [time, period] = timeStr.split(" ");
+      const timeParts = time.split(":").map(Number);
+      let hours = timeParts[0];
+      const minutes = timeParts[1];
+      if (period === "PM" && hours !== 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0; // Reset to 0 for midnight
+      return hours * 100 + (minutes || 0);
+    };
 
     const openTime = parseTimeStr(openStr)
     const closeTime = parseTimeStr(closeStr)
@@ -54,6 +56,13 @@ const LocationCard: React.FC<LocationCardProps> = ({ location, isSelected, onSel
         isSelected ? "border-gold-foil" : "border-[#333333] hover:border-[#555555]"
       }`}
       onClick={() => onSelect(location)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onSelect(location);
+        }
+      }}
+      role="button"
+      tabIndex={0}
     >
       <div className="p-5">
         <div className="flex justify-between items-start mb-3">
@@ -83,7 +92,7 @@ const LocationCard: React.FC<LocationCardProps> = ({ location, isSelected, onSel
           <div className="flex items-start">
             <FaClock className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
             <div className="text-gray-300 text-sm">
-              <p className="font-medium">Today's Hours:</p>
+              <p className="font-medium">Today&apos;s Hours:</p>
               <p>
                 {location.hours.find((h) => h.day === new Date().toLocaleDateString("en-US", { weekday: "long" }))
                   ?.hours || "Closed"}

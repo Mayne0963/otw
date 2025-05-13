@@ -37,9 +37,10 @@ export default function BookingForm() {
   const [selectedService, setSelectedService] = useState("")
   const [isEmergency, setIsEmergency] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => { // Removed async
     e.preventDefault()
     // TODO: Implement form submission
+    console.log('Form submitted', { selectedService, isEmergency }); // Added console log for now
   }
 
   return (

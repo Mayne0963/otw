@@ -164,15 +164,19 @@ export default function Navigation() {
           {/* Auth buttons */}
           <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
             <Button
+              variant="outline"
+              className="hover:bg-otw-gold/20 transition-colors"
               component={Link}
               href="/signin"
-              variant="outlined"
-              color="inherit"
-              sx={{ borderColor: "rgba(255, 255, 255, 0.3)" }}
             >
               Sign In
             </Button>
-            <Button component={Link} href="/signup" variant="contained" color="primary">
+            <Button
+              variant="primary"
+              className="hover:bg-otw-gold-dark transition-colors"
+              component={Link}
+              href="/signup"
+            >
               Sign Up
             </Button>
           </Box>

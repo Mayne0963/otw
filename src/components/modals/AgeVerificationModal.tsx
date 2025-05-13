@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { useAgeVerification } from "../../lib/context/AgeVerificationContext"
 import { FaTimes, FaExclamationTriangle } from "react-icons/fa"
 
@@ -33,18 +33,22 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose, on
     { value: "12", label: "December" },
   ]
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!month || !year) {
       return
     }
 
-    // Call verifyAge without parameters as per the context implementation
-    verifyAge();
-    onSuccess(); // Call onSuccess after verification
-    onClose(); // Still call onClose to close the modal
-  }
+    try {
+      // Call verifyAge with month and year parameters
+      await verifyAge(month, year);
+      onSuccess(); // Call onSuccess after verification
+      onClose(); // Still call onClose to close the modal
+    } catch (error) {
+      console.error("Age verification error:", error);
+    }
+  }, [month, year, verifyAge, onSuccess, onClose])
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
@@ -64,10 +68,16 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose, on
 
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2">Date of Birth</label>
+              <label htmlFor="birth-month" className="block text-sm font-medium mb-2">Date of Birth</label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <select value={month} onChange={(e) => setMonth(e.target.value)} className="input w-full" required>
+                  <select 
+                    id="birth-month"
+                    value={month} 
+                    onChange={(e) => setMonth(e.target.value)} 
+                    className="input w-full" 
+                    required
+                  >
                     <option value="">Month</option>
                     {months.map((m) => (
                       <option key={m.value} value={m.value}>
@@ -77,7 +87,13 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose, on
                   </select>
                 </div>
                 <div>
-                  <select value={year} onChange={(e) => setYear(e.target.value)} className="input w-full" required>
+                  <select 
+                    id="birth-year"
+                    value={year} 
+                    onChange={(e) => setYear(e.target.value)} 
+                    className="input w-full" 
+                    required
+                  >
                     <option value="">Year</option>
                     {years.map((y) => (
                       <option key={y} value={y}>
@@ -102,7 +118,7 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({ onClose, on
           </form>
 
           <p className="text-xs text-gray-500 mt-6 text-center">
-            By clicking "Verify Age", you confirm that you are 21 years of age or older and agree to our Terms of
+            By clicking &quotVerify Age&quot, you confirm that you are 21 years of age or older and agree to our Terms of
             Service and Privacy Policy.
           </p>
         </div>

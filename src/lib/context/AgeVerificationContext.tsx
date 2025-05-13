@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 
 interface AgeVerificationContextType {
   isVerified: boolean
-  verifyAge: () => void
+  verifyAge: (month?: number | string, year?: number | string) => Promise<void>
 }
 
 const AgeVerificationContext = createContext<AgeVerificationContextType | undefined>(undefined)
@@ -20,9 +20,20 @@ export function AgeVerificationProvider({ children }: { children: React.ReactNod
     }
   }, [])
 
-  const verifyAge = () => {
+  const verifyAge = async (month?: number | string, year?: number | string): Promise<void> => {
+    // Store verification data if month and year are provided
+    if (month && year) {
+      try {
+        localStorage.setItem("verificationMonth", String(month))
+        localStorage.setItem("verificationYear", String(year))
+      } catch (error) {
+        console.error("Error storing verification data:", error)
+      }
+    }
+    
     setIsVerified(true)
     localStorage.setItem("ageVerified", "true")
+    return Promise.resolve()
   }
 
   return (

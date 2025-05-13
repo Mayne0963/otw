@@ -6,6 +6,7 @@ import { Badge } from "../ui/badge"
 import Link from "next/link"
 import type { Restaurant } from "../../types/restaurant"
 import Image from "next/image"
+import React from 'react';
 
 interface RestaurantCardProps {
   restaurant: Restaurant

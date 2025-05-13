@@ -1,5 +1,6 @@
 "use client"
 import type { Category } from "../../types/restaurant"
+import React from 'react';
 
 interface CategoryFilterProps {
   categories: Category[]
