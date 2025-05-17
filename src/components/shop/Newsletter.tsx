@@ -40,11 +40,9 @@ const Newsletter: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto text-center">
       <h2 className="text-2xl font-bold mb-4">Stay Updated on New Merch Drops</h2>
-      <p className="text-gray-300 mb-6">
-        Subscribe to our newsletter to be the first to know about new merchandise releases, exclusive drops, and special
-        offers.
+      <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+        Don&apos;t miss out on the latest news and updates from OTW.
       </p>
-
       {isSubmitted ? (
         <div className="bg-emerald-green bg-opacity-20 text-emerald-green p-6 rounded-lg animate-fade-in">
           <div className="w-12 h-12 bg-emerald-green bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3">

@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
 
           <div className="text-center">
             <p className="text-sm text-gray-400">
-              Remember your password?{" "}
+              Don&apos;t worry, we&apos;ll send you a link to reset your password.
               <Link
                 href="/auth/login"
                 className="font-medium text-[#C1272D] hover:text-[#FFD700]"

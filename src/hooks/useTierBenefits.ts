@@ -82,7 +82,7 @@ export function useTierBenefits(userId: string, tier: 'free' | 'silver' | 'gold'
     });
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [userId, subscribeToCollection, setUsage, setLoading]);
 
   const getAvailableBenefits = () => {
     return TIER_BENEFITS.filter(benefit => 
@@ -169,4 +169,4 @@ export function useTierBenefits(userId: string, tier: 'free' | 'silver' | 'gold'
     checkBenefitAvailability,
     useBenefit,
   };
-} 
+}

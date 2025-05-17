@@ -1,12 +1,14 @@
 import { loadStripe } from '@stripe/stripe-js';
 import Stripe from 'stripe';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { buffer } from 'micro';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { NextApiRequest } from 'next';
 import { prisma } from './db'  // Correct import path
 
 // Client-side Stripe instance
 export const getStripe = () => {
-  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
   return stripePromise;
 };
 
@@ -15,12 +17,12 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 // Server-side Stripe instance
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2023-10-16',
   typescript: true
 });
 
-export async function createPaymentIntent(amount: number, currency: string = "usd") {
+export async function createPaymentIntent(amount: number, currency = "usd") {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
@@ -62,7 +64,7 @@ export async function constructEvent(payload: string, sig: string) {
   return stripe.webhooks.constructEvent(
     payload,
     sig,
-    process.env.STRIPE_WEBHOOK_SECRET!
+    process.env.STRIPE_WEBHOOK_SECRET || ''
   );
 }
 

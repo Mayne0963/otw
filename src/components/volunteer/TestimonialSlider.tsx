@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Image from "next/image"
 import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from "react-icons/fa"
 
@@ -21,8 +21,20 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({ testimonials }) =
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
 
+  const handleNext = useCallback(() => {
+    if (isAnimating) return
+
+    setIsAnimating(true)
+    setCurrentIndex((prevIndex) => (prevIndex === (testimonials?.length ?? 0) - 1 ? 0 : prevIndex + 1))
+
+    setTimeout(() => {
+      setIsAnimating(false)
+    }, 500)
+  }, [isAnimating, testimonials?.length])
+
   // Auto-advance the slider
   useEffect(() => {
+    if (!testimonials || testimonials.length === 0) return; // Guard against empty testimonials
     const interval = setInterval(() => {
       if (!isAnimating) {
         handleNext()
@@ -30,31 +42,20 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({ testimonials }) =
     }, 8000)
 
     return () => clearInterval(interval)
-  }, [currentIndex, isAnimating])
+  }, [isAnimating, handleNext, testimonials])
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (isAnimating) return
 
     setIsAnimating(true)
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1))
+    setCurrentIndex((prevIndex) => (prevIndex === 0 ? (testimonials?.length ?? 0) - 1 : prevIndex - 1))
 
     setTimeout(() => {
       setIsAnimating(false)
     }, 500)
-  }
+  }, [isAnimating, testimonials?.length])
 
-  const handleNext = () => {
-    if (isAnimating) return
-
-    setIsAnimating(true)
-    setCurrentIndex((prevIndex) => (prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1))
-
-    setTimeout(() => {
-      setIsAnimating(false)
-    }, 500)
-  }
-
-  const handleDotClick = (index: number) => {
+  const handleDotClick = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return
 
     setIsAnimating(true)
@@ -63,8 +64,14 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({ testimonials }) =
     setTimeout(() => {
       setIsAnimating(false)
     }, 500)
+  }, [isAnimating, currentIndex])
+
+  // Early return if testimonials are not available
+  if (!testimonials || testimonials.length === 0) {
+    return null; // Or a placeholder component
   }
 
+  // The following code will only execute if testimonials is valid and not empty
   return (
     <div className="relative max-w-4xl mx-auto">
       <div className="overflow-hidden rounded-lg bg-[#1A1A1A] border border-[#333333]">

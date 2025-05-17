@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import Image from "next/image"
 
 import {
   FaCalendarAlt,
@@ -150,10 +151,11 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, categoryName
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-full bg-[#333333] overflow-hidden mr-3">
                   {event.host.image && (
-                    <img
+                    <Image
                       src={event.host.image || "/placeholder.svg"}
                       alt={event.host.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   )}
                 </div>

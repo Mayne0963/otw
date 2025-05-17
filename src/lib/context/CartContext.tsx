@@ -12,8 +12,8 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 // Provider component
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false) // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [error, setError] = useState<string | null>(null) // eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Calculate cart totals
   const subtotal = items.reduce((total, item) => total + item.price * item.quantity, 0)

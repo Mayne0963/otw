@@ -35,7 +35,7 @@ export default function NotificationCenter() {
     return () => {
       socket.close()
     }
-  }, [])
+  }, [addNotification])
 
   const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     const newNotification: Notification = {
@@ -177,4 +177,4 @@ export default function NotificationCenter() {
       )}
     </div>
   )
-} 
+}

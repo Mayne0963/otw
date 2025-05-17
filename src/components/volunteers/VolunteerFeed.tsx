@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Card } from "../ui/card"
 import { Award, Clock, Heart } from "lucide-react"
 
@@ -29,7 +30,7 @@ export default function VolunteerFeed() {
         <Card key={story.id} className="p-6">
           <div className="flex gap-4">
             <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-              <img src={story.image} alt={story.name} className="w-full h-full object-cover" />
+              <Image src={story.image} alt={story.name} width={64} height={64} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1 space-y-4">
               <div>

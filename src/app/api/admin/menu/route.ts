@@ -19,9 +19,16 @@ export async function GET(req: NextRequest) {
     if (!authHeader?.startsWith('Bearer ')) {
       throw apiErrors.unauthorized()
     }
-    const idToken = authHeader.split(' ')[1]
+    const idTokenParts = authHeader.split(' ')
+    if (idTokenParts.length < 2 || !idTokenParts[1]) {
+        throw apiErrors.unauthorized('Malformed token');
+    }
+    const idToken = idTokenParts[1];
     const decoded = await auth.verifyIdToken(idToken) as AuthUser
     const userId = decoded.uid
+    if (!userId) {
+        throw apiErrors.unauthorized('Invalid token: UID missing');
+    }
     if (!(await isAdmin(userId))) {
       throw apiErrors.forbidden('Only admins can access menu items')
     }
@@ -80,10 +87,14 @@ export async function POST(req: NextRequest) {
     if (!authHeader?.startsWith('Bearer ')) {
       throw apiErrors.unauthorized()
     }
-    const idToken = authHeader.split(' ')[1]
+    const idTokenParts = authHeader.split(' ')
+    if (idTokenParts.length < 2 || !idTokenParts[1]) {
+        throw apiErrors.unauthorized('Malformed token');
+    }
+    const idToken = idTokenParts[1];
     const decoded = await auth.verifyIdToken(idToken) as AuthUser
     if (!decoded.uid) {
-      throw apiErrors.unauthorized('Invalid authentication token')
+      throw apiErrors.unauthorized('Invalid authentication token: UID missing')
     }
     const userId = decoded.uid
     if (!(await isAdmin(userId))) {

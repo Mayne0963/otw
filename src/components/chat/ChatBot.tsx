@@ -143,7 +143,7 @@ const ChatBot: React.FC = () => {
       </div>
 
       {/* Add CSS for typing animation */}
-      <style jsx>{`
+      <style>{`
         .typing-animation {
           display: flex;
           align-items: center;

@@ -4,6 +4,7 @@ import { Label } from "../../components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
 import { MapPin, Clock, CreditCard } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 export default function OrderPage() {
   return (
@@ -82,7 +83,7 @@ export default function OrderPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
               <div className="relative h-48">
-                <img src="/assets/images/vegan-burger.jpg" alt="Luxury Burger" className="w-full h-full object-cover" />
+                <Image src="/assets/images/vegan-burger.jpg" alt="Luxury Burger" fill className="object-cover" />
                 <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
                   POPULAR
                 </div>
@@ -101,7 +102,7 @@ export default function OrderPage() {
 
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
               <div className="relative h-48">
-                <img src="/assets/images/lobster-tacos.jpg" alt="Lobster Tacos" className="w-full h-full object-cover" />
+                <Image src="/assets/images/lobster-tacos.jpg" alt="Lobster Tacos" fill className="object-cover" />
                 <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
                   POPULAR
                 </div>
@@ -120,7 +121,7 @@ export default function OrderPage() {
 
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
               <div className="relative h-48">
-                <img src="/assets/images/truffle-fries.jpg" alt="Truffle Fries" className="w-full h-full object-cover" />
+                <Image src="/assets/images/truffle-fries.jpg" alt="Truffle Fries" fill className="object-cover" />
                 <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
                   POPULAR
                 </div>
@@ -139,7 +140,7 @@ export default function OrderPage() {
 
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
               <div className="relative h-48">
-                <img src="/assets/images/golden-cheesecake.jpg" alt="Gold Leaf Cheesecake" className="w-full h-full object-cover" />
+                <Image src="/assets/images/golden-cheesecake.jpg" alt="Gold Leaf Cheesecake" fill className="object-cover" />
                 <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
                   POPULAR
                 </div>

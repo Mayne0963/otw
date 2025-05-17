@@ -19,7 +19,7 @@ export function useTierMembership(userId: string) {
     });
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [userId, subscribeToDocument, setMembership, setLoading]);
 
   const createCheckoutSession = async (tier: 'silver' | 'gold' | 'platinum') => {
     try {
@@ -78,4 +78,4 @@ export function useTierMembership(userId: string) {
     createCheckoutSession,
     cancelSubscription,
   };
-} 
+}

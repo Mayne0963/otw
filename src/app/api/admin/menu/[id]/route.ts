@@ -21,11 +21,19 @@ async function handleGet(req: NextRequest, { params }: { params: { id: string } 
     }
 
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken) as AuthUser
-    if (!decoded.uid) {
+    if (!idToken) {
       throw apiErrors.unauthorized('Invalid authentication token')
     }
-    const userId = decoded.uid
+    const decodedToken = await auth.verifyIdToken(idToken)
+    
+    // Validate the decoded token has the required properties
+    if (!decodedToken || !decodedToken.uid) {
+      throw apiErrors.unauthorized('Invalid authentication token')
+    }
+    
+    // Create a properly typed AuthUser object
+    const authUser: AuthUser = decodedToken as AuthUser
+    const userId = authUser.uid
 
     if (!(await isAdmin(userId))) {
       throw apiErrors.forbidden('Only admins can access this resource')
@@ -51,11 +59,19 @@ async function handlePatch(req: NextRequest, { params }: { params: { id: string 
     }
 
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken) as AuthUser
-    if (!decoded.uid) {
+    if (!idToken) {
       throw apiErrors.unauthorized('Invalid authentication token')
     }
-    const userId = decoded.uid
+    const decodedToken = await auth.verifyIdToken(idToken)
+    
+    // Validate the decoded token has the required properties
+    if (!decodedToken || !decodedToken.uid) {
+      throw apiErrors.unauthorized('Invalid authentication token')
+    }
+    
+    // Create a properly typed AuthUser object
+    const authUser: AuthUser = decodedToken as AuthUser
+    const userId = authUser.uid
 
     if (!(await isAdmin(userId))) {
       throw apiErrors.forbidden('Only admins can update menu items')
@@ -90,11 +106,19 @@ async function handleDelete(req: NextRequest, { params }: { params: { id: string
     }
 
     const idToken = authHeader.split(' ')[1]
-    const decoded = await auth.verifyIdToken(idToken) as AuthUser
-    if (!decoded.uid) {
+    if (!idToken) {
       throw apiErrors.unauthorized('Invalid authentication token')
     }
-    const userId = decoded.uid
+    const decodedToken = await auth.verifyIdToken(idToken)
+    
+    // Validate the decoded token has the required properties
+    if (!decodedToken || !decodedToken.uid) {
+      throw apiErrors.unauthorized('Invalid authentication token')
+    }
+    
+    // Create a properly typed AuthUser object
+    const authUser: AuthUser = decodedToken as AuthUser
+    const userId = authUser.uid
 
     if (!(await isAdmin(userId))) {
       throw apiErrors.forbidden('Only admins can delete menu items')

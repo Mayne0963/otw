@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
     }
 
     const idToken = authHeader.split(' ')[1]
+    if (!idToken) {
+      throw apiErrors.unauthorized('Invalid authentication token')
+    }
     const decoded = await auth.verifyIdToken(idToken) as AuthUser
     const userId = decoded.uid
 
@@ -112,10 +115,16 @@ export async function POST(req: NextRequest) {
               updatedBy: userId
             })
           }
-          results.success.push({ 
-            id: item.id,
-            data: 'validatedData' in item ? item.validatedData : undefined
-          })
+          if ('validatedData' in item) {
+            results.success.push({ 
+              id: item.id,
+              data: item.validatedData
+            })
+          } else {
+            results.success.push({ 
+              id: item.id
+            })
+          }
         } catch (err) {
           results.failed.push({ 
             id: item.id,

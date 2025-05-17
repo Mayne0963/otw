@@ -7,6 +7,7 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { MapSearch } from '../maps/MapSearch'
 import { Clock, Phone, MessageCircle, AlertCircle } from 'lucide-react'
+import Image from 'next/image'
 
 interface TrackingStatus {
   status: 'preparing' | 'picked_up' | 'in_transit' | 'arrived'
@@ -107,9 +108,11 @@ export default function OrderTracking({ orderId }: { orderId: string }) {
         {trackingStatus.driver && (
           <Card className="p-4 mb-6">
             <div className="flex items-center space-x-4">
-              <img
+              <Image
                 src={trackingStatus.driver.photo}
                 alt={trackingStatus.driver.name}
+                width={64}
+                height={64}
                 className="w-16 h-16 rounded-full"
               />
               <div className="flex-1">
@@ -138,4 +141,4 @@ export default function OrderTracking({ orderId }: { orderId: string }) {
       </Card>
     </div>
   )
-} 
+}

@@ -40,41 +40,38 @@ const Resizable = React.forwardRef<HTMLDivElement, ResizableProps>(
       setIsResizing(true)
     }
 
-    const handleResize = (e: MouseEvent) => {
-      if (!isResizing || !containerRef.current) return
-
-      const containerRect = containerRef.current.getBoundingClientRect()
-      let newSize = 0
-
-      if (direction === "horizontal") {
-        newSize = e.clientX - containerRect.left
-      } else {
-        newSize = e.clientY - containerRect.top
-      }
-
-      newSize = Math.min(Math.max(newSize, minSize), maxSize)
-      setSize(newSize)
-      onResize?.(newSize)
-    }
-
     const handleResizeEnd = () => {
       setIsResizing(false)
     }
 
     useEffect(() => {
-      if (isResizing) {
-        document.addEventListener("mousemove", handleResize)
-        document.addEventListener("mouseup", handleResizeEnd)
-      } else {
-        document.removeEventListener("mousemove", handleResize)
-        document.removeEventListener("mouseup", handleResizeEnd)
+      if (!isResizing) return
+      
+      const handleResize = (e: MouseEvent) => {
+        if (!containerRef.current) return
+
+        const containerRect = containerRef.current.getBoundingClientRect()
+        let newSize = 0
+
+        if (direction === "horizontal") {
+          newSize = e.clientX - containerRect.left
+        } else {
+          newSize = e.clientY - containerRect.top
+        }
+
+        newSize = Math.min(Math.max(newSize, minSize), maxSize)
+        setSize(newSize)
+        onResize?.(newSize)
       }
+      
+      document.addEventListener("mousemove", handleResize)
+      document.addEventListener("mouseup", handleResizeEnd)
 
       return () => {
         document.removeEventListener("mousemove", handleResize)
         document.removeEventListener("mouseup", handleResizeEnd)
       }
-    }, [isResizing, handleResize])
+    }, [isResizing, direction, minSize, maxSize, onResize])
 
     return (
       <div

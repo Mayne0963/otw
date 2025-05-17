@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState } from "react";
-import Image from "next/image";
+import React, { useState } from "react"
+import Image from "next/image"
 import { FaStar, FaFire, FaLeaf, FaShoppingCart, FaPlus, FaMinus, FaCog } from "react-icons/fa"
 import CustomizationModal from "./CustomizationModal"
 import { getItemCustomizationOptions } from "../../data/menu-data"

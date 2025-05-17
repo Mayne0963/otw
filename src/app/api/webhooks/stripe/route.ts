@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   let event;
   try {
-    event = await constructEvent(rawBody, sig!);
+    event = await constructEvent(rawBody, sig || '');
   } catch (err: any) {
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
   }
@@ -114,11 +114,22 @@ export async function POST(req: NextRequest) {
         // Update order or delivery status for refunds
         if (charge.metadata?.type === 'delivery') {
           const deliveryId = charge.metadata.deliveryId;
+          if (!deliveryId) {
+            console.error('Webhook Error: deliveryId is missing in charge.metadata for delivery refund');
+            // Potentially return an error response or log more details
+            return NextResponse.json({ error: 'Missing deliveryId for refund' }, { status: 400 });
+          }
           await updateDeliveryStatus(deliveryId, 'cancelled', {
             notes: 'Payment refunded',
           });
         } else {
-          const orderRef = firestore.collection('orders').doc(charge.metadata?.orderId);
+          const orderId = charge.metadata?.orderId;
+          if (!orderId) {
+            console.error('Webhook Error: orderId is missing in charge.metadata for order refund');
+            // Potentially return an error response or log more details
+            return NextResponse.json({ error: 'Missing orderId for refund' }, { status: 400 });
+          }
+          const orderRef = firestore.collection('orders').doc(orderId);
           await orderRef.update({
             status: 'refunded',
             refundedAt: new Date(),

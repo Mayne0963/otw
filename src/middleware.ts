@@ -1,37 +1,19 @@
 import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-
-
-
-
-
+import { rateLimit, rateLimits } from './lib/utils/rateLimit'
 
 
 // Extend the NextAuth middleware
 export default withAuth(
   async function middleware(request: NextRequest) {
-    const ip = request.ip || 'unknown'
     const isAdminRoute = request.nextUrl.pathname.startsWith('/api/admin')
 
     // Check rate limit
-    // Import and implement rate limiting logic, for example using a rate limiting library
-    if (true) { // Temporary bypass - implement proper rate limiting
-      return new NextResponse(
-        JSON.stringify({
-          error: 'Too many requests',
-          message: 'Please try again later'
-        }),
-        {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-          }
-        }
-      )
+    const config = isAdminRoute ? rateLimits.admin : rateLimits.default
+    const rateLimitResponse = await rateLimit(config)(request)
+    if (rateLimitResponse) {
+      return rateLimitResponse
     }
 
     // Handle CORS preflight requests

@@ -19,7 +19,7 @@ export function useVolunteer(userId: string) {
     });
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [userId, subscribeToDocument]);
 
   const logHours = async (activity: {
     type: string;
@@ -65,7 +65,7 @@ export function useVolunteer(userId: string) {
     }
   };
 
-  const getLeaderboard = async (limit: number = 10) => {
+  const getLeaderboard = async (limit = 10) => {
     try {
       const q = query(
         collection(db, 'volunteers'),
@@ -108,4 +108,4 @@ export function useVolunteer(userId: string) {
     logHours,
     getLeaderboard,
   };
-} 
+}

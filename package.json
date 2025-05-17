@@ -6,10 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
     "postinstall": "prisma generate",
-    "prepare": "husky"
-  },
+    "prepare": "husky",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.mjs --fix",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "fix-all": "npm run lint && npm run format && npm run typecheck"
+},
+
   "dependencies": {
     "@amplitude/analytics-browser": "^2.17.3",
     "@auth/prisma-adapter": "^2.9.0",
@@ -102,6 +106,8 @@
     "@types/node": "^20.11.19",
     "@types/react": "^18.2.57",
     "@types/react-dom": "^18.2.19",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.1.0",
     "eslint-plugin-react": "^7.37.5",
@@ -109,10 +115,9 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.0.0",
     "postcss": "^8.4.35",
+    "prettier": "^3.5.3",
     "prisma": "^5.10.0",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.8.3",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@typescript-eslint/parser": "^8.32.1"
+    "typescript": "^5.8.3"
   }
 }

@@ -5,6 +5,7 @@ import { MenuItem } from '../../lib/firestoreModels'
 import { Card } from '../ui/card'
 import { Button } from '../ui/button'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 interface MenuGridProps {
   items: MenuItem[]
@@ -24,11 +25,13 @@ export default function MenuGrid({ items }: MenuGridProps) {
         >
           <Card className="flex flex-col h-full bg-otw-black-900 border-otw-gold-600/20 shadow-otw-md hover:border-otw-gold-600 transition-all">
             {item.image && (
-              <img
+              <Image
                 src={item.image}
                 alt={item.name}
+                width={200} // Placeholder, adjust as needed
+                height={150} // Placeholder, adjust as needed
                 className="w-full h-48 object-cover rounded-t-md"
-                loading="lazy"
+                priority={false} // Equivalent to loading="lazy"
               />
             )}
             <div className="flex-1 flex flex-col p-4">
@@ -46,4 +49,4 @@ export default function MenuGrid({ items }: MenuGridProps) {
       ))}
     </div>
   )
-} 
+}

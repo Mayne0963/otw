@@ -27,10 +27,17 @@ export async function GET(req: NextRequest) {
       throw apiErrors.unauthorized()
     }
 
-    const idToken = authHeader.split(' ')[1]
+    const idTokenParts = authHeader.split(' ')
+    if (idTokenParts.length < 2 || !idTokenParts[1]) {
+        throw apiErrors.unauthorized('Malformed token');
+    }
+    const idToken = idTokenParts[1];
     const decoded = await auth.verifyIdToken(idToken)
     const userId = decoded.uid
 
+    if (!userId) {
+        throw apiErrors.unauthorized('Invalid token: UID missing');
+    }
     if (!(await isAdmin(userId))) {
       throw apiErrors.forbidden('Only admins can search menu items')
     }
@@ -62,7 +69,7 @@ export async function GET(req: NextRequest) {
     const snapshot = await baseQuery.get()
     
     // Filter results in memory for text search and price range
-    let results = snapshot.docs
+    const results = snapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() }) as { id: string; name: string; description?: string; price: number })
       .filter(item => {
         const matchesSearch = !params.q || 

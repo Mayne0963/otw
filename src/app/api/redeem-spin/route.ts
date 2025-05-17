@@ -31,9 +31,16 @@ export async function POST(req: NextRequest) {
     if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    const idToken = authHeader.split(' ')[1]
+    const idTokenParts = authHeader.split(' ')
+    if (idTokenParts.length < 2 || !idTokenParts[1]) {
+      return NextResponse.json({ error: 'Malformed token' }, { status: 401 })
+    }
+    const idToken = idTokenParts[1];
     const decoded = await auth.verifyIdToken(idToken)
     const userId = decoded.uid
+    if (!userId) {
+      return NextResponse.json({ error: 'Invalid token: UID missing' }, { status: 401 })
+    }
 
     // Rate limit (in-memory, per instance)
     const now = Date.now()

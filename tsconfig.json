@@ -49,12 +49,21 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx",
     ".next/types/**/*.ts",
-    "src/types/**/*.d.ts"
+    "tailwind.config.js",
+    "postcss.config.js",
+    "next.config.mjs"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next",
+    "out",
+    "build",
+    "public",
+    "components.json"
   ]
 }

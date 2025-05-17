@@ -1,0 +1,16 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore build output
+.next/
+out/
+build/
+
+# Ignore coverage reports
+coverage/
+
+
+# Ignore type definitions
+src/types/**
+**/*.d.ts
+src/lib/analytics.ts

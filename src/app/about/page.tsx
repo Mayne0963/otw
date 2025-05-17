@@ -25,8 +25,8 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold">Our Mission</h2>
             <p className="text-lg text-muted-foreground">
               At On The Way, we believe everyone deserves access to reliable delivery services, regardless of where they live. 
-              We're committed to building a platform that connects communities, supports local businesses, and provides 
-              opportunities for drivers to earn on their own terms.
+              We&apos;re a team of passionate individuals dedicated to bringing you the best products and services.
+              Our mission is to provide a seamless and enjoyable experience for all our customers, ensuring you find exactly what you&apos;re looking for.
             </p>
             <p className="text-lg text-muted-foreground">
               {/* Terms Page Link */}

@@ -150,7 +150,7 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
     if (canvas && canvas.getContext("2d")) {
       drawWheel(canvas.getContext("2d"), canvas.width, canvas.height, spinAngle)
     }
-  }, [])
+  }, [drawWheel, spinAngle])
 
   // Handle claiming points
   const handleClaim = () => {

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useFirestore } from './useFirestore';
 import { Tracking } from '../types/firestore';
-import { collection, query, where, orderBy, limit } from 'firebase/firestore';
 
 export function useTracking(userId: string) {
   const [loading, setLoading] = useState(true);
@@ -12,43 +11,22 @@ export function useTracking(userId: string) {
   
   const { getDocument, setDocument, subscribeToDocument } = useFirestore<Tracking>('tracking');
 
-  // Start tracking user's location
-  const startLocationTracking = useCallback(() => {
-    if (!navigator.geolocation) {
-      setError(new Error('Geolocation is not supported by your browser'));
-      return;
+  // Get address from coordinates using Google Maps Geocoding API
+  const getAddressFromCoords = useCallback(async (lat: number, lng: number) => {
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
+      );
+      const data = await response.json();
+      return data.results[0]?.formatted_address || 'Unknown location';
+    } catch (err) {
+      console.error('Error getting address:', err);
+      return 'Unknown location';
     }
-
-    const id = navigator.geolocation.watchPosition(
-      (position) => {
-        setLocation(position);
-        if (activeTracking) {
-          updateTrackingLocation(position);
-        }
-      },
-      (error) => {
-        setError(error);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-      }
-    );
-
-    setWatchId(id);
-  }, [activeTracking]);
-
-  // Stop tracking user's location
-  const stopLocationTracking = useCallback(() => {
-    if (watchId !== null) {
-      navigator.geolocation.clearWatch(watchId);
-      setWatchId(null);
-    }
-  }, [watchId]);
+  }, []);
 
   // Update tracking location in Firestore
-  const updateTrackingLocation = async (position: GeolocationPosition) => {
+  const updateTrackingLocation = useCallback(async (position: GeolocationPosition) => {
     if (!activeTracking) return;
 
     try {
@@ -66,21 +44,45 @@ export function useTracking(userId: string) {
     } catch (err) {
       setError(err as Error);
     }
-  };
+  }, [activeTracking, setDocument, getAddressFromCoords]);
 
-  // Get address from coordinates using Google Maps Geocoding API
-  const getAddressFromCoords = async (lat: number, lng: number) => {
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`
-      );
-      const data = await response.json();
-      return data.results[0]?.formatted_address || 'Unknown location';
-    } catch (err) {
-      console.error('Error getting address:', err);
-      return 'Unknown location';
+  // Start tracking user's location
+  const startLocationTracking = useCallback(() => {
+    if (!navigator.geolocation) {
+      setError(new Error('Geolocation is not supported by your browser'));
+      return;
     }
-  };
+
+    const id = navigator.geolocation.watchPosition(
+      (position) => {
+        setLocation(position);
+        if (activeTracking) {
+          updateTrackingLocation(position);
+        }
+      },
+      (error: GeolocationPositionError) => {
+        // Create a proper Error object from GeolocationPositionError
+        const customError = new Error(error.message);
+        customError.name = 'GeolocationError';
+        setError(customError);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      }
+    );
+
+    setWatchId(id);
+  }, [activeTracking, updateTrackingLocation]);
+
+  // Stop tracking user's location
+  const stopLocationTracking = useCallback(() => {
+    if (watchId !== null) {
+      navigator.geolocation.clearWatch(watchId);
+      setWatchId(null);
+    }
+  }, [watchId]);
 
   // Start a new tracking session
   const startTracking = async (type: 'delivery' | 'service' | 'volunteer', destination?: {
@@ -107,7 +109,7 @@ export function useTracking(userId: string) {
             location.coords.longitude
           ),
         },
-        destination,
+        ...(destination && { destination }),
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -152,7 +154,7 @@ export function useTracking(userId: string) {
     });
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [userId, subscribeToDocument, setActiveTracking, setLoading]);
 
   // Cleanup location tracking on unmount
   useEffect(() => {
@@ -170,4 +172,4 @@ export function useTracking(userId: string) {
     updateStatus,
     stopLocationTracking,
   };
-} 
+}

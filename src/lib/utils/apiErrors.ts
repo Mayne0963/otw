@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { ZodError } from 'zod'
 
 export type ErrorCode = 
   | 'UNAUTHORIZED'
@@ -70,7 +69,7 @@ export const handleError = (error: unknown): NextResponse => {
 
 export function createAPIError(
   message: string,
-  status: number = 500,
+  status = 500,
   code?: string,
   details?: any
 ) {
@@ -116,21 +115,21 @@ export class ValidationError extends ApiError {
 }
 
 export class AuthenticationError extends ApiError {
-  constructor(message: string = 'Authentication required') {
+  constructor(message = 'Authentication required') {
     super(401, message)
     this.name = 'AuthenticationError'
   }
 }
 
 export class AuthorizationError extends ApiError {
-  constructor(message: string = 'Permission denied') {
+  constructor(message = 'Permission denied') {
     super(403, message)
     this.name = 'AuthorizationError'
   }
 }
 
 export class NotFoundError extends ApiError {
-  constructor(message: string = 'Resource not found') {
+  constructor(message = 'Resource not found') {
     super(404, message)
     this.name = 'NotFoundError'
   }
@@ -183,4 +182,4 @@ export function handleAPIError(error: unknown) {
     },
     { status: 500 }
   )
-} 
+}

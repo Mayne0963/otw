@@ -89,7 +89,7 @@ export default function ShopPage() {
         <div className="absolute inset-0 z-0">
           <Image
             src="/assets/images/otw-booking.png"
-            alt="Broski's Kitchen Merchandise"
+            alt="OTW Merchandise"
             fill
             className="object-cover"
             priority
@@ -99,7 +99,7 @@ export default function ShopPage() {
         <div className="container mx-auto px-4 z-10 text-center">
           <h1 className="heading-xl mb-4 text-white gritty-shadow">Official Merch</h1>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Rep the brand with our exclusive collection of Broski&apos;s Kitchen apparel and accessories.
+            Rep the brand with our exclusive collection of OTW apparel and accessories.
           </p>
         </div>
       </section>
@@ -271,7 +271,7 @@ export default function ShopPage() {
             <div>
               <h2 className="text-3xl font-bold mb-6">About Our Merch</h2>
               <p className="text-gray-300 mb-4">
-                At Broski&apos;s Kitchen, we believe in quality that matches our food. Our merchandise is crafted with
+                At OTW, we believe in quality that matches our food. Our merchandise is crafted with
                 premium materials and designed to last, just like the memories you make in our restaurants.
               </p>
               <p className="text-gray-300 mb-4">
@@ -279,7 +279,7 @@ export default function ShopPage() {
                 with sustainable manufacturers who share our values of quality and responsibility.
               </p>
               <p className="text-gray-300">
-                From comfortable tees to stylish accessories, our merch lets you take a piece of the Broski&apos;s
+                From comfortable tees to stylish accessories, our merch lets you take a piece of the OTW
                 experience home with you.
               </p>
             </div>
@@ -287,7 +287,7 @@ export default function ShopPage() {
               <div className="aspect-square relative rounded-lg overflow-hidden">
                 <Image
                   src="/assets/images/truffle-fries.jpg"
-                  alt="Broski's Kitchen Merchandise"
+                  alt="OTW Merchandise"
                   fill
                   className="object-cover"
                 />
@@ -295,7 +295,7 @@ export default function ShopPage() {
               <div className="aspect-square relative rounded-lg overflow-hidden">
                 <Image
                   src="/assets/images/vegan-burger.jpg"
-                  alt="Broski's Kitchen Merchandise"
+                  alt="OTW Merchandise"
                   fill
                   className="object-cover"
                 />
@@ -303,7 +303,7 @@ export default function ShopPage() {
               <div className="aspect-square relative rounded-lg overflow-hidden">
                 <Image
                   src="/assets/images/buffalo-cauliflower.jpg"
-                  alt="Broski's Kitchen Merchandise"
+                  alt="OTW Merchandise"
                   fill
                   className="object-cover"
                 />
@@ -311,7 +311,7 @@ export default function ShopPage() {
               <div className="aspect-square relative rounded-lg overflow-hidden">
                 <Image
                   src="/assets/images/wagyu-sandwich.jpg"
-                  alt="Broski's Kitchen Merchandise"
+                  alt="OTW Merchandise"
                   fill
                   className="object-cover"
                 />

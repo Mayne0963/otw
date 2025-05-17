@@ -1,8 +1,5 @@
 "use client";
-import React from "react";
-
-import type React from "react"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import type { Location } from "../../types/location"
 import { FaMapMarkerAlt, FaDirections, FaPhone, FaInfoCircle } from "react-icons/fa"
 

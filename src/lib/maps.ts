@@ -27,7 +27,7 @@ export async function geocodeAddress(address: string): Promise<Location> {
   const response = await client.geocode({
     params: {
       address,
-      key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
+      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || '',
     },
   })
 
@@ -56,7 +56,7 @@ export async function calculateRoute(
       waypoints,
       optimize: true, // Optimize waypoint order if present
       mode: 'driving',
-      key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
+      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || '',
     },
   })
 
@@ -75,14 +75,14 @@ export async function calculateRoute(
 export async function searchNearbyPlaces(
   location: LatLngLiteral,
   type: string,
-  radius: number = 5000 // 5km default radius
+  radius = 5000 // 5km default radius
 ) {
   const response = await client.placesNearby({
     params: {
       location,
       radius,
       type,
-      key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
+      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || '',
     },
   })
 
@@ -94,7 +94,7 @@ export async function getPlaceDetails(placeId: string) {
     params: {
       place_id: placeId,
       fields: ['name', 'formatted_address', 'geometry', 'rating', 'opening_hours', 'photos'],
-      key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
+      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || '',
     },
   })
 
@@ -111,9 +111,9 @@ export async function calculateDistanceMatrix(
       origins,
       destinations,
       mode: 'driving',
-      key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
+      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || '',
     },
   })
 
   return response.data
-} 
+}

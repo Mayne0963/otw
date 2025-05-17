@@ -5,7 +5,8 @@ import { menuItemSchema, MenuItem } from './firestoreModels'
 const BROS_KIS_MENU_URL = 'https://www.broskiskitchen.com/menu'
 const PARTNER_MENU_URL = 'https://www.broskiskitchen.com/partner-menu'
 
-// Optionally enhance description with OpenAI
+// Optionally enhance description with OpenAI - currently unused but kept for future implementation
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function enhanceDescription(desc: string): Promise<string> {
   if (!process.env.OPENAI_API_KEY) return desc
   try {
@@ -92,4 +93,4 @@ export async function fetchAndNormalizeMenus() {
     console.error('Menu scraping failed:', err)
     throw err
   }
-} 
+}

@@ -55,7 +55,7 @@ export default function RestaurantsClientPage() {
       filtered = filtered.filter(
         (restaurant) =>
           restaurant.dietaryOptions &&
-          filters.dietaryOptions.some((option) => restaurant.dietaryOptions?.includes(option)),
+          filters.dietaryOptions.some((option) => restaurant.dietaryOptions.includes(option)),
       )
     }
 
@@ -63,20 +63,20 @@ export default function RestaurantsClientPage() {
     if (filters.deliveryTimeMax !== null) {
       filtered = filtered.filter((restaurant) => {
         const maxTime = Number.parseInt(restaurant.deliveryTime.split("-")[1])
-        return maxTime <= filters.deliveryTimeMax!
+        return maxTime <= (filters.deliveryTimeMax || 0)
       })
     }
 
     // Filter by distance
     if (filters.distance !== null) {
-      filtered = filtered.filter((restaurant) => restaurant.distance <= filters.distance!)
+      filtered = filtered.filter((restaurant) => restaurant.distance <= (filters.distance || 0))
     }
 
     // Filter by features
     if (filters.features.length > 0) {
       filtered = filtered.filter(
         (restaurant) =>
-          restaurant.features && filters.features.some((feature) => restaurant.features?.includes(feature)),
+          restaurant.features && filters.features.some((feature) => restaurant.features.includes(feature)),
       )
     }
 

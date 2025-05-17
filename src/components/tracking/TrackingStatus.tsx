@@ -1,6 +1,7 @@
 import React from "react"
 import { Card } from "../ui/card"
 import { Phone, MessageSquare, Clock, CheckCircle2 } from "lucide-react"
+import Image from "next/image"
 
 interface Rep {
   name: string
@@ -61,9 +62,11 @@ export default function TrackingStatus({ status, rep, estimatedTime }: TrackingS
 
       {rep && status !== "received" && (
         <div className="mt-6 flex items-center gap-4 p-4 bg-gray-50 rounded-lg animate-fadeIn">
-          <img
+          <Image
             src={rep.photo}
             alt={rep.name}
+            width={64}
+            height={64}
             className="w-16 h-16 rounded-full object-cover"
           />
           <div className="flex-1">

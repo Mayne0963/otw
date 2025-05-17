@@ -18,21 +18,12 @@ interface RestaurantDetailPageProps {
 }
 
 export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPageProps) {
-  // Use try/catch to handle the case where CartProvider might not be available
-  let cartContext
-  try {
-    cartContext = useCart()
-  } catch (error) {
-    console.error("Cart context not available:", error)
-    // Provide fallback values
-    cartContext = { itemCount: 0 }
-  }
-
-  const { itemCount } = cartContext
+  // Always call hooks at the top level
+  const cartContext = useCart()
+  const { itemCount, addItem } = cartContext || { itemCount: 0, addItem: undefined }
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
   const [filteredItems, setFilteredItems] = useState(menuItems)
-  const [showFilters, setShowFilters] = useState(false)
 
   // Get the correct image and logo based on restaurant id
   const getRestaurantImage = () => {
@@ -157,7 +148,17 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
                   key={item.id}
                   item={item}
                   onAddToCart={(quantity, customizations) => {
-                    // This will use the existing cart context
+                    // Add item to cart using the extracted addItem function
+                    if (addItem) {
+                      addItem({
+                        id: item.id,
+                        name: item.name,
+                        price: item.price,
+                        quantity: quantity,
+                        image: item.image,
+                        customizations: customizations,
+                      })
+                    }
                   }}
                 />
               ))}
