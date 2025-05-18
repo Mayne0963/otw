@@ -8,7 +8,7 @@ export function useTierMembership(userId: string) {
   const [error, setError] = useState<Error | null>(null);
   const [membership, setMembership] = useState<TierMembership | null>(null);
   
-  const { getDocument, setDocument, subscribeToDocument } = useFirestore<TierMembership>('tierMemberships');
+  const { setDocument, subscribeToDocument } = useFirestore<TierMembership>('tierMemberships');
 
   useEffect(() => {
     if (!userId) return;

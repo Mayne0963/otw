@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useFirestore } from './useFirestore';
 import { Volunteer } from '../types/firestore';
-import { collection, query, where, orderBy, limit } from 'firebase/firestore';
+import { orderBy } from 'firebase/firestore';
 
 export function useVolunteer(userId: string) {
   const [loading, setLoading] = useState(true);
@@ -65,14 +65,12 @@ export function useVolunteer(userId: string) {
     }
   };
 
-  const getLeaderboard = async (limit = 10) => {
+  const getLeaderboard = async () => {
     try {
-      const q = query(
-        collection(db, 'volunteers'),
-        orderBy('hours', 'desc'),
-        limit(limit)
-      );
-      return await getDocuments([q]);
+      // Use the getDocuments function with proper constraints
+      return await getDocuments([
+        orderBy('hours', 'desc')
+      ]);
     } catch (err) {
       setError(err as Error);
       return [];

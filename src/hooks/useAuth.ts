@@ -325,16 +325,13 @@ export const useAuth = () => {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
 
-      const { error } = await supabase
-        .from("users")
-        .update({
-          preferences,
-          updatedAt: new Date().toISOString(),
-        })
-        .eq("id", user.id)
+      // Update preferences in Firestore
+      await updateDoc(doc(db, "users", user.id), {
+        preferences,
+        updatedAt: new Date().toISOString(),
+      })
 
-      if (error) throw error
-
+      // Update local state
       setUser((prev) => (prev ? { ...prev, preferences } : null))
     } catch (err: any) {
       setError({
@@ -353,16 +350,13 @@ export const useAuth = () => {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
 
-      const { error } = await supabase
-        .from("users")
-        .update({
-          notificationSettings: settings,
-          updatedAt: new Date().toISOString(),
-        })
-        .eq("id", user.id)
+      // Update notification settings in Firestore
+      await updateDoc(doc(db, "users", user.id), {
+        notificationSettings: settings,
+        updatedAt: new Date().toISOString(),
+      })
 
-      if (error) throw error
-
+      // Update local state
       setUser((prev) => (prev ? { ...prev, notificationSettings: settings } : null))
     } catch (err: any) {
       setError({
@@ -381,16 +375,13 @@ export const useAuth = () => {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
 
-      const { error } = await supabase
-        .from("users")
-        .update({
-          activityHistory: [...(user.activityHistory || []), activity],
-          updatedAt: new Date().toISOString(),
-        })
-        .eq("id", user.id)
+      // Update activity history in Firestore
+      await updateDoc(doc(db, "users", user.id), {
+        activityHistory: [...(user.activityHistory || []), activity],
+        updatedAt: new Date().toISOString(),
+      })
 
-      if (error) throw error
-
+      // Update local state
       setUser((prev) =>
         prev
           ? {
@@ -416,16 +407,13 @@ export const useAuth = () => {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
 
-      const { error } = await supabase
-        .from("users")
-        .update({
-          savedItems: [...(user.savedItems || []), item],
-          updatedAt: new Date().toISOString(),
-        })
-        .eq("id", user.id)
+      // Update saved items in Firestore
+      await updateDoc(doc(db, "users", user.id), {
+        savedItems: [...(user.savedItems || []), item],
+        updatedAt: new Date().toISOString(),
+      })
 
-      if (error) throw error
-
+      // Update local state
       setUser((prev) =>
         prev
           ? {
@@ -451,16 +439,13 @@ export const useAuth = () => {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
 
-      const { error } = await supabase
-        .from("users")
-        .update({
-          savedItems: user.savedItems?.filter((item) => item.itemId !== itemId),
-          updatedAt: new Date().toISOString(),
-        })
-        .eq("id", user.id)
+      // Update saved items in Firestore
+      await updateDoc(doc(db, "users", user.id), {
+        savedItems: user.savedItems?.filter((item) => item.itemId !== itemId),
+        updatedAt: new Date().toISOString(),
+      })
 
-      if (error) throw error
-
+      // Update local state
       setUser((prev) =>
         prev
           ? {
@@ -581,39 +566,32 @@ export const useAuth = () => {
   }
 
   // Helper function to handle social login
-  const handleSocialLogin = async (provider: any, providerName: string): Promise<UserCredential> => {
+  const handleSocialLogin = async (provider: any): Promise<UserCredential> => {
     try {
       setLoading(true)
       setError(null)
       const result = await signInWithPopup(auth, provider)
 
       if (result.user) {
-        // Check if user exists in Supabase
-        const { data: existingUser, error: userError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", result.user.uid)
-          .single()
-
-        if (userError && userError.code !== "PGRST116") {
-          // PGRST116 is "not found" error
-          throw userError
-        }
-
-        if (!existingUser) {
-          // Create new user record in Supabase
-          const { error: insertError } = await supabase.from("users").insert([
-            {
-              id: result.user.uid,
-              email: result.user.email,
-              name: result.user.displayName || "",
-              membershipTier: "none",
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-            },
-          ])
-
-          if (insertError) throw insertError
+        // Get user data from Firestore
+        const userDoc = await getDoc(doc(db, "users", result.user.uid))
+        
+        if (!userDoc.exists()) {
+          // Create user document if it doesn't exist
+          const newUser = {
+            id: result.user.uid,
+            email: result.user.email,
+            displayName: result.user.displayName || "",
+            photoURL: result.user.photoURL,
+            membershipTier: "none",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }
+          
+          await setDoc(doc(db, "users", result.user.uid), newUser)
+          setUser(newUser as User)
+        } else {
+          setUser(userDoc.data() as User)
         }
       }
 
@@ -770,50 +748,7 @@ export const useAuth = () => {
     }
   }
 
-  // Additional User Data Management
-  const updateUserPreferences = async (preferences: Partial<User["preferences"]>) => {
-    try {
-      setLoading(true)
-      setError(null)
-
-      if (!auth.currentUser) {
-        throw new AuthError("User not authenticated", "auth/user-not-found")
-      }
-
-      // Update Supabase user data
-      const { error: userError } = await supabase
-        .from("users")
-        .update({
-          preferences: {
-            ...user?.preferences,
-            ...preferences,
-          },
-          updatedAt: new Date().toISOString(),
-        })
-        .eq("id", auth.currentUser.uid)
-
-      if (userError) throw userError
-
-      // Update local state
-      setUser((prev) =>
-        prev
-          ? {
-              ...prev,
-              preferences: {
-                ...prev.preferences,
-                ...preferences,
-              },
-            }
-          : null,
-      )
-    } catch (err) {
-      const authError = handleFirebaseError(err)
-      setError(authError)
-      throw authError
-    } finally {
-      setLoading(false)
-    }
-  }
+  // This function is removed as it's redundant with updatePreferences
 
   const updateActivityHistory = async (activity: {
     type: string
@@ -916,16 +851,30 @@ export const useAuth = () => {
   }
 
   // Social Login Methods
-  const signInWithGoogle = () => handleSocialLogin(new GoogleAuthProvider(), "Google")
-  const signInWithFacebook = () => handleSocialLogin(new FacebookAuthProvider(), "Facebook")
-  const signInWithApple = () => handleSocialLogin(new OAuthProvider("apple.com"), "Apple")
+  const signInWithGoogle = async () => {
+    const result = await handleSocialLogin(new GoogleAuthProvider())
+    router.push("/dashboard")
+    return result
+  }
+  
+  const signInWithFacebook = async () => {
+    const result = await handleSocialLogin(new FacebookAuthProvider())
+    router.push("/dashboard")
+    return result
+  }
+  
+  const signInWithApple = async () => {
+    const result = await handleSocialLogin(new OAuthProvider("apple.com"))
+    router.push("/dashboard")
+    return result
+  }
 
   // Email/Password Methods
   const signOutEmail = async (email: string, password: string) => {
     try {
       setLoading(true)
       setError(null)
-      await auth.signInWithEmailAndPassword(email, password)
+      await signInWithEmailAndPassword(auth, email, password)
       await signOut()
     } catch (err) {
       const authError = handleFirebaseError(err)
@@ -1030,6 +979,7 @@ export const useAuth = () => {
     signUp,
     signOut,
     updateProfile,
+    updatePreferences,
     signInWithGoogle,
     signInWithFacebook,
     signInWithApple,
@@ -1039,7 +989,6 @@ export const useAuth = () => {
     deleteAccount,
     uploadProfilePicture,
     deleteProfilePicture,
-    updateUserPreferences,
     updateNotificationSettings,
     updateActivityHistory,
     updateSavedItems,

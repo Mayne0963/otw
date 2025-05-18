@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useFirestore } from './useFirestore';
-import { TierMembership } from '../types/firestore';
+
+/**
+ * Calculates the ISO week number for a given date (1-53)
+ * @param date The date to get the week number for
+ * @returns The ISO week number (1-53)
+ */
+const getWeekNumber = (date: Date): number => {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+};
 
 export interface TierBenefit {
   id: string;
@@ -67,7 +79,7 @@ export function useTierBenefits(userId: string, tier: 'free' | 'silver' | 'gold'
   const [error, setError] = useState<Error | null>(null);
   const [usage, setUsage] = useState<Record<string, TierUsage>>({});
   
-  const { getDocuments, setDocument, subscribeToCollection } = useFirestore<TierUsage>('tierUsage');
+  const { setDocument, subscribeToCollection } = useFirestore<TierUsage>('tierUsage');
 
   useEffect(() => {
     if (!userId) return;
@@ -108,7 +120,8 @@ export function useTierBenefits(userId: string, tier: 'free' | 'silver' | 'gold'
         shouldReset = now.getDate() !== lastReset.getDate();
         break;
       case 'weekly':
-        shouldReset = now.getWeek() !== lastReset.getWeek();
+        // Check if the ISO week number has changed
+        shouldReset = getWeekNumber(now) !== getWeekNumber(lastReset);
         break;
       case 'monthly':
         shouldReset = now.getMonth() !== lastReset.getMonth();

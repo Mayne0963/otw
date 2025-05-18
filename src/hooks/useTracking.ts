@@ -9,7 +9,8 @@ export function useTracking(userId: string) {
   const [location, setLocation] = useState<GeolocationPosition | null>(null);
   const [watchId, setWatchId] = useState<number | null>(null);
   
-  const { getDocument, setDocument, subscribeToDocument } = useFirestore<Tracking>('tracking');
+  // Destructure only what we need from useFirestore
+  const { setDocument, subscribeToDocument } = useFirestore<Tracking>('tracking');
 
   // Get address from coordinates using Google Maps Geocoding API
   const getAddressFromCoords = useCallback(async (lat: number, lng: number) => {

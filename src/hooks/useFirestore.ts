@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   collection,
   doc,
@@ -8,9 +8,8 @@ import {
   updateDoc,
   deleteDoc,
   query,
-  where,
-  orderBy,
-  limit,
+  // Commented out unused imports
+  // where,
   onSnapshot,
   DocumentData,
   QueryConstraint,
@@ -24,18 +23,22 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
   // Get a single document
   const getDocument = async (id: string) => {
     try {
+      setLoading(true);
       const docRef = doc(db, collectionName, id);
       const docSnap = await getDoc(docRef);
       return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as T : null;
     } catch (err) {
       setError(err as Error);
       return null;
+    } finally {
+      setLoading(false);
     }
   };
 
   // Get multiple documents with optional query constraints
   const getDocuments = async (constraints: QueryConstraint[] = []) => {
     try {
+      setLoading(true);
       const q = query(collection(db, collectionName), ...constraints);
       const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(doc => ({
@@ -45,12 +48,15 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
     } catch (err) {
       setError(err as Error);
       return [];
+    } finally {
+      setLoading(false);
     }
   };
 
   // Create or update a document
   const setDocument = async (id: string, data: Partial<T>) => {
     try {
+      setLoading(true);
       const docRef = doc(db, collectionName, id);
       await setDoc(docRef, {
         ...data,
@@ -60,12 +66,15 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
     } catch (err) {
       setError(err as Error);
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
   // Update a document
   const updateDocument = async (id: string, data: Partial<T>) => {
     try {
+      setLoading(true);
       const docRef = doc(db, collectionName, id);
       await updateDoc(docRef, {
         ...data,
@@ -75,18 +84,23 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
     } catch (err) {
       setError(err as Error);
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
   // Delete a document
   const deleteDocument = async (id: string) => {
     try {
+      setLoading(true);
       const docRef = doc(db, collectionName, id);
       await deleteDoc(docRef);
       return true;
     } catch (err) {
       setError(err as Error);
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,4 +138,4 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
     subscribeToDocument,
     subscribeToCollection,
   };
-} 
+}
