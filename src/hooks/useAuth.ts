@@ -4,10 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import type { User } from "../types"
 import {
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  OAuthProvider,
   signInWithPopup,
+  signOut as firebaseSignOut,
   sendPasswordResetEmail,
   updateEmail as updateFirebaseEmail,
   updatePassword as updateFirebasePassword,
@@ -17,6 +15,9 @@ import {
   onAuthStateChanged,
   type UserCredential,
   updateProfile as updateFirebaseProfile,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
 } from "firebase/auth"
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage"
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"
@@ -30,7 +31,7 @@ export class AuthError extends Error {
   constructor(
     message: string,
     public code: string,
-    public originalError?: any,
+    public originalError?: unknown,
   ) {
     super(message)
     this.name = "AuthError"
@@ -190,37 +191,43 @@ export const useAuth = () => {
   // Initialize auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        // Get user data from Firestore
-        const userDoc = await getDoc(doc(db, "users", firebaseUser.uid))
-        if (userDoc.exists()) {
-          setUser(userDoc.data() as User)
-        } else {
-          // Create user document if it doesn't exist
-          const newUser = {
-            id: firebaseUser.uid,
-            email: firebaseUser.email,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+      try {
+        if (firebaseUser) {
+          // Get user data from Firestore
+          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid))
+          if (userDoc.exists()) {
+            setUser(userDoc.data() as User)
+          } else {
+            // Create user document if it doesn't exist
+            const newUser = {
+              id: firebaseUser.uid,
+              email: firebaseUser.email,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            }
+            await setDoc(doc(db, "users", firebaseUser.uid), newUser)
+            setUser(newUser as User)
           }
-          await setDoc(doc(db, "users", firebaseUser.uid), newUser)
-          setUser(newUser as User)
+        } else {
+          setUser(null)
         }
-      } else {
-        setUser(null)
+      } catch (err: unknown) {
+        setError(handleFirebaseError(err))
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     })
-
+  
     return () => unsubscribe()
   }, [])
 
   // Sign in with email and password
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<void> => {
     try {
       setLoading(true)
+      setError(null)
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
-
+  
       // Get user data from Firestore
       const userDoc = await getDoc(doc(db, "users", userCredential.user.uid))
       if (userDoc.exists()) {
@@ -236,25 +243,24 @@ export const useAuth = () => {
         await setDoc(doc(db, "users", userCredential.user.uid), newUser)
         setUser(newUser as User)
       }
-
+  
       router.push("/dashboard")
-    } catch (err: any) {
-      setError({
-        code: "SIGN_IN_ERROR",
-        message: err.message || "Failed to sign in",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
     } finally {
       setLoading(false)
     }
   }
 
   // Sign up with email and password
-  const signUp = async (email: string, password: string, userData: Partial<User>) => {
+  const signUp = async (email: string, password: string, userData: Partial<User>): Promise<void> => {
     try {
       setLoading(true)
+      setError(null)
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-
+  
       if (userCredential.user) {
         const newUser = {
           id: userCredential.user.uid,
@@ -264,40 +270,38 @@ export const useAuth = () => {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         }
-
+  
         await setDoc(doc(db, "users", userCredential.user.uid), newUser)
+        setUser(newUser as User)
       }
-    } catch (err: any) {
-      setError({
-        code: "SIGN_UP_ERROR",
-        message: err.message || "Failed to sign up",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
     } finally {
       setLoading(false)
     }
   }
 
   // Sign out
-  const signOut = async () => {
+  const signOut = async (): Promise<void> => {
     try {
       setLoading(true)
-      await auth.signOut()
+      setError(null)
+      await firebaseSignOut(auth)
       setUser(null)
       router.push("/")
-    } catch (err: any) {
-      setError({
-        code: "SIGN_OUT_ERROR",
-        message: err.message || "Failed to sign out",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
     } finally {
       setLoading(false)
     }
   }
 
   // Update user profile
-  const updateProfile = async (updates: Partial<User>) => {
+  const updateProfile = async (updates: Partial<User>): Promise<void> => {
     try {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
@@ -308,19 +312,16 @@ export const useAuth = () => {
       })
 
       setUser((prev) => (prev ? { ...prev, ...updates } : null))
-    } catch (err: any) {
-      setError({
-        code: "UPDATE_PROFILE_ERROR",
-        message: err.message || "Failed to update profile",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const errorMessage = (err as Error)?.message || "Failed to update profile"
+      setError(new AuthError(errorMessage, "UPDATE_PROFILE_ERROR", err))
     } finally {
       setLoading(false)
     }
   }
 
   // Update user preferences
-  const updatePreferences = async (preferences: User["preferences"]) => {
+  const updatePreferences = async (preferences: User["preferences"]): Promise<void> => {
     try {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
@@ -333,19 +334,16 @@ export const useAuth = () => {
 
       // Update local state
       setUser((prev) => (prev ? { ...prev, preferences } : null))
-    } catch (err: any) {
-      setError({
-        code: "UPDATE_PREFERENCES_ERROR",
-        message: err.message || "Failed to update preferences",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const errorMessage = (err as Error)?.message || "Failed to update preferences"
+      setError(new AuthError(errorMessage, "UPDATE_PREFERENCES_ERROR", err))
     } finally {
       setLoading(false)
     }
   }
 
   // Update notification settings
-  const updateNotificationSettings = async (settings: User["notificationSettings"]) => {
+  const updateNotificationSettings = async (settings: User["notificationSettings"]): Promise<void> => {
     try {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
@@ -358,19 +356,16 @@ export const useAuth = () => {
 
       // Update local state
       setUser((prev) => (prev ? { ...prev, notificationSettings: settings } : null))
-    } catch (err: any) {
-      setError({
-        code: "UPDATE_NOTIFICATION_SETTINGS_ERROR",
-        message: err.message || "Failed to update notification settings",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const errorMessage = (err as Error)?.message || "Failed to update notification settings"
+      setError(new AuthError(errorMessage, "UPDATE_NOTIFICATION_SETTINGS_ERROR", err))
     } finally {
       setLoading(false)
     }
   }
 
   // Add activity to history
-  const addActivity = async (activity: User["activityHistory"][0]) => {
+  const addActivity = async (activity: User["activityHistory"][0]): Promise<void> => {
     try {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
@@ -390,19 +385,16 @@ export const useAuth = () => {
             }
           : null,
       )
-    } catch (err: any) {
-      setError({
-        code: "ADD_ACTIVITY_ERROR",
-        message: err.message || "Failed to add activity",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const errorMessage = (err as Error)?.message || "Failed to add activity"
+      setError(new AuthError(errorMessage, "ADD_ACTIVITY_ERROR", err))
     } finally {
       setLoading(false)
     }
   }
 
   // Save an item
-  const saveItem = async (item: User["savedItems"][0]) => {
+  const saveItem = async (item: User["savedItems"][0]): Promise<void> => {
     try {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
@@ -422,19 +414,16 @@ export const useAuth = () => {
             }
           : null,
       )
-    } catch (err: any) {
-      setError({
-        code: "SAVE_ITEM_ERROR",
-        message: err.message || "Failed to save item",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const errorMessage = (err as Error)?.message || "Failed to save item"
+      setError(new AuthError(errorMessage, "SAVE_ITEM_ERROR", err))
     } finally {
       setLoading(false)
     }
   }
 
   // Remove a saved item
-  const removeSavedItem = async (itemId: string) => {
+  const removeSavedItem = async (itemId: string): Promise<void> => {
     try {
       setLoading(true)
       if (!user) throw new Error("No user logged in")
@@ -454,20 +443,57 @@ export const useAuth = () => {
             }
           : null,
       )
-    } catch (err: any) {
-      setError({
-        code: "REMOVE_SAVED_ITEM_ERROR",
-        message: err.message || "Failed to remove saved item",
-        originalError: err,
-      })
+    } catch (err: unknown) {
+      const errorMessage = (err as Error)?.message || "Failed to remove saved item"
+      setError(new AuthError(errorMessage, "REMOVE_SAVED_ITEM_ERROR", err))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Helper function to handle social login
+  const handleSocialLogin = async (provider: GoogleAuthProvider | FacebookAuthProvider | OAuthProvider): Promise<UserCredential> => {
+    try {
+      setLoading(true)
+      setError(null)
+      const result = await signInWithPopup(auth, provider)
+
+      if (result.user) {
+        // Get user data from Firestore
+        const userDoc = await getDoc(doc(db, "users", result.user.uid))
+        
+        if (!userDoc.exists()) {
+          // Create user document if it doesn't exist
+          const newUser = {
+            id: result.user.uid,
+            email: result.user.email,
+            displayName: result.user.displayName || "",
+            photoURL: result.user.photoURL,
+            membershipTier: "none",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          }
+          
+          await setDoc(doc(db, "users", result.user.uid), newUser)
+          setUser(newUser as User)
+        } else {
+          setUser(userDoc.data() as User)
+        }
+      }
+
+      return result
+    } catch (err: unknown) {
+      const authError = handleFirebaseError(err)
+      setError(authError)
+      throw authError
     } finally {
       setLoading(false)
     }
   }
 
   // Helper function to handle Firebase errors
-  const handleFirebaseError = (err: any): AuthError => {
-    const errorCode = err.code || "unknown"
+  const handleFirebaseError = (err: unknown): AuthError => {
+    const errorCode = typeof err === 'object' && err !== null && 'code' in err ? (err as {code: string}).code : "unknown"
     let errorMessage = "An error occurred during authentication"
 
     switch (errorCode) {
@@ -559,51 +585,13 @@ export const useAuth = () => {
         errorMessage = "Invalid image filter"
         break
       default:
-        errorMessage = err.message || "An unknown error occurred"
+        errorMessage = typeof err === 'object' && err !== null && 'message' in err ? String(err.message) : "An unknown error occurred"
     }
 
     return new AuthError(errorMessage, errorCode, err)
   }
 
-  // Helper function to handle social login
-  const handleSocialLogin = async (provider: any): Promise<UserCredential> => {
-    try {
-      setLoading(true)
-      setError(null)
-      const result = await signInWithPopup(auth, provider)
 
-      if (result.user) {
-        // Get user data from Firestore
-        const userDoc = await getDoc(doc(db, "users", result.user.uid))
-        
-        if (!userDoc.exists()) {
-          // Create user document if it doesn't exist
-          const newUser = {
-            id: result.user.uid,
-            email: result.user.email,
-            displayName: result.user.displayName || "",
-            photoURL: result.user.photoURL,
-            membershipTier: "none",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          }
-          
-          await setDoc(doc(db, "users", result.user.uid), newUser)
-          setUser(newUser as User)
-        } else {
-          setUser(userDoc.data() as User)
-        }
-      }
-
-      return result
-    } catch (err) {
-      const authError = handleFirebaseError(err)
-      setError(authError)
-      throw authError
-    } finally {
-      setLoading(false)
-    }
-  }
 
   // Enhanced Profile Picture Upload
   const uploadProfilePicture = async (
@@ -620,7 +608,7 @@ export const useAuth = () => {
       quality?: number
       format?: "jpeg" | "png" | "webp"
     } = {},
-  ) => {
+  ): Promise<string> => {
     try {
       setLoading(true)
       setError(null)
@@ -661,7 +649,7 @@ export const useAuth = () => {
         try {
           const oldImageRef = ref(storage, user.profileImage)
           await deleteObject(oldImageRef)
-        } catch (err) {
+        } catch (err: unknown) {
           // Ignore error if file doesn't exist
           console.warn("Error deleting old profile picture:", err)
         }
@@ -694,7 +682,7 @@ export const useAuth = () => {
       setUser((prev) => (prev ? { ...prev, profileImage: downloadURL } : null))
 
       return downloadURL
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
@@ -704,7 +692,7 @@ export const useAuth = () => {
   }
 
   // Delete Profile Picture
-  const deleteProfilePicture = async () => {
+  const deleteProfilePicture = async (): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
@@ -739,7 +727,7 @@ export const useAuth = () => {
 
       // Update local state
       setUser((prev) => (prev ? { ...prev, profileImage: null } : null))
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
@@ -748,13 +736,12 @@ export const useAuth = () => {
     }
   }
 
-  // This function is removed as it's redundant with updatePreferences
-
+  // Update activity history
   const updateActivityHistory = async (activity: {
     type: string
     description: string
-    metadata?: any
-  }) => {
+    metadata?: Record<string, unknown>
+  }): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
@@ -791,7 +778,7 @@ export const useAuth = () => {
             }
           : null,
       )
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
@@ -803,8 +790,8 @@ export const useAuth = () => {
   const updateSavedItems = async (item: {
     type: string
     itemId: string
-    metadata?: any
-  }) => {
+    metadata?: Record<string, unknown>
+  }): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
@@ -841,7 +828,7 @@ export const useAuth = () => {
             }
           : null,
       )
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
@@ -851,32 +838,32 @@ export const useAuth = () => {
   }
 
   // Social Login Methods
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (): Promise<UserCredential> => {
     const result = await handleSocialLogin(new GoogleAuthProvider())
     router.push("/dashboard")
     return result
   }
   
-  const signInWithFacebook = async () => {
+  const signInWithFacebook = async (): Promise<UserCredential> => {
     const result = await handleSocialLogin(new FacebookAuthProvider())
     router.push("/dashboard")
     return result
   }
   
-  const signInWithApple = async () => {
+  const signInWithApple = async (): Promise<UserCredential> => {
     const result = await handleSocialLogin(new OAuthProvider("apple.com"))
     router.push("/dashboard")
     return result
   }
 
   // Email/Password Methods
-  const signOutEmail = async (email: string, password: string) => {
+  const signOutEmail = async (email: string, password: string): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
       await signInWithEmailAndPassword(auth, email, password)
       await signOut()
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
@@ -885,12 +872,12 @@ export const useAuth = () => {
     }
   }
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = async (email: string): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
       await sendPasswordResetEmail(auth, email)
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
@@ -899,7 +886,7 @@ export const useAuth = () => {
     }
   }
 
-  const updateEmail = async (newEmail: string) => {
+  const updateEmail = async (newEmail: string): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
@@ -921,7 +908,7 @@ export const useAuth = () => {
         // Update local state
         setUser((prev) => (prev ? { ...prev, email: newEmail } : null))
       }
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
@@ -930,7 +917,7 @@ export const useAuth = () => {
     }
   }
 
-  const updatePassword = async (newPassword: string) => {
+  const updatePassword = async (newPassword: string): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
@@ -938,7 +925,7 @@ export const useAuth = () => {
       if (auth.currentUser) {
         await updateFirebasePassword(auth.currentUser, newPassword)
       }
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
@@ -947,7 +934,7 @@ export const useAuth = () => {
     }
   }
 
-  const deleteAccount = async () => {
+  const deleteAccount = async (): Promise<void> => {
     try {
       setLoading(true)
       setError(null)
@@ -962,7 +949,7 @@ export const useAuth = () => {
         await deleteUser(auth.currentUser)
         setUser(null)
       }
-    } catch (err) {
+    } catch (err: unknown) {
       const authError = handleFirebaseError(err)
       setError(authError)
       throw authError
