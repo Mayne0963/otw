@@ -11,7 +11,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.mjs --fix",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "fix-all": "npm run lint && npm run format && npm run typecheck"
+    "fix-all": "npm run lint && npm run format && npm run typecheck",
+    "test": "echo \"No tests specified\" && exit 0"
 },
 
   "dependencies": {
