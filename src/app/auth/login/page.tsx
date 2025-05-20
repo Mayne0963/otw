@@ -38,7 +38,7 @@ export default function LoginPage() {
           description: 'We sent you a login link. Be sure to check your spam folder.',
         })
       }
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
@@ -53,7 +53,7 @@ export default function LoginPage() {
     setIsLoading(true)
     try {
       await signIn('google', { callbackUrl: '/' })
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',

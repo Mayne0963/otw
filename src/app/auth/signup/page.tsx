@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,7 +38,7 @@ export default function SignUpPage() {
           description: 'We sent you a sign-up link. Be sure to check your spam folder.',
         })
       }
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
@@ -53,7 +53,7 @@ export default function SignUpPage() {
     setIsLoading(true)
     try {
       await signIn('google', { callbackUrl: '/' })
-    } catch (_error) {
+    } catch (error) {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',

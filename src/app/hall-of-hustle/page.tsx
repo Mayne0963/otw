@@ -213,7 +213,7 @@ export default function HallOfHustlePage() {
               scrollButtons="auto"
               sx={{ mb: 4 }}
             >
-              {categories.map((category, index) => (
+              {categories.map((category) => (
                 <Tab key={category.label} label={category.label} icon={category.icon} iconPosition="start" />
               ))}
             </Tabs>

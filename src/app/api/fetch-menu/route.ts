@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { fetchAndNormalizeMenus } from '../../../lib/scrapeMenus'
 import { firestore } from '../../../lib/firebaseAdmin'
 

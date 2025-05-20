@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Suspense } from "react"
+// import { Suspense } from "react"
 import Button from "../components/Button"
 
 interface ServiceCardProps {

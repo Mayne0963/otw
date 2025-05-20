@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
             docSnap,
             id: item.id
           }
-        } catch (err) {
+        } catch (_err) {
           results.failed.push({ 
             id: item.id, 
             error: err instanceof Error ? err.message : 'Unknown error'
@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
               id: item.id
             })
           }
-        } catch (err) {
+        } catch (_err) {
           results.failed.push({ 
             id: item.id,
             error: err instanceof Error ? err.message : 'Unknown error'
@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
       if (verifiedItems.length > 0) {
         try {
           await batch.commit()
-        } catch (err) {
+        } catch (_err) {
           // Move all items in this batch to failed
           verifiedItems.forEach((item: VerifiedItem) => {
             if (!item) return
@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
         failed: results.failed
       }
     })
-  } catch (err) {
-    return handleAPIError(err)
+  } catch (_err) {
+    return handleAPIError(_err)
   }
 }
