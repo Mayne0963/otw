@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { fetchAndNormalizeMenus } from '../../../lib/scrapeMenus'
 import { firestore } from '../../../lib/firebaseAdmin'
 
@@ -7,7 +7,7 @@ const SNAPSHOT_COLLECTION = 'menuSnapshots'
 
 export const dynamic = "force-dynamic"
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   try {
     // Scrape and normalize
     const menuItems = await fetchAndNormalizeMenus()

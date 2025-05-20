@@ -30,6 +30,9 @@ const Resizable = React.forwardRef<HTMLDivElement, ResizableProps>(
     const [size, setSize] = useState(initialSize)
     const [isResizing, setIsResizing] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
+    
+    // Connect the forwarded ref to the container ref
+    React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement)
 
     useEffect(() => {
       setSize(initialSize)

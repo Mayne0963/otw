@@ -61,7 +61,7 @@ function ToastItem({ message, type, onClose }: ToastProps) {
 export function ToastContainer() {
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  const addToast = (message: string, type: ToastType) => {
+  const _addToast = (message: string, type: ToastType) => {
     const id = Math.random().toString(36).substring(7)
     setToasts((prev) => [...prev, { id, message, type }])
   }
@@ -82,4 +82,4 @@ export function ToastContainer() {
       ))}
     </div>
   )
-} 
+}
