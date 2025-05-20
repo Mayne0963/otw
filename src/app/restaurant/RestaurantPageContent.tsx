@@ -1,4 +1,4 @@
-import { RestaurantCard } from "@/components/restaurant/RestaurantCard"
+import RestaurantCard from "@/components/restaurant/RestaurantCard"
 import { getFeaturedRestaurants } from "@/lib/restaurants"
 
 export default async function RestaurantPageContent() {

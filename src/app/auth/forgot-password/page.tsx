@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
         description: "Password reset instructions have been sent to your email.",
       })
       router.push("/auth/login")
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: "Error",
         description: "Failed to send reset instructions. Please try again.",

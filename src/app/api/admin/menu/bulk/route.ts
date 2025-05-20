@@ -139,7 +139,6 @@ export async function POST(req: NextRequest) {
           await batch.commit()
         } catch (err) {
           // Move all items in this batch to failed
-          const errorMessage = err instanceof Error ? err.message : 'Unknown batch error'
           verifiedItems.forEach((item: VerifiedItem) => {
             if (!item) return
             results.success = results.success.filter(s => s.id !== item.id)

@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     }
 
     const data = await request.json();
-    const { messages, userId } = data as ChatRequest;
+    const { messages } = data as ChatRequest;
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: "Invalid request format" }, { status: 400 })

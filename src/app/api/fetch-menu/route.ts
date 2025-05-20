@@ -7,7 +7,7 @@ const SNAPSHOT_COLLECTION = 'menuSnapshots'
 
 export const dynamic = "force-dynamic"
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     // Scrape and normalize
     const menuItems = await fetchAndNormalizeMenus()
@@ -45,4 +45,4 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ success: false, error: err.message }, { status: 500 })
   }
-} 
+}

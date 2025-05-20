@@ -126,7 +126,6 @@ export default function CheckoutPage() {
 
   // Validate form based on current step
   const validateForm = () => {
-    const isValid = true
     const errors: Record<string, string> = {}
 
     if (step === 1) {

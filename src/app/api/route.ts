@@ -7,7 +7,7 @@ export async function GET() {
       message: 'API is running',
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       {
         status: 'error',
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       data: body,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       {
         status: 'error',
@@ -36,4 +36,4 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
-} 
+}

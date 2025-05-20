@@ -11,7 +11,7 @@ import { Icons } from '@/components/ui/icons'
 import { useToast } from '@/components/ui/use-toast'
 
 export default function SignUpPage() {
-  const router = useRouter()
+  // const router = useRouter() // Uncomment when navigation is needed
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
@@ -38,7 +38,7 @@ export default function SignUpPage() {
           description: 'We sent you a sign-up link. Be sure to check your spam folder.',
         })
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
@@ -53,7 +53,7 @@ export default function SignUpPage() {
     setIsLoading(true)
     try {
       await signIn('google', { callbackUrl: '/' })
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
