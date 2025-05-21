@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useState, type MouseEvent } from "react"
 import {
   AppBar,
   Box,
@@ -13,8 +11,6 @@ import {
   Container,
   Button,
   MenuItem,
-  useTheme,
-  useMediaQuery,
 } from "@mui/material"
 import MenuIcon from "@mui/icons-material/Menu"
 import Link from "next/link"
@@ -33,11 +29,9 @@ const pages = [
 
 export default function Navigation() {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"))
   const pathname = usePathname()
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget)
   }
 

@@ -29,6 +29,9 @@ interface ProfileData {
   orders: Order[];
 }
 
+// These interfaces are defined but not used in this component
+// They are kept here for documentation purposes but commented out to avoid linting warnings
+/*
 interface ApiError {
   message: string;
 }
@@ -45,6 +48,7 @@ interface FirebaseApp {
   };
   // Add other Firebase services if used, e.g., firestore, storage
 }
+*/
 
 export default function UserProfile() {
   const [profile, setProfile] = useState<ProfileData | null>(null);

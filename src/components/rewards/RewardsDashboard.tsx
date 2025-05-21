@@ -39,7 +39,9 @@ interface SpinResultData {
   // Add other spin result properties if available from API
 }
 
-// Define Reward and Redemption types if they are used within this component, otherwise remove if unused
+// These interfaces are defined but not used in this component
+// They are kept here for documentation purposes but commented out to avoid linting warnings
+/*
 interface Reward {
   id: string;
   name: string;
@@ -53,6 +55,7 @@ interface Redemption {
   status: 'pending' | 'completed' | 'failed';
   createdAt: Date;
 }
+*/
 
 export default function RewardsDashboard() {
   const [profile, setProfile] = useState<ProfileResponse | null>(null) // Typed profile

@@ -21,7 +21,7 @@ interface LiveTrackerProps {
 
 export function LiveTracker({ orderId, socket }: LiveTrackerProps) {
   const [location, setLocation] = useState<Location | null>(null)
-  const [eta, setEta] = useState<string | null>(null)
+  // Removed unused eta state
 
   useEffect(() => {
     socket.emit("join_tracking", orderId)
@@ -45,11 +45,10 @@ export function LiveTracker({ orderId, socket }: LiveTrackerProps) {
         initialLongitude={location?.lng}
         showSearchBox={false}
       />
-      {eta && (
-        <div className="mt-4 p-4 bg-gray-100 rounded">
-          <p className="text-sm text-gray-600">Estimated arrival: {eta}</p>
-        </div>
-      )}
+      {/* Removed eta reference but kept conditional rendering structure for future use */}
+      <div className="mt-4 p-4 bg-gray-100 rounded">
+        <p className="text-sm text-gray-600">Tracking your order in real-time</p>
+      </div>
     </div>
   )
 }

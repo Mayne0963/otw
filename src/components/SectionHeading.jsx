@@ -3,7 +3,7 @@
 import { useState } from "react"
 
 export default function SectionHeading({ title, subtitle, centered = true, accentColor = "primary-red" }) {
-  const [isVisible, setIsVisible] = useState(true)
+  // No state needed for this component
 
   const colorClass = accentColor === "primary-red" ? "bg-primary-red" : "bg-accent-gold"
   const alignment = centered ? "mx-auto text-center" : ""

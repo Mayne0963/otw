@@ -39,6 +39,8 @@ export default function SignUpPage() {
         })
       }
     } catch (error) {
+      // Log error in development environment
+      console.error(error)
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
@@ -54,6 +56,8 @@ export default function SignUpPage() {
     try {
       await signIn('google', { callbackUrl: '/' })
     } catch (error) {
+      // Log error in development environment
+      console.error(error)
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',

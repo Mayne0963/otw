@@ -14,7 +14,7 @@ const TABS = [
 ]
 
 export default function AdminDashboard() {
-  const [profile, setProfile] = useState<any>(null)
+  const [, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState('menu')
   const [error, setError] = useState<string | null>(null)
@@ -65,4 +65,4 @@ export default function AdminDashboard() {
       </Card>
     </div>
   )
-} 
+}

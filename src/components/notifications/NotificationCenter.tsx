@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card } from '../ui/card'
 import { Button } from '../ui/button'
 import { Badge } from '../ui/badge'
@@ -23,21 +23,8 @@ export default function NotificationCenter() {
   const [unreadCount, setUnreadCount] = useState(0)
   const { toast } = useToast()
 
-  // Simulate real-time notifications
-  useEffect(() => {
-    const socket = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3001')
-
-    socket.onmessage = (event) => {
-      const notification = JSON.parse(event.data)
-      addNotification(notification)
-    }
-
-    return () => {
-      socket.close()
-    }
-  }, [addNotification])
-
-  const addNotification = (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
+  // Define addNotification with useCallback to prevent recreation on every render
+  const addNotification = useCallback((notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
     const newNotification: Notification = {
       ...notification,
       id: Math.random().toString(36).substr(2, 9),
@@ -49,12 +36,63 @@ export default function NotificationCenter() {
     setUnreadCount((prev) => prev + 1)
 
     // Show toast for new notifications
-    toast({
-      title: notification.title,
-      description: notification.message,
-      variant: notification.type === 'error' ? 'destructive' : 'default',
-    })
-  }
+    if (typeof toast === 'function') {
+      toast({
+        title: notification.title,
+        description: notification.message,
+        variant: notification.type === 'error' ? 'destructive' : 'default',
+      })
+    } else if (toast.info) {
+      // Handle case where toast is the object with methods
+      switch (notification.type) {
+        case 'error':
+          toast.error(notification.message)
+          break
+        case 'warning':
+          toast.warning(notification.message)
+          break
+        case 'success':
+          toast.success(notification.message)
+          break
+        default:
+          toast.info(notification.message)
+          break
+      }
+    }
+  }, [toast])
+
+  // Simulate real-time notifications
+  useEffect(() => {
+    const socket = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3001')
+    
+    // Add proper error handling for WebSocket
+    socket.onopen = () => {
+      console.log('WebSocket connection established')
+    }
+    
+    socket.onmessage = (event) => {
+      try {
+        const notification = JSON.parse(event.data)
+        addNotification(notification)
+      } catch (error) {
+        console.error('Error parsing notification:', error)
+      }
+    }
+    
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error)
+    }
+    
+    socket.onclose = (event) => {
+      console.log('WebSocket connection closed:', event.code, event.reason)
+    }
+
+    return () => {
+      if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+        socket.close()
+      }
+    }
+  }, [addNotification])
 
   const markAsRead = (id: string) => {
     setNotifications((prev) =>

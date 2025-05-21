@@ -13,10 +13,9 @@ export default function LocationsClientPage({ locations }: LocationsClientPagePr
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedState, setSelectedState] = useState("all")
   const [filteredLocations, setFilteredLocations] = useState(locations)
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [mapCenter, setMapCenter] = useState({ lat: 34.0522, lng: -118.2437 }) // Default to LA
   const [mapZoom, setMapZoom] = useState(5)
-
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const states = [...new Set(locations.map((location) => location.state))].sort()
 
   useEffect(() => {

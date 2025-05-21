@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { FaPlay } from "react-icons/fa"
 import { useRewards } from "../../lib/context/RewardsContext"
 
@@ -16,12 +16,14 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
   const [result, setResult] = useState<number | null>(null)
   const [canSpin, setCanSpin] = useState(true)
   const [spinAngle, setSpinAngle] = useState(0)
-  const [targetAngle, setTargetAngle] = useState(0)
+  // This state holds the final points value that will be displayed and claimed
   const [finalPoints, setFinalPoints] = useState(0)
 
-  // Define wheel segments (points values between 50-200)
-  const segments = [50, 75, 100, 125, 150, 175, 200, 65, 85, 110, 135, 160]
-  const colors = [
+  // Define wheel segments (points values between 50-200) - memoized to prevent recreation on each render
+  const segments = useMemo(() => [50, 75, 100, 125, 150, 175, 200, 65, 85, 110, 135, 160], [])
+  
+  // Define wheel colors - memoized to prevent recreation on each render
+  const colors = useMemo(() => [
     "#D4AF37", // gold-foil
     "#880808", // blood-red
     "#50C878", // emerald-green
@@ -34,10 +36,10 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
     "#880808", // blood-red
     "#50C878", // emerald-green
     "#7851A9", // royal-purple
-  ]
+  ], [])
 
-  // Function to draw the wheel
-  const drawWheel = (ctx: CanvasRenderingContext2D, width: number, height: number, angle: number) => {
+  // Function to draw the wheel - memoized with useCallback
+  const drawWheel = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, angle: number) => {
     ctx.clearRect(0, 0, width, height)
     const centerX = width / 2
     const centerY = height / 2
@@ -86,7 +88,7 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
     ctx.closePath()
     ctx.fillStyle = "#D4AF37"
     ctx.fill()
-  }
+  }, [segments, colors])
 
   // Function to handle the spinning animation
   const spinTheWheel = () => {
@@ -103,7 +105,7 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
     // Calculate the exact stop angle based on the segment
     const segmentAngle = 360 / segments.length
     const targetRotation = 360 * 5 - (randomSegmentIndex * segmentAngle + segmentAngle / 2)
-    setTargetAngle(targetRotation)
+    // Use targetRotation directly instead of storing in state
 
     // Animation duration
     const animationDuration = 5000 // 5 seconds
@@ -150,13 +152,13 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
     if (canvas && canvas.getContext("2d")) {
       drawWheel(canvas.getContext("2d"), canvas.width, canvas.height, spinAngle)
     }
-  }, [drawWheel, spinAngle])
+  }, [spinAngle, drawWheel])
 
   // Handle claiming points
   const handleClaim = () => {
     if (result !== null) {
-      addPoints(result)
-      onComplete(result)
+      addPoints(finalPoints)
+      onComplete(finalPoints)
     }
   }
 

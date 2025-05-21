@@ -14,26 +14,13 @@ import {
   Car,
   MapPin,
   Crown,
-  HelpingHand,
-  // ChevronDown, // Unused
-  // LogOut,      // Unused
-  // Settings,    // Unused
-  // Clock,       // Unused
-  // Heart,       // Unused
-  // Search,      // Unused
-  // Bell,        // Unused
-  // MessageCircle, // Unused
+  HelpingHand
 } from "lucide-react"
-import CartDropdown from "../cart/CartDropdown"
 import { useCart } from "../../lib/context/CartContext"
 import { useFirebaseAuth } from "../../contexts/FirebaseAuthContext"
 import Button from "../Button"
-import { Logo } from "../ui/logo"
 import { useOnClickOutside } from "../../hooks/useOnClickOutside"
 import { cn } from "../../lib/utils"
-import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar"
-import NotificationCenter from '../notifications/NotificationCenter';
-// import { signIn } from 'next-auth/react'; // Appears unused, auth handled by useFirebaseAuth and links
 import Image from 'next/image';
 
 const mainNavItems = [
@@ -49,13 +36,12 @@ const mainNavItems = [
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const { itemCount } = useCart()
+  const [, setUserMenuOpen] = useState(false)
+  useCart() // Keep the context connected without destructuring
   const pathname = usePathname()
   const { user, logout } = useFirebaseAuth()
   const menuRef = useRef<HTMLDivElement>(null)
   const userMenuRef = useRef<HTMLDivElement>(null)
-  const [searchQuery, setSearchQuery] = useState("")
 
   // Handle scroll effect
   useEffect(() => {
@@ -65,13 +51,13 @@ export const Navbar = () => {
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [setScrolled])
 
   // Close mobile menu when route changes
   useEffect(() => {
     setMobileMenuOpen(false)
     setUserMenuOpen(false)
-  }, [pathname])
+  }, [pathname, setMobileMenuOpen, setUserMenuOpen])
 
   // Prevent scrolling when mobile menu is open
   useEffect(() => {

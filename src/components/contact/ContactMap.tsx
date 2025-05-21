@@ -13,20 +13,20 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
   const mapRef = useRef<HTMLDivElement>(null)
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
 
-  // Calculate center point of all locations
-  const calculateCenter = () => {
-    if (locations.length === 0) return { lat: 37.0902, lng: -95.7129 } // Default to US center
-
-    const totalLat = locations.reduce((sum, loc) => sum + loc.coordinates.lat, 0)
-    const totalLng = locations.reduce((sum, loc) => sum + loc.coordinates.lng, 0)
-
-    return {
-      lat: totalLat / locations.length,
-      lng: totalLng / locations.length,
-    }
-  }
-
   useEffect(() => {
+    // Calculate center point of all locations
+    const calculateCenter = () => {
+      if (locations.length === 0) return { lat: 37.0902, lng: -95.7129 } // Default to US center
+
+      const totalLat = locations.reduce((sum, loc) => sum + loc.coordinates.lat, 0)
+      const totalLng = locations.reduce((sum, loc) => sum + loc.coordinates.lng, 0)
+
+      return {
+        lat: totalLat / locations.length,
+        lng: totalLng / locations.length,
+      }
+    }
+    
     // Load Google Maps script
     const loadGoogleMapsScript = () => {
       const script = document.createElement("script")
@@ -181,7 +181,7 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
     } else {
       loadGoogleMapsScript()
     }
-  }, [locations])
+  }, [locations, setSelectedLocation])
 
   return (
     <div className="w-full h-full">

@@ -6,7 +6,7 @@ import { Progress } from '../ui/progress'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { MapSearch } from '../maps/MapSearch'
-import { Clock, Phone, MessageCircle, AlertCircle } from 'lucide-react'
+import { Phone, MessageCircle, AlertCircle } from 'lucide-react'
 import Image from 'next/image'
 
 interface TrackingStatus {

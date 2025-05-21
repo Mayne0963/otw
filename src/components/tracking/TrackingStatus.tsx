@@ -40,7 +40,6 @@ export default function TrackingStatus({ status, rep, estimatedTime }: TrackingS
           {STATUS_STEPS.map((step, index) => {
             const Icon = step.icon
             const isActive = index <= currentStep
-            const isCompleted = index < currentStep
             
             return (
               <div key={step.key} className="flex flex-col items-center">

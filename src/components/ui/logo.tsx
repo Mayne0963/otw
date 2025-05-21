@@ -10,7 +10,7 @@ interface LogoProps {
   alt?: string
 }
 
-export function Logo({ size = "medium", variant = "default", href, className, alt = "On The Way Logo" }: LogoProps) {
+export function Logo({ size = "medium", href, className, alt = "On The Way Logo" }: LogoProps) {
   // Use the transparent background logo for best appearance
   const logoSrc = "/assets/logos/otw-logo-new-red-transparent.png"
 

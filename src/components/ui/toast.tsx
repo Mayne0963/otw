@@ -61,11 +61,6 @@ function ToastItem({ message, type, onClose }: ToastProps) {
 export function ToastContainer() {
   const [toasts, setToasts] = useState<Toast[]>([])
 
-  const _addToast = (message: string, type: ToastType) => {
-    const id = Math.random().toString(36).substring(7)
-    setToasts((prev) => [...prev, { id, message, type }])
-  }
-
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id))
   }

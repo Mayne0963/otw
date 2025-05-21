@@ -24,6 +24,8 @@ export default function ForgotPasswordPage() {
       })
       router.push("/auth/login")
     } catch (error) {
+      // Log error in development environment
+      console.error(error)
       toast({
         title: "Error",
         description: "Failed to send reset instructions. Please try again.",

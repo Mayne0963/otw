@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation' // Will be used when navigation is needed
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Label } from '../../../components/ui/label'
@@ -39,6 +39,8 @@ export default function LoginPage() {
         })
       }
     } catch (error) {
+      // Log error in development environment
+      console.error(error)
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
@@ -54,6 +56,8 @@ export default function LoginPage() {
     try {
       await signIn('google', { callbackUrl: '/' })
     } catch (error) {
+      // Log error in development environment
+      console.error(error)
       toast({
         title: 'Error',
         description: 'Something went wrong. Please try again.',
