@@ -61,6 +61,8 @@ export const Navbar = () => {
   const { user, logout } = useFirebaseAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const [hideHeader, setHideHeader] = useState(false);
+  const lastScrollY = useRef(0);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -85,8 +87,26 @@ export const Navbar = () => {
   useOnClickOutside<HTMLDivElement>(menuRef, () => setMobileMenuOpen(false));
   useOnClickOutside<HTMLDivElement>(userMenuRef, () => setUserMenuOpen(false));
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY.current && window.scrollY > 50) {
+        setHideHeader(true);
+      } else {
+        setHideHeader(false);
+      }
+      lastScrollY.current = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-black shadow-lg border-b border-otw-gold/10">
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full bg-black shadow-lg border-b border-otw-gold/10 transition-transform duration-300",
+        hideHeader ? "-translate-y-full" : "translate-y-0"
+      )}
+    >
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8"
         aria-label="Global"
@@ -141,6 +161,32 @@ export const Navbar = () => {
               <span className="sr-only">Shopping cart</span>
             </Button>
           </Link>
+          <Link href="/locations" className={`nav-link ${pathname === "/locations" ? "nav-link-active" : ""}`}>
+            Locations
+          </Link>
+          <Link href="/events" className={`nav-link ${pathname === "/events" ? "nav-link-active" : ""}`}>
+            Events
+          </Link>
+          <Link href="/rewards" className={`nav-link ${pathname === "/rewards" ? "nav-link-active" : ""}`}>
+            Rewards
+          </Link>
+          <Link href="/shop" className={`nav-link ${pathname === "/shop" ? "nav-link-active" : ""}`}>
+            Shop
+          </Link>
+          <Link href="/contact" className={`nav-link ${pathname === "/contact" ? "nav-link-active" : ""}`}>
+            Contact
+          </Link>
+          <a 
+            href="https://otw-chi.vercel.app" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="nav-link bg-gradient-to-r from-[#D4AF37] to-[#880808] text-white px-4 py-2 rounded-md hover:opacity-90 transition-opacity duration-300 font-semibold"
+          >
+            OTW
+          </a>
+
+          <CartDropdown />
+
           {user ? (
             <>
               <Link href="/profile">
@@ -272,3 +318,118 @@ export const Navbar = () => {
     </header>
   );
 };
+
+      <div
+        className={`md:hidden mobile-menu ${mobileMenuOpen ? "open" : ""} bg-[#111111] border-t border-[#333333] mt-4`}
+      >
+        <div className="container mx-auto flex flex-col space-y-3 px-4 py-4">
+          <Link
+            href="/menu"
+            className={`py-2 hover:text-gold-foil transition-colors duration-300 flex items-center ${pathname === "/menu" ? "text-gold-foil font-bold" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Menu
+          </Link>
+          <Link
+            href="/infused-menu"
+            className={`py-2 hover:text-gold-foil transition-colors duration-300 flex items-center ${pathname === "/infused-menu" ? "text-gold-foil font-bold" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <span className="badge badge-new mr-2">NEW</span> Infused Menu
+          </Link>
+          <Link
+            href="/locations"
+            className={`py-2 hover:text-gold-foil transition-colors duration-300 flex items-center ${pathname === "/locations" ? "text-gold-foil font-bold" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Locations
+          </Link>
+          <Link
+            href="/events"
+            className={`py-2 hover:text-gold-foil transition-colors duration-300 flex items-center ${pathname === "/events" ? "text-gold-foil font-bold" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Events
+          </Link>
+          <Link
+            href="/rewards"
+            className={`py-2 hover:text-gold-foil transition-colors duration-300 flex items-center ${pathname === "/rewards" ? "text-gold-foil font-bold" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Rewards
+          </Link>
+          <Link
+            href="/shop"
+            className={`py-2 hover:text-gold-foil transition-colors duration-300 flex items-center ${pathname === "/shop" ? "text-gold-foil font-bold" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Shop
+          </Link>
+          <Link
+            href="/contact"
+            className={`py-2 hover:text-gold-foil transition-colors duration-300 flex items-center ${pathname === "/contact" ? "text-gold-foil font-bold" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Contact
+          </Link>
+          <a 
+            href="https://otw-chi.vercel.app" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="py-2 bg-gradient-to-r from-[#D4AF37] to-[#880808] text-white px-4 rounded-md hover:opacity-90 transition-opacity duration-300 font-semibold text-center"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            OTW
+          </a>
+          <Link
+            href="/cart"
+            className="py-2 flex items-center hover:text-gold-foil transition-colors duration-300"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <FaShoppingBag className="mr-2" /> Cart {itemCount > 0 && `(${itemCount})`}
+          </Link>
+
+          {user ? (
+            <div className="pt-4 border-t border-[#333333] mt-2 space-y-2">
+              <Link
+                href="/profile"
+                className="block py-2 hover:text-gold-foil transition-colors duration-300"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <FaUser className="inline mr-2" /> {user.name}
+              </Link>
+              <Link
+                href="/orders"
+                className="block py-2 hover:text-gold-foil transition-colors duration-300"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Order History
+              </Link>
+              <button
+                onClick={() => {
+                  logout()
+                  setMobileMenuOpen(false)
+                }}
+                className="w-full text-left py-2 hover:text-gold-foil transition-colors duration-300"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="pt-4 border-t border-[#333333] mt-2">
+              <Link
+                href="/auth/login"
+                className="btn-primary w-full flex items-center justify-center gap-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <FaUser /> Login
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+export default Navbar
