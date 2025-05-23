@@ -55,23 +55,12 @@ const mainNavItems = [
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [, setUserMenuOpen] = useState(false);
   useCart(); // Keep the context connected without destructuring
   const pathname = usePathname();
   const { user, logout } = useFirebaseAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
-
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [setScrolled]);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -97,16 +86,9 @@ export const Navbar = () => {
   useOnClickOutside<HTMLDivElement>(userMenuRef, () => setUserMenuOpen(false));
 
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-colors duration-200",
-        scrolled
-          ? "bg-otw-black/80 backdrop-blur-md border-b border-otw-gold/10"
-          : "bg-transparent",
-      )}
-    >
+    <header className="sticky top-0 z-50 w-full bg-black shadow-lg border-b border-otw-gold/10">
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8"
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
