@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-// import { Suspense } from "react"
+import dynamic from "next/dynamic";
 import Button from "../components/Button";
+
+const MapSearch = dynamic(() => import("../components/maps/MapSearch"), { ssr: false });
 
 interface ServiceCardProps {
   icon: string;
@@ -89,6 +91,20 @@ export default function Home() {
             buttonText="Book Ride"
             buttonVariant="primary"
           />
+        </div>
+      </section>
+
+      <section className="py-20 px-4 bg-[#181818]">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#FFD700] text-center mb-8">
+            Explore Your Area
+          </h2>
+          <p className="text-lg text-center text-white/80 mb-8 max-w-2xl mx-auto">
+            Find restaurants, stores, and services near you. Use the interactive map below to search for locations and get directions instantly.
+          </p>
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-otw-gold/20 bg-black/80">
+            <MapSearch height="450px" showSearchBar={true} />
+          </div>
         </div>
       </section>
 
@@ -270,5 +286,3 @@ export default function Home() {
     </main>
   );
 }
-
-export const dynamic = "force-dynamic";

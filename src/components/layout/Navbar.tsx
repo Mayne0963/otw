@@ -61,6 +61,8 @@ export const Navbar = () => {
   const { user, logout } = useFirebaseAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const [hideHeader, setHideHeader] = useState(false);
+  const lastScrollY = useRef(0);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -85,8 +87,26 @@ export const Navbar = () => {
   useOnClickOutside<HTMLDivElement>(menuRef, () => setMobileMenuOpen(false));
   useOnClickOutside<HTMLDivElement>(userMenuRef, () => setUserMenuOpen(false));
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY.current && window.scrollY > 50) {
+        setHideHeader(true);
+      } else {
+        setHideHeader(false);
+      }
+      lastScrollY.current = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-black shadow-lg border-b border-otw-gold/10">
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full bg-black shadow-lg border-b border-otw-gold/10 transition-transform duration-300",
+        hideHeader ? "-translate-y-full" : "translate-y-0"
+      )}
+    >
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8"
         aria-label="Global"
