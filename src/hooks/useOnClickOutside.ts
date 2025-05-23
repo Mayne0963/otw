@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useEffect, type RefObject } from "react"
+import { useEffect, type RefObject } from "react";
 
-type Handler = (event: MouseEvent | TouchEvent) => void
+type Handler = (event: MouseEvent | TouchEvent) => void;
 
 export function useOnClickOutside<T extends HTMLElement>(
   ref: RefObject<T | null>,
@@ -11,29 +11,29 @@ export function useOnClickOutside<T extends HTMLElement>(
 ): void {
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as Node
+      const target = event.target as Node;
 
       // Do nothing if clicking ref's element or descendent elements
       if (!ref.current || ref.current.contains(target)) {
-        return
+        return;
       }
 
       // Do nothing if clicking exceptional refs
       for (const exceptionalRef of exceptionalRefs) {
         if (exceptionalRef.current && exceptionalRef.current.contains(target)) {
-          return
+          return;
         }
       }
 
-      handler(event)
-    }
+      handler(event);
+    };
 
-    document.addEventListener("mousedown", listener)
-    document.addEventListener("touchstart", listener)
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener);
 
     return () => {
-      document.removeEventListener("mousedown", listener)
-      document.removeEventListener("touchstart", listener)
-    }
-  }, [ref, handler, exceptionalRefs])
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    };
+  }, [ref, handler, exceptionalRefs]);
 }

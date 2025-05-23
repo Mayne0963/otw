@@ -1,10 +1,10 @@
-import { NextAuthOptions } from "next-auth"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { PrismaClient } from "@prisma/client"
+import { NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
 
-export const prisma = new PrismaClient()
-import EmailProvider from "next-auth/providers/email"
-import GoogleProvider from "next-auth/providers/google"
+export const prisma = new PrismaClient();
+import EmailProvider from "next-auth/providers/email";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -20,19 +20,19 @@ export const authOptions: NextAuthOptions = {
         // Get the email server configuration from environment variables
         const { host, port, user, pass } = {
           host: process.env.EMAIL_SERVER_HOST,
-          port: parseInt(process.env.EMAIL_SERVER_PORT || '587'),
+          port: parseInt(process.env.EMAIL_SERVER_PORT || "587"),
           user: process.env.EMAIL_SERVER_USER,
           pass: process.env.EMAIL_SERVER_PASSWORD,
-        }
+        };
 
         // Create a nodemailer transporter
-        const nodemailer = await import('nodemailer')
+        const nodemailer = await import("nodemailer");
         const transport = nodemailer.createTransport({
           host,
           port,
           secure: port === 465,
           auth: { user, pass },
-        })
+        });
 
         // Send the verification email
         await transport.sendMail({
@@ -53,13 +53,13 @@ export const authOptions: NextAuthOptions = {
               <p>If you did not request this email, you can safely ignore it.</p>
               <p>Thanks,<br>OTW Team</p>
             </div>
-          `
-        })
+          `,
+        });
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
   ],
   callbacks: {
@@ -69,16 +69,16 @@ export const authOptions: NextAuthOptions = {
           name: session.user?.name,
           email: session.user?.email,
           image: session.user?.image,
-          id: token.sub
-        } as any
+          id: token.sub,
+        } as any;
       }
-      return session
+      return session;
     },
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
+        token.id = user.id;
       }
-      return token
+      return token;
     },
   },
   pages: {
@@ -86,4 +86,4 @@ export const authOptions: NextAuthOptions = {
     verifyRequest: "/auth/verify-request",
     error: "/auth/error",
   },
-}
+};

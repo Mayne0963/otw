@@ -1,82 +1,95 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { FaSearch, FaCalendarAlt, FaFilter, FaMapMarkerAlt, FaClock, FaTicketAlt } from "react-icons/fa"
-import EventCard from "../../components/events/EventCard"
-import EventFilter from "../../components/events/EventFilter"
-import EventDetailModal from "../../components/events/EventDetailModal"
-import RegistrationModal from "../../components/events/RegistrationModal"
-import { events, categories, locations } from "../../data/event-data"
-import type { Event } from "../../types/event"
+import { useState, useEffect } from "react";
+import {
+  FaSearch,
+  FaCalendarAlt,
+  FaFilter,
+  FaMapMarkerAlt,
+  FaClock,
+  FaTicketAlt,
+} from "react-icons/fa";
+import EventCard from "../../components/events/EventCard";
+import EventFilter from "../../components/events/EventFilter";
+import EventDetailModal from "../../components/events/EventDetailModal";
+import RegistrationModal from "../../components/events/RegistrationModal";
+import { events, categories, locations } from "../../data/event-data";
+import type { Event } from "../../types/event";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default function EventsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [selectedLocation, setSelectedLocation] = useState("all")
-  const [timeFrame, setTimeFrame] = useState("upcoming")
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
-  const [showDetailModal, setShowDetailModal] = useState(false)
-  const [showRegistrationModal, setShowRegistrationModal] = useState(false)
-  const [showFilters, setShowFilters] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [timeFrame, setTimeFrame] = useState("upcoming");
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Filter events based on search query, category, location, and time frame
   useEffect(() => {
-    let filtered = [...events]
+    let filtered = [...events];
 
     // Filter by search query
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (event) =>
           event.title.toLowerCase().includes(query) ||
           event.description.toLowerCase().includes(query) ||
           event.location.name.toLowerCase().includes(query),
-      )
+      );
     }
 
     // Filter by category
     if (selectedCategory !== "all") {
-      filtered = filtered.filter((event) => event.category === selectedCategory)
+      filtered = filtered.filter(
+        (event) => event.category === selectedCategory,
+      );
     }
 
     // Filter by location
     if (selectedLocation !== "all") {
-      filtered = filtered.filter((event) => event.location.id === selectedLocation)
+      filtered = filtered.filter(
+        (event) => event.location.id === selectedLocation,
+      );
     }
 
     // Filter by time frame
-    const now = new Date()
+    const now = new Date();
     if (timeFrame === "upcoming") {
-      filtered = filtered.filter((event) => new Date(event.date) >= now)
+      filtered = filtered.filter((event) => new Date(event.date) >= now);
     } else if (timeFrame === "past") {
-      filtered = filtered.filter((event) => new Date(event.date) < now)
+      filtered = filtered.filter((event) => new Date(event.date) < now);
     }
 
     // Sort by date
     filtered.sort((a, b) => {
-      const dateA = new Date(a.date)
-      const dateB = new Date(b.date)
-      return timeFrame === "upcoming" ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime()
-    })
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return timeFrame === "upcoming"
+        ? dateA.getTime() - dateB.getTime()
+        : dateB.getTime() - dateA.getTime();
+    });
 
-    setFilteredEvents(filtered)
-  }, [searchQuery, selectedCategory, selectedLocation, timeFrame])
+    setFilteredEvents(filtered);
+  }, [searchQuery, selectedCategory, selectedLocation, timeFrame]);
 
   // Handle event selection
   const handleEventSelect = (event: Event) => {
-    setSelectedEvent(event)
-    setShowDetailModal(true)
-  }
+    setSelectedEvent(event);
+    setShowDetailModal(true);
+  };
 
   // Handle registration
   const handleRegister = (event: Event) => {
-    setSelectedEvent(event)
-    setShowDetailModal(false)
-    setShowRegistrationModal(true)
-  }
+    setSelectedEvent(event);
+    setShowDetailModal(false);
+    setShowRegistrationModal(true);
+  };
 
   return (
     <div className="min-h-screen pb-20">
@@ -90,9 +103,12 @@ export default function EventsPage() {
           ></div>
         </div>
         <div className="container mx-auto px-4 z-10 text-center">
-          <h1 className="heading-xl mb-4 text-white gritty-shadow">Events & Experiences</h1>
+          <h1 className="heading-xl mb-4 text-white gritty-shadow">
+            Events & Experiences
+          </h1>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Join us for exclusive tastings, chef workshops, and special dining experiences.
+            Join us for exclusive tastings, chef workshops, and special dining
+            experiences.
           </p>
         </div>
       </section>
@@ -118,7 +134,9 @@ export default function EventsPage() {
             <div className="flex rounded-full bg-[#1A1A1A] p-1">
               <button
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  timeFrame === "upcoming" ? "bg-gold-foil text-black" : "text-white hover:bg-[#333333]"
+                  timeFrame === "upcoming"
+                    ? "bg-gold-foil text-black"
+                    : "text-white hover:bg-[#333333]"
                 }`}
                 onClick={() => setTimeFrame("upcoming")}
               >
@@ -126,7 +144,9 @@ export default function EventsPage() {
               </button>
               <button
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  timeFrame === "past" ? "bg-gold-foil text-black" : "text-white hover:bg-[#333333]"
+                  timeFrame === "past"
+                    ? "bg-gold-foil text-black"
+                    : "text-white hover:bg-[#333333]"
                 }`}
                 onClick={() => setTimeFrame("past")}
               >
@@ -179,13 +199,20 @@ export default function EventsPage() {
 
       {/* Featured Event Section (only show for upcoming events) */}
       {timeFrame === "upcoming" &&
-        events.filter((event) => event.featured && new Date(event.date) >= new Date()).length > 0 && (
+        events.filter(
+          (event) => event.featured && new Date(event.date) >= new Date(),
+        ).length > 0 && (
           <section className="py-12 bg-black">
             <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold mb-8 text-center">Featured Event</h2>
+              <h2 className="text-2xl font-bold mb-8 text-center">
+                Featured Event
+              </h2>
 
               {events
-                .filter((event) => event.featured && new Date(event.date) >= new Date())
+                .filter(
+                  (event) =>
+                    event.featured && new Date(event.date) >= new Date(),
+                )
                 .slice(0, 1)
                 .map((event) => (
                   <div
@@ -204,19 +231,27 @@ export default function EventsPage() {
                               FEATURED
                             </span>
                             <span className="bg-[#333333] text-white text-xs px-3 py-1 rounded-full">
-                              {categories.find((c) => c.id === event.category)?.name}
+                              {
+                                categories.find((c) => c.id === event.category)
+                                  ?.name
+                              }
                             </span>
                           </div>
-                          <h3 className="text-2xl font-bold mb-2">{event.title}</h3>
+                          <h3 className="text-2xl font-bold mb-2">
+                            {event.title}
+                          </h3>
                           <div className="flex items-center text-gray-400 mb-2">
                             <FaCalendarAlt className="mr-2 text-gold-foil" />
                             <span>
-                              {new Date(event.date).toLocaleDateString("en-US", {
-                                weekday: "long",
-                                month: "long",
-                                day: "numeric",
-                                year: "numeric",
-                              })}
+                              {new Date(event.date).toLocaleDateString(
+                                "en-US",
+                                {
+                                  weekday: "long",
+                                  month: "long",
+                                  day: "numeric",
+                                  year: "numeric",
+                                },
+                              )}
                             </span>
                           </div>
                           <div className="flex items-center text-gray-400 mb-2">
@@ -227,7 +262,9 @@ export default function EventsPage() {
                             <FaMapMarkerAlt className="mr-2 text-gold-foil" />
                             <span>{event.location.name}</span>
                           </div>
-                          <p className="text-gray-300 mb-6">{event.description.substring(0, 150)}...</p>
+                          <p className="text-gray-300 mb-6">
+                            {event.description.substring(0, 150)}...
+                          </p>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-3">
                           <button
@@ -255,9 +292,12 @@ export default function EventsPage() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold">{timeFrame === "upcoming" ? "Upcoming Events" : "Past Events"}</h2>
+            <h2 className="text-2xl font-bold">
+              {timeFrame === "upcoming" ? "Upcoming Events" : "Past Events"}
+            </h2>
             <div className="text-sm text-gray-400">
-              {filteredEvents.length} {filteredEvents.length === 1 ? "Event" : "Events"} Found
+              {filteredEvents.length}{" "}
+              {filteredEvents.length === 1 ? "Event" : "Events"} Found
             </div>
           </div>
 
@@ -269,7 +309,9 @@ export default function EventsPage() {
                   event={event}
                   onSelect={handleEventSelect}
                   onRegister={handleRegister}
-                  categoryName={categories.find((c) => c.id === event.category)?.name || ""}
+                  categoryName={
+                    categories.find((c) => c.id === event.category)?.name || ""
+                  }
                   isPast={timeFrame === "past"}
                 />
               ))}
@@ -278,13 +320,15 @@ export default function EventsPage() {
             <div className="bg-[#1A1A1A] rounded-lg p-8 text-center">
               <FaCalendarAlt className="text-4xl text-gold-foil mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">No Events Found</h3>
-              <p className="text-gray-400 mb-4">We couldn&apos;t find any events matching your search criteria.</p>
+              <p className="text-gray-400 mb-4">
+                We couldn&apos;t find any events matching your search criteria.
+              </p>
               <button
                 className="btn-primary"
                 onClick={() => {
-                  setSearchQuery("")
-                  setSelectedCategory("all")
-                  setSelectedLocation("all")
+                  setSearchQuery("");
+                  setSelectedCategory("all");
+                  setSelectedLocation("all");
                 }}
               >
                 Reset Filters
@@ -299,10 +343,14 @@ export default function EventsPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/20 to-[#880808]/20 opacity-50"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="heading-lg mb-4 gritty-shadow">Host Your Own Event</h2>
+            <h2 className="heading-lg mb-4 gritty-shadow">
+              Host Your Own Event
+            </h2>
             <p className="text-gray-300 mb-8">
-              Looking for a unique venue for your next private event? Broski&apos;s Kitchen offers custom catering and
-              private dining experiences for corporate events, birthdays, anniversaries, and more.
+              Looking for a unique venue for your next private event?
+              Broski&apos;s Kitchen offers custom catering and private dining
+              experiences for corporate events, birthdays, anniversaries, and
+              more.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <a href="/private-events" className="btn-primary">
@@ -322,7 +370,8 @@ export default function EventsPage() {
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-2xl font-bold mb-4">Stay Updated</h2>
             <p className="text-gray-300 mb-6">
-              Subscribe to our newsletter to get notified about upcoming events and exclusive offers.
+              Subscribe to our newsletter to get notified about upcoming events
+              and exclusive offers.
             </p>
             <form className="flex flex-col sm:flex-row gap-3">
               <input
@@ -343,19 +392,24 @@ export default function EventsPage() {
       {selectedEvent && showDetailModal && (
         <EventDetailModal
           event={selectedEvent}
-          categoryName={categories.find((c) => c.id === selectedEvent.category)?.name || ""}
+          categoryName={
+            categories.find((c) => c.id === selectedEvent.category)?.name || ""
+          }
           onClose={() => setShowDetailModal(false)}
           onRegister={() => {
-            setShowDetailModal(false)
-            setShowRegistrationModal(true)
+            setShowDetailModal(false);
+            setShowRegistrationModal(true);
           }}
         />
       )}
 
       {/* Registration Modal */}
       {selectedEvent && showRegistrationModal && (
-        <RegistrationModal event={selectedEvent} onClose={() => setShowRegistrationModal(false)} />
+        <RegistrationModal
+          event={selectedEvent}
+          onClose={() => setShowRegistrationModal(false)}
+        />
       )}
     </div>
-  )
+  );
 }

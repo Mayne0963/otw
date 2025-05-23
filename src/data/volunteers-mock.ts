@@ -33,4 +33,4 @@ export const mockVolunteers: Volunteer[] = [
 export function getFeaturedVolunteers(): Volunteer[] {
   // In real app, fetch from DB. Here, return mock.
   return mockVolunteers;
-} 
+}

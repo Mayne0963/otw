@@ -1,17 +1,17 @@
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
-import NextAuth from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
-import EmailProvider from 'next-auth/providers/email'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { prisma } from '../../../../lib/db'
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import EmailProvider from "next-auth/providers/email";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "../../../../lib/db";
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
     EmailProvider({
       server: {
@@ -22,23 +22,23 @@ const handler = NextAuth({
           pass: process.env.EMAIL_SERVER_PASSWORD,
         },
       },
-      from: process.env.EMAIL_FROM,
+      from: process.env.EMAIL_FROM || "noreply@example.com",
     }),
   ],
   pages: {
-    signIn: '/auth/login',
-    signOut: '/auth/logout',
-    error: '/auth/error',
-    verifyRequest: '/auth/verify-request',
+    signIn: "/auth/login",
+    signOut: "/auth/logout",
+    error: "/auth/error",
+    verifyRequest: "/auth/verify-request",
   },
   callbacks: {
     async session({ session, user }) {
       if (session.user) {
-        (session.user as typeof user & { id: string }).id = user.id
+        (session.user as typeof user & { id: string }).id = user.id;
       }
-      return session
+      return session;
     },
   },
-})
+});
 
-export { handler as GET, handler as POST }
+export { handler as GET, handler as POST };

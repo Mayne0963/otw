@@ -39,7 +39,7 @@ export default function LocationsClientPage({ locations }: LocationsClientPagePr
 
     setFilteredLocations(filtered)
 
-    if (filtered.length > 0 && (searchQuery || selectedState !== "all")) {
+    if (filtered.length > 0 && (searchQuery || selectedState !== "all") && filtered[0]?.coordinates) {
       setMapCenter({ lat: filtered[0].coordinates.lat, lng: filtered[0].coordinates.lng })
       setMapZoom(10)
     } else {

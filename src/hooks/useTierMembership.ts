@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
-import { useFirestore } from './useFirestore';
-import { TierMembership } from '../types/firestore';
-import { getStripe } from '../lib/stripe';
+import { useState, useEffect } from "react";
+import { useFirestore } from "./useFirestore";
+import { TierMembership } from "../types/firestore";
+import { getStripe } from "../lib/stripe";
 
 export function useTierMembership(userId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [membership, setMembership] = useState<TierMembership | null>(null);
-  
-  const { setDocument, subscribeToDocument } = useFirestore<TierMembership>('tierMemberships');
+
+  const { setDocument, subscribeToDocument } =
+    useFirestore<TierMembership>("tierMemberships");
 
   useEffect(() => {
     if (!userId) return;
@@ -21,12 +22,14 @@ export function useTierMembership(userId: string) {
     return () => unsubscribe();
   }, [userId, subscribeToDocument, setMembership, setLoading]);
 
-  const createCheckoutSession = async (tier: 'silver' | 'gold' | 'platinum') => {
+  const createCheckoutSession = async (
+    tier: "silver" | "gold" | "platinum",
+  ) => {
     try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId,
@@ -36,9 +39,9 @@ export function useTierMembership(userId: string) {
 
       const { sessionId } = await response.json();
       const stripe = await getStripe();
-      
-      if (!stripe) throw new Error('Stripe failed to initialize');
-      
+
+      if (!stripe) throw new Error("Stripe failed to initialize");
+
       const { error } = await stripe.redirectToCheckout({ sessionId });
       if (error) throw error;
     } catch (err) {
@@ -49,20 +52,20 @@ export function useTierMembership(userId: string) {
 
   const cancelSubscription = async () => {
     try {
-      const response = await fetch('/api/cancel-subscription', {
-        method: 'POST',
+      const response = await fetch("/api/cancel-subscription", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           userId,
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to cancel subscription');
-      
+      if (!response.ok) throw new Error("Failed to cancel subscription");
+
       await setDocument(userId, {
-        status: 'canceled',
+        status: "canceled",
         endDate: new Date(),
       });
     } catch (err) {

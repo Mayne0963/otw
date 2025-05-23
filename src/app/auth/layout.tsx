@@ -1,15 +1,18 @@
-"use client"
+"use client";
 
-import dynamic from 'next/dynamic'
+import dynamic from "next/dynamic";
 
-const AuthProvider = dynamic(() => import('../../lib/context/AuthContext').then(mod => mod.AuthProvider), {
-  ssr: false
-})
+const AuthProvider = dynamic(
+  () => import("../../lib/context/AuthContext").then((mod) => mod.AuthProvider),
+  {
+    ssr: false,
+  },
+);
 
 export default function AuthLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  return <AuthProvider>{children}</AuthProvider>
-} 
+  return <AuthProvider>{children}</AuthProvider>;
+}

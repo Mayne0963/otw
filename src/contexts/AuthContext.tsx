@@ -1,23 +1,29 @@
-"use client"
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth } from '../lib/firebase';
-import type { User, AuthError } from "../types"
+import { createContext, useContext, useEffect, useState } from "react";
+import { onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
+import { auth } from "../lib/firebase";
+import type { User, AuthError } from "../types";
 
 interface AuthContextType {
-  user: User | null
-  loading: boolean
-  error: AuthError | null
-  signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, userData: Partial<User>) => Promise<void>
-  signOut: () => Promise<void>
-  updateProfile: (updates: Partial<User>) => Promise<void>
-  updatePreferences: (preferences: User["preferences"]) => Promise<void>
-  updateNotificationSettings: (settings: User["notificationSettings"]) => Promise<void>
-  addActivity: (activity: User["activityHistory"][0]) => Promise<void>
-  saveItem: (item: User["savedItems"][0]) => Promise<void>
-  removeSavedItem: (itemId: string) => Promise<void>
+  user: User | null;
+  loading: boolean;
+  error: AuthError | null;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    userData: Partial<User>,
+  ) => Promise<void>;
+  signOut: () => Promise<void>;
+  updateProfile: (updates: Partial<User>) => Promise<void>;
+  updatePreferences: (preferences: User["preferences"]) => Promise<void>;
+  updateNotificationSettings: (
+    settings: User["notificationSettings"],
+  ) => Promise<void>;
+  addActivity: (activity: User["activityHistory"][0]) => Promise<void>;
+  saveItem: (item: User["savedItems"][0]) => Promise<void>;
+  removeSavedItem: (itemId: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -62,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await firebaseSignOut(auth);
       setUser(null);
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     }
   };
 
@@ -91,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import React, { useState, useRef } from 'react'; // Added React import
-import { Button } from '../ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
+import React, { useState, useRef } from "react"; // Added React import
+import { Button } from "../ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 
 // Define a more specific type for the user prop
 interface User {
@@ -45,7 +45,13 @@ const getFirebase = (): FirebaseApp | undefined => {
   return (window as any).firebase as FirebaseApp | undefined;
 };
 
-export default function AvatarUpload({ user, onUpload }: { user: User, onUpload?: (url: string) => void }) {
+export default function AvatarUpload({
+  user,
+  onUpload,
+}: {
+  user: User;
+  onUpload?: (url: string) => void;
+}) {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,7 +65,7 @@ export default function AvatarUpload({ user, onUpload }: { user: User, onUpload?
 
     const firebaseApp = getFirebase();
     if (!firebaseApp) {
-      alert('Firebase is not available.');
+      alert("Firebase is not available.");
       setUploading(false);
       return;
     }
@@ -70,14 +76,18 @@ export default function AvatarUpload({ user, onUpload }: { user: User, onUpload?
       const avatarRef = storageRef.child(`avatars/${user.uid}`);
       await avatarRef.put(file);
       const url = await avatarRef.getDownloadURL();
-      
+
       // Update Firestore user profile
-      await firebaseApp.firestore().collection('users').doc(user.uid).update({ photoURL: url });
-      
+      await firebaseApp
+        .firestore()
+        .collection("users")
+        .doc(user.uid)
+        .update({ photoURL: url });
+
       if (onUpload) onUpload(url);
     } catch (err: unknown) {
-      console.error('Failed to upload avatar:', err); // Log the error for debugging
-      alert('Failed to upload avatar. Please try again.');
+      console.error("Failed to upload avatar:", err); // Log the error for debugging
+      alert("Failed to upload avatar. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -86,15 +96,20 @@ export default function AvatarUpload({ user, onUpload }: { user: User, onUpload?
   return (
     <div className="flex flex-col items-center gap-2">
       <Avatar className="w-24 h-24">
-        <AvatarImage src={preview || user.photoURL} alt={user.name || 'User Avatar'} />
-        <AvatarFallback>{user.name?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
+        <AvatarImage
+          src={preview || user.photoURL}
+          alt={user.name || "User Avatar"}
+        />
+        <AvatarFallback>{user.name?.[0]?.toUpperCase() || "U"}</AvatarFallback>
       </Avatar>
       <input
         type="file"
         accept="image/*"
         className="hidden"
         ref={fileInputRef}
-        onChange={(e) => { void handleFileChange(e); }} // Added void to handle promise for onChange
+        onChange={(e) => {
+          void handleFileChange(e);
+        }} // Added void to handle promise for onChange
         disabled={uploading}
       />
       <Button
@@ -103,7 +118,7 @@ export default function AvatarUpload({ user, onUpload }: { user: User, onUpload?
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
       >
-        {uploading ? 'Uploading...' : 'Change Avatar'}
+        {uploading ? "Uploading..." : "Change Avatar"}
       </Button>
     </div>
   );

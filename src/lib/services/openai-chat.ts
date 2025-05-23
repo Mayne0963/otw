@@ -1,10 +1,10 @@
-import OpenAI from "openai"
-import { vectorStore } from "../utils/vectorStore"
+import OpenAI from "openai";
+import { vectorStore } from "../utils/vectorStore";
 
 // Initialize OpenAI client with the provided API key
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-})
+});
 
 // System prompt template
 const SYSTEM_PROMPT = `You are BroskiBot, the AI assistant for Broski's Kitchen, a luxury street gourmet restaurant.
@@ -15,19 +15,22 @@ Here is some information about Broski's Kitchen that you can use to answer quest
 
 {{context}}
 
-Remember to stay in character as BroskiBot and only provide information related to Broski's Kitchen.`
+Remember to stay in character as BroskiBot and only provide information related to Broski's Kitchen.`;
 
 // Function to generate a response using OpenAI
-export async function generateChatResponse(messages: { role: string; text: string }[], query: string): Promise<string> {
+export async function generateChatResponse(
+  messages: { role: string; text: string }[],
+  query: string,
+): Promise<string> {
   try {
     // Search for relevant content
-    const searchResults = vectorStore.search(query)
+    const searchResults = vectorStore.search(query);
 
     // Create context from search results
-    const context = searchResults.map((result) => result.text).join("\n\n")
+    const context = searchResults.map((result) => result.text).join("\n\n");
 
     // Create system message with context
-    const systemMessage = SYSTEM_PROMPT.replace("{{context}}", context)
+    const systemMessage = SYSTEM_PROMPT.replace("{{context}}", context);
 
     // Format messages for OpenAI
     const formattedMessages = [
@@ -36,7 +39,7 @@ export async function generateChatResponse(messages: { role: string; text: strin
         role: msg.role === "user" ? "user" : "assistant",
         content: msg.text,
       })),
-    ]
+    ];
 
     // Call OpenAI API
     const response = await openai.chat.completions.create({
@@ -44,12 +47,15 @@ export async function generateChatResponse(messages: { role: string; text: strin
       messages: formattedMessages as any,
       temperature: 0.7,
       max_tokens: 500,
-    })
+    });
 
     // Return the generated response
-    return response.choices[0].message.content || "I'm sorry, I couldn't generate a response."
+    return (
+      response.choices[0].message.content ||
+      "I'm sorry, I couldn't generate a response."
+    );
   } catch (error) {
-    console.error("Error generating chat response:", error)
-    return "I'm having trouble connecting to my services. Please try again later."
+    console.error("Error generating chat response:", error);
+    return "I'm having trouble connecting to my services. Please try again later.";
   }
 }

@@ -26,12 +26,14 @@ GET /api/admin/menu
 Lists all menu items with pagination and sorting.
 
 Query Parameters:
+
 - `limit` (optional): Items per page (default: 50, max: 100)
 - `page` (optional): Page number (default: 1)
 - `sortBy` (optional): Field to sort by (default: 'name')
 - `sortOrder` (optional): Sort direction ('asc' or 'desc', default: 'asc')
 
 Response:
+
 ```json
 {
   "menu": [
@@ -63,6 +65,7 @@ GET /api/admin/menu/{id}
 Retrieves a specific menu item by ID.
 
 Response:
+
 ```json
 {
   "id": "string",
@@ -84,6 +87,7 @@ POST /api/admin/menu
 Creates a new menu item.
 
 Request Body:
+
 ```json
 {
   "name": "string",
@@ -96,6 +100,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "id": "string",
@@ -119,6 +124,7 @@ PATCH /api/admin/menu/{id}
 Updates an existing menu item. All fields are optional.
 
 Request Body:
+
 ```json
 {
   "name": "string?",
@@ -131,6 +137,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "id": "string",
@@ -154,6 +161,7 @@ DELETE /api/admin/menu/{id}
 Deletes a menu item.
 
 Response:
+
 ```json
 {
   "success": true,
@@ -171,6 +179,7 @@ GET /api/admin/menu/search
 Searches menu items with advanced filtering.
 
 Query Parameters:
+
 - `q` (optional): Search query for name and description
 - `type` (optional): Filter by type ('classic' or 'infused')
 - `source` (optional): Filter by source ('broskis' or 'partner')
@@ -180,6 +189,7 @@ Query Parameters:
 - `page` (optional): Page number (default: 1)
 
 Response:
+
 ```json
 {
   "items": [
@@ -220,6 +230,7 @@ POST /api/admin/menu/bulk
 Performs bulk updates or deletions on menu items.
 
 Request Body:
+
 ```json
 {
   "operation": "'update' | 'delete'",
@@ -233,6 +244,7 @@ Request Body:
 ```
 
 Response:
+
 ```json
 {
   "message": "string",
@@ -268,10 +280,11 @@ All endpoints return consistent error responses:
 ```
 
 Common Error Codes:
+
 - `UNAUTHORIZED`: Authentication required or invalid
 - `FORBIDDEN`: User lacks required permissions
 - `NOT_FOUND`: Requested resource not found
 - `BAD_REQUEST`: Invalid request data
 - `VALIDATION_ERROR`: Request data fails validation
 - `RATE_LIMIT_EXCEEDED`: Too many requests
-- `INTERNAL_ERROR`: Server error 
+- `INTERNAL_ERROR`: Server error

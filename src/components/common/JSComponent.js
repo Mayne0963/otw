@@ -7,9 +7,9 @@
  * @typedef {import('react').ReactNode} ReactNode
  */
 
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 
 /**
  * Example JavaScript component that works with TypeScript types
@@ -19,7 +19,7 @@ import { useState } from "react"
  * @returns {JSX.Element}
  */
 const JSComponent = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="bg-surface p-4 rounded-lg shadow-lg">
@@ -33,7 +33,7 @@ const JSComponent = ({ title, children }) => {
 
       {isOpen && <div className="animate-fade-in">{children}</div>}
     </div>
-  )
-}
+  );
+};
 
-export default JSComponent
+export default JSComponent;

@@ -1,25 +1,34 @@
-"use client"
+"use client";
 
-import type * as React from "react"
+import type * as React from "react";
 import {
   ChevronLeft,
   ChevronRight,
   ArrowLeftIcon as DoubleArrowLeft,
   ArrowRightIcon as DoubleArrowRight,
-} from "lucide-react"
+} from "lucide-react";
 
-import { cn } from "../../lib/utils"
-import { Button } from "./button"
+import { cn } from "../../lib/utils";
+import { Button } from "./button";
 
 export interface PaginationProps extends React.HTMLAttributes<HTMLDivElement> {
-  pageCount: number
-  currentPage: number
-  onPageChange: (page: number) => void
+  pageCount: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
 }
 
-export const Pagination = ({ pageCount, currentPage, onPageChange, className, ...props }: PaginationProps) => {
+export const Pagination = ({
+  pageCount,
+  currentPage,
+  onPageChange,
+  className,
+  ...props
+}: PaginationProps) => {
   return (
-    <div className={cn("flex items-center justify-between", className)} {...props}>
+    <div
+      className={cn("flex items-center justify-between", className)}
+      {...props}
+    >
       <div className="flex-1 text-sm text-muted-foreground">
         Page {currentPage} of {pageCount}
       </div>
@@ -62,5 +71,5 @@ export const Pagination = ({ pageCount, currentPage, onPageChange, className, ..
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};

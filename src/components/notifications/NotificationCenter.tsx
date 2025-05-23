@@ -1,131 +1,148 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from 'react'
-import { Card } from '../ui/card'
-import { Button } from '../ui/button'
-import { Badge } from '../ui/badge'
-import { ScrollArea } from '../ui/scroll-area'
-import { Bell, X, Check, AlertCircle, Info } from 'lucide-react'
-import { useToast } from '../ui/use-toast'
+import { useState, useEffect, useCallback } from "react";
+import { Card } from "../ui/card";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
+import { Bell, X, Check, AlertCircle, Info } from "lucide-react";
+import { useToast } from "../ui/use-toast";
 
 interface Notification {
-  id: string
-  type: 'info' | 'success' | 'warning' | 'error'
-  title: string
-  message: string
-  timestamp: Date
-  read: boolean
+  id: string;
+  type: "info" | "success" | "warning" | "error";
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
 }
 
 export default function NotificationCenter() {
-  const [notifications, setNotifications] = useState<Notification[]>([])
-  const [isOpen, setIsOpen] = useState(false)
-  const [unreadCount, setUnreadCount] = useState(0)
-  const { toast } = useToast()
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const { toast } = useToast();
 
   // Define addNotification with useCallback to prevent recreation on every render
-  const addNotification = useCallback((notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
-    const newNotification: Notification = {
-      ...notification,
-      id: Math.random().toString(36).substr(2, 9),
-      timestamp: new Date(),
-      read: false,
-    }
+  const addNotification = useCallback(
+    (notification: Omit<Notification, "id" | "timestamp" | "read">) => {
+      const newNotification: Notification = {
+        ...notification,
+        id: Math.random().toString(36).substr(2, 9),
+        timestamp: new Date(),
+        read: false,
+      };
 
-    setNotifications((prev) => [newNotification, ...prev])
-    setUnreadCount((prev) => prev + 1)
+      setNotifications((prev) => [newNotification, ...prev]);
+      setUnreadCount((prev) => prev + 1);
 
-    // Show toast for new notifications
-    if (typeof toast === 'function') {
-      toast({
-        title: notification.title,
-        description: notification.message,
-        variant: notification.type === 'error' ? 'destructive' : 'default',
-      })
-    } else if (toast.info) {
-      // Handle case where toast is the object with methods
-      switch (notification.type) {
-        case 'error':
-          toast.error(notification.message)
-          break
-        case 'warning':
-          toast.warning(notification.message)
-          break
-        case 'success':
-          toast.success(notification.message)
-          break
-        default:
-          toast.info(notification.message)
-          break
+      // Show toast for new notifications
+      if (typeof toast === "function") {
+        toast({
+          title: notification.title,
+          description: notification.message,
+          variant: notification.type === "error" ? "destructive" : "default",
+        });
+      } else if (typeof toast === 'object') {
+        // Handle case where toast is the object with methods
+        const toastWithMethods = toast as { 
+          error: (message: string) => void;
+          warning: (message: string) => void;
+          success: (message: string) => void;
+          info: (message: string) => void;
+        };
+        
+        switch (notification.type) {
+          case "error":
+            if ('error' in toast) toastWithMethods.error(notification.message);
+            break;
+          case "warning":
+            if ('warning' in toast) toastWithMethods.warning(notification.message);
+            break;
+          case "success":
+            if ('success' in toast) toastWithMethods.success(notification.message);
+            break;
+          default:
+            if ('info' in toast) toastWithMethods.info(notification.message);
+            break;
+        }
       }
-    }
-  }, [toast])
+    },
+    [toast],
+  );
 
   // Simulate real-time notifications
   useEffect(() => {
-    const socket = new WebSocket(process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3001')
-    
+    const socket = new WebSocket(
+      process.env.NEXT_PUBLIC_WEBSOCKET_URL || "ws://localhost:3001",
+    );
+
     // Add proper error handling for WebSocket
     socket.onopen = () => {
-      console.log('WebSocket connection established')
-    }
-    
+      console.log("WebSocket connection established");
+    };
+
     socket.onmessage = (event) => {
       try {
-        const notification = JSON.parse(event.data)
-        addNotification(notification)
+        const notification = JSON.parse(event.data);
+        addNotification(notification);
       } catch (error) {
-        console.error('Error parsing notification:', error)
+        console.error("Error parsing notification:", error);
       }
-    }
-    
+    };
+
     socket.onerror = (error) => {
-      console.error('WebSocket error:', error)
-    }
-    
+      console.error("WebSocket error:", error);
+    };
+
     socket.onclose = (event) => {
-      console.log('WebSocket connection closed:', event.code, event.reason)
-    }
+      console.log("WebSocket connection closed:", event.code, event.reason);
+    };
 
     return () => {
-      if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
-        socket.close()
+      if (
+        socket.readyState === WebSocket.OPEN ||
+        socket.readyState === WebSocket.CONNECTING
+      ) {
+        socket.close();
       }
-    }
-  }, [addNotification])
+    };
+  }, [addNotification]);
 
   const markAsRead = (id: string) => {
     setNotifications((prev) =>
       prev.map((notification) =>
-        notification.id === id ? { ...notification, read: true } : notification
-      )
-    )
-    setUnreadCount((prev) => Math.max(0, prev - 1))
-  }
+        notification.id === id ? { ...notification, read: true } : notification,
+      ),
+    );
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+  };
 
   const markAllAsRead = () => {
     setNotifications((prev) =>
-      prev.map((notification) => ({ ...notification, read: true }))
-    )
-    setUnreadCount(0)
-  }
+      prev.map((notification) => ({ ...notification, read: true })),
+    );
+    setUnreadCount(0);
+  };
 
   const deleteNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((notification) => notification.id !== id))
-  }
+    setNotifications((prev) =>
+      prev.filter((notification) => notification.id !== id),
+    );
+  };
 
-  const getNotificationIcon = (type: Notification['type']) => {
+  const getNotificationIcon = (type: Notification["type"]) => {
     switch (type) {
-      case 'success':
-        return <Check className="h-5 w-5 text-green-500" />
-      case 'warning':
-        return <AlertCircle className="h-5 w-5 text-yellow-500" />
-      case 'error':
-        return <AlertCircle className="h-5 w-5 text-red-500" />
+      case "success":
+        return <Check className="h-5 w-5 text-green-500" />;
+      case "warning":
+        return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+      case "error":
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
       default:
-        return <Info className="h-5 w-5 text-blue-500" />
+        return <Info className="h-5 w-5 text-blue-500" />;
     }
-  }
+  };
 
   return (
     <div className="relative">
@@ -170,7 +187,7 @@ export default function NotificationCenter() {
                   <div
                     key={notification.id}
                     className={`p-4 hover:bg-gray-50 ${
-                      !notification.read ? 'bg-blue-50' : ''
+                      !notification.read ? "bg-blue-50" : ""
                     }`}
                   >
                     <div className="flex items-start gap-3">
@@ -192,7 +209,9 @@ export default function NotificationCenter() {
                         </p>
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-xs text-gray-500">
-                            {new Date(notification.timestamp).toLocaleTimeString()}
+                            {new Date(
+                              notification.timestamp,
+                            ).toLocaleTimeString()}
                           </span>
                           {!notification.read && (
                             <Button
@@ -214,5 +233,5 @@ export default function NotificationCenter() {
         </Card>
       )}
     </div>
-  )
+  );
 }

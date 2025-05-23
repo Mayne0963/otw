@@ -1,34 +1,34 @@
-import React, { useState } from "react"
-import { Card } from "./card"
-import { Copy, CheckCircle, Star, Loader2 } from "lucide-react"
-import Image from "next/image"
+import React, { useState } from "react";
+import { Card } from "./card";
+import { Copy, CheckCircle, Star, Loader2 } from "lucide-react";
+import Image from "next/image";
 
 interface QRCodeTipProps {
   rep: {
-    name: string
-    photo: string
-    rating: number
-    completedDeliveries: number
-  }
-  tipUrl: string
+    name: string;
+    photo: string;
+    rating: number;
+    completedDeliveries: number;
+  };
+  tipUrl: string;
 }
 
 export default function QRCodeTip({ rep, tipUrl }: QRCodeTipProps) {
-  const [copied, setCopied] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [copied, setCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCopy = async () => {
     try {
-      setIsLoading(true)
-      await navigator.clipboard.writeText(tipUrl)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setIsLoading(true);
+      await navigator.clipboard.writeText(tipUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error("Failed to copy:", err)
+      console.error("Failed to copy:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Card className="p-6 max-w-sm mx-auto space-y-6">
@@ -46,7 +46,9 @@ export default function QRCodeTip({ rep, tipUrl }: QRCodeTipProps) {
           <h3 className="font-semibold">{rep.name}</h3>
           <div className="flex items-center gap-1 text-sm text-gray-500">
             <Star className="w-4 h-4 text-otw-gold" aria-hidden="true" />
-            <span>{rep.rating} • {rep.completedDeliveries} deliveries</span>
+            <span>
+              {rep.rating} • {rep.completedDeliveries} deliveries
+            </span>
           </div>
         </div>
       </div>
@@ -87,5 +89,5 @@ export default function QRCodeTip({ rep, tipUrl }: QRCodeTipProps) {
         )}
       </button>
     </Card>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Box,
@@ -14,15 +14,15 @@ import {
   ListItemText,
   Alert,
   Paper,
-} from "@mui/material"
-import Link from "next/link"
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital"
-import PhoneIcon from "@mui/icons-material/Phone"
-import WarningIcon from "@mui/icons-material/Warning"
-import SecurityIcon from "@mui/icons-material/Security"
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar"
-import LocationOnIcon from "@mui/icons-material/LocationOn"
-import AccessTimeIcon from "@mui/icons-material/AccessTime"
+} from "@mui/material";
+import Link from "next/link";
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import PhoneIcon from "@mui/icons-material/Phone";
+import WarningIcon from "@mui/icons-material/Warning";
+import SecurityIcon from "@mui/icons-material/Security";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 const emergencyContacts = [
   {
@@ -43,7 +43,7 @@ const emergencyContacts = [
     description: "For vehicle breakdowns and accidents",
     icon: <DirectionsCarIcon color="error" />,
   },
-]
+];
 
 const safetyResources = [
   {
@@ -64,7 +64,7 @@ const safetyResources = [
     icon: <WarningIcon />,
     link: "/emergency/procedures",
   },
-]
+];
 
 const nearbyHospitals = [
   {
@@ -85,7 +85,7 @@ const nearbyHospitals = [
     distance: "4.2 miles",
     phone: "(555) 345-6789",
   },
-]
+];
 
 export default function EmergencyPage() {
   return (
@@ -122,7 +122,11 @@ export default function EmergencyPage() {
           >
             Emergency Resources
           </Typography>
-          <Typography variant="h5" color="text.secondary" sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}>
+          <Typography
+            variant="h5"
+            color="text.secondary"
+            sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}
+          >
             Quick access to emergency contacts and safety information
           </Typography>
         </Box>
@@ -157,10 +161,16 @@ export default function EmergencyPage() {
                         {contact.name}
                       </Typography>
                     </Box>
-                    <Typography variant="h4" color="error" sx={{ mb: 2, fontWeight: 700 }}>
+                    <Typography
+                      variant="h4"
+                      color="error"
+                      sx={{ mb: 2, fontWeight: 700 }}
+                    >
                       {contact.number}
                     </Typography>
-                    <Typography color="text.secondary">{contact.description}</Typography>
+                    <Typography color="text.secondary">
+                      {contact.description}
+                    </Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -196,10 +206,19 @@ export default function EmergencyPage() {
                         {resource.title}
                       </Typography>
                     </Box>
-                    <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      sx={{ mb: 3 }}
+                    >
                       {resource.description}
                     </Typography>
-                    <Button component={Link} href={resource.link} variant="outlined" color="primary">
+                    <Button
+                      component={Link}
+                      href={resource.link}
+                      variant="outlined"
+                      color="primary"
+                    >
                       Learn More
                     </Button>
                   </CardContent>
@@ -240,7 +259,10 @@ export default function EmergencyPage() {
                       <ListItemIcon>
                         <LocationOnIcon />
                       </ListItemIcon>
-                      <ListItemText primary={hospital.address} secondary={`${hospital.distance} away`} />
+                      <ListItemText
+                        primary={hospital.address}
+                        secondary={`${hospital.distance} away`}
+                      />
                     </ListItem>
                     <ListItem>
                       <ListItemIcon>
@@ -282,5 +304,5 @@ export default function EmergencyPage() {
         </Box>
       </Container>
     </Box>
-  )
+  );
 }

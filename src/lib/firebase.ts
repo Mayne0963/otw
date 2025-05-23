@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getAnalytics, isSupported } from "firebase/analytics";
-import { UserProfile } from '@/types';
+import { UserProfile } from "@/types";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,19 +16,19 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const app =
+  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
 // Initialize Analytics conditionally (only in browser)
 let analytics = null;
-if (typeof window !== 'undefined') {
-  isSupported().then(yes => yes && (analytics = getAnalytics(app)));
+if (typeof window !== "undefined") {
+  isSupported().then((yes) => yes && (analytics = getAnalytics(app)));
 }
 
 export { app, auth, db, storage, analytics };
-
 
 declare global {
   interface Window {
@@ -37,10 +37,10 @@ declare global {
 }
 
 export async function updateUserProfile(
-  userId: string, 
-  updates: Partial<UserProfile>
+  userId: string,
+  updates: Partial<UserProfile>,
 ): Promise<UserProfile> {
-  const docRef = doc(firestore, 'users', userId);
+  const docRef = doc(firestore, "users", userId);
   await updateDoc(docRef, updates);
   return (await getDoc(docRef)).data() as UserProfile;
 }

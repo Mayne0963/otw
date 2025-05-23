@@ -1,29 +1,37 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Image from "next/image"
-import { FaTimes, FaStar, FaFire, FaShoppingCart } from "react-icons/fa"
-import type { Product } from "../../types/merch"
+import { useState } from "react";
+import Image from "next/image";
+import { FaTimes, FaStar, FaFire, FaShoppingCart } from "react-icons/fa";
+import type { Product } from "../../types/merch";
 
 interface ProductQuickViewProps {
-  product: Product
-  onClose: () => void
-  onAddToCart: (product: Product, quantity: number) => void
+  product: Product;
+  onClose: () => void;
+  onAddToCart: (product: Product, quantity: number) => void;
 }
 
-const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose, onAddToCart }) => {
-  const [quantity, setQuantity] = useState(1)
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [selectedSize, setSelectedSize] = useState(product.sizes ? product.sizes[0] : null)
-  const [selectedColor, setSelectedColor] = useState(product.colors ? product.colors[0] : null)
+const ProductQuickView: React.FC<ProductQuickViewProps> = ({
+  product,
+  onClose,
+  onAddToCart,
+}) => {
+  const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedSize, setSelectedSize] = useState(
+    product.sizes ? product.sizes[0] : null,
+  );
+  const [selectedColor, setSelectedColor] = useState(
+    product.colors ? product.colors[0] : null,
+  );
 
   const handleQuantityChange = (value: number) => {
-    if (value < 1) return
-    if (value > 10) return
-    setQuantity(value)
-  }
+    if (value < 1) return;
+    if (value > 10) return;
+    setQuantity(value);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80">
@@ -58,7 +66,9 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose, o
                   <button
                     key={index}
                     className={`relative w-16 h-16 rounded-md overflow-hidden border-2 ${
-                      selectedImage === index ? "border-gold-foil" : "border-[#333333]"
+                      selectedImage === index
+                        ? "border-gold-foil"
+                        : "border-[#333333]"
                     }`}
                     onClick={() => setSelectedImage(index)}
                   >
@@ -92,9 +102,13 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose, o
             <h2 className="text-2xl font-bold mb-2">{product.name}</h2>
 
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl font-bold text-gold-foil">${product.price.toFixed(2)}</span>
+              <span className="text-2xl font-bold text-gold-foil">
+                ${product.price.toFixed(2)}
+              </span>
               {product.compareAtPrice && (
-                <span className="text-gray-500 text-lg line-through">${product.compareAtPrice.toFixed(2)}</span>
+                <span className="text-gray-500 text-lg line-through">
+                  ${product.compareAtPrice.toFixed(2)}
+                </span>
               )}
             </div>
 
@@ -109,7 +123,9 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose, o
                     <button
                       key={size}
                       className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                        selectedSize === size ? "bg-gold-foil text-black" : "bg-[#222222] text-white hover:bg-[#333333]"
+                        selectedSize === size
+                          ? "bg-gold-foil text-black"
+                          : "bg-[#222222] text-white hover:bg-[#333333]"
                       }`}
                       onClick={() => setSelectedSize(size)}
                     >
@@ -157,7 +173,9 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose, o
                   min="1"
                   max="10"
                   value={quantity}
-                  onChange={(e) => handleQuantityChange(Number.parseInt(e.target.value))}
+                  onChange={(e) =>
+                    handleQuantityChange(Number.parseInt(e.target.value))
+                  }
                   className="w-16 h-10 bg-[#222222] text-center text-white border-x border-[#333333]"
                 />
                 <button
@@ -173,8 +191,8 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose, o
             <button
               className="btn-primary w-full flex items-center justify-center gap-2"
               onClick={() => {
-                onAddToCart(product, quantity)
-                onClose()
+                onAddToCart(product, quantity);
+                onClose();
               }}
             >
               <FaShoppingCart /> Add to Cart
@@ -185,11 +203,15 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose, o
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <h4 className="font-medium mb-1">Material</h4>
-                  <p className="text-gray-400">{product.material || "100% Cotton"}</p>
+                  <p className="text-gray-400">
+                    {product.material || "100% Cotton"}
+                  </p>
                 </div>
                 <div>
                   <h4 className="font-medium mb-1">Care</h4>
-                  <p className="text-gray-400">{product.care || "Machine wash cold"}</p>
+                  <p className="text-gray-400">
+                    {product.care || "Machine wash cold"}
+                  </p>
                 </div>
                 <div>
                   <h4 className="font-medium mb-1">SKU</h4>
@@ -205,7 +227,7 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({ product, onClose, o
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductQuickView
+export default ProductQuickView;

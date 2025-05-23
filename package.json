@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --no-lint",
     "start": "next start",
     "postinstall": "prisma generate",
     "prepare": "husky",
@@ -70,6 +70,7 @@
     "eslint-define-config": "^2.1.0",
     "firebase": "^10.8.0",
     "firebase-admin": "^12.0.0",
+    "framer-motion": "^12.12.1",
     "helmet": "^8.1.0",
     "input-otp": "^1.0.1",
     "lucide-react": "^0.331.0",

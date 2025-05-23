@@ -1,40 +1,41 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { useToast } from "../../../components/ui/use-toast"
-import Button from "../../../components/Button"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useToast } from "@/components/ui/use-toast";
+import Button from "@/components/Button";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const { toast } = useToast()
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
       // Add your password reset logic here
       toast({
         title: "Success",
-        description: "Password reset instructions have been sent to your email.",
-      })
-      router.push("/auth/login")
+        description:
+          "Password reset instructions have been sent to your email.",
+      });
+      router.push("/auth/login");
     } catch (error) {
       // Log error in development environment
-      console.error(error)
+      console.error(error);
       toast({
         title: "Error",
         description: "Failed to send reset instructions. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
@@ -44,8 +45,8 @@ export default function ForgotPasswordPage() {
             Reset your password
           </h2>
           <p className="mt-2 text-center text-sm text-gray-400">
-            Enter your email address and we'll send you instructions to reset your
-            password.
+            Enter your email address and we'll send you instructions to reset
+            your password.
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -79,7 +80,8 @@ export default function ForgotPasswordPage() {
 
           <div className="text-center">
             <p className="text-sm text-gray-400">
-              Don&apos;t worry, we&apos;ll send you a link to reset your password.
+              Don&apos;t worry, we&apos;ll send you a link to reset your
+              password.
               <Link
                 href="/auth/login"
                 className="font-medium text-[#C1272D] hover:text-[#FFD700]"
@@ -91,5 +93,5 @@ export default function ForgotPasswordPage() {
         </form>
       </div>
     </div>
-  )
+  );
 }

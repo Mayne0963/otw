@@ -1,15 +1,15 @@
-import Head from "next/head"
-import { env } from "../../lib/env"
+import Head from "next/head";
+import { env } from "../../lib/env";
 
 interface MetaTagsProps {
-  title?: string
-  description?: string
-  keywords?: string[]
-  ogImage?: string
-  ogType?: "website" | "article" | "profile"
-  twitterCard?: "summary" | "summary_large_image" | "app" | "player"
-  canonicalUrl?: string
-  noIndex?: boolean
+  title?: string;
+  description?: string;
+  keywords?: string[];
+  ogImage?: string;
+  ogType?: "website" | "article" | "profile";
+  twitterCard?: "summary" | "summary_large_image" | "app" | "player";
+  canonicalUrl?: string;
+  noIndex?: boolean;
 }
 
 export function MetaTags({
@@ -30,8 +30,10 @@ export function MetaTags({
   canonicalUrl,
   noIndex = false,
 }: MetaTagsProps) {
-  const fullTitle = title.includes("OTW") ? title : `${title} | OTW - On The Way`
-  const fullCanonicalUrl = canonicalUrl || env.WEBSITE_URL
+  const fullTitle = title.includes("OTW")
+    ? title
+    : `${title} | OTW - On The Way`;
+  const fullCanonicalUrl = canonicalUrl || env.WEBSITE_URL;
 
   return (
     <Head>
@@ -65,11 +67,14 @@ export function MetaTags({
       {/* Additional Meta Tags */}
       <meta name="application-name" content="OTW" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+      <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="black-translucent"
+      />
       <meta name="apple-mobile-web-app-title" content="OTW" />
       <meta name="format-detection" content="telephone=no" />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="theme-color" content="#c22126" />
     </Head>
-  )
+  );
 }

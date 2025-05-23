@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, type MouseEvent } from "react"
+import { useState, type MouseEvent } from "react";
 import {
   AppBar,
   Box,
@@ -11,10 +11,10 @@ import {
   Container,
   Button,
   MenuItem,
-} from "@mui/material"
-import MenuIcon from "@mui/icons-material/Menu"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const pages = [
   { name: "Home", path: "/" },
@@ -25,19 +25,19 @@ const pages = [
   { name: "Partners", path: "/partners" },
   { name: "Volunteers", path: "/volunteers" },
   { name: "Hall of Hustle", path: "/hall-of-hustle" },
-]
+];
 
 export default function Navigation() {
-  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
-  const pathname = usePathname()
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const pathname = usePathname();
 
   const handleOpenNavMenu = (event: MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget)
-  }
+    setAnchorElNav(event.currentTarget);
+  };
 
   const handleCloseNavMenu = () => {
-    setAnchorElNav(null)
-  }
+    setAnchorElNav(null);
+  };
 
   return (
     <AppBar
@@ -97,7 +97,10 @@ export default function Navigation() {
             >
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                  <Link href={page.path} style={{ textDecoration: "none", color: "inherit" }}>
+                  <Link
+                    href={page.path}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
                     <Typography textAlign="center">{page.name}</Typography>
                   </Link>
                 </MenuItem>
@@ -124,7 +127,14 @@ export default function Navigation() {
           </Typography>
 
           {/* Desktop menu */}
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" }, justifyContent: "center", gap: 2 }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "center",
+              gap: 2,
+            }}
+          >
             {pages.map((page) => (
               <Button
                 key={page.name}
@@ -158,7 +168,7 @@ export default function Navigation() {
           {/* Auth buttons */}
           <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
             <Button
-              variant="outline"
+              variant="outlined"
               className="hover:bg-otw-gold/20 transition-colors"
               component={Link}
               href="/signin"
@@ -166,7 +176,7 @@ export default function Navigation() {
               Sign In
             </Button>
             <Button
-              variant="primary"
+              variant="contained"
               className="hover:bg-otw-gold-dark transition-colors"
               component={Link}
               href="/signup"
@@ -177,5 +187,5 @@ export default function Navigation() {
         </Toolbar>
       </Container>
     </AppBar>
-  )
+  );
 }

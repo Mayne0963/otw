@@ -1,38 +1,47 @@
 "use client";
-import React, { useEffect, useState } from "react"
-import type { Location } from "../../types/location"
-import { FaMapMarkerAlt, FaDirections, FaPhone, FaInfoCircle } from "react-icons/fa"
+import React, { useEffect, useState } from "react";
+import type { Location } from "../../types/location";
+import {
+  FaMapMarkerAlt,
+  FaDirections,
+  FaPhone,
+  FaInfoCircle,
+} from "react-icons/fa";
 
 interface LocationMapProps {
-  locations: Location[]
-  center: { lat: number; lng: number }
-  zoom: number
-  selectedLocation: Location | null
-  onMarkerClick: (location: Location) => void
+  locations: Location[];
+  center: { lat: number; lng: number };
+  zoom: number;
+  selectedLocation: Location | null;
+  onMarkerClick: (location: Location) => void;
 }
 
-const LocationMap: React.FC<LocationMapProps> = ({ locations, selectedLocation, onMarkerClick }) => {
-  const [isLoading, setIsLoading] = useState(true)
-  const [mapAvailable, setMapAvailable] = useState(false)
+const LocationMap: React.FC<LocationMapProps> = ({
+  locations,
+  selectedLocation,
+  onMarkerClick,
+}) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [mapAvailable, setMapAvailable] = useState(false);
 
   useEffect(() => {
     interface MapAvailabilityResponse {
-  hasApiKey: boolean;
-}
+      hasApiKey: boolean;
+    }
 
-const checkMapAvailability = async () => {
+    const checkMapAvailability = async () => {
       try {
         // Check if maps are available without exposing API key
         const response = await fetch("/api/maps");
-        const data = await response.json() as MapAvailabilityResponse;
+        const data = (await response.json()) as MapAvailabilityResponse;
         setMapAvailable(data.hasApiKey);
       } catch (error) {
-        console.error("Error checking map availability:", error)
-        setMapAvailable(false)
+        console.error("Error checking map availability:", error);
+        setMapAvailable(false);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
     void checkMapAvailability();
   }, []);
@@ -48,7 +57,7 @@ const checkMapAvailability = async () => {
           <h3 className="text-xl font-bold mb-2">Loading Locations...</h3>
         </div>
       </div>
-    )
+    );
   }
 
   // Always use the location list view - no more Google Maps integration
@@ -59,7 +68,11 @@ const checkMapAvailability = async () => {
           <FaMapMarkerAlt />
         </div>
         <h3 className="text-xl font-bold mb-2">Our Locations</h3>
-        {!mapAvailable && <p className="text-gray-400 mb-4">Find a Broski&apos;s Kitchen near you</p>}
+        {!mapAvailable && (
+          <p className="text-gray-400 mb-4">
+            Find a Broski&apos;s Kitchen near you
+          </p>
+        )}
       </div>
 
       <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
@@ -73,7 +86,7 @@ const checkMapAvailability = async () => {
             }`}
             onClick={() => onMarkerClick(location)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
+              if (e.key === "Enter" || e.key === " ") {
                 onMarkerClick(location);
               }
             }}
@@ -89,7 +102,10 @@ const checkMapAvailability = async () => {
 
             <div className="mt-3 grid grid-cols-2 gap-2">
               {location.hours.map((hour, idx) => (
-                <div key={idx} className="flex justify-between text-gray-400 text-xs">
+                <div
+                  key={idx}
+                  className="flex justify-between text-gray-400 text-xs"
+                >
                   <span className="font-medium">{hour.day}:</span>
                   <span>{hour.hours}</span>
                 </div>
@@ -98,7 +114,10 @@ const checkMapAvailability = async () => {
 
             <div className="mt-4 flex flex-wrap gap-2">
               {location.features.map((feature, index) => (
-                <span key={index} className="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
+                <span
+                  key={index}
+                  className="inline-block bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs"
+                >
                   {feature}
                 </span>
               ))}
@@ -127,8 +146,8 @@ const checkMapAvailability = async () => {
 
               <button
                 onClick={(e) => {
-                  e.stopPropagation()
-                  onMarkerClick(location)
+                  e.stopPropagation();
+                  onMarkerClick(location);
                 }}
                 className="flex items-center text-gold-foil hover:text-gold-foil/80 text-sm"
                 aria-label={`View details for ${location.name}`}
@@ -140,7 +159,7 @@ const checkMapAvailability = async () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default LocationMap
+export default LocationMap;

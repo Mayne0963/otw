@@ -3,7 +3,7 @@ export interface User {
   email: string;
   displayName: string;
   photoURL?: string;
-  tier?: 'free' | 'silver' | 'gold' | 'platinum';
+  tier?: "free" | "silver" | "gold" | "platinum";
   tierExpiryDate?: Date;
   volunteerHours?: number;
   createdAt: Date;
@@ -13,10 +13,10 @@ export interface User {
 export interface TierMembership {
   id: string;
   userId: string;
-  tier: 'silver' | 'gold' | 'platinum';
+  tier: "silver" | "gold" | "platinum";
   stripeCustomerId: string;
   stripeSubscriptionId: string;
-  status: 'active' | 'canceled' | 'past_due';
+  status: "active" | "canceled" | "past_due";
   startDate: Date;
   endDate: Date;
   createdAt: Date;
@@ -42,8 +42,8 @@ export interface Volunteer {
 export interface Tracking {
   id: string;
   userId: string;
-  type: 'delivery' | 'service' | 'volunteer';
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  type: "delivery" | "service" | "volunteer";
+  status: "pending" | "in_progress" | "completed" | "cancelled";
   location: {
     lat: number;
     lng: number;
@@ -58,4 +58,4 @@ export interface Tracking {
   actualArrival?: Date;
   createdAt: Date;
   updatedAt: Date;
-} 
+}

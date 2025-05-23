@@ -1,6 +1,6 @@
-import { Card } from "../ui/card"
-import { Button } from "../ui/button"
-import { Clock, MapPin, DollarSign, Star } from "lucide-react"
+import { Card } from "../ui/card";
+import { Button } from "../ui/button";
+import { Clock, MapPin, DollarSign, Star } from "lucide-react";
 
 const mockOrders = [
   {
@@ -24,22 +24,28 @@ const mockOrders = [
     rating: 4,
   },
   // Add more mock orders as needed
-]
+];
 
 export default function OrderHistory() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-6 bg-gray-900">
-          <h3 className="text-lg font-semibold text-otw-gold mb-2">Total Orders</h3>
+          <h3 className="text-lg font-semibold text-otw-gold mb-2">
+            Total Orders
+          </h3>
           <p className="text-3xl font-bold">24</p>
         </Card>
         <Card className="p-6 bg-gray-900">
-          <h3 className="text-lg font-semibold text-otw-gold mb-2">Total Tips</h3>
+          <h3 className="text-lg font-semibold text-otw-gold mb-2">
+            Total Tips
+          </h3>
           <p className="text-3xl font-bold">$156</p>
         </Card>
         <Card className="p-6 bg-gray-900">
-          <h3 className="text-lg font-semibold text-otw-gold mb-2">Avg Rating</h3>
+          <h3 className="text-lg font-semibold text-otw-gold mb-2">
+            Avg Rating
+          </h3>
           <p className="text-3xl font-bold">4.8</p>
         </Card>
       </div>
@@ -69,7 +75,9 @@ export default function OrderHistory() {
                 <div className="flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-otw-gold" />
                   <span className="font-semibold">${order.amount}</span>
-                  <span className="text-sm text-gray-400">(+${order.tip} tip)</span>
+                  <span className="text-sm text-gray-400">
+                    (+${order.tip} tip)
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Star className="w-4 h-4 text-otw-gold" />
@@ -84,5 +92,5 @@ export default function OrderHistory() {
         ))}
       </div>
     </div>
-  )
+  );
 }

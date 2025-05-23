@@ -1,4 +1,4 @@
-import type { Restaurant } from "../types/restaurant"
+import type { Restaurant } from "../types/restaurant";
 
 export const restaurantCategories = [
   { id: "all", name: "All" },
@@ -10,13 +10,14 @@ export const restaurantCategories = [
   { id: "healthy", name: "Healthy" },
   { id: "desserts", name: "Desserts" },
   { id: "breakfast", name: "Breakfast" },
-]
+];
 
 export const restaurants: Restaurant[] = [
   {
     id: "broskis-kitchen",
     name: "Broski's Kitchen",
-    description: "Luxury street gourmet with premium ingredients and innovative techniques.",
+    description:
+      "Luxury street gourmet with premium ingredients and innovative techniques.",
     image: "/assets/images/restaurants/broskis.jpg",
     logo: "/assets/logos/broskis-logo.png",
     categories: ["american"],
@@ -36,7 +37,8 @@ export const restaurants: Restaurant[] = [
   {
     id: "fort-wayne-pizza",
     name: "Fort Wayne Pizza Co.",
-    description: "Authentic hand-tossed pizzas with locally sourced ingredients.",
+    description:
+      "Authentic hand-tossed pizzas with locally sourced ingredients.",
     image: "/assets/restaurants/pizza.jpg",
     logo: "/assets/restaurants/pizza-logo.png",
     categories: ["pizza", "italian"],
@@ -55,7 +57,8 @@ export const restaurants: Restaurant[] = [
   {
     id: "taqueria-jalisco",
     name: "Taqueria Jalisco",
-    description: "Authentic Mexican street food with homemade tortillas and salsas.",
+    description:
+      "Authentic Mexican street food with homemade tortillas and salsas.",
     image: "/assets/restaurants/mexican.jpg",
     logo: "/assets/mexican-logo.png",
     categories: ["mexican"],
@@ -93,7 +96,8 @@ export const restaurants: Restaurant[] = [
   {
     id: "mama-mias",
     name: "Mama Mia's Trattoria",
-    description: "Family-owned Italian restaurant serving traditional recipes since 1985.",
+    description:
+      "Family-owned Italian restaurant serving traditional recipes since 1985.",
     image: "/assets/restaurants/italian.jpg",
     logo: "/assets/logos/italian-logo.png",
     categories: ["italian"],
@@ -107,12 +111,19 @@ export const restaurants: Restaurant[] = [
     isPartner: true,
     tags: ["Top Rated", "OTW Partner"],
     dietaryOptions: ["vegetarian"],
-    features: ["takeout", "delivery", "reservations", "alcohol", "family_friendly"],
+    features: [
+      "takeout",
+      "delivery",
+      "reservations",
+      "alcohol",
+      "family_friendly",
+    ],
   },
   {
     id: "green-bowl",
     name: "Green Bowl",
-    description: "Fresh salads, grain bowls, and smoothies made with organic ingredients.",
+    description:
+      "Fresh salads, grain bowls, and smoothies made with organic ingredients.",
     image: "/assets/restaurants/healthy.jpg",
     logo: "/assets/logos/healthy-logo.png",
     categories: ["healthy"],
@@ -125,13 +136,20 @@ export const restaurants: Restaurant[] = [
     distance: 5.3,
     isPartner: false,
     tags: ["Healthy", "Vegan Options"],
-    dietaryOptions: ["vegetarian", "vegan", "gluten_free", "dairy_free", "nut_free"],
+    dietaryOptions: [
+      "vegetarian",
+      "vegan",
+      "gluten_free",
+      "dairy_free",
+      "nut_free",
+    ],
     features: ["takeout", "delivery"],
   },
   {
     id: "sweet-tooth",
     name: "Sweet Tooth Bakery",
-    description: "Artisanal desserts, pastries, and custom cakes for any occasion.",
+    description:
+      "Artisanal desserts, pastries, and custom cakes for any occasion.",
     image: "/assets/restaurants/bakery.jpg",
     logo: "/assets/logos/bakery-logo.png",
     categories: ["desserts"],
@@ -166,7 +184,7 @@ export const restaurants: Restaurant[] = [
     dietaryOptions: ["vegetarian", "gluten_free"],
     features: ["takeout", "delivery", "family_friendly"],
   },
-]
+];
 
 // Generate placeholder images for restaurants
 export const restaurantImages = {
@@ -174,20 +192,30 @@ export const restaurantImages = {
   pizza: "/menu-1.jpg",
   mexican: "/lobster-tacos.jpg",
   korean: "/korean-wings.jpg",
-  italian: "/placeholder.svg?height=300&width=600&query=traditional italian trattoria with rustic decor",
+  italian:
+    "/placeholder.svg?height=300&width=600&query=traditional italian trattoria with rustic decor",
   healthy: "/vegan-burger.jpg",
   bakery: "/golden-cheesecake.jpg",
-  breakfast: "/placeholder.svg?height=300&width=600&query=bright breakfast cafe with coffee bar",
-}
+  breakfast:
+    "/placeholder.svg?height=300&width=600&query=bright breakfast cafe with coffee bar",
+};
 
 // Generate placeholder logos for restaurants
 export const restaurantLogos = {
-  broskis: "/placeholder.svg?height=100&width=100&query=luxury BK logo gold and black",
-  pizza: "/placeholder.svg?height=100&width=100&query=pizza logo with red and green",
-  mexican: "/placeholder.svg?height=100&width=100&query=mexican restaurant logo colorful",
-  korean: "/placeholder.svg?height=100&width=100&query=korean restaurant logo minimalist",
-  italian: "/placeholder.svg?height=100&width=100&query=italian restaurant logo with flag colors",
-  healthy: "/placeholder.svg?height=100&width=100&query=green healthy food logo with leaf",
-  bakery: "/placeholder.svg?height=100&width=100&query=bakery logo with cupcake",
-  breakfast: "/placeholder.svg?height=100&width=100&query=breakfast cafe logo with sun and coffee",
-}
+  broskis:
+    "/placeholder.svg?height=100&width=100&query=luxury BK logo gold and black",
+  pizza:
+    "/placeholder.svg?height=100&width=100&query=pizza logo with red and green",
+  mexican:
+    "/placeholder.svg?height=100&width=100&query=mexican restaurant logo colorful",
+  korean:
+    "/placeholder.svg?height=100&width=100&query=korean restaurant logo minimalist",
+  italian:
+    "/placeholder.svg?height=100&width=100&query=italian restaurant logo with flag colors",
+  healthy:
+    "/placeholder.svg?height=100&width=100&query=green healthy food logo with leaf",
+  bakery:
+    "/placeholder.svg?height=100&width=100&query=bakery logo with cupcake",
+  breakfast:
+    "/placeholder.svg?height=100&width=100&query=breakfast cafe logo with sun and coffee",
+};

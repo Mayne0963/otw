@@ -1,103 +1,134 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { auth, firestore } from '../../../../../lib/firebaseAdmin'
-import { handleAPIError, apiErrors } from '../../../../../lib/utils/apiErrors'
-import { z } from 'zod'
-import { Query, DocumentData } from 'firebase-admin/firestore'
+import { NextRequest, NextResponse } from "next/server";
+import { auth, firestore } from "../../../../../lib/firebaseAdmin";
+import { handleAPIError, apiErrors } from "../../../../../lib/utils/apiErrors";
+import { z } from "zod";
+import { Query, DocumentData } from "firebase-admin/firestore";
 
 // Search query validation schema
 const searchParamsSchema = z.object({
   q: z.string().optional(),
-  type: z.enum(['classic', 'infused']).optional(),
-  source: z.enum(['broskis', 'partner']).optional(),
+  type: z.enum(["classic", "infused"]).optional(),
+  source: z.enum(["broskis", "partner"]).optional(),
   minPrice: z.number().min(0).optional(),
   maxPrice: z.number().min(0).optional(),
   limit: z.number().min(1).max(100).default(50),
-  page: z.number().min(1).default(1)
-})
+  page: z.number().min(1).default(1),
+});
 
 async function isAdmin(userId: string) {
-  const userSnap = await firestore.collection('users').doc(userId).get();
-  return userSnap.exists && userSnap.data()?.role === 'admin';
+  const userSnap = await firestore.collection("users").doc(userId).get();
+  return userSnap.exists && userSnap.data()?.role === "admin";
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const authHeader = req.headers.get('authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
-      throw apiErrors.unauthorized()
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      throw apiErrors.unauthorized();
     }
 
-    const idTokenParts = authHeader.split(' ')
+    const idTokenParts = authHeader.split(" ");
     if (idTokenParts.length < 2 || !idTokenParts[1]) {
-        throw apiErrors.unauthorized('Malformed token');
+      throw apiErrors.unauthorized("Malformed token");
     }
     const idToken = idTokenParts[1];
-    const decoded = await auth.verifyIdToken(idToken)
-    const userId = decoded.uid
+    const decoded = await auth.verifyIdToken(idToken);
+    const userId = decoded.uid;
 
     if (!userId) {
-        throw apiErrors.unauthorized('Invalid token: UID missing');
+      throw apiErrors.unauthorized("Invalid token: UID missing");
     }
     if (!(await isAdmin(userId))) {
-      throw apiErrors.forbidden('Only admins can search menu items')
+      throw apiErrors.forbidden("Only admins can search menu items");
     }
 
     // Parse and validate query parameters
-    const url = new URL(req.url)
+    const url = new URL(req.url);
     const rawParams = {
-      q: url.searchParams.get('q'),
-      type: url.searchParams.get('type'),
-      source: url.searchParams.get('source'),
-      minPrice: url.searchParams.get('minPrice') ? parseFloat(url.searchParams.get('minPrice')?.toString() || '') : undefined,
-      maxPrice: url.searchParams.get('maxPrice') ? parseFloat(url.searchParams.get('maxPrice')?.toString() || '') : undefined,
-      limit: url.searchParams.get('limit') ? parseInt(url.searchParams.get('limit')?.toString() || '50') : 50,
-      page: url.searchParams.get('page') ? parseInt(url.searchParams.get('page')?.toString() || '1') : 1
-    }
+      q: url.searchParams.get("q"),
+      type: url.searchParams.get("type"),
+      source: url.searchParams.get("source"),
+      minPrice: url.searchParams.get("minPrice")
+        ? parseFloat(url.searchParams.get("minPrice")?.toString() || "")
+        : undefined,
+      maxPrice: url.searchParams.get("maxPrice")
+        ? parseFloat(url.searchParams.get("maxPrice")?.toString() || "")
+        : undefined,
+      limit: url.searchParams.get("limit")
+        ? parseInt(url.searchParams.get("limit")?.toString() || "50")
+        : 50,
+      page: url.searchParams.get("page")
+        ? parseInt(url.searchParams.get("page")?.toString() || "1")
+        : 1,
+    };
 
-    const params = searchParamsSchema.parse(rawParams)
-    
-    if (params.minPrice !== undefined && params.maxPrice !== undefined && params.minPrice > params.maxPrice) {
-      throw apiErrors.badRequest('minPrice cannot be greater than maxPrice')
+    const params = searchParamsSchema.parse(rawParams);
+
+    if (
+      params.minPrice !== undefined &&
+      params.maxPrice !== undefined &&
+      params.minPrice > params.maxPrice
+    ) {
+      throw apiErrors.badRequest("minPrice cannot be greater than maxPrice");
     }
 
     // Build base query
-    let baseQuery: Query<DocumentData> = firestore.collection('menuItems')
-    if (params.type) baseQuery = baseQuery.where('type', '==', params.type) as Query<DocumentData>
-    if (params.source) baseQuery = baseQuery.where('source', '==', params.source) as Query<DocumentData>
-    
+    let baseQuery: Query<DocumentData> = firestore.collection("menuItems");
+    if (params.type)
+      baseQuery = baseQuery.where(
+        "type",
+        "==",
+        params.type,
+      ) as Query<DocumentData>;
+    if (params.source)
+      baseQuery = baseQuery.where(
+        "source",
+        "==",
+        params.source,
+      ) as Query<DocumentData>;
+
     // Execute query
-    const snapshot = await baseQuery.get()
-    
+    const snapshot = await baseQuery.get();
+
     // Filter results in memory for text search and price range
     const results = snapshot.docs
-      .map(doc => ({ id: doc.id, ...doc.data() }) as { id: string; name: string; description?: string; price: number })
-      .filter(item => {
-        const matchesSearch = !params.q || 
-          item.name.toLowerCase().includes(params.q.toLowerCase()) || 
-          item.description?.toLowerCase().includes(params.q.toLowerCase())
-        const matchesPrice = 
+      .map(
+        (doc) =>
+          ({ id: doc.id, ...doc.data() }) as {
+            id: string;
+            name: string;
+            description?: string;
+            price: number;
+          },
+      )
+      .filter((item) => {
+        const matchesSearch =
+          !params.q ||
+          item.name.toLowerCase().includes(params.q.toLowerCase()) ||
+          item.description?.toLowerCase().includes(params.q.toLowerCase());
+        const matchesPrice =
           (params.minPrice === undefined || item.price >= params.minPrice) &&
-          (params.maxPrice === undefined || item.price <= params.maxPrice)
-        return matchesSearch && matchesPrice
-      })
+          (params.maxPrice === undefined || item.price <= params.maxPrice);
+        return matchesSearch && matchesPrice;
+      });
 
     // Sort results by relevance if there's a search query
     if (params.q) {
-      const query = params.q.toLowerCase()
+      const query = params.q.toLowerCase();
       results.sort((a, b) => {
-        const aNameMatch = a.name.toLowerCase().includes(query)
-        const bNameMatch = b.name.toLowerCase().includes(query)
-        if (aNameMatch && !bNameMatch) return -1
-        if (!aNameMatch && bNameMatch) return 1
-        return 0
-      })
+        const aNameMatch = a.name.toLowerCase().includes(query);
+        const bNameMatch = b.name.toLowerCase().includes(query);
+        if (aNameMatch && !bNameMatch) return -1;
+        if (!aNameMatch && bNameMatch) return 1;
+        return 0;
+      });
     }
 
     // Apply pagination
-    const total = results.length
-    const startIndex = (params.page - 1) * params.limit
-    const endIndex = startIndex + params.limit
-    const paginatedResults = results.slice(startIndex, endIndex)
+    const total = results.length;
+    const startIndex = (params.page - 1) * params.limit;
+    const endIndex = startIndex + params.limit;
+    const paginatedResults = results.slice(startIndex, endIndex);
 
     return NextResponse.json({
       items: paginatedResults,
@@ -105,7 +136,7 @@ export async function GET(req: NextRequest) {
         total,
         page: params.page,
         limit: params.limit,
-        totalPages: Math.ceil(total / params.limit)
+        totalPages: Math.ceil(total / params.limit),
       },
       filters: {
         query: params.q,
@@ -113,11 +144,11 @@ export async function GET(req: NextRequest) {
         source: params.source,
         priceRange: {
           min: params.minPrice,
-          max: params.maxPrice
-        }
-      }
-    })
-  } catch (err) {
-    return handleAPIError(err)
+          max: params.maxPrice,
+        },
+      },
+    });
+  } catch (err: unknown) {
+    return handleAPIError(err);
   }
 }

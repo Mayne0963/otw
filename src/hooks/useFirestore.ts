@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   collection,
   doc,
@@ -13,8 +13,8 @@ import {
   onSnapshot,
   DocumentData,
   QueryConstraint,
-} from 'firebase/firestore';
-import { db } from '../lib/firebase';
+} from "firebase/firestore";
+import { db } from "../lib/firebase";
 
 export function useFirestore<T extends DocumentData>(collectionName: string) {
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,9 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
       setLoading(true);
       const docRef = doc(db, collectionName, id);
       const docSnap = await getDoc(docRef);
-      return docSnap.exists() ? { id: docSnap.id, ...docSnap.data() } as T : null;
+      return docSnap.exists()
+        ? ({ id: docSnap.id, ...docSnap.data() } as T)
+        : null;
     } catch (err) {
       setError(err as Error);
       return null;
@@ -41,9 +43,9 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
       setLoading(true);
       const q = query(collection(db, collectionName), ...constraints);
       const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
+      return querySnapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       })) as T[];
     } catch (err) {
       setError(err as Error);
@@ -58,10 +60,14 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
     try {
       setLoading(true);
       const docRef = doc(db, collectionName, id);
-      await setDoc(docRef, {
-        ...data,
-        updatedAt: new Date(),
-      }, { merge: true });
+      await setDoc(
+        docRef,
+        {
+          ...data,
+          updatedAt: new Date(),
+        },
+        { merge: true },
+      );
       return true;
     } catch (err) {
       setError(err as Error);
@@ -105,23 +111,26 @@ export function useFirestore<T extends DocumentData>(collectionName: string) {
   };
 
   // Subscribe to a document
-  const subscribeToDocument = (id: string, callback: (data: T | null) => void) => {
+  const subscribeToDocument = (
+    id: string,
+    callback: (data: T | null) => void,
+  ) => {
     const docRef = doc(db, collectionName, id);
     return onSnapshot(docRef, (doc) => {
-      callback(doc.exists() ? { id: doc.id, ...doc.data() } as T : null);
+      callback(doc.exists() ? ({ id: doc.id, ...doc.data() } as T) : null);
     });
   };
 
   // Subscribe to a collection
   const subscribeToCollection = (
     callback: (data: T[]) => void,
-    constraints: QueryConstraint[] = []
+    constraints: QueryConstraint[] = [],
   ) => {
     const q = query(collection(db, collectionName), ...constraints);
     return onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
+      const data = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       })) as T[];
       callback(data);
     });

@@ -1,14 +1,22 @@
-"use client"
+"use client";
 
-import Link from "next/link"
+import Link from "next/link";
 
-export default function ServiceCard({ icon, title, description, linkText, linkHref }) {
+export default function ServiceCard({
+  icon,
+  title,
+  description,
+  linkText,
+  linkHref,
+}) {
   return (
     <div className="service-card group">
       <div className="h-16 w-16 bg-primary-red rounded-full flex items-center justify-center mb-6 transform group-hover:scale-110 transition-all duration-300">
         {icon}
       </div>
-      <h3 className="text-2xl font-bold mb-4 group-hover:text-accent-gold transition-colors duration-300">{title}</h3>
+      <h3 className="text-2xl font-bold mb-4 group-hover:text-accent-gold transition-colors duration-300">
+        {title}
+      </h3>
       <p className="text-gray-300 mb-6">{description}</p>
       <Link
         href={linkHref}
@@ -21,9 +29,14 @@ export default function ServiceCard({ icon, title, description, linkText, linkHr
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M14 5l7 7m0 0l-7 7m7-7H3"
+          ></path>
         </svg>
       </Link>
     </div>
-  )
+  );
 }

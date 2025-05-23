@@ -1,9 +1,9 @@
-import RestaurantCard from "@/components/restaurant/RestaurantCard"
-import { getFeaturedRestaurants } from "@/lib/restaurants"
+import RestaurantCard from "@/components/restaurant/RestaurantCard";
+import { getFeaturedRestaurants } from "@/lib/restaurants";
 
 export default async function RestaurantPageContent() {
-  const restaurants = await getFeaturedRestaurants()
-  
+  const restaurants = await getFeaturedRestaurants();
+
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">Featured Restaurants</h1>
@@ -13,5 +13,5 @@ export default async function RestaurantPageContent() {
         ))}
       </div>
     </div>
-  )
+  );
 }

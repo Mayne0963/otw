@@ -19,7 +19,8 @@ export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [filteredProducts, setFilteredProducts] = useState(products)
   const [showFilters, setShowFilters] = useState(false)
-  const [priceRange, setPriceRange] = useState([0, 100])
+  // Ensure priceRange is always a tuple of two numbers
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100])
   const [sortOption, setSortOption] = useState("featured")
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [showQuickView, setShowQuickView] = useState(false)
@@ -42,7 +43,11 @@ export default function ShopPage() {
     }
 
     // Filter by price range
-    filtered = filtered.filter((product) => product.price >= priceRange[0] && product.price <= priceRange[1])
+    filtered = filtered.filter((product) => {
+      // Use destructuring with default values to ensure type safety
+      const [minPrice = 0, maxPrice = 100] = priceRange;
+      return product.price >= minPrice && product.price <= maxPrice;
+    })
 
     // Sort products
     switch (sortOption) {
@@ -72,7 +77,8 @@ export default function ShopPage() {
       name: product.name,
       price: product.price,
       quantity: quantity,
-      image: product.images[0],
+      image: product.images[0] || "",  // Ensure image is always a string, not undefined
+      customizations: {}, // Provide empty object as default
     })
   }
 
@@ -253,7 +259,7 @@ export default function ShopPage() {
                 onClick={() => {
                   setSelectedCategory("all")
                   setSearchQuery("")
-                  setPriceRange([0, 100])
+                  setPriceRange([0, 100] as [number, number])
                   setSortOption("featured")
                 }}
               >

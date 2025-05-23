@@ -1,21 +1,26 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Search, X, ChevronDown, ChevronUp } from "lucide-react"
-import type { RestaurantFilters, Category, DietaryOption, RestaurantFeature } from "../../types/restaurant"
-import { Button } from "../ui/button"
-import { Slider } from "../ui/slider"
-import { Badge } from "../ui/badge"
+import { useState } from "react";
+import { Search, X, ChevronDown, ChevronUp } from "lucide-react";
+import type {
+  RestaurantFilters,
+  Category,
+  DietaryOption,
+  RestaurantFeature,
+} from "../../types/restaurant";
+import { Button } from "../ui/button";
+import { Slider } from "../ui/slider";
+import { Badge } from "../ui/badge";
 
 interface AdvancedSearchProps {
-  filters: RestaurantFilters
-  setFilters: (filters: RestaurantFilters) => void
-  categories: Category[]
-  dietaryOptions: DietaryOption[]
-  features: RestaurantFeature[]
-  resetFilters: () => void
+  filters: RestaurantFilters;
+  setFilters: (filters: RestaurantFilters) => void;
+  categories: Category[];
+  dietaryOptions: DietaryOption[];
+  features: RestaurantFeature[];
+  resetFilters: () => void;
 }
 
 export default function AdvancedSearch({
@@ -26,109 +31,115 @@ export default function AdvancedSearch({
   features,
   resetFilters,
 }: AdvancedSearchProps) {
-  const [showAdvanced, setShowAdvanced] = useState(false)
-  const [searchQuery, setSearchQuery] = useState(filters.search)
-  const [activeFiltersCount, setActiveFiltersCount] = useState(0)
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(filters.search);
+  const [activeFiltersCount, setActiveFiltersCount] = useState(0);
 
   // Count active filters for the badge
   const countActiveFilters = (currentFilters: RestaurantFilters) => {
-    let count = 0
-    if (currentFilters.category !== "all") count++
-    if (currentFilters.priceLevel.length > 0) count++
-    if (currentFilters.partnerOnly) count++
-    if (currentFilters.dietaryOptions.length > 0) count++
-    if (currentFilters.deliveryTimeMax !== null) count++
-    if (currentFilters.distance !== null) count++
-    if (currentFilters.features.length > 0) count++
-    return count
-  }
+    let count = 0;
+    if (currentFilters.category !== "all") count++;
+    if (currentFilters.priceLevel.length > 0) count++;
+    if (currentFilters.partnerOnly) count++;
+    if (currentFilters.dietaryOptions.length > 0) count++;
+    if (currentFilters.deliveryTimeMax !== null) count++;
+    if (currentFilters.distance !== null) count++;
+    if (currentFilters.features.length > 0) count++;
+    return count;
+  };
 
   // Handle search submission
   const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setFilters({ ...filters, search: searchQuery })
-    const newCount = countActiveFilters({ ...filters, search: searchQuery })
-    setActiveFiltersCount(newCount)
-  }
+    e.preventDefault();
+    setFilters({ ...filters, search: searchQuery });
+    const newCount = countActiveFilters({ ...filters, search: searchQuery });
+    setActiveFiltersCount(newCount);
+  };
 
   // Handle category change
   const handleCategoryChange = (category: string) => {
-    const newFilters = { ...filters, category }
-    setFilters(newFilters)
-    setActiveFiltersCount(countActiveFilters(newFilters))
-  }
+    const newFilters = { ...filters, category };
+    setFilters(newFilters);
+    setActiveFiltersCount(countActiveFilters(newFilters));
+  };
 
   // Handle price level change
   const handlePriceLevelChange = (level: string) => {
     const newPriceLevels = filters.priceLevel.includes(level)
       ? filters.priceLevel.filter((pl) => pl !== level)
-      : [...filters.priceLevel, level]
+      : [...filters.priceLevel, level];
 
-    const newFilters = { ...filters, priceLevel: newPriceLevels }
-    setFilters(newFilters)
-    setActiveFiltersCount(countActiveFilters(newFilters))
-  }
+    const newFilters = { ...filters, priceLevel: newPriceLevels };
+    setFilters(newFilters);
+    setActiveFiltersCount(countActiveFilters(newFilters));
+  };
 
   // Handle dietary options change
   const handleDietaryChange = (option: string) => {
     const newOptions = filters.dietaryOptions.includes(option)
       ? filters.dietaryOptions.filter((o) => o !== option)
-      : [...filters.dietaryOptions, option]
+      : [...filters.dietaryOptions, option];
 
-    const newFilters = { ...filters, dietaryOptions: newOptions }
-    setFilters(newFilters)
-    setActiveFiltersCount(countActiveFilters(newFilters))
-  }
+    const newFilters = { ...filters, dietaryOptions: newOptions };
+    setFilters(newFilters);
+    setActiveFiltersCount(countActiveFilters(newFilters));
+  };
 
   // Handle features change
   const handleFeatureChange = (feature: string) => {
     const newFeatures = filters.features.includes(feature)
       ? filters.features.filter((f) => f !== feature)
-      : [...filters.features, feature]
+      : [...filters.features, feature];
 
-    const newFilters = { ...filters, features: newFeatures }
-    setFilters(newFilters)
-    setActiveFiltersCount(countActiveFilters(newFilters))
-  }
+    const newFilters = { ...filters, features: newFeatures };
+    setFilters(newFilters);
+    setActiveFiltersCount(countActiveFilters(newFilters));
+  };
 
   // Handle delivery time change
   const handleDeliveryTimeChange = (value: number[]) => {
-    const newFilters = { ...filters, deliveryTimeMax: value[0] }
-    setFilters(newFilters)
-    setActiveFiltersCount(countActiveFilters(newFilters))
-  }
+    const newFilters = { ...filters, deliveryTimeMax: value[0] };
+    setFilters(newFilters);
+    setActiveFiltersCount(countActiveFilters(newFilters));
+  };
 
   // Handle distance change
   const handleDistanceChange = (value: number[]) => {
-    const newFilters = { ...filters, distance: value[0] }
-    setFilters(newFilters)
-    setActiveFiltersCount(countActiveFilters(newFilters))
-  }
+    const newFilters = { ...filters, distance: value[0] };
+    setFilters(newFilters);
+    setActiveFiltersCount(countActiveFilters(newFilters));
+  };
 
   // Handle partner only change
   const handlePartnerOnlyChange = () => {
-    const newFilters = { ...filters, partnerOnly: !filters.partnerOnly }
-    setFilters(newFilters)
-    setActiveFiltersCount(countActiveFilters(newFilters))
-  }
+    const newFilters = { ...filters, partnerOnly: !filters.partnerOnly };
+    setFilters(newFilters);
+    setActiveFiltersCount(countActiveFilters(newFilters));
+  };
 
   // Handle sort change
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilters({ ...filters, sortBy: e.target.value as RestaurantFilters["sortBy"] })
-  }
+    setFilters({
+      ...filters,
+      sortBy: e.target.value as RestaurantFilters["sortBy"],
+    });
+  };
 
   // Handle reset
   const handleReset = () => {
-    resetFilters()
-    setSearchQuery("")
-    setActiveFiltersCount(0)
-  }
+    resetFilters();
+    setSearchQuery("");
+    setActiveFiltersCount(0);
+  };
 
   return (
     <div className="w-full bg-[#111111] border-b border-[#333333] sticky top-20 z-30">
       <div className="container mx-auto px-4 py-4">
         {/* Main Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="relative flex items-center mb-4">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="relative flex items-center mb-4"
+        >
           <div className="relative flex-grow">
             <input
               type="text"
@@ -137,21 +148,27 @@ export default function AdvancedSearch({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             {searchQuery && (
               <button
                 type="button"
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                 onClick={() => {
-                  setSearchQuery("")
-                  setFilters({ ...filters, search: "" })
+                  setSearchQuery("");
+                  setFilters({ ...filters, search: "" });
                 }}
               >
                 <X size={18} />
               </button>
             )}
           </div>
-          <Button type="submit" className="ml-2 bg-[#C1272D] hover:bg-[#A01F24] text-white">
+          <Button
+            type="submit"
+            className="ml-2 bg-[#C1272D] hover:bg-[#A01F24] text-white"
+          >
             Search
           </Button>
         </form>
@@ -192,9 +209,15 @@ export default function AdvancedSearch({
               onClick={() => setShowAdvanced(!showAdvanced)}
             >
               More Filters
-              {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              {showAdvanced ? (
+                <ChevronUp size={14} />
+              ) : (
+                <ChevronDown size={14} />
+              )}
               {activeFiltersCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 bg-[#FFD700] text-black text-xs">{activeFiltersCount}</Badge>
+                <Badge className="absolute -top-2 -right-2 bg-[#FFD700] text-black text-xs">
+                  {activeFiltersCount}
+                </Badge>
               )}
             </button>
           </div>
@@ -291,7 +314,9 @@ export default function AdvancedSearch({
                 <div className="flex justify-between mb-2">
                   <h3 className="text-white font-medium">Max Delivery Time</h3>
                   <span className="text-white">
-                    {filters.deliveryTimeMax ? `${filters.deliveryTimeMax} min` : "Any"}
+                    {filters.deliveryTimeMax
+                      ? `${filters.deliveryTimeMax} min`
+                      : "Any"}
                   </span>
                 </div>
                 <Slider
@@ -313,7 +338,9 @@ export default function AdvancedSearch({
               <div>
                 <div className="flex justify-between mb-2">
                   <h3 className="text-white font-medium">Max Distance</h3>
-                  <span className="text-white">{filters.distance ? `${filters.distance} miles` : "Any"}</span>
+                  <span className="text-white">
+                    {filters.distance ? `${filters.distance} miles` : "Any"}
+                  </span>
                 </div>
                 <Slider
                   defaultValue={[filters.distance || 10]}
@@ -344,10 +371,16 @@ export default function AdvancedSearch({
               </label>
 
               <div className="flex gap-4 ml-auto">
-                <button className="text-[#FFD700] hover:underline" onClick={handleReset}>
+                <button
+                  className="text-[#FFD700] hover:underline"
+                  onClick={handleReset}
+                >
                   Reset All Filters
                 </button>
-                <Button className="bg-[#C1272D] hover:bg-[#A01F24] text-white" onClick={() => setShowAdvanced(false)}>
+                <Button
+                  className="bg-[#C1272D] hover:bg-[#A01F24] text-white"
+                  onClick={() => setShowAdvanced(false)}
+                >
                   Apply Filters
                 </Button>
               </div>
@@ -356,5 +389,5 @@ export default function AdvancedSearch({
         )}
       </div>
     </div>
-  )
+  );
 }

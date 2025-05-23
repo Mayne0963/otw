@@ -48,12 +48,14 @@ export async function POST(req: NextRequest) {
             .limit(1)
             .get();
 
-          if (!deliverySnap.empty) {
+          if (!deliverySnap.empty && deliverySnap.docs.length > 0) {
             const deliveryDoc = deliverySnap.docs[0];
-            await updateDeliveryStatus(deliveryDoc.id, 'paid');
+            if (deliveryDoc) {
+              await updateDeliveryStatus(deliveryDoc.id, 'paid');
 
-            // Notify available drivers (implement your notification logic)
-            await notifyDrivers(deliveryDoc.data());
+              // Notify available drivers (implement your notification logic)
+              await notifyDrivers(deliveryDoc.data());
+            }
           }
         }
 
@@ -98,11 +100,13 @@ export async function POST(req: NextRequest) {
             .limit(1)
             .get();
 
-          if (!deliverySnap.empty) {
+          if (!deliverySnap.empty && deliverySnap.docs.length > 0) {
             const deliveryDoc = deliverySnap.docs[0];
-            await updateDeliveryStatus(deliveryDoc.id, 'cancelled', {
-              notes: 'Payment failed',
-            });
+            if (deliveryDoc) {
+              await updateDeliveryStatus(deliveryDoc.id, 'cancelled', {
+                notes: 'Payment failed',
+              });
+            }
           }
         }
         break;

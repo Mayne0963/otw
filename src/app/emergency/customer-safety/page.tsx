@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Box,
@@ -14,15 +14,15 @@ import {
   Alert,
   Paper,
   Button,
-} from "@mui/material"
-import SecurityIcon from "@mui/icons-material/Security"
-import WarningIcon from "@mui/icons-material/Warning"
-import PersonIcon from "@mui/icons-material/Person"
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser"
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar"
-import RestaurantIcon from "@mui/icons-material/Restaurant"
-import StorefrontIcon from "@mui/icons-material/Storefront"
-import Link from "next/link"
+} from "@mui/material";
+import SecurityIcon from "@mui/icons-material/Security";
+import WarningIcon from "@mui/icons-material/Warning";
+import PersonIcon from "@mui/icons-material/Person";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import StorefrontIcon from "@mui/icons-material/Storefront";
+import Link from "next/link";
 
 const safetyGuidelines = [
   {
@@ -58,7 +58,7 @@ const safetyGuidelines = [
       "Regularly review your account activity",
     ],
   },
-]
+];
 
 const serviceSpecificGuidelines = [
   {
@@ -94,7 +94,7 @@ const serviceSpecificGuidelines = [
       "Report any safety concerns immediately",
     ],
   },
-]
+];
 
 const emergencyProcedures = [
   {
@@ -130,7 +130,7 @@ const emergencyProcedures = [
       "Report any unauthorized charges",
     ],
   },
-]
+];
 
 export default function CustomerSafetyPage() {
   return (
@@ -153,8 +153,13 @@ export default function CustomerSafetyPage() {
           >
             Customer Safety Guidelines
           </Typography>
-          <Typography variant="h5" color="text.secondary" sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}>
-            Essential safety information and best practices for using OTW services
+          <Typography
+            variant="h5"
+            color="text.secondary"
+            sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}
+          >
+            Essential safety information and best practices for using OTW
+            services
           </Typography>
         </Box>
 
@@ -168,7 +173,8 @@ export default function CustomerSafetyPage() {
           }}
         >
           <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-            Your safety is our priority. If you feel unsafe at any time, contact OTW support immediately.
+            Your safety is our priority. If you feel unsafe at any time, contact
+            OTW support immediately.
           </Typography>
         </Alert>
 
@@ -293,7 +299,11 @@ export default function CustomerSafetyPage() {
                       {procedure.steps.map((step, index) => (
                         <ListItem key={index} sx={{ px: 0 }}>
                           <ListItemIcon sx={{ minWidth: 40 }}>
-                            <Typography variant="h6" color="error" sx={{ fontWeight: 700 }}>
+                            <Typography
+                              variant="h6"
+                              color="error"
+                              sx={{ fontWeight: 700 }}
+                            >
                               {index + 1}
                             </Typography>
                           </ListItemIcon>
@@ -311,7 +321,8 @@ export default function CustomerSafetyPage() {
         {/* Additional Resources */}
         <Box sx={{ mt: 8, textAlign: "center" }}>
           <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
-            For additional safety resources or to report a safety concern, please visit our{" "}
+            For additional safety resources or to report a safety concern,
+            please visit our{" "}
             <Link href="/help" style={{ color: "inherit" }}>
               Help Center
             </Link>
@@ -329,5 +340,5 @@ export default function CustomerSafetyPage() {
         </Box>
       </Container>
     </Box>
-  )
+  );
 }

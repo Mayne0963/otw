@@ -1,16 +1,31 @@
-"use client"
+"use client";
 
 import React, { useState, useRef } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 
-import { FaPlay, FaPause, FaForward, FaBackward, FaVolumeUp, FaVolumeDown } from "react-icons/fa"
-import { useMediaPlayer } from "../../lib/context/MediaPlayerContext"
-import type { Track } from "../../types"
+import {
+  FaPlay,
+  FaPause,
+  FaForward,
+  FaBackward,
+  FaVolumeUp,
+  FaVolumeDown,
+} from "react-icons/fa";
+import { useMediaPlayer } from "../../lib/context/MediaPlayerContext";
+import type { Track } from "../../types";
 
 const MusicPlayer = () => {
-  const { isPlaying, currentTrack, playTrack, pauseTrack, nextTrack, previousTrack, volume, setVolume } =
-    useMediaPlayer()
-  const audioRef = useRef<HTMLAudioElement>(null)
+  const {
+    isPlaying,
+    currentTrack,
+    playTrack,
+    pauseTrack,
+    nextTrack,
+    previousTrack,
+    volume,
+    setVolume,
+  } = useMediaPlayer();
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   // Dummy track data
   const classicHipHop: Track[] = [
@@ -42,7 +57,7 @@ const MusicPlayer = () => {
       url: "/music/snoop-dogg-gin-and-juice.mp3",
       coverImage: "/images/snoop-dogg.jpg",
     },
-  ]
+  ];
 
   const chillBeats: Track[] = [
     {
@@ -66,9 +81,9 @@ const MusicPlayer = () => {
       url: "/music/relaxing-piano.mp3",
       coverImage: "/images/relaxing-piano.jpg",
     },
-  ]
+  ];
 
-  const [currentPlaylist, setCurrentPlaylist] = useState(classicHipHop)
+  const [currentPlaylist, setCurrentPlaylist] = useState(classicHipHop);
 
   const handlePlayPause = () => {
     if (currentTrack) {
@@ -77,24 +92,25 @@ const MusicPlayer = () => {
       } else {
         playTrack(currentTrack);
       }
-    } else {
-      playTrack(currentPlaylist[0]);
+    } else if (currentPlaylist.length > 0) {
+      // Assert that currentPlaylist[0] is a Track to satisfy TypeScript
+      playTrack(currentPlaylist[0] as Track);
     }
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(Number(e.target.value))
+    setVolume(Number(e.target.value));
     if (audioRef.current) {
-      audioRef.current.volume = Number(e.target.value)
+      audioRef.current.volume = Number(e.target.value);
     }
-  }
+  };
 
   const handlePlaylistSwitch = (playlist: Track[]) => {
-    setCurrentPlaylist(playlist)
+    setCurrentPlaylist(playlist);
     if (isPlaying) {
-      pauseTrack()
+      pauseTrack();
     }
-  }
+  };
 
   return (
     <div className="fixed bottom-0 left-0 w-full bg-[#1A1A1A] border-t border-[#333333] p-4 z-50">
@@ -113,20 +129,33 @@ const MusicPlayer = () => {
             </div>
           )}
           <div>
-            <p className="text-white font-bold">{currentTrack ? currentTrack.title : "No track selected"}</p>
-            <p className="text-gray-400 text-sm">{currentTrack ? currentTrack.artist : ""}</p>
+            <p className="text-white font-bold">
+              {currentTrack ? currentTrack.title : "No track selected"}
+            </p>
+            <p className="text-gray-400 text-sm">
+              {currentTrack ? currentTrack.artist : ""}
+            </p>
           </div>
         </div>
 
         {/* Controls */}
         <div className="flex items-center">
-          <button onClick={previousTrack} className="text-white hover:text-gold-foil transition-colors p-2">
+          <button
+            onClick={previousTrack}
+            className="text-white hover:text-gold-foil transition-colors p-2"
+          >
             <FaBackward />
           </button>
-          <button onClick={handlePlayPause} className="text-white hover:text-gold-foil transition-colors p-2">
+          <button
+            onClick={handlePlayPause}
+            className="text-white hover:text-gold-foil transition-colors p-2"
+          >
             {isPlaying ? <FaPause /> : <FaPlay />}
           </button>
-          <button onClick={nextTrack} className="text-white hover:text-gold-foil transition-colors p-2">
+          <button
+            onClick={nextTrack}
+            className="text-white hover:text-gold-foil transition-colors p-2"
+          >
             <FaForward />
           </button>
         </div>
@@ -150,7 +179,9 @@ const MusicPlayer = () => {
         <div className="flex items-center space-x-2">
           <button
             className={`text-white text-xs px-2 py-1 rounded ${
-              currentPlaylist === classicHipHop ? "bg-gold-foil text-black" : "hover:text-gold-foil"
+              currentPlaylist === classicHipHop
+                ? "bg-gold-foil text-black"
+                : "hover:text-gold-foil"
             }`}
             onClick={() => handlePlaylistSwitch(classicHipHop)}
           >
@@ -158,7 +189,9 @@ const MusicPlayer = () => {
           </button>
           <button
             className={`text-white text-xs px-2 py-1 rounded ${
-              currentPlaylist === chillBeats ? "bg-gold-foil text-black" : "hover:text-gold-foil"
+              currentPlaylist === chillBeats
+                ? "bg-gold-foil text-black"
+                : "hover:text-gold-foil"
             }`}
             onClick={() => handlePlaylistSwitch(chillBeats)}
           >
@@ -167,12 +200,19 @@ const MusicPlayer = () => {
         </div>
 
         {/* Audio Element */}
-        {currentTrack && <audio ref={audioRef} src={currentTrack.url} autoPlay={isPlaying} onEnded={nextTrack}>
-          <track kind="captions" />
-        </audio>}
+        {currentTrack && (
+          <audio
+            ref={audioRef}
+            src={currentTrack.url}
+            autoPlay={isPlaying}
+            onEnded={nextTrack}
+          >
+            <track kind="captions" />
+          </audio>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MusicPlayer
+export default MusicPlayer;

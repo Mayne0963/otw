@@ -2,8 +2,8 @@
  * Type definitions for Firebase Auth and Firestore
  */
 
-import { DecodedIdToken } from 'firebase-admin/auth';
-import { DocumentData, DocumentReference } from 'firebase-admin/firestore';
+import { DecodedIdToken } from "firebase-admin/auth";
+import { DocumentData, DocumentReference } from "firebase-admin/firestore";
 
 /**
  * Extended DecodedIdToken with guaranteed uid property

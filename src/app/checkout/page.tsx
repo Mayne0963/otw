@@ -1,24 +1,31 @@
-"use client"
+"use client";
 
 export const dynamic = "force-dynamic";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import Image from "next/image"
-import { useCart } from "../../lib/context/CartContext"
-import { FaArrowLeft, FaCreditCard, FaLock, FaShoppingBag, FaCheck, FaExclamationTriangle } from "react-icons/fa"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { useCart } from "../../lib/context/CartContext";
+import {
+  FaArrowLeft,
+  FaCreditCard,
+  FaLock,
+  FaShoppingBag,
+  FaCheck,
+  FaExclamationTriangle,
+} from "react-icons/fa";
 
 export default function CheckoutPage() {
-  const router = useRouter()
-  const { items, subtotal, tax, total, clearCart } = useCart()
-  const [step, setStep] = useState(1)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [orderComplete, setOrderComplete] = useState(false)
-  const [orderId, setOrderId] = useState<string | null>(null)
+  const router = useRouter();
+  const { items, subtotal, tax, total, clearCart } = useCart();
+  const [step, setStep] = useState(1);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [orderComplete, setOrderComplete] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -57,159 +64,168 @@ export default function CheckoutPage() {
 
     // Terms
     agreeToTerms: false,
-  })
+  });
 
   // Redirect to cart if cart is empty
   useEffect(() => {
     if (items.length === 0 && !orderComplete) {
-      router.push("/cart")
+      router.push("/cart");
     }
-  }, [items, router, orderComplete])
+  }, [items, router, orderComplete]);
 
   // Handle form input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
-    const checked = type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value, type } = e.target;
+    const checked =
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
 
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
-    })
-  }
+    });
+  };
 
   // Handle order type change
   const handleOrderTypeChange = (type: "delivery" | "pickup") => {
     setFormData({
       ...formData,
       orderType: type,
-    })
-  }
+    });
+  };
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     // Validate form based on current step
     if (!validateForm()) {
-      return
+      return;
     }
 
     if (step < 3) {
       // Move to next step
-      setStep(step + 1)
-      window.scrollTo(0, 0)
-      return
+      setStep(step + 1);
+      window.scrollTo(0, 0);
+      return;
     }
 
     // Process payment and complete order
-    setIsProcessing(true)
-    setError(null)
+    setIsProcessing(true);
+    setError(null);
 
     try {
       // Simulate API call to process payment and create order
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Generate a random order ID
-      const newOrderId = `BK-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`
-      setOrderId(newOrderId)
+      const newOrderId = `BK-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`;
+      setOrderId(newOrderId);
 
       // Clear cart and show success
-      clearCart()
-      setOrderComplete(true)
+      clearCart();
+      setOrderComplete(true);
     } catch (err) {
-      console.error("Order processing error:", err)
-      setError("There was an error processing your payment. Please try again.")
+      console.error("Order processing error:", err);
+      setError("There was an error processing your payment. Please try again.");
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   // Validate form based on current step
   const validateForm = () => {
-    const errors: Record<string, string> = {}
+    const errors: Record<string, string> = {};
 
     if (step === 1) {
       // Validate contact and delivery information
-      if (!formData.email) errors.email = "Email is required"
-      if (!formData.phone) errors.phone = "Phone number is required"
+      if (!formData.email) errors.email = "Email is required";
+      if (!formData.phone) errors.phone = "Phone number is required";
 
       if (formData.orderType === "delivery") {
-        if (!formData.firstName) errors.firstName = "First name is required"
-        if (!formData.lastName) errors.lastName = "Last name is required"
-        if (!formData.address) errors.address = "Address is required"
-        if (!formData.city) errors.city = "City is required"
-        if (!formData.state) errors.state = "State is required"
-        if (!formData.zipCode) errors.zipCode = "ZIP code is required"
+        if (!formData.firstName) errors.firstName = "First name is required";
+        if (!formData.lastName) errors.lastName = "Last name is required";
+        if (!formData.address) errors.address = "Address is required";
+        if (!formData.city) errors.city = "City is required";
+        if (!formData.state) errors.state = "State is required";
+        if (!formData.zipCode) errors.zipCode = "ZIP code is required";
       } else {
-        if (!formData.pickupLocation) errors.pickupLocation = "Please select a pickup location"
+        if (!formData.pickupLocation)
+          errors.pickupLocation = "Please select a pickup location";
       }
     } else if (step === 2) {
       // Validate payment information
-      if (!formData.cardNumber) errors.cardNumber = "Card number is required"
+      if (!formData.cardNumber) errors.cardNumber = "Card number is required";
       else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, "")))
-        errors.cardNumber = "Please enter a valid 16-digit card number"
+        errors.cardNumber = "Please enter a valid 16-digit card number";
 
-      if (!formData.cardName) errors.cardName = "Name on card is required"
+      if (!formData.cardName) errors.cardName = "Name on card is required";
 
-      if (!formData.expiryDate) errors.expiryDate = "Expiry date is required"
-      else if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate)) errors.expiryDate = "Please use MM/YY format"
+      if (!formData.expiryDate) errors.expiryDate = "Expiry date is required";
+      else if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate))
+        errors.expiryDate = "Please use MM/YY format";
 
-      if (!formData.cvv) errors.cvv = "CVV is required"
-      else if (!/^\d{3,4}$/.test(formData.cvv)) errors.cvv = "CVV must be 3 or 4 digits"
+      if (!formData.cvv) errors.cvv = "CVV is required";
+      else if (!/^\d{3,4}$/.test(formData.cvv))
+        errors.cvv = "CVV must be 3 or 4 digits";
 
-      if (!formData.agreeToTerms) errors.agreeToTerms = "You must agree to the terms and conditions"
+      if (!formData.agreeToTerms)
+        errors.agreeToTerms = "You must agree to the terms and conditions";
     }
 
     if (Object.keys(errors).length > 0) {
-      setError("Please correct the errors in the form")
-      return false
+      setError("Please correct the errors in the form");
+      return false;
     }
 
-    setError(null)
-    return true
-  }
+    setError(null);
+    return true;
+  };
 
   // Format card number with spaces
   const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "")
-    const matches = v.match(/\d{4,16}/g)
-    const match = (matches && matches[0]) || ""
-    const parts = []
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+    const matches = v.match(/\d{4,16}/g);
+    const match = (matches && matches[0]) || "";
+    const parts = [];
 
     for (let i = 0; i < match.length; i += 4) {
-      parts.push(match.substring(i, i + 4))
+      parts.push(match.substring(i, i + 4));
     }
 
     if (parts.length) {
-      return parts.join(" ")
+      return parts.join(" ");
     } else {
-      return value
+      return value;
     }
-  }
+  };
 
   // Handle card number input
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formattedValue = formatCardNumber(e.target.value)
+    const formattedValue = formatCardNumber(e.target.value);
     setFormData({
       ...formData,
       cardNumber: formattedValue,
-    })
-  }
+    });
+  };
 
   // Handle expiry date input
   const handleExpiryDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { value } = e.target
-    value = value.replace(/\D/g, "")
+    let { value } = e.target;
+    value = value.replace(/\D/g, "");
 
     if (value.length > 2) {
-      value = `${value.slice(0, 2)}/${value.slice(2, 4)}`
+      value = `${value.slice(0, 2)}/${value.slice(2, 4)}`;
     }
 
     setFormData({
       ...formData,
       expiryDate: value,
-    })
-  }
+    });
+  };
 
   // If order is complete, show success page
   if (orderComplete) {
@@ -223,7 +239,8 @@ export default function CheckoutPage() {
               </div>
               <h1 className="text-3xl font-bold mb-2">Order Confirmed!</h1>
               <p className="text-gray-300">
-                Thank you for your order. Your order has been received and is being prepared.
+                Thank you for your order. Your order has been received and is
+                being prepared.
               </p>
             </div>
 
@@ -237,12 +254,13 @@ export default function CheckoutPage() {
 
               <div className="border-t border-[#333333] pt-4 mt-4">
                 <p className="text-gray-300 mb-2">
-                  <strong>Order Type:</strong> {formData.orderType === "delivery" ? "Delivery" : "Pickup"}
+                  <strong>Order Type:</strong>{" "}
+                  {formData.orderType === "delivery" ? "Delivery" : "Pickup"}
                 </p>
                 {formData.orderType === "delivery" ? (
                   <p className="text-gray-300 mb-2">
-                    <strong>Delivery Address:</strong> {formData.address}, {formData.city}, {formData.state}{" "}
-                    {formData.zipCode}
+                    <strong>Delivery Address:</strong> {formData.address},{" "}
+                    {formData.city}, {formData.state} {formData.zipCode}
                   </p>
                 ) : (
                   <p className="text-gray-300 mb-2">
@@ -251,7 +269,9 @@ export default function CheckoutPage() {
                 )}
                 <p className="text-gray-300">
                   <strong>Estimated Time:</strong>{" "}
-                  {formData.deliveryTime === "asap" ? "30-45 minutes" : formData.scheduledTime}
+                  {formData.deliveryTime === "asap"
+                    ? "30-45 minutes"
+                    : formData.scheduledTime}
                 </p>
               </div>
             </div>
@@ -296,7 +316,7 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -304,7 +324,10 @@ export default function CheckoutPage() {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Checkout</h1>
-          <Link href="/cart" className="text-gold-foil hover:underline flex items-center">
+          <Link
+            href="/cart"
+            className="text-gold-foil hover:underline flex items-center"
+          >
             <FaArrowLeft className="mr-2" /> Back to Cart
           </Link>
         </div>
@@ -321,13 +344,17 @@ export default function CheckoutPage() {
                   >
                     1
                   </div>
-                  <div className={`flex-1 h-1 mx-2 ${step >= 2 ? "bg-gold-foil" : "bg-[#333333]"}`}></div>
+                  <div
+                    className={`flex-1 h-1 mx-2 ${step >= 2 ? "bg-gold-foil" : "bg-[#333333]"}`}
+                  ></div>
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? "bg-gold-foil text-black" : "bg-[#333333] text-white"}`}
                   >
                     2
                   </div>
-                  <div className={`flex-1 h-1 mx-2 ${step >= 3 ? "bg-gold-foil" : "bg-[#333333]"}`}></div>
+                  <div
+                    className={`flex-1 h-1 mx-2 ${step >= 3 ? "bg-gold-foil" : "bg-[#333333]"}`}
+                  ></div>
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 3 ? "bg-gold-foil text-black" : "bg-[#333333] text-white"}`}
                   >
@@ -354,10 +381,15 @@ export default function CheckoutPage() {
                 {step === 1 && (
                   <div className="space-y-6 animate-fade-in">
                     <div>
-                      <h2 className="text-xl font-bold mb-4">Contact Information</h2>
+                      <h2 className="text-xl font-bold mb-4">
+                        Contact Information
+                      </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="email" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="email"
+                            className="block text-sm font-medium mb-1"
+                          >
                             Email Address *
                           </label>
                           <input
@@ -371,7 +403,10 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <div>
-                          <label htmlFor="phone" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="phone"
+                            className="block text-sm font-medium mb-1"
+                          >
                             Phone Number *
                           </label>
                           <input
@@ -419,10 +454,15 @@ export default function CheckoutPage() {
 
                     {formData.orderType === "delivery" ? (
                       <div>
-                        <h2 className="text-xl font-bold mb-4">Delivery Address</h2>
+                        <h2 className="text-xl font-bold mb-4">
+                          Delivery Address
+                        </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label htmlFor="firstName" className="block text-sm font-medium mb-1">
+                            <label
+                              htmlFor="firstName"
+                              className="block text-sm font-medium mb-1"
+                            >
                               First Name *
                             </label>
                             <input
@@ -436,7 +476,10 @@ export default function CheckoutPage() {
                             />
                           </div>
                           <div>
-                            <label htmlFor="lastName" className="block text-sm font-medium mb-1">
+                            <label
+                              htmlFor="lastName"
+                              className="block text-sm font-medium mb-1"
+                            >
                               Last Name *
                             </label>
                             <input
@@ -452,7 +495,10 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="mt-4">
-                          <label htmlFor="address" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="address"
+                            className="block text-sm font-medium mb-1"
+                          >
                             Street Address *
                           </label>
                           <input
@@ -467,7 +513,10 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="mt-4">
-                          <label htmlFor="apartment" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="apartment"
+                            className="block text-sm font-medium mb-1"
+                          >
                             Apartment, Suite, etc. (optional)
                           </label>
                           <input
@@ -482,7 +531,10 @@ export default function CheckoutPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                           <div>
-                            <label htmlFor="city" className="block text-sm font-medium mb-1">
+                            <label
+                              htmlFor="city"
+                              className="block text-sm font-medium mb-1"
+                            >
                               City *
                             </label>
                             <input
@@ -496,7 +548,10 @@ export default function CheckoutPage() {
                             />
                           </div>
                           <div>
-                            <label htmlFor="state" className="block text-sm font-medium mb-1">
+                            <label
+                              htmlFor="state"
+                              className="block text-sm font-medium mb-1"
+                            >
                               State *
                             </label>
                             <input
@@ -510,7 +565,10 @@ export default function CheckoutPage() {
                             />
                           </div>
                           <div>
-                            <label htmlFor="zipCode" className="block text-sm font-medium mb-1">
+                            <label
+                              htmlFor="zipCode"
+                              className="block text-sm font-medium mb-1"
+                            >
                               ZIP Code *
                             </label>
                             <input
@@ -526,7 +584,10 @@ export default function CheckoutPage() {
                         </div>
 
                         <div className="mt-4">
-                          <label htmlFor="deliveryInstructions" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="deliveryInstructions"
+                            className="block text-sm font-medium mb-1"
+                          >
                             Delivery Instructions (optional)
                           </label>
                           <textarea
@@ -541,9 +602,14 @@ export default function CheckoutPage() {
                       </div>
                     ) : (
                       <div>
-                        <h2 className="text-xl font-bold mb-4">Pickup Location</h2>
+                        <h2 className="text-xl font-bold mb-4">
+                          Pickup Location
+                        </h2>
                         <div>
-                          <label htmlFor="pickupLocation" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="pickupLocation"
+                            className="block text-sm font-medium mb-1"
+                          >
                             Select Location *
                           </label>
                           <select
@@ -555,10 +621,18 @@ export default function CheckoutPage() {
                             required
                           >
                             <option value="">Select a location</option>
-                            <option value="Downtown LA">Downtown LA - 420 S Grand Ave</option>
-                            <option value="Hollywood">Hollywood - 6801 Hollywood Blvd</option>
-                            <option value="SF Mission">SF Mission District - 2534 Mission St</option>
-                            <option value="SF Marina">SF Marina District - 2108 Chestnut St</option>
+                            <option value="Downtown LA">
+                              Downtown LA - 420 S Grand Ave
+                            </option>
+                            <option value="Hollywood">
+                              Hollywood - 6801 Hollywood Blvd
+                            </option>
+                            <option value="SF Mission">
+                              SF Mission District - 2534 Mission St
+                            </option>
+                            <option value="SF Marina">
+                              SF Marina District - 2108 Chestnut St
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -584,8 +658,12 @@ export default function CheckoutPage() {
                           />
                           <div className="flex flex-col items-center">
                             <span className="text-xl mb-2">⚡</span>
-                            <span className="font-medium">As Soon As Possible</span>
-                            <span className="text-xs text-gray-400 mt-1">30-45 min</span>
+                            <span className="font-medium">
+                              As Soon As Possible
+                            </span>
+                            <span className="text-xs text-gray-400 mt-1">
+                              30-45 min
+                            </span>
                           </div>
                         </label>
                         <label
@@ -605,15 +683,22 @@ export default function CheckoutPage() {
                           />
                           <div className="flex flex-col items-center">
                             <span className="text-xl mb-2">🕒</span>
-                            <span className="font-medium">Schedule for Later</span>
-                            <span className="text-xs text-gray-400 mt-1">Select a time</span>
+                            <span className="font-medium">
+                              Schedule for Later
+                            </span>
+                            <span className="text-xs text-gray-400 mt-1">
+                              Select a time
+                            </span>
                           </div>
                         </label>
                       </div>
 
                       {formData.deliveryTime === "scheduled" && (
                         <div className="mt-4">
-                          <label htmlFor="scheduledTime" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="scheduledTime"
+                            className="block text-sm font-medium mb-1"
+                          >
                             Select Time *
                           </label>
                           <select
@@ -625,15 +710,33 @@ export default function CheckoutPage() {
                             required
                           >
                             <option value="">Select a time</option>
-                            <option value="Today, 12:00 PM">Today, 12:00 PM</option>
-                            <option value="Today, 1:00 PM">Today, 1:00 PM</option>
-                            <option value="Today, 2:00 PM">Today, 2:00 PM</option>
-                            <option value="Today, 3:00 PM">Today, 3:00 PM</option>
-                            <option value="Today, 4:00 PM">Today, 4:00 PM</option>
-                            <option value="Today, 5:00 PM">Today, 5:00 PM</option>
-                            <option value="Today, 6:00 PM">Today, 6:00 PM</option>
-                            <option value="Today, 7:00 PM">Today, 7:00 PM</option>
-                            <option value="Today, 8:00 PM">Today, 8:00 PM</option>
+                            <option value="Today, 12:00 PM">
+                              Today, 12:00 PM
+                            </option>
+                            <option value="Today, 1:00 PM">
+                              Today, 1:00 PM
+                            </option>
+                            <option value="Today, 2:00 PM">
+                              Today, 2:00 PM
+                            </option>
+                            <option value="Today, 3:00 PM">
+                              Today, 3:00 PM
+                            </option>
+                            <option value="Today, 4:00 PM">
+                              Today, 4:00 PM
+                            </option>
+                            <option value="Today, 5:00 PM">
+                              Today, 5:00 PM
+                            </option>
+                            <option value="Today, 6:00 PM">
+                              Today, 6:00 PM
+                            </option>
+                            <option value="Today, 7:00 PM">
+                              Today, 7:00 PM
+                            </option>
+                            <option value="Today, 8:00 PM">
+                              Today, 8:00 PM
+                            </option>
                           </select>
                         </div>
                       )}
@@ -645,14 +748,21 @@ export default function CheckoutPage() {
                 {step === 2 && (
                   <div className="space-y-6 animate-fade-in">
                     <div>
-                      <h2 className="text-xl font-bold mb-4">Payment Information</h2>
+                      <h2 className="text-xl font-bold mb-4">
+                        Payment Information
+                      </h2>
                       <div className="bg-[#111111] p-4 rounded-lg mb-6 flex items-center">
                         <FaLock className="text-gold-foil mr-2" />
-                        <span className="text-sm">Your payment information is encrypted and secure.</span>
+                        <span className="text-sm">
+                          Your payment information is encrypted and secure.
+                        </span>
                       </div>
 
                       <div className="mb-4">
-                        <label htmlFor="cardNumber" className="block text-sm font-medium mb-1">
+                        <label
+                          htmlFor="cardNumber"
+                          className="block text-sm font-medium mb-1"
+                        >
                           Card Number *
                         </label>
                         <input
@@ -669,7 +779,10 @@ export default function CheckoutPage() {
                       </div>
 
                       <div className="mb-4">
-                        <label htmlFor="cardName" className="block text-sm font-medium mb-1">
+                        <label
+                          htmlFor="cardName"
+                          className="block text-sm font-medium mb-1"
+                        >
                           Name on Card *
                         </label>
                         <input
@@ -685,7 +798,10 @@ export default function CheckoutPage() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="expiryDate" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="expiryDate"
+                            className="block text-sm font-medium mb-1"
+                          >
                             Expiry Date *
                           </label>
                           <input
@@ -701,7 +817,10 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <div>
-                          <label htmlFor="cvv" className="block text-sm font-medium mb-1">
+                          <label
+                            htmlFor="cvv"
+                            className="block text-sm font-medium mb-1"
+                          >
                             CVV *
                           </label>
                           <input
@@ -720,7 +839,9 @@ export default function CheckoutPage() {
                     </div>
 
                     <div>
-                      <h2 className="text-xl font-bold mb-4">Billing Address</h2>
+                      <h2 className="text-xl font-bold mb-4">
+                        Billing Address
+                      </h2>
                       <div className="mb-4">
                         <label className="flex items-center">
                           <input
@@ -746,7 +867,10 @@ export default function CheckoutPage() {
                           className="input flex-grow"
                           placeholder="Enter promo code"
                         />
-                        <button type="button" className="btn-outline whitespace-nowrap">
+                        <button
+                          type="button"
+                          className="btn-outline whitespace-nowrap"
+                        >
                           Apply
                         </button>
                       </div>
@@ -764,11 +888,17 @@ export default function CheckoutPage() {
                         />
                         <span className="text-sm">
                           I agree to the{" "}
-                          <Link href="/terms" className="text-gold-foil hover:underline">
+                          <Link
+                            href="/terms"
+                            className="text-gold-foil hover:underline"
+                          >
                             Terms of Service
                           </Link>{" "}
                           and{" "}
-                          <Link href="/privacy" className="text-gold-foil hover:underline">
+                          <Link
+                            href="/privacy"
+                            className="text-gold-foil hover:underline"
+                          >
                             Privacy Policy
                           </Link>
                         </span>
@@ -781,7 +911,9 @@ export default function CheckoutPage() {
                 {step === 3 && (
                   <div className="space-y-6 animate-fade-in">
                     <div>
-                      <h2 className="text-xl font-bold mb-4">Review Your Order</h2>
+                      <h2 className="text-xl font-bold mb-4">
+                        Review Your Order
+                      </h2>
 
                       <div className="bg-[#111111] p-4 rounded-lg mb-6">
                         <h3 className="font-bold mb-2">Order Details</h3>
@@ -789,22 +921,31 @@ export default function CheckoutPage() {
                           <p>
                             <span className="text-gray-400">Order Type:</span>{" "}
                             <span className="font-medium">
-                              {formData.orderType === "delivery" ? "Delivery" : "Pickup"}
+                              {formData.orderType === "delivery"
+                                ? "Delivery"
+                                : "Pickup"}
                             </span>
                           </p>
 
                           {formData.orderType === "delivery" ? (
                             <>
                               <p>
-                                <span className="text-gray-400">Delivery Address:</span>{" "}
+                                <span className="text-gray-400">
+                                  Delivery Address:
+                                </span>{" "}
                                 <span className="font-medium">
                                   {formData.address}
-                                  {formData.apartment ? `, ${formData.apartment}` : ""}, {formData.city},{" "}
-                                  {formData.state} {formData.zipCode}
+                                  {formData.apartment
+                                    ? `, ${formData.apartment}`
+                                    : ""}
+                                  , {formData.city}, {formData.state}{" "}
+                                  {formData.zipCode}
                                 </span>
                               </p>
                               <p>
-                                <span className="text-gray-400">Recipient:</span>{" "}
+                                <span className="text-gray-400">
+                                  Recipient:
+                                </span>{" "}
                                 <span className="font-medium">
                                   {formData.firstName} {formData.lastName}
                                 </span>
@@ -812,8 +953,12 @@ export default function CheckoutPage() {
                             </>
                           ) : (
                             <p>
-                              <span className="text-gray-400">Pickup Location:</span>{" "}
-                              <span className="font-medium">{formData.pickupLocation}</span>
+                              <span className="text-gray-400">
+                                Pickup Location:
+                              </span>{" "}
+                              <span className="font-medium">
+                                {formData.pickupLocation}
+                              </span>
                             </p>
                           )}
 
@@ -843,7 +988,9 @@ export default function CheckoutPage() {
                           </div>
                           <div>
                             <p className="font-medium">Credit Card</p>
-                            <p className="text-sm text-gray-400">**** **** **** {formData.cardNumber.slice(-4)}</p>
+                            <p className="text-sm text-gray-400">
+                              **** **** **** {formData.cardNumber.slice(-4)}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -872,7 +1019,9 @@ export default function CheckoutPage() {
                                   <span className="font-medium">
                                     {item.quantity} × {item.name}
                                   </span>
-                                  <span>${(item.price * item.quantity).toFixed(2)}</span>
+                                  <span>
+                                    ${(item.price * item.quantity).toFixed(2)}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -885,7 +1034,11 @@ export default function CheckoutPage() {
 
                 <div className="flex justify-between mt-8">
                   {step > 1 ? (
-                    <button type="button" className="btn-outline" onClick={() => setStep(step - 1)}>
+                    <button
+                      type="button"
+                      className="btn-outline"
+                      onClick={() => setStep(step - 1)}
+                    >
                       Back
                     </button>
                   ) : (
@@ -894,7 +1047,11 @@ export default function CheckoutPage() {
                     </Link>
                   )}
 
-                  <button type="submit" className="btn-primary flex items-center gap-2" disabled={isProcessing}>
+                  <button
+                    type="submit"
+                    className="btn-primary flex items-center gap-2"
+                    disabled={isProcessing}
+                  >
                     {isProcessing ? (
                       <>
                         <svg
@@ -964,7 +1121,9 @@ export default function CheckoutPage() {
 
                 <div className="flex justify-between pt-4 border-t border-[#333333] font-bold">
                   <span>Total</span>
-                  <span className="text-gold-foil">${(total + 4.99).toFixed(2)}</span>
+                  <span className="text-gold-foil">
+                    ${(total + 4.99).toFixed(2)}
+                  </span>
                 </div>
               </div>
 
@@ -973,7 +1132,8 @@ export default function CheckoutPage() {
                   <FaLock className="text-gold-foil mr-2" /> Secure Checkout
                 </h3>
                 <p className="text-sm text-gray-400">
-                  Your payment information is encrypted and secure. We never store your full credit card details.
+                  Your payment information is encrypted and secure. We never
+                  store your full credit card details.
                 </p>
               </div>
             </div>
@@ -981,5 +1141,5 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

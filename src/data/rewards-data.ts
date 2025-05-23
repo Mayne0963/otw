@@ -1,10 +1,11 @@
-import type { Reward } from "../types/reward"
+import type { Reward } from "../types/reward";
 
 export const rewards: Reward[] = [
   {
     id: "free-burger",
     name: "Free Luxury Burger",
-    description: "Redeem for a free Luxury Burger of your choice. Valid for dine-in or takeout at any location.",
+    description:
+      "Redeem for a free Luxury Burger of your choice. Valid for dine-in or takeout at any location.",
     pointsRequired: 200,
     category: "food",
     categoryName: "Food & Drink",
@@ -15,7 +16,8 @@ export const rewards: Reward[] = [
   {
     id: "free-side",
     name: "Free Side Dish",
-    description: "Redeem for a free side dish of your choice. Valid for dine-in or takeout at any location.",
+    description:
+      "Redeem for a free side dish of your choice. Valid for dine-in or takeout at any location.",
     pointsRequired: 100,
     category: "food",
     categoryName: "Food & Drink",
@@ -25,7 +27,8 @@ export const rewards: Reward[] = [
   {
     id: "free-dessert",
     name: "Free Dessert",
-    description: "Redeem for a free dessert of your choice. Valid for dine-in or takeout at any location.",
+    description:
+      "Redeem for a free dessert of your choice. Valid for dine-in or takeout at any location.",
     pointsRequired: 150,
     category: "food",
     categoryName: "Food & Drink",
@@ -35,7 +38,8 @@ export const rewards: Reward[] = [
   {
     id: "ten-percent-off",
     name: "10% Off Your Order",
-    description: "Redeem for 10% off your entire order. Valid for dine-in, takeout, or delivery.",
+    description:
+      "Redeem for 10% off your entire order. Valid for dine-in, takeout, or delivery.",
     pointsRequired: 75,
     category: "discount",
     categoryName: "Discount",
@@ -45,7 +49,8 @@ export const rewards: Reward[] = [
   {
     id: "twenty-percent-off",
     name: "20% Off Your Order",
-    description: "Redeem for 20% off your entire order. Valid for dine-in, takeout, or delivery.",
+    description:
+      "Redeem for 20% off your entire order. Valid for dine-in, takeout, or delivery.",
     pointsRequired: 150,
     category: "discount",
     categoryName: "Discount",
@@ -56,7 +61,8 @@ export const rewards: Reward[] = [
   {
     id: "free-delivery",
     name: "Free Delivery",
-    description: "Redeem for free delivery on your next order. No minimum purchase required.",
+    description:
+      "Redeem for free delivery on your next order. No minimum purchase required.",
     pointsRequired: 50,
     category: "discount",
     categoryName: "Discount",
@@ -66,7 +72,8 @@ export const rewards: Reward[] = [
   {
     id: "cooking-class",
     name: "Cooking Class",
-    description: "Redeem for a spot in one of our exclusive cooking classes led by our executive chef.",
+    description:
+      "Redeem for a spot in one of our exclusive cooking classes led by our executive chef.",
     pointsRequired: 500,
     category: "experience",
     categoryName: "Experience",
@@ -77,7 +84,8 @@ export const rewards: Reward[] = [
   {
     id: "chefs-table",
     name: "Chef's Table Experience",
-    description: "Redeem for an exclusive Chef's Table dining experience for you and a guest.",
+    description:
+      "Redeem for an exclusive Chef's Table dining experience for you and a guest.",
     pointsRequired: 1000,
     category: "experience",
     categoryName: "Experience",
@@ -89,7 +97,8 @@ export const rewards: Reward[] = [
   {
     id: "tshirt",
     name: "Broski's Kitchen T-Shirt",
-    description: "Redeem for an exclusive Broski's Kitchen t-shirt. Available in various sizes.",
+    description:
+      "Redeem for an exclusive Broski's Kitchen t-shirt. Available in various sizes.",
     pointsRequired: 300,
     category: "merchandise",
     categoryName: "Merchandise",
@@ -98,7 +107,8 @@ export const rewards: Reward[] = [
   {
     id: "hat",
     name: "Broski's Kitchen Hat",
-    description: "Redeem for an exclusive Broski's Kitchen hat. One size fits all.",
+    description:
+      "Redeem for an exclusive Broski's Kitchen hat. One size fits all.",
     pointsRequired: 200,
     category: "merchandise",
     categoryName: "Merchandise",
@@ -107,7 +117,8 @@ export const rewards: Reward[] = [
   {
     id: "cookbook",
     name: "Luxury Street Food Cookbook",
-    description: "Redeem for our exclusive cookbook featuring recipes from our executive chef.",
+    description:
+      "Redeem for our exclusive cookbook featuring recipes from our executive chef.",
     pointsRequired: 400,
     category: "merchandise",
     categoryName: "Merchandise",
@@ -126,4 +137,4 @@ export const rewards: Reward[] = [
     expirationDays: 60,
     tierRequired: "gold",
   },
-]
+];

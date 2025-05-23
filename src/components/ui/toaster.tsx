@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { ToastContainer } from "./toast"
+import { ToastContainer } from "./toast";
 
 export function Toaster() {
-  return <ToastContainer />
+  return <ToastContainer />;
 }

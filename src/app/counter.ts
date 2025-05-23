@@ -1,7 +1,7 @@
-"use server"
+"use server";
 // import { getCloudflareContext } from '@opennextjs/cloudflare'
 // import { headers } from "next/headers"
-import { cookies } from "next/headers"
+import { cookies } from "next/headers";
 
 /**
  * Increment counter and log access
@@ -18,35 +18,39 @@ import { cookies } from "next/headers"
 export async function incrementAndLog() {
   // const cf = await getCloudflareContext()
   // const headersList = headers() // Uncomment when needed for request headers
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
 
   // Get current count from cookie or start at 0
-  let currentCount = Number.parseInt(cookieStore.get("page_views")?.value || "0")
+  let currentCount = Number.parseInt(
+    cookieStore.get("page_views")?.value || "0",
+  );
 
   // Increment count
-  currentCount += 1
+  currentCount += 1;
 
   // Store updated count in cookie (expires in 1 year)
   cookieStore.set("page_views", currentCount.toString(), {
     expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     path: "/",
-  })
+  });
 
   // Log this access in memory (will be lost on restart)
-  const accessTime = new Date().toISOString()
-  const recentAccessList = JSON.parse(cookieStore.get("recent_access")?.value || "[]")
-  recentAccessList.unshift({ accessed_at: accessTime })
+  const accessTime = new Date().toISOString();
+  const recentAccessList = JSON.parse(
+    cookieStore.get("recent_access")?.value || "[]",
+  );
+  recentAccessList.unshift({ accessed_at: accessTime });
 
   // Keep only the 5 most recent accesses
   while (recentAccessList.length > 5) {
-    recentAccessList.pop()
+    recentAccessList.pop();
   }
 
   // Store recent access list in cookie
   cookieStore.set("recent_access", JSON.stringify(recentAccessList), {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week
     path: "/",
-  })
+  });
 
   // Database operation example (commented out):
   // const { results: countResults } = await cf.env.DB.prepare(
@@ -67,7 +71,7 @@ export async function incrementAndLog() {
   return {
     count: currentCount,
     recentAccess: recentAccessList,
-  }
+  };
 }
 
 /**
@@ -79,13 +83,17 @@ export async function incrementAndLog() {
  * 3. For local development, you can use wrangler to simulate the database
  */
 export async function getStats() {
-  const cookieStore = await cookies()
+  const cookieStore = await cookies();
 
   // Get current count from cookie or default to 0
-  const currentCount = Number.parseInt(cookieStore.get("page_views")?.value || "0")
+  const currentCount = Number.parseInt(
+    cookieStore.get("page_views")?.value || "0",
+  );
 
   // Get recent access list from cookie or default to empty array
-  const recentAccessList = JSON.parse(cookieStore.get("recent_access")?.value || "[]")
+  const recentAccessList = JSON.parse(
+    cookieStore.get("recent_access")?.value || "[]",
+  );
 
   // Database query example (commented out):
   // const cf = await getCloudflareContext()
@@ -100,5 +108,5 @@ export async function getStats() {
   return {
     count: currentCount,
     recentAccess: recentAccessList,
-  }
+  };
 }

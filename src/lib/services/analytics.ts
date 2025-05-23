@@ -1,4 +1,4 @@
-import { env } from "../env"
+import { env } from "../env";
 
 type EventName =
   | "page_view"
@@ -13,36 +13,36 @@ type EventName =
   | "view_item_list"
   | "select_item"
   | "share"
-  | "custom_event"
+  | "custom_event";
 
-type EventProperties = Record<string, string | number | boolean | null>
+type EventProperties = Record<string, string | number | boolean | null>;
 
 class AnalyticsService {
-  private isEnabled: boolean
+  private isEnabled: boolean;
 
   constructor() {
-    this.isEnabled = env.ENABLE_ANALYTICS
+    this.isEnabled = env.ENABLE_ANALYTICS;
   }
 
   /**
    * Track a user event
    */
   public trackEvent(eventName: EventName, properties?: EventProperties): void {
-    if (!this.isEnabled) return
+    if (!this.isEnabled) return;
 
     try {
       // Send to Google Analytics if available
       if (typeof window !== "undefined" && "gtag" in window) {
-        const gtag = (window as any).gtag
-        gtag("event", eventName, properties)
+        const gtag = (window as any).gtag;
+        gtag("event", eventName, properties);
       }
 
       // Log to console in development
       if (process.env.NODE_ENV === "development") {
-        console.log(`[Analytics] ${eventName}`, properties)
+        console.log(`[Analytics] ${eventName}`, properties);
       }
     } catch (error) {
-      console.error("[Analytics Error]", error)
+      console.error("[Analytics Error]", error);
     }
   }
 
@@ -50,33 +50,33 @@ class AnalyticsService {
    * Track page view
    */
   public trackPageView(url: string): void {
-    this.trackEvent("page_view", { page_path: url })
+    this.trackEvent("page_view", { page_path: url });
   }
 
   /**
    * Identify user
    */
   public identifyUser(userId: string, traits?: Record<string, any>): void {
-    if (!this.isEnabled) return
+    if (!this.isEnabled) return;
 
     try {
       // Send to Google Analytics if available
       if (typeof window !== "undefined" && "gtag" in window) {
-        const gtag = (window as any).gtag
+        const gtag = (window as any).gtag;
         gtag("set", "user_properties", {
           user_id: userId,
           ...traits,
-        })
+        });
       }
 
       // Log to console in development
       if (process.env.NODE_ENV === "development") {
-        console.log(`[Analytics] Identify User: ${userId}`, traits)
+        console.log(`[Analytics] Identify User: ${userId}`, traits);
       }
     } catch (error) {
-      console.error("[Analytics Error]", error)
+      console.error("[Analytics Error]", error);
     }
   }
 }
 
-export const analytics = new AnalyticsService()
+export const analytics = new AnalyticsService();

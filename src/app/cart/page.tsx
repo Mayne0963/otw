@@ -1,42 +1,55 @@
-"use client"
+"use client";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { useCart } from "../../lib/context/CartContext"
-import { FaShoppingCart, FaTrash, FaPlus, FaMinus, FaArrowLeft, FaCreditCard, FaCog } from "react-icons/fa"
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useCart } from "../../lib/context/CartContext";
+import {
+  FaShoppingCart,
+  FaTrash,
+  FaPlus,
+  FaMinus,
+  FaArrowLeft,
+  FaCreditCard,
+  FaCog,
+} from "react-icons/fa";
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, subtotal, tax, total, clearCart } = useCart()
-  const [promoCode, setPromoCode] = useState("")
-  const [promoError, setPromoError] = useState<string | null>(null)
+  const { items, removeItem, updateQuantity, subtotal, tax, total, clearCart } =
+    useCart();
+  const [promoCode, setPromoCode] = useState("");
+  const [promoError, setPromoError] = useState<string | null>(null);
 
-  const handleQuantityChange = (id: string, currentQuantity: number, change: number) => {
-    const newQuantity = currentQuantity + change
+  const handleQuantityChange = (
+    id: string,
+    currentQuantity: number,
+    change: number,
+  ) => {
+    const newQuantity = currentQuantity + change;
     if (newQuantity > 0) {
-      updateQuantity(id, newQuantity)
+      updateQuantity(id, newQuantity);
     }
-  }
+  };
 
   const handlePromoCode = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (promoCode.trim() === "") {
-      setPromoError("Please enter a promo code")
-      return
+      setPromoError("Please enter a promo code");
+      return;
     }
 
     // In a real app, you would validate the promo code with an API
-    setPromoError("Invalid promo code")
-  }
+    setPromoError("Invalid promo code");
+  };
 
   // Check if an item has customizations
   const hasCustomizations = (item: any) => {
-    return item.customizations && Object.keys(item.customizations).length > 0
-  }
+    return item.customizations && Object.keys(item.customizations).length > 0;
+  };
 
   if (items.length === 0) {
     return (
@@ -49,14 +62,19 @@ export default function CartPage() {
               <FaShoppingCart className="text-gray-500 text-3xl" />
             </div>
             <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-            <p className="text-gray-400 mb-8">Looks like you haven't added any items to your cart yet.</p>
-            <Link href="/menu" className="btn-primary inline-flex items-center gap-2">
+            <p className="text-gray-400 mb-8">
+              Looks like you haven't added any items to your cart yet.
+            </p>
+            <Link
+              href="/menu"
+              className="btn-primary inline-flex items-center gap-2"
+            >
               <FaArrowLeft size={14} /> Browse Menu
             </Link>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -70,7 +88,10 @@ export default function CartPage() {
             <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333]">
               <div className="p-4 bg-[#111111] border-b border-[#333333] flex justify-between items-center">
                 <h2 className="font-bold">Items ({items.length})</h2>
-                <button onClick={clearCart} className="text-sm text-gray-400 hover:text-blood-red transition-colors">
+                <button
+                  onClick={clearCart}
+                  className="text-sm text-gray-400 hover:text-blood-red transition-colors"
+                >
                   Clear Cart
                 </button>
               </div>
@@ -81,7 +102,12 @@ export default function CartPage() {
                     <div className="flex items-center gap-4">
                       <div className="w-20 h-20 bg-[#222222] rounded-lg overflow-hidden relative flex-shrink-0">
                         {item.image ? (
-                          <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                          <Image
+                            src={item.image || "/placeholder.svg"}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <FaShoppingCart className="text-gray-500" />
@@ -91,26 +117,36 @@ export default function CartPage() {
 
                       <div className="flex-grow">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-bold">{item.name.split(" (")[0]}</h3>
+                          <h3 className="font-bold">
+                            {item.name.split(" (")[0]}
+                          </h3>
                           {hasCustomizations(item) && (
                             <span className="bg-gold-foil bg-opacity-20 text-gold-foil text-xs px-2 py-1 rounded-full flex items-center gap-1">
                               <FaCog size={10} /> Customized
                             </span>
                           )}
                         </div>
-                        <div className="text-gold-foil font-bold mt-1">${item.price.toFixed(2)}</div>
+                        <div className="text-gold-foil font-bold mt-1">
+                          ${item.price.toFixed(2)}
+                        </div>
 
                         {/* Display customizations if any */}
                         {hasCustomizations(item) && (
                           <div className="mt-2 text-sm text-gray-400">
-                            {item.customizations && Object.values(item.customizations)
-                              .flat()
-                              .map((option, index) => (
-                                <div key={index} className="flex justify-between">
-                                  <span>{option.name}</span>
-                                  {option.price > 0 && <span>+${option.price.toFixed(2)}</span>}
-                                </div>
-                              ))}
+                            {item.customizations &&
+                              Object.values(item.customizations)
+                                .flat()
+                                .map((option, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex justify-between"
+                                  >
+                                    <span>{option.name}</span>
+                                    {option.price > 0 && (
+                                      <span>+${option.price.toFixed(2)}</span>
+                                    )}
+                                  </div>
+                                ))}
                           </div>
                         )}
                       </div>
@@ -119,14 +155,20 @@ export default function CartPage() {
                         <div className="flex items-center border border-[#333333] rounded-md">
                           <button
                             className="px-2 py-1 text-white hover:bg-[#333333] transition-colors"
-                            onClick={() => handleQuantityChange(item.id, item.quantity, -1)}
+                            onClick={() =>
+                              handleQuantityChange(item.id, item.quantity, -1)
+                            }
                           >
                             <FaMinus size={12} />
                           </button>
-                          <span className="px-3 py-1 text-white">{item.quantity}</span>
+                          <span className="px-3 py-1 text-white">
+                            {item.quantity}
+                          </span>
                           <button
                             className="px-2 py-1 text-white hover:bg-[#333333] transition-colors"
-                            onClick={() => handleQuantityChange(item.id, item.quantity, 1)}
+                            onClick={() =>
+                              handleQuantityChange(item.id, item.quantity, 1)
+                            }
                           >
                             <FaPlus size={12} />
                           </button>
@@ -147,7 +189,10 @@ export default function CartPage() {
             </div>
 
             <div className="mt-6">
-              <Link href="/menu" className="text-gold-foil hover:underline inline-flex items-center gap-2">
+              <Link
+                href="/menu"
+                className="text-gold-foil hover:underline inline-flex items-center gap-2"
+              >
                 <FaArrowLeft size={14} /> Continue Shopping
               </Link>
             </div>
@@ -168,24 +213,34 @@ export default function CartPage() {
                   <span>${tax.toFixed(2)}</span>
                 </div>
 
-                <form onSubmit={handlePromoCode} className="pt-4 border-t border-[#333333]">
-                  <label className="block text-sm font-medium mb-2">Promo Code</label>
+                <form
+                  onSubmit={handlePromoCode}
+                  className="pt-4 border-t border-[#333333]"
+                >
+                  <label className="block text-sm font-medium mb-2">
+                    Promo Code
+                  </label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       className="input flex-grow"
                       value={promoCode}
                       onChange={(e) => {
-                        setPromoCode(e.target.value)
-                        setPromoError(null)
+                        setPromoCode(e.target.value);
+                        setPromoError(null);
                       }}
                       placeholder="Enter code"
                     />
-                    <button type="submit" className="btn-outline whitespace-nowrap">
+                    <button
+                      type="submit"
+                      className="btn-outline whitespace-nowrap"
+                    >
                       Apply
                     </button>
                   </div>
-                  {promoError && <p className="text-blood-red text-sm mt-1">{promoError}</p>}
+                  {promoError && (
+                    <p className="text-blood-red text-sm mt-1">{promoError}</p>
+                  )}
                 </form>
 
                 <div className="flex justify-between pt-4 border-t border-[#333333] font-bold">
@@ -194,15 +249,20 @@ export default function CartPage() {
                 </div>
               </div>
 
-              <Link href="/checkout" className="btn-primary w-full flex items-center justify-center gap-2">
+              <Link
+                href="/checkout"
+                className="btn-primary w-full flex items-center justify-center gap-2"
+              >
                 <FaCreditCard /> Proceed to Checkout
               </Link>
 
-              <p className="text-xs text-gray-500 mt-4 text-center">Taxes and shipping calculated at checkout</p>
+              <p className="text-xs text-gray-500 mt-4 text-center">
+                Taxes and shipping calculated at checkout
+              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

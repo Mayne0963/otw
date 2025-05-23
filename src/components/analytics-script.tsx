@@ -1,10 +1,10 @@
-"use client"
-import Script from "next/script"
-import { env } from "../lib/env"
+"use client";
+import Script from "next/script";
+import { env } from "../lib/env";
 
 export function AnalyticsScript() {
   if (!env.ENABLE_ANALYTICS) {
-    return null
+    return null;
   }
 
   return (
@@ -25,7 +25,10 @@ export function AnalyticsScript() {
       />
 
       {/* Google Analytics */}
-      <Script src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX" strategy="afterInteractive" />
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+        strategy="afterInteractive"
+      />
       <Script
         id="google-analytics"
         strategy="afterInteractive"
@@ -39,5 +42,5 @@ export function AnalyticsScript() {
         }}
       />
     </>
-  )
+  );
 }

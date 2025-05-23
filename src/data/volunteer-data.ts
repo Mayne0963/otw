@@ -2,7 +2,8 @@ export const volunteerOpportunities = [
   {
     title: "Kitchen Assistant",
     icon: "FaUtensils",
-    description: "Help our chefs prepare meals, organize ingredients, and maintain kitchen cleanliness.",
+    description:
+      "Help our chefs prepare meals, organize ingredients, and maintain kitchen cleanliness.",
     commitment: "4-hour shifts, minimum 2 shifts per month",
     skills: [
       "Basic food preparation skills",
@@ -14,44 +15,70 @@ export const volunteerOpportunities = [
   {
     title: "Event Support",
     icon: "FaCalendarAlt",
-    description: "Assist with setup, service, and cleanup during special events and community gatherings.",
+    description:
+      "Assist with setup, service, and cleanup during special events and community gatherings.",
     commitment: "Event-based, typically 4-6 hours per event",
-    skills: ["Customer service", "Organization", "Flexibility", "Positive attitude"],
+    skills: [
+      "Customer service",
+      "Organization",
+      "Flexibility",
+      "Positive attitude",
+    ],
   },
   {
     title: "Food Distribution",
     icon: "FaBoxOpen",
-    description: "Package and distribute meals to community partners and those in need.",
+    description:
+      "Package and distribute meals to community partners and those in need.",
     commitment: "3-hour shifts, weekly or bi-weekly",
     skills: ["Reliability", "Organization", "Physical stamina", "Compassion"],
   },
   {
     title: "Community Outreach",
     icon: "FaUsers",
-    description: "Represent Broski's Kitchen at community events and help build partnerships.",
+    description:
+      "Represent Broski's Kitchen at community events and help build partnerships.",
     commitment: "Flexible, 4-8 hours per month",
-    skills: ["Communication", "Interpersonal skills", "Knowledge of local community", "Enthusiasm"],
+    skills: [
+      "Communication",
+      "Interpersonal skills",
+      "Knowledge of local community",
+      "Enthusiasm",
+    ],
   },
   {
     title: "Culinary Educator",
     icon: "FaChalkboardTeacher",
-    description: "Share your culinary knowledge by assisting with cooking classes and demonstrations.",
+    description:
+      "Share your culinary knowledge by assisting with cooking classes and demonstrations.",
     commitment: "2-3 hour classes, 1-2 times per month",
-    skills: ["Cooking experience", "Teaching ability", "Patience", "Creativity"],
+    skills: [
+      "Cooking experience",
+      "Teaching ability",
+      "Patience",
+      "Creativity",
+    ],
   },
   {
     title: "Administrative Support",
     icon: "FaHandsHelping",
-    description: "Help with office tasks, volunteer coordination, and program administration.",
+    description:
+      "Help with office tasks, volunteer coordination, and program administration.",
     commitment: "Flexible, 3-6 hours per week",
-    skills: ["Computer literacy", "Organization", "Communication", "Attention to detail"],
+    skills: [
+      "Computer literacy",
+      "Organization",
+      "Communication",
+      "Attention to detail",
+    ],
   },
-]
+];
 
 export const volunteerRequirements = [
   {
     title: "Age Requirements",
-    description: "We welcome volunteers of various ages, with some restrictions for certain roles.",
+    description:
+      "We welcome volunteers of various ages, with some restrictions for certain roles.",
     items: [
       "Must be at least 16 years old to volunteer",
       "Volunteers under 18 require parental consent",
@@ -61,7 +88,8 @@ export const volunteerRequirements = [
   },
   {
     title: "Time Commitment",
-    description: "We appreciate your time and offer flexible scheduling options.",
+    description:
+      "We appreciate your time and offer flexible scheduling options.",
     items: [
       "Minimum commitment of 8 hours per month",
       "Shifts typically range from 3-4 hours",
@@ -71,7 +99,8 @@ export const volunteerRequirements = [
   },
   {
     title: "Background Check",
-    description: "For the safety of our community, we conduct background checks for certain roles.",
+    description:
+      "For the safety of our community, we conduct background checks for certain roles.",
     items: [
       "Required for roles working with vulnerable populations",
       "Free of charge to volunteers",
@@ -81,7 +110,8 @@ export const volunteerRequirements = [
   },
   {
     title: "Training Requirements",
-    description: "We provide comprehensive training to ensure you're prepared for your role.",
+    description:
+      "We provide comprehensive training to ensure you're prepared for your role.",
     items: [
       "Mandatory orientation session (2 hours)",
       "Role-specific training provided",
@@ -89,7 +119,7 @@ export const volunteerRequirements = [
       "Ongoing learning opportunities available",
     ],
   },
-]
+];
 
 export const volunteerTestimonials = [
   {
@@ -120,7 +150,7 @@ export const volunteerTestimonials = [
     quote:
       "Volunteering with the food distribution program has opened my eyes to food insecurity issues in our community. It's gratifying to help provide nutritious meals to those who need them most, and the Broski's Kitchen team makes every shift meaningful and enjoyable.",
   },
-]
+];
 
 export const volunteerFAQs = [
   {
@@ -153,4 +183,4 @@ export const volunteerFAQs = [
     answer:
       "While volunteering doesn't guarantee employment, many of our staff members started as volunteers. Volunteering is a great way to demonstrate your skills, work ethic, and commitment to our mission.",
   },
-]
+];

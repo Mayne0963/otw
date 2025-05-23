@@ -1,46 +1,52 @@
-import React from "react"
-import { Card } from "../ui/card"
-import { Phone, MessageSquare, Clock, CheckCircle2 } from "lucide-react"
-import Image from "next/image"
+import React from "react";
+import { Card } from "../ui/card";
+import { Phone, MessageSquare, Clock, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 
 interface Rep {
-  name: string
-  photo: string
-  phone: string
-  rating: number
+  name: string;
+  photo: string;
+  phone: string;
+  rating: number;
 }
 
 interface TrackingStatusProps {
-  status: "received" | "assigned" | "inMotion" | "completed"
-  rep?: Rep
-  estimatedTime?: string
+  status: "received" | "assigned" | "inMotion" | "completed";
+  rep?: Rep;
+  estimatedTime?: string;
 }
 
 const STATUS_STEPS = [
   { key: "received", label: "Request Received", icon: Clock },
   { key: "assigned", label: "Rep Assigned", icon: CheckCircle2 },
   { key: "inMotion", label: "In Motion", icon: Clock },
-  { key: "completed", label: "Delivered", icon: CheckCircle2 }
-]
+  { key: "completed", label: "Delivered", icon: CheckCircle2 },
+];
 
-export default function TrackingStatus({ status, rep, estimatedTime }: TrackingStatusProps) {
-  const currentStep = STATUS_STEPS.findIndex(step => step.key === status)
+export default function TrackingStatus({
+  status,
+  rep,
+  estimatedTime,
+}: TrackingStatusProps) {
+  const currentStep = STATUS_STEPS.findIndex((step) => step.key === status);
 
   return (
     <Card className="p-6 space-y-6">
       <div className="relative">
         <div className="absolute left-0 top-1/2 w-full h-1 bg-gray-200 -translate-y-1/2">
-          <div 
+          <div
             className="h-full bg-otw-gold transition-all duration-500"
-            style={{ width: `${(currentStep / (STATUS_STEPS.length - 1)) * 100}%` }}
+            style={{
+              width: `${(currentStep / (STATUS_STEPS.length - 1)) * 100}%`,
+            }}
           />
         </div>
-        
+
         <div className="relative flex justify-between">
           {STATUS_STEPS.map((step, index) => {
-            const Icon = step.icon
-            const isActive = index <= currentStep
-            
+            const Icon = step.icon;
+            const isActive = index <= currentStep;
+
             return (
               <div key={step.key} className="flex flex-col items-center">
                 <div
@@ -48,13 +54,17 @@ export default function TrackingStatus({ status, rep, estimatedTime }: TrackingS
                     isActive ? "bg-otw-gold" : "bg-gray-200"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-400"}`} />
+                  <Icon
+                    className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-400"}`}
+                  />
                 </div>
-                <span className={`mt-2 text-sm ${isActive ? "text-otw-gold" : "text-gray-400"}`}>
+                <span
+                  className={`mt-2 text-sm ${isActive ? "text-otw-gold" : "text-gray-400"}`}
+                >
                   {step.label}
                 </span>
               </div>
-            )
+            );
           })}
         </div>
       </div>
@@ -90,5 +100,5 @@ export default function TrackingStatus({ status, rep, estimatedTime }: TrackingS
         </div>
       )}
     </Card>
-  )
+  );
 }

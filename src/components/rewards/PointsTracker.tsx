@@ -1,17 +1,24 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
 interface PointsTrackerProps {
-  currentPoints: number
-  nextTierPoints: number
-  nextTierName: string
+  currentPoints: number;
+  nextTierPoints: number;
+  nextTierName: string;
 }
 
-const PointsTracker: React.FC<PointsTrackerProps> = ({ currentPoints, nextTierPoints, nextTierName }) => {
+const PointsTracker: React.FC<PointsTrackerProps> = ({
+  currentPoints,
+  nextTierPoints,
+  nextTierName,
+}) => {
   // Calculate percentage progress
-  const progressPercentage = Math.min((currentPoints / nextTierPoints) * 100, 100)
-  const pointsNeeded = nextTierPoints - currentPoints
+  const progressPercentage = Math.min(
+    (currentPoints / nextTierPoints) * 100,
+    100,
+  );
+  const pointsNeeded = nextTierPoints - currentPoints;
 
   return (
     <div>
@@ -35,7 +42,7 @@ const PointsTracker: React.FC<PointsTrackerProps> = ({ currentPoints, nextTierPo
           : `You've reached ${nextTierName} tier!`}
       </p>
     </div>
-  )
-}
+  );
+};
 
-export default PointsTracker
+export default PointsTracker;

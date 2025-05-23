@@ -1,20 +1,20 @@
 export interface Restaurant {
-  id: string
-  name: string
-  description: string
-  image?: string
-  logo?: string
-  rating: number
-  reviewCount: number
-  categories: string[]
-  priceLevel: string
-  deliveryFee: number
-  deliveryTime: string
-  distance: number
-  isPartner: boolean
-  dietaryOptions?: string[]
-  features?: string[]
-  featured?: boolean
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+  logo?: string;
+  rating: number;
+  reviewCount: number;
+  categories: string[];
+  priceLevel: string;
+  deliveryFee: number;
+  deliveryTime: string;
+  distance: number;
+  isPartner: boolean;
+  dietaryOptions?: string[];
+  features?: string[];
+  featured?: boolean;
 }
 
 export const restaurants: Restaurant[] = [
@@ -29,10 +29,10 @@ export const restaurants: Restaurant[] = [
     deliveryFee: 2.99,
     deliveryTime: "30-45",
     distance: 1.5,
-    isPartner: true
-  }
-]
+    isPartner: true,
+  },
+];
 
 export async function getFeaturedRestaurants(): Promise<Restaurant[]> {
-  return restaurants.filter(r => r.featured)
+  return restaurants.filter((r) => r.featured);
 }

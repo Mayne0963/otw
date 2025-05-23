@@ -1,80 +1,82 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
-import type { Reward, RewardHistory } from "../../types"
+import type React from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import type { Reward, RewardHistory } from "../../types";
 
 interface RewardsContextType {
-  points: number
-  tier: string
-  rewards: Reward[]
-  history: RewardHistory[]
-  addPoints: (amount: number) => void
-  redeemReward: (reward: Reward) => boolean
-  spinWheel: () => number
+  points: number;
+  tier: string;
+  rewards: Reward[];
+  history: RewardHistory[];
+  addPoints: (amount: number) => void;
+  redeemReward: (reward: Reward) => boolean;
+  spinWheel: () => number;
 }
 
-const RewardsContext = createContext<RewardsContextType | undefined>(undefined)
+const RewardsContext = createContext<RewardsContextType | undefined>(undefined);
 
 export const useRewards = () => {
-  const context = useContext(RewardsContext)
+  const context = useContext(RewardsContext);
   if (context === undefined) {
-    throw new Error("useRewards must be used within a RewardsProvider")
+    throw new Error("useRewards must be used within a RewardsProvider");
   }
-  return context
-}
+  return context;
+};
 
 interface RewardsProviderProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
-export const RewardsProvider: React.FC<RewardsProviderProps> = ({ children }) => {
-  const [points, setPoints] = useState(0)
-  const [tier, setTier] = useState("Bronze")
-  const [rewards, setRewards] = useState<Reward[]>([])
-  const [history, setHistory] = useState<RewardHistory[]>([])
+export const RewardsProvider: React.FC<RewardsProviderProps> = ({
+  children,
+}) => {
+  const [points, setPoints] = useState(0);
+  const [tier, setTier] = useState("Bronze");
+  const [rewards, setRewards] = useState<Reward[]>([]);
+  const [history, setHistory] = useState<RewardHistory[]>([]);
 
   // Load rewards data from localStorage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const savedPoints = localStorage.getItem("rewardsPoints")
-      const savedTier = localStorage.getItem("rewardsTier")
-      const savedHistory = localStorage.getItem("rewardsHistory")
+      const savedPoints = localStorage.getItem("rewardsPoints");
+      const savedTier = localStorage.getItem("rewardsTier");
+      const savedHistory = localStorage.getItem("rewardsHistory");
 
-      if (savedPoints) setPoints(Number.parseInt(savedPoints, 10))
-      if (savedTier) setTier(savedTier)
-      if (savedHistory) setHistory(JSON.parse(savedHistory))
+      if (savedPoints) setPoints(Number.parseInt(savedPoints, 10));
+      if (savedTier) setTier(savedTier);
+      if (savedHistory) setHistory(JSON.parse(savedHistory));
 
       // Fetch rewards from API or use static data
       // For now, we'll use static data
       import("../../data/rewards-data").then((data) => {
-        setRewards(data.rewards)
-      })
+        setRewards(data.rewards);
+      });
     }
-  }, [])
+  }, []);
 
   // Update localStorage when state changes
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("rewardsPoints", points.toString())
-      localStorage.setItem("rewardsTier", tier)
-      localStorage.setItem("rewardsHistory", JSON.stringify(history))
+      localStorage.setItem("rewardsPoints", points.toString());
+      localStorage.setItem("rewardsTier", tier);
+      localStorage.setItem("rewardsHistory", JSON.stringify(history));
     }
-  }, [points, tier, history])
+  }, [points, tier, history]);
 
   // Update tier based on points
   useEffect(() => {
     if (points >= 1000) {
-      setTier("Gold")
+      setTier("Gold");
     } else if (points >= 500) {
-      setTier("Silver")
+      setTier("Silver");
     } else {
-      setTier("Bronze")
+      setTier("Bronze");
     }
-  }, [points])
+  }, [points]);
 
   const addPoints = (amount: number) => {
-    setPoints((prevPoints) => prevPoints + amount)
+    setPoints((prevPoints) => prevPoints + amount);
 
     // Add to history
     const newHistoryItem: RewardHistory = {
@@ -83,14 +85,14 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({ children }) =>
       type: "earned",
       points: amount,
       description: `Earned ${amount} points`,
-    }
+    };
 
-    setHistory((prevHistory) => [newHistoryItem, ...prevHistory])
-  }
+    setHistory((prevHistory) => [newHistoryItem, ...prevHistory]);
+  };
 
   const redeemReward = (reward: Reward): boolean => {
     if (points >= reward.points) {
-      setPoints((prevPoints) => prevPoints - reward.points)
+      setPoints((prevPoints) => prevPoints - reward.points);
 
       // Add to history
       const newHistoryItem: RewardHistory = {
@@ -100,20 +102,20 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({ children }) =>
         points: -reward.points,
         description: `Redeemed ${reward.name}`,
         reward: reward,
-      }
+      };
 
-      setHistory((prevHistory) => [newHistoryItem, ...prevHistory])
-      return true
+      setHistory((prevHistory) => [newHistoryItem, ...prevHistory]);
+      return true;
     }
-    return false
-  }
+    return false;
+  };
 
   const spinWheel = (): number => {
     // Generate a random number of points between 10 and 100
-    const randomPoints = Math.floor(Math.random() * 91) + 10
-    addPoints(randomPoints)
-    return randomPoints
-  }
+    const randomPoints = Math.floor(Math.random() * 91) + 10;
+    addPoints(randomPoints);
+    return randomPoints;
+  };
 
   return (
     <RewardsContext.Provider
@@ -129,5 +131,5 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({ children }) =>
     >
       {children}
     </RewardsContext.Provider>
-  )
-}
+  );
+};

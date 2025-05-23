@@ -1,10 +1,16 @@
-import { Button } from "../../components/ui/button"
-import { Input } from "../../components/ui/input"
-import { Label } from "../../components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select"
-import { MapPin, Clock, CreditCard } from "lucide-react"
-import Link from "next/link"
-import Image from "next/image"
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import { MapPin, Clock, CreditCard } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function OrderPage() {
   return (
@@ -21,7 +27,8 @@ export default function OrderPage() {
         <div className="container mx-auto px-4 z-10 text-center">
           <h1 className="text-5xl font-bold mb-4 text-white">Order Online</h1>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Get your favorite Broski's Kitchen dishes delivered right to your door.
+            Get your favorite Broski's Kitchen dishes delivered right to your
+            door.
           </p>
         </div>
       </section>
@@ -37,7 +44,11 @@ export default function OrderPage() {
                 <Label htmlFor="address">Delivery Address</Label>
                 <div className="relative mt-1">
                   <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input id="address" placeholder="Enter your delivery address" className="pl-10" />
+                  <Input
+                    id="address"
+                    placeholder="Enter your delivery address"
+                    className="pl-10"
+                  />
                 </div>
               </div>
 
@@ -78,12 +89,19 @@ export default function OrderPage() {
       {/* Popular Items Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Popular Items</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">
+            Popular Items
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
               <div className="relative h-48">
-                <Image src="/assets/images/vegan-burger.jpg" alt="Luxury Burger" fill className="object-cover" />
+                <Image
+                  src="/assets/images/vegan-burger.jpg"
+                  alt="Luxury Burger"
+                  fill
+                  className="object-cover"
+                />
                 <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
                   POPULAR
                 </div>
@@ -93,7 +111,9 @@ export default function OrderPage() {
                   <h3 className="text-lg font-bold">Luxury Burger</h3>
                   <span className="text-otw-gold font-bold">$18.99</span>
                 </div>
-                <p className="text-gray-400 text-sm mb-4">Wagyu beef, truffle aioli, gold leaf, brioche bun</p>
+                <p className="text-gray-400 text-sm mb-4">
+                  Wagyu beef, truffle aioli, gold leaf, brioche bun
+                </p>
                 <Link href="/menu">
                   <Button className="w-full">Add to Cart</Button>
                 </Link>
@@ -102,7 +122,12 @@ export default function OrderPage() {
 
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
               <div className="relative h-48">
-                <Image src="/assets/images/lobster-tacos.jpg" alt="Lobster Tacos" fill className="object-cover" />
+                <Image
+                  src="/assets/images/lobster-tacos.jpg"
+                  alt="Lobster Tacos"
+                  fill
+                  className="object-cover"
+                />
                 <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
                   POPULAR
                 </div>
@@ -112,7 +137,9 @@ export default function OrderPage() {
                   <h3 className="text-lg font-bold">Lobster Tacos</h3>
                   <span className="text-otw-gold font-bold">$22.99</span>
                 </div>
-                <p className="text-gray-400 text-sm mb-4">Maine lobster, avocado crema, mango salsa</p>
+                <p className="text-gray-400 text-sm mb-4">
+                  Maine lobster, avocado crema, mango salsa
+                </p>
                 <Link href="/menu">
                   <Button className="w-full">Add to Cart</Button>
                 </Link>
@@ -121,7 +148,12 @@ export default function OrderPage() {
 
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
               <div className="relative h-48">
-                <Image src="/assets/images/truffle-fries.jpg" alt="Truffle Fries" fill className="object-cover" />
+                <Image
+                  src="/assets/images/truffle-fries.jpg"
+                  alt="Truffle Fries"
+                  fill
+                  className="object-cover"
+                />
                 <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
                   POPULAR
                 </div>
@@ -131,7 +163,9 @@ export default function OrderPage() {
                   <h3 className="text-lg font-bold">Truffle Fries</h3>
                   <span className="text-otw-gold font-bold">$12.99</span>
                 </div>
-                <p className="text-gray-400 text-sm mb-4">Hand-cut fries, truffle oil, parmesan, herbs</p>
+                <p className="text-gray-400 text-sm mb-4">
+                  Hand-cut fries, truffle oil, parmesan, herbs
+                </p>
                 <Link href="/menu">
                   <Button className="w-full">Add to Cart</Button>
                 </Link>
@@ -140,7 +174,12 @@ export default function OrderPage() {
 
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
               <div className="relative h-48">
-                <Image src="/assets/images/golden-cheesecake.jpg" alt="Gold Leaf Cheesecake" fill className="object-cover" />
+                <Image
+                  src="/assets/images/golden-cheesecake.jpg"
+                  alt="Gold Leaf Cheesecake"
+                  fill
+                  className="object-cover"
+                />
                 <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
                   POPULAR
                 </div>
@@ -150,7 +189,9 @@ export default function OrderPage() {
                   <h3 className="text-lg font-bold">Gold Leaf Cheesecake</h3>
                   <span className="text-otw-gold font-bold">$14.99</span>
                 </div>
-                <p className="text-gray-400 text-sm mb-4">NY style cheesecake, gold leaf, berry compote</p>
+                <p className="text-gray-400 text-sm mb-4">
+                  NY style cheesecake, gold leaf, berry compote
+                </p>
                 <Link href="/menu">
                   <Button className="w-full">Add to Cart</Button>
                 </Link>
@@ -169,7 +210,9 @@ export default function OrderPage() {
       {/* Order Info Section */}
       <section className="py-16 bg-gray-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Order Information</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">
+            Order Information
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-gray-800 p-6 rounded-lg">
@@ -178,8 +221,9 @@ export default function OrderPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Delivery Times</h3>
               <p className="text-gray-400 mb-4">
-                We deliver within a 5-mile radius of our locations. Average delivery time is 30-45 minutes depending on
-                distance and order volume.
+                We deliver within a 5-mile radius of our locations. Average
+                delivery time is 30-45 minutes depending on distance and order
+                volume.
               </p>
               <p className="text-gray-400">
                 <strong>Hours:</strong> 11am - 10pm Daily
@@ -192,8 +236,8 @@ export default function OrderPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Payment Options</h3>
               <p className="text-gray-400 mb-4">
-                We accept all major credit cards, digital wallets, and cash on delivery. All payments are secure and
-                encrypted.
+                We accept all major credit cards, digital wallets, and cash on
+                delivery. All payments are secure and encrypted.
               </p>
               <p className="text-gray-400">
                 <strong>Minimum Order:</strong> $15 for delivery
@@ -206,8 +250,8 @@ export default function OrderPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Delivery Area</h3>
               <p className="text-gray-400 mb-4">
-                We currently deliver to all of Fort Wayne and select surrounding areas. Enter your address to confirm
-                delivery availability.
+                We currently deliver to all of Fort Wayne and select surrounding
+                areas. Enter your address to confirm delivery availability.
               </p>
               <p className="text-gray-400">
                 <strong>Delivery Fee:</strong> $3.99 (Free for orders over $50)
@@ -221,9 +265,12 @@ export default function OrderPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 p-8 text-center">
-            <h2 className="text-3xl font-bold mb-4">Save on Delivery with Tier Membership</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              Save on Delivery with Tier Membership
+            </h2>
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join our Tier Membership program and enjoy free delivery, exclusive menu items, and more.
+              Join our Tier Membership program and enjoy free delivery,
+              exclusive menu items, and more.
             </p>
             <Link href="/tier">
               <Button size="lg">Learn About Tier Membership</Button>
@@ -232,5 +279,5 @@ export default function OrderPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

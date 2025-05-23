@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import Link from "next/link"
+import Link from "next/link";
 
 import {
   Box,
@@ -18,13 +18,13 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-} from "@mui/material"
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore"
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar"
-import SecurityIcon from "@mui/icons-material/Security"
-import WarningIcon from "@mui/icons-material/Warning"
-import SpeedIcon from "@mui/icons-material/Speed"
-import VisibilityIcon from "@mui/icons-material/Visibility"
+} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import SecurityIcon from "@mui/icons-material/Security";
+import WarningIcon from "@mui/icons-material/Warning";
+import SpeedIcon from "@mui/icons-material/Speed";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const safetyGuidelines = [
   {
@@ -60,7 +60,7 @@ const safetyGuidelines = [
       "Avoid distracted driving at all times",
     ],
   },
-]
+];
 
 const emergencyProcedures = [
   {
@@ -96,7 +96,7 @@ const emergencyProcedures = [
       "Follow roadside assistance instructions",
     ],
   },
-]
+];
 
 const safetyChecklist = [
   {
@@ -132,7 +132,7 @@ const safetyChecklist = [
       "Rest period planned",
     ],
   },
-]
+];
 
 export default function DriverSafetyPage() {
   return (
@@ -155,7 +155,11 @@ export default function DriverSafetyPage() {
           >
             Driver Safety Guidelines
           </Typography>
-          <Typography variant="h5" color="text.secondary" sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}>
+          <Typography
+            variant="h5"
+            color="text.secondary"
+            sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}
+          >
             Essential safety information and procedures for OTW drivers
           </Typography>
         </Box>
@@ -170,7 +174,8 @@ export default function DriverSafetyPage() {
           }}
         >
           <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-            Remember: Your safety is our top priority. If you feel unsafe at any time, contact OTW support immediately.
+            Remember: Your safety is our top priority. If you feel unsafe at any
+            time, contact OTW support immediately.
           </Typography>
         </Alert>
 
@@ -249,7 +254,11 @@ export default function DriverSafetyPage() {
                     {procedure.steps.map((step, index) => (
                       <ListItem key={index} sx={{ px: 0 }}>
                         <ListItemIcon sx={{ minWidth: 40 }}>
-                          <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
+                          <Typography
+                            variant="h6"
+                            color="primary"
+                            sx={{ fontWeight: 700 }}
+                          >
                             {index + 1}
                           </Typography>
                         </ListItemIcon>
@@ -300,7 +309,8 @@ export default function DriverSafetyPage() {
         {/* Additional Resources */}
         <Box sx={{ mt: 8, textAlign: "center" }}>
           <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-            For additional safety resources or to report a safety concern, please visit our{" "}
+            For additional safety resources or to report a safety concern,
+            please visit our{" "}
             <Link href="/help" style={{ color: "inherit" }}>
               Help Center
             </Link>
@@ -308,5 +318,5 @@ export default function DriverSafetyPage() {
         </Box>
       </Container>
     </Box>
-  )
+  );
 }

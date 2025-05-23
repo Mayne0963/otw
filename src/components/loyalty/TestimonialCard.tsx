@@ -1,21 +1,20 @@
 "use client";
-import React from "react";
 
-import type React from "react"
+import type React from "react";
 
-import Image from "next/image"
-import { FaStar } from "react-icons/fa"
+import Image from "next/image";
+import { FaStar } from "react-icons/fa";
 
 interface Testimonial {
-  name: string
-  tier: string
-  image: string
-  quote: string
-  rating: number
+  name: string;
+  tier: string;
+  image: string;
+  quote: string;
+  rating: number;
 }
 
 interface TestimonialCardProps {
-  testimonial: Testimonial
+  testimonial: Testimonial;
 }
 
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
@@ -23,13 +22,13 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   const getTierColor = () => {
     switch (testimonial.tier.toLowerCase()) {
       case "gold":
-        return "text-gold-foil"
+        return "text-gold-foil";
       case "silver":
-        return "text-gray-400"
+        return "text-gray-400";
       default:
-        return "text-[#CD7F32]"
+        return "text-[#CD7F32]";
     }
-  }
+  };
 
   return (
     <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
@@ -46,20 +45,28 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
         <div>
           <h4 className="font-bold">{testimonial.name}</h4>
           <div className="flex items-center">
-            <span className={`text-sm ${getTierColor()}`}>{testimonial.tier} Member</span>
+            <span className={`text-sm ${getTierColor()}`}>
+              {testimonial.tier} Member
+            </span>
           </div>
         </div>
       </div>
       <div className="mb-4">
         <div className="flex mb-2">
           {(Array(5).fill(0) as number[]).map((_, i) => (
-            <FaStar key={i} className={i < testimonial.rating ? "text-gold-foil" : "text-gray-600"} size={16} />
+            <FaStar
+              key={i}
+              className={
+                i < testimonial.rating ? "text-gold-foil" : "text-gray-600"
+              }
+              size={16}
+            />
           ))}
         </div>
         <p className="text-gray-300 italic">&quot;{testimonial.quote}&quot;</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TestimonialCard
+export default TestimonialCard;

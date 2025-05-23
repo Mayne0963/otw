@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { AuthProvider } from "../../lib/context/AuthContext"
+import { AuthProvider } from "../../lib/context/AuthContext";
 
 export default function OrdersLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  return <AuthProvider>{children}</AuthProvider>
-} 
+  return <AuthProvider>{children}</AuthProvider>;
+}

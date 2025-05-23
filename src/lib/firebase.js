@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -9,55 +9,55 @@ const firebaseConfig = {
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
-}
+};
 
-let app = null
-let auth = null
-let db = null
-let storage = null
-let analytics = null
+let app = null;
+let auth = null;
+let db = null;
+let storage = null;
+let analytics = null;
 
 // Initialize Firebase only on client side
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   const initializeFirebase = async () => {
     try {
-      const { initializeApp } = await import('firebase/app')
-      app = initializeApp(firebaseConfig)
+      const { initializeApp } = await import("firebase/app");
+      app = initializeApp(firebaseConfig);
 
       // Initialize services one by one to handle any potential errors
       try {
-        const { getAuth } = await import('firebase/auth')
-        auth = getAuth(app)
+        const { getAuth } = await import("firebase/auth");
+        auth = getAuth(app);
       } catch (error) {
-        console.error('Error initializing auth:', error)
+        console.error("Error initializing auth:", error);
       }
 
       try {
-        const { getFirestore } = await import('firebase/firestore')
-        db = getFirestore(app)
+        const { getFirestore } = await import("firebase/firestore");
+        db = getFirestore(app);
       } catch (error) {
-        console.error('Error initializing firestore:', error)
+        console.error("Error initializing firestore:", error);
       }
 
       try {
-        const { getStorage } = await import('firebase/storage')
-        storage = getStorage(app)
+        const { getStorage } = await import("firebase/storage");
+        storage = getStorage(app);
       } catch (error) {
-        console.error('Error initializing storage:', error)
+        console.error("Error initializing storage:", error);
       }
 
       try {
-        const { getAnalytics } = await import('firebase/analytics')
-        analytics = getAnalytics(app)
+        const { getAnalytics } = await import("firebase/analytics");
+        analytics = getAnalytics(app);
       } catch (error) {
-        console.error('Error initializing analytics:', error)
+        console.error("Error initializing analytics:", error);
       }
     } catch (error) {
-      console.error('Error initializing Firebase:', error)
+      console.error("Error initializing Firebase:", error);
     }
-  }
+  };
 
-  initializeFirebase()
+  initializeFirebase();
 }
 
-export { app, auth, db, storage, analytics }
+export { app, auth, db, storage, analytics };

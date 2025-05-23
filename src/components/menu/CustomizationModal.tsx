@@ -1,20 +1,23 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { FaTimes, FaCheck } from "react-icons/fa";
-import type { CustomizationCategory, CustomizationOption } from "../../types"
+import type { CustomizationCategory, CustomizationOption } from "../../types";
 
 interface CustomizationModalProps {
   item: {
-    id: string
-    name: string
-    price: number
-    image: string
-    category: string
-  }
-  customizationOptions: CustomizationCategory[]
-  onClose: () => void
-  onAddToCart: (quantity: number, customizations: { [categoryId: string]: CustomizationOption[] }) => void
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+    category: string;
+  };
+  customizationOptions: CustomizationCategory[];
+  onClose: () => void;
+  onAddToCart: (
+    quantity: number,
+    customizations: { [categoryId: string]: CustomizationOption[] },
+  ) => void;
 }
 
 const CustomizationModal: React.FC<CustomizationModalProps> = ({
@@ -23,112 +26,138 @@ const CustomizationModal: React.FC<CustomizationModalProps> = ({
   onClose,
   onAddToCart,
 }) => {
-  const [quantity, setQuantity] = useState(1)
-  const [selectedOptions, setSelectedOptions] = useState<{ [categoryId: string]: CustomizationOption[] }>({})
-  const [validationErrors, setValidationErrors] = useState<{ [categoryId: string]: string }>({})
-  const [totalPrice, setTotalPrice] = useState(item.price)
+  const [quantity, setQuantity] = useState(1);
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [categoryId: string]: CustomizationOption[];
+  }>({});
+  const [validationErrors, setValidationErrors] = useState<{
+    [categoryId: string]: string;
+  }>({});
+  const [totalPrice, setTotalPrice] = useState(item.price);
 
   // Initialize selected options
   useEffect(() => {
-    const initialOptions: { [categoryId: string]: CustomizationOption[] } = {}
-    const errors: { [categoryId: string]: string } = {}
+    const initialOptions: { [categoryId: string]: CustomizationOption[] } = {};
+    const errors: { [categoryId: string]: string } = {};
 
     customizationOptions.forEach((category) => {
+      // Initialize empty array for all categories
+      initialOptions[category.id] = [];
+      
       if (category.required && !category.multiple) {
         // Pre-select the first option for required single-select categories
-        initialOptions[category.id] = [category.options[0]]
-      } else {
-        initialOptions[category.id] = []
+        if (category.options && Array.isArray(category.options) && category.options.length > 0) {
+          const firstOption = category.options[0];
+          if (firstOption) {
+            // Add the first option to the array
+            initialOptions[category.id] = [firstOption];
+          }
+        }
       }
 
-      if (category.required && initialOptions[category.id].length === 0) {
-        errors[category.id] = `Please select a ${category.name.toLowerCase()}`
+      // Check if a required category has no selection
+      if (category.required && initialOptions[category.id]?.length === 0) {
+        errors[category.id] = `Please select a ${category.name.toLowerCase()}`;
       }
-    })
+    });
 
-    setSelectedOptions(initialOptions)
-    setValidationErrors(errors)
-  }, [customizationOptions])
+    setSelectedOptions(initialOptions);
+    setValidationErrors(errors);
+  }, [customizationOptions]);
 
   // Calculate total price whenever selections change
   useEffect(() => {
-    let newTotal = item.price * quantity
+    let newTotal = item.price * quantity;
 
     // Add the price of all selected options
     Object.values(selectedOptions).forEach((options) => {
       options.forEach((option) => {
-        newTotal += option.price * quantity
-      })
-    })
+        newTotal += option.price * quantity;
+      });
+    });
 
-    setTotalPrice(newTotal)
-  }, [selectedOptions, quantity, item.price])
+    setTotalPrice(newTotal);
+  }, [selectedOptions, quantity, item.price]);
 
-  const handleOptionSelect = (category: CustomizationCategory, option: CustomizationOption) => {
+  const handleOptionSelect = (
+    category: CustomizationCategory,
+    option: CustomizationOption,
+  ) => {
     setSelectedOptions((prev) => {
-      const newOptions = { ...prev }
+      const newOptions = { ...prev };
 
       if (category.multiple) {
         // For multi-select, toggle the option
-        const categoryOptions = [...(prev[category.id] || [])]
-        const optionIndex = categoryOptions.findIndex((opt) => opt.id === option.id)
+        const categoryOptions = [...(prev[category.id] || [])];
+        const optionIndex = categoryOptions.findIndex(
+          (opt) => opt && typeof opt === 'object' && 'id' in opt && opt.id === option.id,
+        );
 
         if (optionIndex >= 0) {
           // Remove if already selected
-          categoryOptions.splice(optionIndex, 1)
+          categoryOptions.splice(optionIndex, 1);
         } else {
           // Add if not selected
-          categoryOptions.push(option)
+          categoryOptions.push(option);
         }
 
-        newOptions[category.id] = categoryOptions
+        newOptions[category.id] = categoryOptions;
       } else {
         // For single-select, replace the current selection
-        newOptions[category.id] = [option]
+        newOptions[category.id] = [option];
       }
 
       // Clear validation error if a selection is made for a required category
-      if (category.required && newOptions[category.id].length > 0) {
+      const categoryOptions = newOptions[category.id];
+      if (category.required && categoryOptions && Array.isArray(categoryOptions) && categoryOptions.length > 0) {
         setValidationErrors((prev) => {
-          const newErrors = { ...prev }
-          delete newErrors[category.id]
-          return newErrors
-        })
+          const newErrors = { ...prev };
+          delete newErrors[category.id];
+          return newErrors;
+        });
       }
 
-      return newOptions
-    })
-  }
+      return newOptions;
+    });
+  };
 
   const isOptionSelected = (categoryId: string, optionId: string) => {
-    return (selectedOptions[categoryId] || []).some((opt) => opt.id === optionId)
-  }
+    return (selectedOptions[categoryId] || []).some(
+      (opt) => opt && typeof opt === 'object' && 'id' in opt && opt.id === optionId,
+    );
+  };
 
   const handleAddToCart = () => {
     // Validate all required fields are filled
-    const errors: { [categoryId: string]: string } = {}
+    const errors: { [categoryId: string]: string } = {};
 
     customizationOptions.forEach((category) => {
-      if (category.required && (!selectedOptions[category.id] || selectedOptions[category.id].length === 0)) {
-        errors[category.id] = `Please select a ${category.name.toLowerCase()}`
+      // Check if the category is required and has no selections
+      const categorySelections = selectedOptions[category.id] || [];
+      if (category.required && categorySelections.length === 0) {
+        errors[category.id] = `Please select a ${category.name.toLowerCase()}`;
       }
-    })
+    });
 
     if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors)
-      return
+      setValidationErrors(errors);
+      return;
     }
 
-    onAddToCart(quantity, selectedOptions)
-    onClose()
-  }
+    onAddToCart(quantity, selectedOptions);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80">
       <div className="bg-[#1A1A1A] rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-fade-in">
         <div className="relative p-6 border-b border-[#333333] flex justify-between items-center">
           <h2 className="text-xl font-bold">Customize {item.name}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors" aria-label="Close">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+            aria-label="Close"
+          >
             <FaTimes size={20} />
           </button>
         </div>
@@ -138,17 +167,24 @@ const CustomizationModal: React.FC<CustomizationModalProps> = ({
             <div key={category.id} className="mb-6">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-bold">
-                  {category.name} {category.required && <span className="text-blood-red">*</span>}
+                  {category.name}{" "}
+                  {category.required && (
+                    <span className="text-blood-red">*</span>
+                  )}
                 </h3>
-                <span className="text-sm text-gray-400">{category.multiple ? "Select multiple" : "Select one"}</span>
+                <span className="text-sm text-gray-400">
+                  {category.multiple ? "Select multiple" : "Select one"}
+                </span>
               </div>
 
               {validationErrors[category.id] && (
-                <p className="text-blood-red text-sm mb-2">{validationErrors[category.id]}</p>
+                <p className="text-blood-red text-sm mb-2">
+                  {validationErrors[category.id]}
+                </p>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {category.options.map((option) => (
+                {category.options && Array.isArray(category.options) && category.options.map((option) => (
                   <button
                     key={option.id}
                     className={`p-3 rounded-md border ${
@@ -164,7 +200,11 @@ const CustomizationModal: React.FC<CustomizationModalProps> = ({
                       )}
                       {option.name}
                     </span>
-                    {option.price > 0 && <span className="text-gold-foil">+${option.price.toFixed(2)}</span>}
+                    {option.price > 0 && (
+                      <span className="text-gold-foil">
+                        +${option.price.toFixed(2)}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -212,7 +252,7 @@ const CustomizationModal: React.FC<CustomizationModalProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CustomizationModal
+export default CustomizationModal;

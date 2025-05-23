@@ -1,7 +1,7 @@
-import * as React from "react"
-import Link from "next/link"
+import * as React from "react";
+import Link from "next/link";
 
-import { cn } from "../../lib/utils"
+import { cn } from "../../lib/utils";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,18 +10,20 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "./navigation-menu"
+} from "./navigation-menu";
 
 const components: { title: string; href: string; description: string }[] = [
   {
     title: "Alert Dialog",
     href: "/docs/components/alert-dialog",
-    description: "A modal dialog that interrupts the user with important content and expects a response.",
+    description:
+      "A modal dialog that interrupts the user with important content and expects a response.",
   },
   {
     title: "Hover Card",
     href: "/docs/components/hover-card",
-    description: "For sighted users to preview content available behind a link.",
+    description:
+      "For sighted users to preview content available behind a link.",
   },
   {
     title: "Progress",
@@ -36,7 +38,8 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "Tabs",
     href: "/docs/components/tabs",
-    description: "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+    description:
+      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
   },
   {
     title: "Tooltip",
@@ -44,7 +47,7 @@ const components: { title: string; href: string; description: string }[] = [
     description:
       "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
-]
+];
 
 export function NavigationMenuDemo() {
   return (
@@ -60,9 +63,12 @@ export function NavigationMenuDemo() {
                     href="/docs"
                     className="group flex h-full w-full select-none flex-col justify-end rounded-md bg-muted p-6 no-underline outline-none focus:shadow-md"
                   >
-                    <div className="mb-2 mt-4 text-lg font-medium">Documentation</div>
+                    <div className="mb-2 mt-4 text-lg font-medium">
+                      Documentation
+                    </div>
                     <p className="text-sm leading-tight text-muted-foreground">
-                      Learn how to use Shadcn UI components and utilities to build your next app.
+                      Learn how to use Shadcn UI components and utilities to
+                      build your next app.
                     </p>
                   </Link>
                 </NavigationMenuLink>
@@ -73,9 +79,12 @@ export function NavigationMenuDemo() {
                     href="/docs/installation"
                     className="group flex h-full w-full select-none flex-col justify-end rounded-md bg-muted p-6 no-underline outline-none focus:shadow-md"
                   >
-                    <div className="mb-2 mt-4 text-lg font-medium">Installation</div>
+                    <div className="mb-2 mt-4 text-lg font-medium">
+                      Installation
+                    </div>
                     <p className="text-sm leading-tight text-muted-foreground">
-                      Install all necessary dependencies and get your project set up.
+                      Install all necessary dependencies and get your project
+                      set up.
                     </p>
                   </Link>
                 </NavigationMenuLink>
@@ -88,7 +97,11 @@ export function NavigationMenuDemo() {
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
               {components.map((component) => (
-                <ListItem key={component.title} title={component.title} href={component.href}>
+                <ListItem
+                  key={component.title}
+                  title={component.title}
+                  href={component.href}
+                >
                   {component.description}
                 </ListItem>
               ))}
@@ -97,12 +110,14 @@ export function NavigationMenuDemo() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/docs" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>Documentation</NavigationMenuLink>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Documentation
+            </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
-  )
+  );
 }
 
 const ListItem = React.forwardRef<
@@ -122,10 +137,12 @@ const ListItem = React.forwardRef<
           )}
         >
           <div className="mb-2 mt-4 text-lg font-medium">{title}</div>
-          <p className="text-sm leading-tight text-muted-foreground">{children}</p>
+          <p className="text-sm leading-tight text-muted-foreground">
+            {children}
+          </p>
         </Link>
       </NavigationMenuLink>
     </li>
-  )
-})
-ListItem.displayName = "ListItem"
+  );
+});
+ListItem.displayName = "ListItem";

@@ -1,5 +1,9 @@
-import Link from "next/link"
+import React from 'react';
 
+// Footer navigation sections
+// This is a commented out section that was causing TypeScript errors
+// Keeping it as reference for future implementation
+/*
 const footerSections = [
   {
     title: "Services",
@@ -37,7 +41,8 @@ const footerSections = [
       { name: "Accessibility", path: "/accessibility" },
     ],
   },
-]
+];
+*/
 
 export default function Footer() {
   return (
@@ -47,12 +52,14 @@ export default function Footer() {
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">About OTW</h3>
             <p className="text-gray-400">
-              Delivering flavors and motion to your doorstep. Fast, reliable, and
-              community-driven service.
+              Delivering flavors and motion to your doorstep. Fast, reliable,
+              and community-driven service.
             </p>
           </div>
           <div>
-            <h3 className="text-white text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-white text-lg font-semibold mb-4">
+              Quick Links
+            </h3>
             <ul className="space-y-2">
               <li>
                 <a
@@ -87,5 +94,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

@@ -14,5 +14,5 @@ export default function QuantumEntanglingDeliveryPage() {
       <h1>Quantum Entangling Delivery</h1>
       <p>This is the Quantum Entangling Delivery page.</p>
     </div>
-  )
+  );
 }

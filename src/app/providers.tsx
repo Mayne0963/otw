@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { ThemeProvider } from 'next-themes'
-import { AuthProvider } from '../lib/context/AuthContext'
-import { Toaster } from '../components/ui/toaster'
+import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "../lib/context/AuthContext";
+import { Toaster } from "../components/ui/toaster";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -17,5 +17,5 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <Toaster />
       </AuthProvider>
     </ThemeProvider>
-  )
-} 
+  );
+}

@@ -37,7 +37,24 @@ export default function MenuPage() {
   });
   const [filteredItems, setFilteredItems] = useState(menuItems); // Initialize with all menu items
   const [showFilters, setShowFilters] = useState(false);
-  const [pendingItem, setPendingItem] = useState<any | null>(null);
+  // Define a MenuItem type to replace 'any'
+  interface MenuItem {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    image: string;
+    category: string;
+    infused?: boolean;
+    dietary?: {
+      vegetarian?: boolean;
+      vegan?: boolean;
+      glutenFree?: boolean;
+      dairyFree?: boolean;
+    };
+  }
+  
+  const [pendingItem, setPendingItem] = useState<MenuItem | null>(null);
   const [pendingQuantity, setPendingQuantity] = useState<number>(1);
   const [pendingCustomizations, setPendingCustomizations] = useState<{[categoryId: string]: CustomizationOption[]} | undefined>(undefined);
 
@@ -91,7 +108,7 @@ export default function MenuPage() {
 
   // Handle adding item to cart
   const handleAddToCart = (
-    item: any,
+    item: MenuItem,
     quantity = 1,
     customizations?: { [categoryId: string]: CustomizationOption[] },
   ) => {
@@ -139,7 +156,7 @@ export default function MenuPage() {
       price: item.price + additionalPrice,
       quantity: quantity,
       image: item.image,
-      customizations: customizations,
+      customizations: customizations || {}, // Provide empty object as fallback when customizations is undefined
     })
   }
 

@@ -1,4 +1,4 @@
-import type { Event } from "../types/event"
+import type { Event } from "../types/event";
 
 export const categories = [
   { id: "tasting", name: "Tastings" },
@@ -7,7 +7,7 @@ export const categories = [
   { id: "music", name: "Live Music" },
   { id: "popup", name: "Pop-Up Events" },
   { id: "holiday", name: "Holiday Events" },
-]
+];
 
 export const locations = [
   { id: "la-downtown", name: "Downtown LA" },
@@ -18,7 +18,7 @@ export const locations = [
   { id: "nyc-brooklyn", name: "NYC Williamsburg" },
   { id: "chi-river-north", name: "Chicago River North" },
   { id: "chi-wicker-park", name: "Chicago Wicker Park" },
-]
+];
 
 export const events: Event[] = [
   {
@@ -38,7 +38,12 @@ export const events: Event[] = [
     capacity: 30,
     registered: 28,
     featured: true,
-    features: ["Food Tastings", "Drink Pairings", "Chef Demonstration", "Take-Home Gift"],
+    features: [
+      "Food Tastings",
+      "Drink Pairings",
+      "Chef Demonstration",
+      "Take-Home Gift",
+    ],
     schedule: [
       { time: "7:00 PM", activity: "Welcome Cocktail & Appetizers" },
       { time: "7:30 PM", activity: "Chef Introduction & Tasting Begins" },
@@ -68,7 +73,12 @@ export const events: Event[] = [
     capacity: 20,
     registered: 15,
     featured: false,
-    features: ["Hands-on Cooking", "All Materials Provided", "Take-Home Recipes", "21+ Only"],
+    features: [
+      "Hands-on Cooking",
+      "All Materials Provided",
+      "Take-Home Recipes",
+      "21+ Only",
+    ],
     schedule: [
       { time: "6:00 PM", activity: "Introduction to Infusion Techniques" },
       { time: "6:45 PM", activity: "Recipe 1: Infused Appetizers" },
@@ -99,7 +109,12 @@ export const events: Event[] = [
     capacity: 12,
     registered: 8,
     featured: true,
-    features: ["7-Course Dinner", "Wine Pairings", "Chef Interaction", "Exclusive Menu"],
+    features: [
+      "7-Course Dinner",
+      "Wine Pairings",
+      "Chef Interaction",
+      "Exclusive Menu",
+    ],
     schedule: [
       { time: "7:30 PM", activity: "Champagne Reception" },
       { time: "8:00 PM", activity: "Seating & First Course" },
@@ -128,7 +143,12 @@ export const events: Event[] = [
     capacity: 50,
     registered: 42,
     featured: false,
-    features: ["Live DJ", "Family-Style Dinner", "Craft Cocktails", "Dance Party"],
+    features: [
+      "Live DJ",
+      "Family-Style Dinner",
+      "Craft Cocktails",
+      "Dance Party",
+    ],
   },
   {
     id: "popup-collab-1",
@@ -147,7 +167,12 @@ export const events: Event[] = [
     capacity: 200,
     registered: 175,
     featured: false,
-    features: ["Special Menu", "No Reservation Required", "First Come, First Served", "Exclusive Merchandise"],
+    features: [
+      "Special Menu",
+      "No Reservation Required",
+      "First Come, First Served",
+      "Exclusive Merchandise",
+    ],
   },
   {
     id: "holiday-feast-1",
@@ -166,7 +191,11 @@ export const events: Event[] = [
     capacity: 60,
     registered: 25,
     featured: false,
-    features: ["Family-Style Feast", "Holiday Cocktails", "Thanksgiving Classics Reimagined"],
+    features: [
+      "Family-Style Feast",
+      "Holiday Cocktails",
+      "Thanksgiving Classics Reimagined",
+    ],
   },
   {
     id: "past-event-1",
@@ -185,7 +214,12 @@ export const events: Event[] = [
     capacity: 100,
     registered: 100,
     featured: false,
-    features: ["Rooftop Views", "Summer Menu Tasting", "Live DJ", "Craft Cocktails"],
+    features: [
+      "Rooftop Views",
+      "Summer Menu Tasting",
+      "Live DJ",
+      "Craft Cocktails",
+    ],
   },
   {
     id: "past-event-2",
@@ -204,6 +238,11 @@ export const events: Event[] = [
     capacity: 25,
     registered: 25,
     featured: false,
-    features: ["Hands-on Cooking", "Ingredient Tasting", "Take-Home Recipe Book", "Burger Feast"],
+    features: [
+      "Hands-on Cooking",
+      "Ingredient Tasting",
+      "Take-Home Recipe Book",
+      "Burger Feast",
+    ],
   },
-]
+];

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
+import { useState } from "react";
+import Link from "next/link";
 import {
   FaMapMarkerAlt,
   FaPhone,
@@ -13,19 +13,19 @@ import {
   FaYoutube,
   FaChevronDown,
   FaChevronUp,
-} from "react-icons/fa"
-import ContactForm from "../../components/contact/ContactForm"
-import ContactMap from "../../components/contact/ContactMap"
-import { locationData } from "../../data/location-data"
+} from "react-icons/fa";
+import ContactForm from "../../components/contact/ContactForm";
+import ContactMap from "../../components/contact/ContactMap";
+import { locationData } from "../../data/location-data";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default function ContactPage() {
-  const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   const toggleFaq = (index: number) => {
-    setExpandedFaq(expandedFaq === index ? null : index)
-  }
+    setExpandedFaq(expandedFaq === index ? null : index);
+  };
 
   const faqs = [
     {
@@ -63,7 +63,7 @@ export default function ContactPage() {
       answer:
         "You can apply for job openings through the Careers section of our website or by visiting any of our locations and asking for an application form.",
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen pb-20">
@@ -77,9 +77,12 @@ export default function ContactPage() {
           ></div>
         </div>
         <div className="container mx-auto px-4 z-10 text-center">
-          <h1 className="heading-xl mb-4 text-white gritty-shadow">Contact Us</h1>
+          <h1 className="heading-xl mb-4 text-white gritty-shadow">
+            Contact Us
+          </h1>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            We'd love to hear from you. Reach out with questions, feedback, or to book your next event.
+            We'd love to hear from you. Reach out with questions, feedback, or
+            to book your next event.
           </p>
         </div>
       </section>
@@ -136,7 +139,9 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-bold mb-1">Email</h3>
                       <p className="text-gray-300">info@broskiskitchen.com</p>
-                      <p className="text-gray-300">catering@broskiskitchen.com</p>
+                      <p className="text-gray-300">
+                        catering@broskiskitchen.com
+                      </p>
                       <p className="text-gray-300">events@broskiskitchen.com</p>
                     </div>
                   </div>
@@ -148,7 +153,9 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-bold mb-1">Office Hours</h3>
-                      <p className="text-gray-300">Monday - Friday: 9 AM - 5 PM</p>
+                      <p className="text-gray-300">
+                        Monday - Friday: 9 AM - 5 PM
+                      </p>
                       <p className="text-gray-300">Saturday - Sunday: Closed</p>
                     </div>
                   </div>
@@ -199,10 +206,20 @@ export default function ContactPage() {
               {/* Newsletter Signup */}
               <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
                 <h3 className="text-xl font-bold mb-2">Stay Updated</h3>
-                <p className="text-gray-300 mb-4">Subscribe to our newsletter for the latest updates and offers.</p>
+                <p className="text-gray-300 mb-4">
+                  Subscribe to our newsletter for the latest updates and offers.
+                </p>
                 <form className="flex flex-col sm:flex-row gap-2">
-                  <input type="email" placeholder="Your email address" className="input flex-grow" required />
-                  <button type="submit" className="btn-primary whitespace-nowrap">
+                  <input
+                    type="email"
+                    placeholder="Your email address"
+                    className="input flex-grow"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="btn-primary whitespace-nowrap"
+                  >
                     Subscribe
                   </button>
                 </form>
@@ -220,7 +237,10 @@ export default function ContactPage() {
             <ContactMap locations={locationData} />
           </div>
           <div className="mt-8 text-center">
-            <Link href="/locations" className="btn-outline inline-flex items-center gap-2">
+            <Link
+              href="/locations"
+              className="btn-outline inline-flex items-center gap-2"
+            >
               View All Locations
             </Link>
           </div>
@@ -230,10 +250,15 @@ export default function ContactPage() {
       {/* FAQ Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold mb-8 text-center">
+            Frequently Asked Questions
+          </h2>
           <div className="max-w-3xl mx-auto">
             {faqs.map((faq, index) => (
-              <div key={index} className="mb-4 bg-[#1A1A1A] rounded-lg border border-[#333333] overflow-hidden">
+              <div
+                key={index}
+                className="mb-4 bg-[#1A1A1A] rounded-lg border border-[#333333] overflow-hidden"
+              >
                 <button
                   className="w-full p-4 text-left flex justify-between items-center focus:outline-none"
                   onClick={() => toggleFaq(index)}
@@ -248,7 +273,9 @@ export default function ContactPage() {
                 </button>
                 <div
                   className={`px-4 pb-4 transition-all duration-300 ${
-                    expandedFaq === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+                    expandedFaq === index
+                      ? "max-h-96 opacity-100"
+                      : "max-h-0 opacity-0 overflow-hidden"
                   }`}
                 >
                   <p className="text-gray-300">{faq.answer}</p>
@@ -263,9 +290,12 @@ export default function ContactPage() {
       <section className="py-16 bg-black relative">
         <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/20 to-[#880808]/20 opacity-50"></div>
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <h2 className="heading-lg mb-4 gritty-shadow">Ready to Experience Broski's?</h2>
+          <h2 className="heading-lg mb-4 gritty-shadow">
+            Ready to Experience Broski's?
+          </h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            Visit one of our locations or order online to experience our luxury street gourmet cuisine.
+            Visit one of our locations or order online to experience our luxury
+            street gourmet cuisine.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link href="/locations" className="btn-outline">
@@ -278,5 +308,5 @@ export default function ContactPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

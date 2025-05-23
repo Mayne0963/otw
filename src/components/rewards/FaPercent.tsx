@@ -1,2 +1,2 @@
-import { FaPercent } from "react-icons/fa"
-export default FaPercent
+import { FaPercent } from "react-icons/fa";
+export default FaPercent;

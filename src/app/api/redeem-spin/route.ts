@@ -59,7 +59,12 @@ export async function POST(req: NextRequest) {
     }
 
     // Assign prize
-    const prize = PRIZES[Math.floor(Math.random() * PRIZES.length)]
+    const prizeIndex = Math.floor(Math.random() * PRIZES.length)
+    const prize = PRIZES[prizeIndex]
+    if (!prize) {
+      return NextResponse.json({ error: 'Failed to select prize' }, { status: 500 })
+    }
+    
     const prizeHistory = rewardData.prizeHistory || []
     const spinsUsed = (rewardData.spinsUsed || 0) + 1
     const spinsRemaining = rewardData.spinsRemaining - 1

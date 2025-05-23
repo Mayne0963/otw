@@ -1,14 +1,14 @@
-import type React from "react"
-import { FaCheckCircle } from "react-icons/fa"
+import type React from "react";
+import { FaCheckCircle } from "react-icons/fa";
 
 interface Requirement {
-  title: string
-  description: string
-  items: string[]
+  title: string;
+  description: string;
+  items: string[];
 }
 
 interface RequirementCardProps {
-  requirement: Requirement
+  requirement: Requirement;
 }
 
 const RequirementCard: React.FC<RequirementCardProps> = ({ requirement }) => {
@@ -25,7 +25,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({ requirement }) => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default RequirementCard
+export default RequirementCard;

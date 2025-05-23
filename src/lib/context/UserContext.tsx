@@ -1,43 +1,47 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useContext, useState, type ReactNode } from "react"
+import type React from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 
 interface User {
-  id: string
-  name: string
-  email: string
-  points: number
-  isLoggedIn: boolean
+  id: string;
+  name: string;
+  email: string;
+  points: number;
+  isLoggedIn: boolean;
 }
 
 interface UserContextType {
-  user: User | null
-  setUser: (user: User | null) => void
+  user: User | null;
+  setUser: (user: User | null) => void;
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined)
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const useUser = (): UserContextType => {
-  const context = useContext(UserContext)
+  const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useUser must be used within a UserProvider")
+    throw new Error("useUser must be used within a UserProvider");
   }
-  return context
-}
+  return context;
+};
 
 interface UserProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-  const [user, setUserState] = useState<User | null>(null)
+  const [user, setUserState] = useState<User | null>(null);
 
   // You can add any logic here to fetch or manage user data
 
   const setUser = (user: User | null) => {
-    setUserState(user)
-  }
+    setUserState(user);
+  };
 
-  return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>
-}
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
+};

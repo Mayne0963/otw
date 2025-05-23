@@ -23,4 +23,4 @@ export const testimonials = [
       "Even at the Bronze tier, the rewards are worth it. I've already redeemed points for free sides and desserts!",
     rating: 5,
   },
-]
+];

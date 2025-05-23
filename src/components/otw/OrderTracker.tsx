@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Card } from "../ui/card"
-import { Input } from "../ui/input"
-import { Button } from "../ui/button"
-import { CheckCircle, Clock, MapPin, User } from "lucide-react"
+import { useState } from "react";
+import { Card } from "../ui/card";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { CheckCircle, Clock, MapPin, User } from "lucide-react";
 
 const statusSteps = [
   {
@@ -33,17 +33,18 @@ const statusSteps = [
     icon: CheckCircle,
     description: "Service completed successfully",
   },
-]
+];
 
 export default function OrderTracker() {
-  const [orderId, setOrderId] = useState("")
-  const [currentStatus] = useState("received") // Removed setCurrentStatus as it's unused
+  const [orderId, setOrderId] = useState("");
+  const [currentStatus] = useState("received"); // Removed setCurrentStatus as it's unused
 
-  const handleTrack = (e: React.FormEvent) => { // Removed async
-    e.preventDefault()
+  const handleTrack = (e: React.FormEvent) => {
+    // Removed async
+    e.preventDefault();
     // TODO: Implement tracking lookup
-    console.log('Tracking order:', orderId); // Added console log for now
-  }
+    console.log("Tracking order:", orderId); // Added console log for now
+  };
 
   return (
     <div className="space-y-8">
@@ -63,11 +64,15 @@ export default function OrderTracker() {
         <div className="absolute left-8 top-0 h-full w-0.5 bg-gray-700" />
 
         <div className="space-y-8">
-          {statusSteps.map((step) => { // Removed unused 'index' parameter
+          {statusSteps.map((step) => {
+            // Removed unused 'index' parameter
             const isActive = statusSteps
-              .slice(0, statusSteps.findIndex((s) => s.id === currentStatus) + 1)
+              .slice(
+                0,
+                statusSteps.findIndex((s) => s.id === currentStatus) + 1,
+              )
               .map((s) => s.id)
-              .includes(step.id)
+              .includes(step.id);
 
             return (
               <div key={step.id} className="relative flex items-start gap-4">
@@ -81,11 +86,15 @@ export default function OrderTracker() {
                 </div>
 
                 <div>
-                  <h3 className={`font-semibold ${isActive ? "text-otw-gold" : "text-gray-400"}`}>{step.title}</h3>
+                  <h3
+                    className={`font-semibold ${isActive ? "text-otw-gold" : "text-gray-400"}`}
+                  >
+                    {step.title}
+                  </h3>
                   <p className="text-sm text-gray-500">{step.description}</p>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
@@ -114,5 +123,5 @@ export default function OrderTracker() {
         </div>
       </Card>
     </div>
-  )
+  );
 }

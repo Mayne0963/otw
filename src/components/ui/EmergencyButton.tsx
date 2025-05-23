@@ -1,19 +1,18 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 
-const EMERGENCY_TYPES = [
-  "Medical",
-  "Roadside",
-  "Personal Safety",
-  "Other"
-]
+const EMERGENCY_TYPES = ["Medical", "Roadside", "Personal Safety", "Other"];
 
-export default function EmergencyButton({ onClick }: { onClick?: (type?: string) => void }) {
-  const [showModal, setShowModal] = useState(false)
-  const [selectedType, setSelectedType] = useState(EMERGENCY_TYPES[0])
+export default function EmergencyButton({
+  onClick,
+}: {
+  onClick?: (type?: string) => void;
+}) {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedType, setSelectedType] = useState(EMERGENCY_TYPES[0]);
 
   function handleConfirm() {
-    setShowModal(false)
-    if (onClick) onClick(selectedType)
+    setShowModal(false);
+    if (onClick) onClick(selectedType);
   }
 
   return (
@@ -28,16 +27,24 @@ export default function EmergencyButton({ onClick }: { onClick?: (type?: string)
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-xs w-full shadow-xl text-center">
-            <h2 className="text-lg font-bold text-otw-red mb-2">Confirm Emergency</h2>
-            <p className="mb-4 text-gray-700">Are you sure you want to trigger an emergency alert?</p>
-            <label className="block mb-2 text-sm font-semibold text-gray-700">Type:</label>
+            <h2 className="text-lg font-bold text-otw-red mb-2">
+              Confirm Emergency
+            </h2>
+            <p className="mb-4 text-gray-700">
+              Are you sure you want to trigger an emergency alert?
+            </p>
+            <label className="block mb-2 text-sm font-semibold text-gray-700">
+              Type:
+            </label>
             <select
               className="w-full mb-4 p-2 border rounded"
               value={selectedType}
-              onChange={e => setSelectedType(e.target.value)}
+              onChange={(e) => setSelectedType(e.target.value)}
             >
-              {EMERGENCY_TYPES.map(type => (
-                <option key={type} value={type}>{type}</option>
+              {EMERGENCY_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </select>
             <div className="flex gap-2 justify-center">
@@ -58,5 +65,5 @@ export default function EmergencyButton({ onClick }: { onClick?: (type?: string)
         </div>
       )}
     </>
-  )
+  );
 }

@@ -1,9 +1,8 @@
 "use client";
-import React from "react";
 
-import type React from "react"
+import type React from "react";
 
-import { FaCheck, FaTimes } from "react-icons/fa"
+import { FaCheck, FaTimes } from "react-icons/fa";
 
 const TierBenefitsTable: React.FC = () => {
   return (
@@ -14,17 +13,20 @@ const TierBenefitsTable: React.FC = () => {
             <th className="p-4 text-left border-b border-[#333333]">Benefit</th>
             <th className="p-4 text-center border-b border-[#333333]">
               <span className="flex items-center justify-center">
-                <span className="w-3 h-3 bg-[#CD7F32] rounded-full mr-2"></span> Bronze
+                <span className="w-3 h-3 bg-[#CD7F32] rounded-full mr-2"></span>{" "}
+                Bronze
               </span>
             </th>
             <th className="p-4 text-center border-b border-[#333333]">
               <span className="flex items-center justify-center">
-                <span className="w-3 h-3 bg-gray-400 rounded-full mr-2"></span> Silver
+                <span className="w-3 h-3 bg-gray-400 rounded-full mr-2"></span>{" "}
+                Silver
               </span>
             </th>
             <th className="p-4 text-center border-b border-[#333333]">
               <span className="flex items-center justify-center">
-                <span className="w-3 h-3 bg-gold-foil rounded-full mr-2"></span> Gold
+                <span className="w-3 h-3 bg-gold-foil rounded-full mr-2"></span>{" "}
+                Gold
               </span>
             </th>
           </tr>
@@ -153,7 +155,7 @@ const TierBenefitsTable: React.FC = () => {
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default TierBenefitsTable
+export default TierBenefitsTable;

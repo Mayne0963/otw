@@ -12,6 +12,7 @@ import MenuItemCard from "../../../components/menu/MenuItemCard"
 import CategoryFilter from "../../../components/menu/CategoryFilter"
 import type { Restaurant } from "../../../types/restaurant"
 import { restaurantImages, restaurantLogos } from "../../../data/restaurants-data"
+import type { CustomizationOption } from "../../../types"
 
 interface RestaurantDetailPageProps {
   restaurant: Restaurant
@@ -27,13 +28,15 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
 
   // Get the correct image and logo based on restaurant id
   const getRestaurantImage = () => {
-    const id = restaurant.id.split("-")[0]
-    return restaurantImages[id as keyof typeof restaurantImages] || restaurant.image
+    if (!restaurant || !restaurant.id) return "/placeholder.svg";
+    const id = restaurant.id.split("-")[0];
+    return restaurantImages[id as keyof typeof restaurantImages] || restaurant.image || "/placeholder.svg";
   }
 
   const getRestaurantLogo = () => {
-    const id = restaurant.id.split("-")[0]
-    return restaurantLogos[id as keyof typeof restaurantLogos] || restaurant.logo
+    if (!restaurant || !restaurant.id) return "/placeholder.svg";
+    const id = restaurant.id.split("-")[0];
+    return restaurantLogos[id as keyof typeof restaurantLogos] || restaurant.logo || "/placeholder.svg";
   }
 
   // Filter menu items based on selected category and search query
@@ -61,7 +64,7 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
       {/* Restaurant Header */}
       <section className="relative h-[40vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image src={getRestaurantImage() || "/placeholder.svg"} alt={restaurant.name} fill className="object-cover" />
+          <Image src={getRestaurantImage() || "/placeholder.svg"} alt={restaurant?.name || 'Restaurant'} fill className="object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-60"></div>
         </div>
         <div className="container mx-auto px-4 z-10">
@@ -73,27 +76,27 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
             <div className="w-20 h-20 bg-[#111111] rounded-lg overflow-hidden relative border-2 border-[#333333]">
               <Image
                 src={getRestaurantLogo() || "/placeholder.svg"}
-                alt={`${restaurant.name} logo`}
+                alt={`${restaurant?.name || 'Restaurant'} logo`}
                 fill
                 className="object-cover"
               />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-white">{restaurant.name}</h1>
+              <h1 className="text-4xl font-bold text-white">{restaurant?.name || 'Restaurant'}</h1>
               <div className="flex items-center flex-wrap gap-2 mt-2">
                 <div className="flex items-center text-[#FFD700]">
                   <Star size={18} fill="#FFD700" />
-                  <span className="ml-1 font-medium">{restaurant.rating}</span>
+                  <span className="ml-1 font-medium">{restaurant?.rating || 'N/A'}</span>
                 </div>
-                <span className="text-gray-400">({restaurant.reviewCount} reviews)</span>
+                <span className="text-gray-400">({restaurant?.reviewCount || 0} reviews)</span>
                 <span className="mx-2 text-gray-500">•</span>
-                <span className="text-gray-400">{restaurant.priceLevel}</span>
+                <span className="text-gray-400">{restaurant?.priceLevel || 'N/A'}</span>
                 <span className="mx-2 text-gray-500">•</span>
-                <span className="text-gray-400">{restaurant.deliveryTime}</span>
+                <span className="text-gray-400">{restaurant?.deliveryTime || 'N/A'}</span>
                 <span className="mx-2 text-gray-500">•</span>
-                <span className="text-gray-400">${restaurant.deliveryFee.toFixed(2)} delivery</span>
+                <span className="text-gray-400">${(restaurant?.deliveryFee || 0).toFixed(2)} delivery</span>
               </div>
-              <p className="text-gray-300 mt-2">{restaurant.description}</p>
+              <p className="text-gray-300 mt-2">{restaurant?.description || 'No description available'}</p>
             </div>
           </div>
         </div>
@@ -154,10 +157,10 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
                         id: item.id,
                         name: item.name,
                         price: item.price,
-                        quantity: quantity,
+                        quantity: quantity || 1,
                         image: item.image,
-                        customizations: customizations,
-                      })
+                        customizations: customizations || {}, // Provide empty object as fallback
+                      });
                     }
                   }}
                 />

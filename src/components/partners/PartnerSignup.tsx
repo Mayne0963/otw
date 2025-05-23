@@ -1,41 +1,59 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "../ui/button"
+import { useState } from "react";
+import { Button } from "../ui/button";
 // import { Card } from "../ui/card" // Removed unused Card import
-import { Input } from "../ui/input"
-import { Textarea } from "../ui/textarea"
-import { Label } from "../ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { Upload } from "lucide-react"
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Upload } from "lucide-react";
 
-const businessTypes = ["Restaurant", "Retail Store", "Service Provider", "Grocery Store", "Other"]
+const businessTypes = [
+  "Restaurant",
+  "Retail Store",
+  "Service Provider",
+  "Grocery Store",
+  "Other",
+];
 
 export default function PartnerSignup() {
-  const [uploading, setUploading] = useState(false)
+  const [uploading, setUploading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => { // Removed async
-    e.preventDefault()
+  const handleSubmit = (e: React.FormEvent) => {
+    // Removed async
+    e.preventDefault();
     // TODO: Implement form submission
-    console.log('Partner signup submitted'); // Added console log for now
-  }
+    console.log("Partner signup submitted"); // Added console log for now
+  };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => { // Removed async
-    if (!e.target.files?.length) return
-    setUploading(true)
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Removed async
+    if (!e.target.files?.length) return;
+    setUploading(true);
     // TODO: Implement file upload
-    console.log('File selected:', e.target.files[0].name); // Added console log for now
-    setTimeout(() => setUploading(false), 1500) // Mock upload
-  }
+    console.log("File selected:", e.target.files && e.target.files[0] ? e.target.files[0].name : 'No file selected'); // Added console log for now
+    setTimeout(() => setUploading(false), 1500); // Mock upload
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         <div>
           <Label htmlFor="businessName">Business Name</Label>
-          <Input id="businessName" placeholder="Enter your business name" required />
+          <Input
+            id="businessName"
+            placeholder="Enter your business name"
+            required
+          />
         </div>
 
         <div>
@@ -57,22 +75,41 @@ export default function PartnerSignup() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" type="email" placeholder="you@business.com" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@business.com"
+              required
+            />
           </div>
           <div>
             <Label htmlFor="phone">Phone Number</Label>
-            <Input id="phone" type="tel" placeholder="(260) 555-0123" required />
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="(260) 555-0123"
+              required
+            />
           </div>
         </div>
 
         <div>
           <Label htmlFor="address">Business Address</Label>
-          <Input id="address" placeholder="Enter your business address" required />
+          <Input
+            id="address"
+            placeholder="Enter your business address"
+            required
+          />
         </div>
 
         <div>
           <Label htmlFor="description">Business Description</Label>
-          <Textarea id="description" placeholder="Tell us about your business..." className="h-24" required />
+          <Textarea
+            id="description"
+            placeholder="Tell us about your business..."
+            className="h-24"
+            required
+          />
         </div>
 
         <div>
@@ -82,7 +119,10 @@ export default function PartnerSignup() {
               <div className="text-center">
                 <Upload className="mx-auto h-12 w-12 text-gray-400" />
                 <div className="mt-4">
-                  <label htmlFor="file-upload" className="cursor-pointer text-otw-gold hover:text-otw-red">
+                  <label
+                    htmlFor="file-upload"
+                    className="cursor-pointer text-otw-gold hover:text-otw-red"
+                  >
                     <span>Upload a file</span>
                     <input
                       id="file-upload"
@@ -93,7 +133,9 @@ export default function PartnerSignup() {
                       onChange={handleFileUpload} // Already non-async, no 'void' needed here as it's not a promise
                     />
                   </label>
-                  <p className="text-xs text-gray-500 mt-1">PDF, DOC, XLS up to 10MB</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    PDF, DOC, XLS up to 10MB
+                  </p>
                 </div>
               </div>
             </div>
@@ -101,9 +143,13 @@ export default function PartnerSignup() {
         </div>
       </div>
 
-      <Button type="submit" className="w-full bg-otw-red hover:bg-otw-gold hover:text-black" disabled={uploading}>
+      <Button
+        type="submit"
+        className="w-full bg-otw-red hover:bg-otw-gold hover:text-black"
+        disabled={uploading}
+      >
         {uploading ? "Uploading..." : "Submit Application"}
       </Button>
     </form>
-  )
+  );
 }

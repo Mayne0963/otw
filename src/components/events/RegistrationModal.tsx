@@ -1,18 +1,28 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { FaTimes, FaCalendarAlt, FaMapMarkerAlt, FaClock, FaTicketAlt, FaCheck } from "react-icons/fa"
-import type { Event } from "../../types/event"
+import { useState } from "react";
+import {
+  FaTimes,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaClock,
+  FaTicketAlt,
+  FaCheck,
+} from "react-icons/fa";
+import type { Event } from "../../types/event";
 
 interface RegistrationModalProps {
-  event: Event
-  onClose: () => void
+  event: Event;
+  onClose: () => void;
 }
 
-const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose }) => {
-  const [step, setStep] = useState(1)
+const RegistrationModal: React.FC<RegistrationModalProps> = ({
+  event,
+  onClose,
+}) => {
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -22,122 +32,129 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
     specialRequests: "",
     dietaryRestrictions: "",
     agreeToTerms: false,
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calculate total price
-  const totalPrice = formData.tickets * event.price
+  const totalPrice = formData.tickets * event.price;
 
   // Format date
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       weekday: "long",
       month: "long",
       day: "numeric",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   // Handle input change
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target
-    const checked = type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value, type } = e.target;
+    const checked =
+      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
 
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
-    })
+    });
 
     // Clear error when field is updated
     if (errors[name]) {
       setErrors({
         ...errors,
         [name]: "",
-      })
+      });
     }
-  }
+  };
 
   // Validate form
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required"
+      newErrors.firstName = "First name is required";
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required"
+      newErrors.lastName = "Last name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid"
+      newErrors.email = "Email is invalid";
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required"
+      newErrors.phone = "Phone number is required";
     }
 
     if (formData.tickets < 1) {
-      newErrors.tickets = "At least 1 ticket is required"
+      newErrors.tickets = "At least 1 ticket is required";
     } else if (formData.tickets > event.capacity - event.registered) {
-      newErrors.tickets = `Only ${event.capacity - event.registered} tickets available`
+      newErrors.tickets = `Only ${event.capacity - event.registered} tickets available`;
     }
 
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = "You must agree to the terms and conditions"
+      newErrors.agreeToTerms = "You must agree to the terms and conditions";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Handle next step
   const handleNextStep = () => {
     if (validateForm()) {
-      setStep(2)
+      setStep(2);
     }
-  }
+  };
 
   // Handle previous step
   const handlePrevStep = () => {
-    setStep(1)
-  }
+    setStep(1);
+  };
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (validateForm()) {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
       try {
         // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        await new Promise((resolve) => setTimeout(resolve, 1500));
 
         // Show success step
-        setStep(3)
+        setStep(3);
       } catch (error) {
-        console.error("Registration error:", error)
+        console.error("Registration error:", error);
         setErrors({
           ...errors,
           form: "An error occurred during registration. Please try again.",
-        })
+        });
       } finally {
-        setIsSubmitting(false)
+        setIsSubmitting(false);
       }
     }
-  }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80">
       <div className="bg-[#1A1A1A] rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-fade-in">
         <div className="relative p-6 border-b border-[#333333]">
           <h2 className="text-xl font-bold pr-8">
-            {step === 3 ? "Registration Complete" : `Register for ${event.title}`}
+            {step === 3
+              ? "Registration Complete"
+              : `Register for ${event.title}`}
           </h2>
           <button
             onClick={onClose}
@@ -176,7 +193,10 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
               <form className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium mb-1">
+                    <label
+                      htmlFor="firstName"
+                      className="block text-sm font-medium mb-1"
+                    >
                       First Name *
                     </label>
                     <input
@@ -188,11 +208,18 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                       className={`input w-full ${errors.firstName ? "border-blood-red" : ""}`}
                       required
                     />
-                    {errors.firstName && <p className="mt-1 text-sm text-blood-red">{errors.firstName}</p>}
+                    {errors.firstName && (
+                      <p className="mt-1 text-sm text-blood-red">
+                        {errors.firstName}
+                      </p>
+                    )}
                   </div>
 
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium mb-1">
+                    <label
+                      htmlFor="lastName"
+                      className="block text-sm font-medium mb-1"
+                    >
                       Last Name *
                     </label>
                     <input
@@ -204,12 +231,19 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                       className={`input w-full ${errors.lastName ? "border-blood-red" : ""}`}
                       required
                     />
-                    {errors.lastName && <p className="mt-1 text-sm text-blood-red">{errors.lastName}</p>}
+                    {errors.lastName && (
+                      <p className="mt-1 text-sm text-blood-red">
+                        {errors.lastName}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-1">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium mb-1"
+                  >
                     Email Address *
                   </label>
                   <input
@@ -221,11 +255,18 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                     className={`input w-full ${errors.email ? "border-blood-red" : ""}`}
                     required
                   />
-                  {errors.email && <p className="mt-1 text-sm text-blood-red">{errors.email}</p>}
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-blood-red">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium mb-1">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium mb-1"
+                  >
                     Phone Number *
                   </label>
                   <input
@@ -237,11 +278,18 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                     className={`input w-full ${errors.phone ? "border-blood-red" : ""}`}
                     required
                   />
-                  {errors.phone && <p className="mt-1 text-sm text-blood-red">{errors.phone}</p>}
+                  {errors.phone && (
+                    <p className="mt-1 text-sm text-blood-red">
+                      {errors.phone}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label htmlFor="tickets" className="block text-sm font-medium mb-1">
+                  <label
+                    htmlFor="tickets"
+                    className="block text-sm font-medium mb-1"
+                  >
                     Number of Tickets *
                   </label>
                   <select
@@ -252,17 +300,26 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                     className={`input w-full ${errors.tickets ? "border-blood-red" : ""}`}
                     required
                   >
-                    {[...Array(Math.min(10, event.capacity - event.registered))].map((_, i) => (
+                    {[
+                      ...Array(Math.min(10, event.capacity - event.registered)),
+                    ].map((_, i) => (
                       <option key={i} value={i + 1}>
                         {i + 1}
                       </option>
                     ))}
                   </select>
-                  {errors.tickets && <p className="mt-1 text-sm text-blood-red">{errors.tickets}</p>}
+                  {errors.tickets && (
+                    <p className="mt-1 text-sm text-blood-red">
+                      {errors.tickets}
+                    </p>
+                  )}
                 </div>
 
                 <div>
-                  <label htmlFor="dietaryRestrictions" className="block text-sm font-medium mb-1">
+                  <label
+                    htmlFor="dietaryRestrictions"
+                    className="block text-sm font-medium mb-1"
+                  >
                     Dietary Restrictions
                   </label>
                   <textarea
@@ -276,7 +333,10 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                 </div>
 
                 <div>
-                  <label htmlFor="specialRequests" className="block text-sm font-medium mb-1">
+                  <label
+                    htmlFor="specialRequests"
+                    className="block text-sm font-medium mb-1"
+                  >
                     Special Requests
                   </label>
                   <textarea
@@ -304,15 +364,25 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                   <div className="ml-3 text-sm">
                     <label htmlFor="agreeToTerms" className="text-gray-300">
                       I agree to the{" "}
-                      <a href="/terms" className="text-gold-foil hover:underline">
+                      <a
+                        href="/terms"
+                        className="text-gold-foil hover:underline"
+                      >
                         Terms and Conditions
                       </a>{" "}
                       and{" "}
-                      <a href="/privacy" className="text-gold-foil hover:underline">
+                      <a
+                        href="/privacy"
+                        className="text-gold-foil hover:underline"
+                      >
                         Privacy Policy
                       </a>
                     </label>
-                    {errors.agreeToTerms && <p className="mt-1 text-sm text-blood-red">{errors.agreeToTerms}</p>}
+                    {errors.agreeToTerms && (
+                      <p className="mt-1 text-sm text-blood-red">
+                        {errors.agreeToTerms}
+                      </p>
+                    )}
                   </div>
                 </div>
               </form>
@@ -321,7 +391,9 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
 
           {step === 2 && (
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold">Review Your Registration</h3>
+              <h3 className="text-lg font-semibold">
+                Review Your Registration
+              </h3>
 
               <div className="p-4 bg-[#111111] rounded-lg">
                 <h4 className="font-medium mb-2">Event Details</h4>
@@ -330,13 +402,15 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                     <span className="text-gray-400">Event:</span> {event.title}
                   </p>
                   <p>
-                    <span className="text-gray-400">Date:</span> {formatDate(event.date)}
+                    <span className="text-gray-400">Date:</span>{" "}
+                    {formatDate(event.date)}
                   </p>
                   <p>
                     <span className="text-gray-400">Time:</span> {event.time}
                   </p>
                   <p>
-                    <span className="text-gray-400">Location:</span> {event.location.name}
+                    <span className="text-gray-400">Location:</span>{" "}
+                    {event.location.name}
                   </p>
                 </div>
               </div>
@@ -345,25 +419,33 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                 <h4 className="font-medium mb-2">Attendee Information</h4>
                 <div className="space-y-2 text-gray-300">
                   <p>
-                    <span className="text-gray-400">Name:</span> {formData.firstName} {formData.lastName}
+                    <span className="text-gray-400">Name:</span>{" "}
+                    {formData.firstName} {formData.lastName}
                   </p>
                   <p>
-                    <span className="text-gray-400">Email:</span> {formData.email}
+                    <span className="text-gray-400">Email:</span>{" "}
+                    {formData.email}
                   </p>
                   <p>
-                    <span className="text-gray-400">Phone:</span> {formData.phone}
+                    <span className="text-gray-400">Phone:</span>{" "}
+                    {formData.phone}
                   </p>
                   <p>
-                    <span className="text-gray-400">Tickets:</span> {formData.tickets}
+                    <span className="text-gray-400">Tickets:</span>{" "}
+                    {formData.tickets}
                   </p>
                   {formData.dietaryRestrictions && (
                     <p>
-                      <span className="text-gray-400">Dietary Restrictions:</span> {formData.dietaryRestrictions}
+                      <span className="text-gray-400">
+                        Dietary Restrictions:
+                      </span>{" "}
+                      {formData.dietaryRestrictions}
                     </p>
                   )}
                   {formData.specialRequests && (
                     <p>
-                      <span className="text-gray-400">Special Requests:</span> {formData.specialRequests}
+                      <span className="text-gray-400">Special Requests:</span>{" "}
+                      {formData.specialRequests}
                     </p>
                   )}
                 </div>
@@ -373,19 +455,27 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                 <h4 className="font-medium mb-2">Payment Summary</h4>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-gray-300">{formData.tickets} x Ticket(s)</span>
-                    <span className="text-gray-300">${(formData.tickets * event.price).toFixed(2)}</span>
+                    <span className="text-gray-300">
+                      {formData.tickets} x Ticket(s)
+                    </span>
+                    <span className="text-gray-300">
+                      ${(formData.tickets * event.price).toFixed(2)}
+                    </span>
                   </div>
                   <div className="border-t border-[#333333] my-2"></div>
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span className="text-gold-foil">${totalPrice.toFixed(2)}</span>
+                    <span className="text-gold-foil">
+                      ${totalPrice.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               {errors.form && (
-                <div className="p-4 bg-blood-red bg-opacity-20 text-blood-red rounded-lg">{errors.form}</div>
+                <div className="p-4 bg-blood-red bg-opacity-20 text-blood-red rounded-lg">
+                  {errors.form}
+                </div>
               )}
             </div>
           )}
@@ -397,10 +487,12 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
               </div>
 
               <div>
-                <h3 className="text-xl font-bold mb-2">Registration Successful!</h3>
+                <h3 className="text-xl font-bold mb-2">
+                  Registration Successful!
+                </h3>
                 <p className="text-gray-300 mb-4">
-                  Thank you for registering for {event.title}. We've sent a confirmation email to {formData.email} with
-                  all the details.
+                  Thank you for registering for {event.title}. We've sent a
+                  confirmation email to {formData.email} with all the details.
                 </p>
               </div>
 
@@ -411,21 +503,26 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                     <span className="text-gray-400">Event:</span> {event.title}
                   </p>
                   <p>
-                    <span className="text-gray-400">Date:</span> {formatDate(event.date)}
+                    <span className="text-gray-400">Date:</span>{" "}
+                    {formatDate(event.date)}
                   </p>
                   <p>
                     <span className="text-gray-400">Time:</span> {event.time}
                   </p>
                   <p>
-                    <span className="text-gray-400">Location:</span> {event.location.name}
+                    <span className="text-gray-400">Location:</span>{" "}
+                    {event.location.name}
                   </p>
                   <p>
-                    <span className="text-gray-400">Tickets:</span> {formData.tickets}
+                    <span className="text-gray-400">Tickets:</span>{" "}
+                    {formData.tickets}
                   </p>
                 </div>
               </div>
 
-              <p className="text-sm text-gray-400">Add this event to your calendar or share it with friends.</p>
+              <p className="text-sm text-gray-400">
+                Add this event to your calendar or share it with friends.
+              </p>
 
               <div className="flex justify-center gap-3">
                 <button className="btn-outline text-sm">Add to Calendar</button>
@@ -453,7 +550,11 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
                 <button className="btn-outline" onClick={handlePrevStep}>
                   Back
                 </button>
-                <button className="btn-primary" onClick={handleSubmit} disabled={isSubmitting}>
+                <button
+                  className="btn-primary"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? (
                     <span className="flex items-center">
                       <svg
@@ -494,7 +595,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({ event, onClose })
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RegistrationModal
+export default RegistrationModal;

@@ -1,47 +1,55 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect, useRef, useState } from "react"
-import type { Location } from "../../types/location"
+import { useEffect, useRef, useState } from "react";
+import type { Location } from "../../types/location";
 
 interface ContactMapProps {
-  locations: Location[]
+  locations: Location[];
 }
 
 const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null,
+  );
 
   useEffect(() => {
     // Calculate center point of all locations
     const calculateCenter = () => {
-      if (locations.length === 0) return { lat: 37.0902, lng: -95.7129 } // Default to US center
+      if (locations.length === 0) return { lat: 37.0902, lng: -95.7129 }; // Default to US center
 
-      const totalLat = locations.reduce((sum, loc) => sum + loc.coordinates.lat, 0)
-      const totalLng = locations.reduce((sum, loc) => sum + loc.coordinates.lng, 0)
+      const totalLat = locations.reduce(
+        (sum, loc) => sum + loc.coordinates.lat,
+        0,
+      );
+      const totalLng = locations.reduce(
+        (sum, loc) => sum + loc.coordinates.lng,
+        0,
+      );
 
       return {
         lat: totalLat / locations.length,
         lng: totalLng / locations.length,
-      }
-    }
-    
+      };
+    };
+
     // Load Google Maps script
     const loadGoogleMapsScript = () => {
-      const script = document.createElement("script")
-      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`
-      script.async = true
-      script.defer = true
-      script.onload = initializeMap
-      document.head.appendChild(script)
-    }
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeMap;
+      document.head.appendChild(script);
+    };
 
     // Initialize map
     const initializeMap = () => {
-      if (!mapRef.current) return
+      if (!mapRef.current) return;
 
-      const center = calculateCenter()
+      const center = calculateCenter();
 
       // Create map instance
       const mapOptions = {
@@ -49,7 +57,10 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
         zoom: 5,
         styles: [
           { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-          { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+          {
+            elementType: "labels.text.stroke",
+            stylers: [{ color: "#242f3e" }],
+          },
           { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
           {
             featureType: "administrative.locality",
@@ -134,21 +145,24 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
         streetViewControl: false,
         rotateControl: false,
         fullscreenControl: true,
-      }
+      };
 
-      const map = new window.google.maps.Map(mapRef.current, mapOptions)
+      const map = new window.google.maps.Map(mapRef.current, mapOptions);
 
       // Add markers for each location
       locations.forEach((location) => {
         const marker = new window.google.maps.Marker({
-          position: { lat: location.coordinates.lat, lng: location.coordinates.lng },
+          position: {
+            lat: location.coordinates.lat,
+            lng: location.coordinates.lng,
+          },
           map: map,
           title: location.name,
           icon: {
             url: "/images/marker.png",
             scaledSize: new window.google.maps.Size(30, 40),
           },
-        })
+        });
 
         // Create info window
         const infoWindow = new window.google.maps.InfoWindow({
@@ -159,29 +173,29 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
               <p style="margin: 5px 0 0;"><a href="tel:${location.phone}" style="color: #D4AF37;">${location.phone}</a></p>
             </div>
           `,
-        })
+        });
 
         // Add click event to marker
         marker.addListener("click", () => {
           // Close any open info windows
-          infoWindow.close()
+          infoWindow.close();
 
           // Open this info window
-          infoWindow.open(map, marker)
+          infoWindow.open(map, marker);
 
           // Set selected location
-          setSelectedLocation(location)
-        })
-      })
-    }
+          setSelectedLocation(location);
+        });
+      });
+    };
 
     // Check if Google Maps script is already loaded
     if (window.google && window.google.maps) {
-      initializeMap()
+      initializeMap();
     } else {
-      loadGoogleMapsScript()
+      loadGoogleMapsScript();
     }
-  }, [locations, setSelectedLocation])
+  }, [locations, setSelectedLocation]);
 
   return (
     <div className="w-full h-full">
@@ -192,7 +206,7 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
           : "Map showing all Broski's Kitchen locations"}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ContactMap
+export default ContactMap;

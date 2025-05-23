@@ -1,22 +1,40 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { Textarea } from "../ui/textarea"
-import { Label } from "../ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Label } from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
-const availabilityOptions = ["Weekday Mornings", "Weekday Afternoons", "Weekday Evenings", "Weekends", "Flexible"]
+const availabilityOptions = [
+  "Weekday Mornings",
+  "Weekday Afternoons",
+  "Weekday Evenings",
+  "Weekends",
+  "Flexible",
+];
 
-const interestAreas = ["Food Delivery", "Senior Assistance", "Moving Help", "Community Events", "Emergency Response"]
+const interestAreas = [
+  "Food Delivery",
+  "Senior Assistance",
+  "Moving Help",
+  "Community Events",
+  "Emergency Response",
+];
 
 export default function VolunteerSignup() {
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // TODO: Implement form submission
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -24,7 +42,11 @@ export default function VolunteerSignup() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="firstName">First Name</Label>
-            <Input id="firstName" placeholder="Enter your first name" required />
+            <Input
+              id="firstName"
+              placeholder="Enter your first name"
+              required
+            />
           </div>
           <div>
             <Label htmlFor="lastName">Last Name</Label>
@@ -34,7 +56,12 @@ export default function VolunteerSignup() {
 
         <div>
           <Label htmlFor="email">Email Address</Label>
-          <Input id="email" type="email" placeholder="you@example.com" required />
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+          />
         </div>
 
         <div>
@@ -76,18 +103,30 @@ export default function VolunteerSignup() {
 
         <div>
           <Label htmlFor="experience">Relevant Experience</Label>
-          <Textarea id="experience" placeholder="Tell us about any relevant experience..." className="h-24" />
+          <Textarea
+            id="experience"
+            placeholder="Tell us about any relevant experience..."
+            className="h-24"
+          />
         </div>
 
         <div>
           <Label htmlFor="motivation">Why do you want to volunteer?</Label>
-          <Textarea id="motivation" placeholder="Share your motivation to join OTW..." className="h-24" required />
+          <Textarea
+            id="motivation"
+            placeholder="Share your motivation to join OTW..."
+            className="h-24"
+            required
+          />
         </div>
       </div>
 
-      <Button type="submit" className="w-full bg-otw-red hover:bg-otw-gold hover:text-black">
+      <Button
+        type="submit"
+        className="w-full bg-otw-red hover:bg-otw-gold hover:text-black"
+      >
         Submit Application
       </Button>
     </form>
-  )
+  );
 }

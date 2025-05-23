@@ -1,26 +1,30 @@
-import type React from "react"
+import type React from "react";
 
-import Link from "next/link"
-import Image from "next/image"
-import { Logo } from "../ui/logo"
+import Link from "next/link";
+import Image from "next/image";
+import { Logo } from "../ui/logo";
 
 interface AuthLayoutProps {
-  children: React.ReactNode
-  title: string
-  subtitle: string
+  children: React.ReactNode;
+  title: string;
+  subtitle: string;
 }
 
-const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) => {
+const AuthLayout: React.FC<AuthLayoutProps> = ({
+  children,
+  title,
+  subtitle,
+}) => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left Side - Branding */}
       <div className="hidden md:flex md:w-1/2 bg-black relative">
         <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent z-10"></div>
-        <Image 
-          src="/assets/images/otw-services-hero.jpg" 
-          alt="OTW Services" 
-          fill 
-          className="object-cover opacity-60" 
+        <Image
+          src="/assets/images/otw-services-hero.jpg"
+          alt="OTW Services"
+          fill
+          className="object-cover opacity-60"
           priority
           sizes="50vw"
         />
@@ -29,9 +33,12 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) =>
             <Logo size="large" variant="default" />
           </Link>
           <div className="max-w-md text-center">
-            <h2 className="text-2xl font-bold mb-4 text-white">Thee Motion of the People</h2>
+            <h2 className="text-2xl font-bold mb-4 text-white">
+              Thee Motion of the People
+            </h2>
             <p className="text-gray-300">
-              Join our community and experience the perfect blend of convenience and community service.
+              Join our community and experience the perfect blend of convenience
+              and community service.
             </p>
           </div>
         </div>
@@ -55,7 +62,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) =>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AuthLayout
+export default AuthLayout;

@@ -1,14 +1,15 @@
-import type { Metadata } from "next"
-import PartnerSignup from "../../components/partners/PartnerSignup"
-import { Card } from "../../components/ui/card"
-import { Building2, ShieldCheck, TrendingUp } from "lucide-react"
+import type { Metadata } from "next";
+import PartnerSignup from "../../components/partners/PartnerSignup";
+import { Card } from "../../components/ui/card";
+import { Building2, ShieldCheck, TrendingUp } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Partner with OTW | The One-Stop Motion Platform",
-  description: "Join OTW as a business partner and expand your reach in Fort Wayne.",
-}
+  description:
+    "Join OTW as a business partner and expand your reach in Fort Wayne.",
+};
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 const benefits = [
   {
@@ -26,7 +27,7 @@ const benefits = [
     description: "Manage orders, inventory, and analytics all in one place.",
     icon: Building2,
   },
-]
+];
 
 export default function PartnersPage() {
   return (
@@ -37,14 +38,14 @@ export default function PartnersPage() {
             Partner with OTW
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Join Fort Wayne's premier motion platform and grow your business with our
-            community of customers and delivery partners.
+            Join Fort Wayne's premier motion platform and grow your business
+            with our community of customers and delivery partners.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {benefits.map((benefit) => {
-            const Icon = benefit.icon
+            const Icon = benefit.icon;
             return (
               <Card key={benefit.title} className="p-6 text-center">
                 <div className="inline-flex p-3 rounded-full bg-otw-red/10 text-otw-red mb-4">
@@ -53,7 +54,7 @@ export default function PartnersPage() {
                 <h3 className="text-lg font-semibold mb-2">{benefit.title}</h3>
                 <p className="text-gray-400">{benefit.description}</p>
               </Card>
-            )
+            );
           })}
         </div>
 
@@ -64,8 +65,9 @@ export default function PartnersPage() {
                 Get Started Today
               </h2>
               <p className="text-gray-300 mb-6">
-                Fill out the form to begin your partnership with OTW. Our team will
-                review your application and get back to you within 24 hours.
+                Fill out the form to begin your partnership with OTW. Our team
+                will review your application and get back to you within 24
+                hours.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
@@ -87,5 +89,5 @@ export default function PartnersPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

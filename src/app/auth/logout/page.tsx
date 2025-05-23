@@ -1,22 +1,28 @@
-"use client"
+"use client";
 
-import { useEffect } from 'react'
-import { signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Icons } from '@/components/ui/icons'
+import { useEffect } from "react";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Icons } from "@/components/ui/icons";
 
 export default function LogoutPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const performLogout = async () => {
-      await signOut({ redirect: false })
-      router.push('/')
-    }
+      await signOut({ redirect: false });
+      router.push("/");
+    };
 
-    performLogout()
-  }, [router])
+    performLogout();
+  }, [router]);
 
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
@@ -32,5 +38,5 @@ export default function LogoutPage() {
         </CardContent>
       </Card>
     </div>
-  )
-} 
+  );
+}

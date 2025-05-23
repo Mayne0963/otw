@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useState, useRef, useEffect } from "react"
-import { cn } from "../../lib/utils"
+import * as React from "react";
+import { useState, useRef, useEffect } from "react";
+import { cn } from "../../lib/utils";
 
 export interface ResizableProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode
-  minSize?: number
-  maxSize?: number
-  initialSize?: number
-  direction?: "horizontal" | "vertical"
-  onResize?: (size: number) => void
+  children: React.ReactNode;
+  minSize?: number;
+  maxSize?: number;
+  initialSize?: number;
+  direction?: "horizontal" | "vertical";
+  onResize?: (size: number) => void;
 }
 
 const Resizable = React.forwardRef<HTMLDivElement, ResizableProps>(
@@ -27,59 +27,66 @@ const Resizable = React.forwardRef<HTMLDivElement, ResizableProps>(
     },
     ref,
   ) => {
-    const [size, setSize] = useState(initialSize)
-    const [isResizing, setIsResizing] = useState(false)
-    const containerRef = useRef<HTMLDivElement>(null)
-    
+    const [size, setSize] = useState(initialSize);
+    const [isResizing, setIsResizing] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
     // Connect the forwarded ref to the container ref
-    React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement)
+    React.useImperativeHandle(
+      ref,
+      () => containerRef.current as HTMLDivElement,
+    );
 
     useEffect(() => {
-      setSize(initialSize)
-    }, [initialSize])
+      setSize(initialSize);
+    }, [initialSize]);
 
     const handleResizeStart = (e: React.MouseEvent<HTMLDivElement>) => {
-      e.preventDefault()
-      setIsResizing(true)
-    }
+      e.preventDefault();
+      setIsResizing(true);
+    };
 
     const handleResizeEnd = () => {
-      setIsResizing(false)
-    }
+      setIsResizing(false);
+    };
 
     useEffect(() => {
-      if (!isResizing) return
-      
-      const handleResize = (e: MouseEvent) => {
-        if (!containerRef.current) return
+      if (!isResizing) return;
 
-        const containerRect = containerRef.current.getBoundingClientRect()
-        let newSize = 0
+      const handleResize = (e: MouseEvent) => {
+        if (!containerRef.current) return;
+
+        const containerRect = containerRef.current.getBoundingClientRect();
+        let newSize = 0;
 
         if (direction === "horizontal") {
-          newSize = e.clientX - containerRect.left
+          newSize = e.clientX - containerRect.left;
         } else {
-          newSize = e.clientY - containerRect.top
+          newSize = e.clientY - containerRect.top;
         }
 
-        newSize = Math.min(Math.max(newSize, minSize), maxSize)
-        setSize(newSize)
-        onResize?.(newSize)
-      }
-      
-      document.addEventListener("mousemove", handleResize)
-      document.addEventListener("mouseup", handleResizeEnd)
+        newSize = Math.min(Math.max(newSize, minSize), maxSize);
+        setSize(newSize);
+        onResize?.(newSize);
+      };
+
+      document.addEventListener("mousemove", handleResize);
+      document.addEventListener("mouseup", handleResizeEnd);
 
       return () => {
-        document.removeEventListener("mousemove", handleResize)
-        document.removeEventListener("mouseup", handleResizeEnd)
-      }
-    }, [isResizing, direction, minSize, maxSize, onResize])
+        document.removeEventListener("mousemove", handleResize);
+        document.removeEventListener("mouseup", handleResizeEnd);
+      };
+    }, [isResizing, direction, minSize, maxSize, onResize]);
 
     return (
       <div
         ref={containerRef}
-        className={cn("relative", direction === "horizontal" ? "w-fit" : "h-fit", className)}
+        className={cn(
+          "relative",
+          direction === "horizontal" ? "w-fit" : "h-fit",
+          className,
+        )}
         style={direction === "horizontal" ? { width: size } : { height: size }}
         {...props}
       >
@@ -87,7 +94,9 @@ const Resizable = React.forwardRef<HTMLDivElement, ResizableProps>(
         <div
           className={cn(
             "absolute bg-border cursor-col-resize",
-            direction === "horizontal" ? "right-0 top-0 h-full w-2" : "bottom-0 left-0 w-full h-2 cursor-row-resize",
+            direction === "horizontal"
+              ? "right-0 top-0 h-full w-2"
+              : "bottom-0 left-0 w-full h-2 cursor-row-resize",
           )}
           style={{
             ...(direction === "horizontal"
@@ -98,9 +107,9 @@ const Resizable = React.forwardRef<HTMLDivElement, ResizableProps>(
           onMouseDown={handleResizeStart}
         />
       </div>
-    )
+    );
   },
-)
-Resizable.displayName = "Resizable"
+);
+Resizable.displayName = "Resizable";
 
-export { Resizable }
+export { Resizable };

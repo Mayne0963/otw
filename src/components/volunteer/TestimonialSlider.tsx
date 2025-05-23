@@ -1,70 +1,79 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect, useCallback } from "react"
-import Image from "next/image"
-import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from "react-icons/fa"
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
+import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 interface Testimonial {
-  name: string
-  role: string
-  image: string
-  quote: string
+  name: string;
+  role: string;
+  image: string;
+  quote: string;
 }
 
 interface TestimonialSliderProps {
-  testimonials: Testimonial[]
+  testimonials: Testimonial[];
 }
 
-const TestimonialSlider: React.FC<TestimonialSliderProps> = ({ testimonials }) => {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
+const TestimonialSlider: React.FC<TestimonialSliderProps> = ({
+  testimonials,
+}) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleNext = useCallback(() => {
-    if (isAnimating) return
+    if (isAnimating) return;
 
-    setIsAnimating(true)
-    setCurrentIndex((prevIndex) => (prevIndex === (testimonials?.length ?? 0) - 1 ? 0 : prevIndex + 1))
+    setIsAnimating(true);
+    setCurrentIndex((prevIndex) =>
+      prevIndex === (testimonials?.length ?? 0) - 1 ? 0 : prevIndex + 1,
+    );
 
     setTimeout(() => {
-      setIsAnimating(false)
-    }, 500)
-  }, [isAnimating, testimonials?.length])
+      setIsAnimating(false);
+    }, 500);
+  }, [isAnimating, testimonials?.length]);
 
   // Auto-advance the slider
   useEffect(() => {
     if (!testimonials || testimonials.length === 0) return; // Guard against empty testimonials
     const interval = setInterval(() => {
       if (!isAnimating) {
-        handleNext()
+        handleNext();
       }
-    }, 8000)
+    }, 8000);
 
-    return () => clearInterval(interval)
-  }, [isAnimating, handleNext, testimonials])
+    return () => clearInterval(interval);
+  }, [isAnimating, handleNext, testimonials]);
 
   const handlePrev = useCallback(() => {
-    if (isAnimating) return
+    if (isAnimating) return;
 
-    setIsAnimating(true)
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? (testimonials?.length ?? 0) - 1 : prevIndex - 1))
-
-    setTimeout(() => {
-      setIsAnimating(false)
-    }, 500)
-  }, [isAnimating, testimonials?.length])
-
-  const handleDotClick = useCallback((index: number) => {
-    if (isAnimating || index === currentIndex) return
-
-    setIsAnimating(true)
-    setCurrentIndex(index)
+    setIsAnimating(true);
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? (testimonials?.length ?? 0) - 1 : prevIndex - 1,
+    );
 
     setTimeout(() => {
-      setIsAnimating(false)
-    }, 500)
-  }, [isAnimating, currentIndex])
+      setIsAnimating(false);
+    }, 500);
+  }, [isAnimating, testimonials?.length]);
+
+  const handleDotClick = useCallback(
+    (index: number) => {
+      if (isAnimating || index === currentIndex) return;
+
+      setIsAnimating(true);
+      setCurrentIndex(index);
+
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 500);
+    },
+    [isAnimating, currentIndex],
+  );
 
   // Early return if testimonials are not available
   if (!testimonials || testimonials.length === 0) {
@@ -78,7 +87,9 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({ testimonials }) =
         <div className="relative p-8 md:p-12">
           <FaQuoteLeft className="text-gold-foil text-4xl opacity-20 absolute top-8 left-8" />
 
-          <div className={`transition-opacity duration-500 ${isAnimating ? "opacity-0" : "opacity-100"}`}>
+          <div
+            className={`transition-opacity duration-500 ${isAnimating ? "opacity-0" : "opacity-100"}`}
+          >
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
                 <Image
@@ -91,10 +102,16 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({ testimonials }) =
               </div>
 
               <div>
-                <p className="text-lg text-gray-300 italic mb-6">{testimonials[currentIndex].quote}</p>
+                <p className="text-lg text-gray-300 italic mb-6">
+                  {testimonials[currentIndex].quote}
+                </p>
                 <div>
-                  <h4 className="font-bold text-lg">{testimonials[currentIndex].name}</h4>
-                  <p className="text-gold-foil">{testimonials[currentIndex].role}</p>
+                  <h4 className="font-bold text-lg">
+                    {testimonials[currentIndex].name}
+                  </h4>
+                  <p className="text-gold-foil">
+                    {testimonials[currentIndex].role}
+                  </p>
                 </div>
               </div>
             </div>
@@ -108,7 +125,9 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({ testimonials }) =
             key={index}
             onClick={() => handleDotClick(index)}
             className={`w-3 h-3 rounded-full transition-colors ${
-              index === currentIndex ? "bg-gold-foil" : "bg-[#333333] hover:bg-[#555555]"
+              index === currentIndex
+                ? "bg-gold-foil"
+                : "bg-[#333333] hover:bg-[#555555]"
             }`}
             aria-label={`Go to testimonial ${index + 1}`}
           />
@@ -131,7 +150,7 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({ testimonials }) =
         <FaChevronRight />
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default TestimonialSlider
+export default TestimonialSlider;

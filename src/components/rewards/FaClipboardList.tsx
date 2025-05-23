@@ -1,2 +1,2 @@
-import { FaClipboardList } from "react-icons/fa"
-export default FaClipboardList
+import { FaClipboardList } from "react-icons/fa";
+export default FaClipboardList;

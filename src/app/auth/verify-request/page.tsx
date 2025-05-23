@@ -1,14 +1,22 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Icons } from '@/components/ui/icons'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Icons } from "@/components/ui/icons";
 
 export default function VerifyRequestPage() {
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <Card className="w-[350px]">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Check your email</CardTitle>
+          <CardTitle className="text-2xl text-center">
+            Check your email
+          </CardTitle>
           <CardDescription className="text-center">
             A sign in link has been sent to your email address.
           </CardDescription>
@@ -21,5 +29,5 @@ export default function VerifyRequestPage() {
         </CardContent>
       </Card>
     </div>
-  )
-} 
+  );
+}

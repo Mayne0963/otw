@@ -1,4 +1,4 @@
-import type { Product } from "../types/merch"
+import type { Product } from "../types/merch";
 
 export const categories = [
   { id: "apparel", name: "Apparel" },
@@ -6,7 +6,7 @@ export const categories = [
   { id: "accessories", name: "Accessories" },
   { id: "drinkware", name: "Drinkware" },
   { id: "home", name: "Home Goods" },
-]
+];
 
 export const products: Product[] = [
   {
@@ -71,7 +71,8 @@ export const products: Product[] = [
   {
     id: "beanie",
     name: "Embroidered Beanie",
-    description: "Keep your head warm with our stylish beanie featuring an embroidered Broski's Kitchen logo.",
+    description:
+      "Keep your head warm with our stylish beanie featuring an embroidered Broski's Kitchen logo.",
     price: 24.99,
     images: ["/images/merch-beanie-1.jpg"],
     category: "headwear",
@@ -143,13 +144,20 @@ export const products: Product[] = [
   {
     id: "phone-case",
     name: "Phone Case",
-    description: "Protect your phone in style with our durable phone case featuring the Broski's Kitchen logo.",
+    description:
+      "Protect your phone in style with our durable phone case featuring the Broski's Kitchen logo.",
     price: 24.99,
     images: ["/images/merch-phonecase-1.jpg"],
     category: "accessories",
     categoryName: "Accessories",
     new: true,
-    sizes: ["iPhone 13", "iPhone 14", "iPhone 15", "Samsung S22", "Samsung S23"],
+    sizes: [
+      "iPhone 13",
+      "iPhone 14",
+      "iPhone 15",
+      "Samsung S22",
+      "Samsung S23",
+    ],
     colors: [
       { name: "Black", hex: "#000000" },
       { name: "Clear", hex: "#FFFFFF" },
@@ -189,9 +197,13 @@ export const products: Product[] = [
   {
     id: "long-sleeve-tee",
     name: "Long Sleeve Logo T-Shirt",
-    description: "Our classic logo tee with long sleeves for cooler weather. Made from soft, premium cotton.",
+    description:
+      "Our classic logo tee with long sleeves for cooler weather. Made from soft, premium cotton.",
     price: 34.99,
-    images: ["/images/merch-longsleeve-1.jpg", "/images/merch-longsleeve-1-back.jpg"],
+    images: [
+      "/images/merch-longsleeve-1.jpg",
+      "/images/merch-longsleeve-1-back.jpg",
+    ],
     category: "apparel",
     categoryName: "Apparel",
     sizes: ["S", "M", "L", "XL", "2XL"],
@@ -206,7 +218,8 @@ export const products: Product[] = [
   {
     id: "dad-hat",
     name: "Embroidered Dad Hat",
-    description: "Classic dad hat with embroidered Broski's Kitchen logo. Adjustable strap for the perfect fit.",
+    description:
+      "Classic dad hat with embroidered Broski's Kitchen logo. Adjustable strap for the perfect fit.",
     price: 29.99,
     images: ["/images/merch-dadhat-1.jpg"],
     category: "headwear",
@@ -221,4 +234,4 @@ export const products: Product[] = [
     care: "Spot clean only",
     sku: "BK-DAD-001",
   },
-]
+];

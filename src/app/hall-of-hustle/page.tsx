@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
 import {
   Box,
@@ -18,21 +18,25 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-} from "@mui/material"
-import { useState } from "react"
-import Link from "next/link"
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents"
-import StarIcon from "@mui/icons-material/Star"
-import LocalShippingIcon from "@mui/icons-material/LocalShipping"
-import RestaurantIcon from "@mui/icons-material/Restaurant"
-import StorefrontIcon from "@mui/icons-material/Storefront"
+} from "@mui/material";
+import { useState } from "react";
+import Link from "next/link";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import StarIcon from "@mui/icons-material/Star";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import StorefrontIcon from "@mui/icons-material/Storefront";
 
 const topPerformers = [
   {
     name: "Alex Johnson",
     role: "Delivery Driver",
     image: "/assets/driver1.jpg",
-    achievements: ["1000+ deliveries completed", "98% customer satisfaction", "Top rated driver 3 months in a row"],
+    achievements: [
+      "1000+ deliveries completed",
+      "98% customer satisfaction",
+      "Top rated driver 3 months in a row",
+    ],
     stats: {
       deliveries: "1,234",
       rating: "4.9",
@@ -43,7 +47,11 @@ const topPerformers = [
     name: "Maria Garcia",
     role: "Restaurant Partner",
     image: "/assets/restaurant1.jpg",
-    achievements: ["5000+ orders fulfilled", "Fastest preparation time", "Most consistent quality rating"],
+    achievements: [
+      "5000+ orders fulfilled",
+      "Fastest preparation time",
+      "Most consistent quality rating",
+    ],
     stats: {
       orders: "5,678",
       rating: "4.8",
@@ -54,14 +62,18 @@ const topPerformers = [
     name: "David Chen",
     role: "Retail Partner",
     image: "/assets/retail1.jpg",
-    achievements: ["2000+ deliveries completed", "Best inventory management", "Highest customer retention"],
+    achievements: [
+      "2000+ deliveries completed",
+      "Best inventory management",
+      "Highest customer retention",
+    ],
     stats: {
       orders: "2,345",
       rating: "4.9",
       customers: "1,500+",
     },
   },
-]
+];
 
 const successStories = [
   {
@@ -82,21 +94,24 @@ const successStories = [
     image: "/assets/success3.jpg",
     category: "Retail",
   },
-]
+];
 
 const categories = [
   { label: "All", icon: <EmojiEventsIcon /> },
   { label: "Drivers", icon: <LocalShippingIcon /> },
   { label: "Restaurants", icon: <RestaurantIcon /> },
   { label: "Retail", icon: <StorefrontIcon /> },
-]
+];
 
 export default function HallOfHustlePage() {
-  const [selectedCategory, setSelectedCategory] = useState(0)
+  const [selectedCategory, setSelectedCategory] = useState(0);
 
-  const handleCategoryChange = (event: React.SyntheticEvent, newValue: number) => {
-    setSelectedCategory(newValue)
-  }
+  const handleCategoryChange = (
+    event: React.SyntheticEvent,
+    newValue: number,
+  ) => {
+    setSelectedCategory(newValue);
+  };
 
   return (
     <Box sx={{ bgcolor: "background.default", color: "text.primary", py: 8 }}>
@@ -118,7 +133,11 @@ export default function HallOfHustlePage() {
           >
             Hall of Hustle
           </Typography>
-          <Typography variant="h5" color="text.secondary" sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}>
+          <Typography
+            variant="h5"
+            color="text.secondary"
+            sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}
+          >
             Celebrating our top performers and success stories
           </Typography>
         </Box>
@@ -159,7 +178,11 @@ export default function HallOfHustlePage() {
                       <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
                         {performer.name}
                       </Typography>
-                      <Typography variant="subtitle1" color="primary" sx={{ mb: 2 }}>
+                      <Typography
+                        variant="subtitle1"
+                        color="primary"
+                        sx={{ mb: 2 }}
+                      >
                         {performer.role}
                       </Typography>
                     </Box>
@@ -177,7 +200,11 @@ export default function HallOfHustlePage() {
                     <Grid container spacing={2}>
                       {Object.entries(performer.stats).map(([key, value]) => (
                         <Grid item xs={4} key={key}>
-                          <Typography variant="h6" color="primary" sx={{ fontWeight: 700 }}>
+                          <Typography
+                            variant="h6"
+                            color="primary"
+                            sx={{ fontWeight: 700 }}
+                          >
                             {value}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
@@ -214,7 +241,12 @@ export default function HallOfHustlePage() {
               sx={{ mb: 4 }}
             >
               {categories.map((category) => (
-                <Tab key={category.label} label={category.label} icon={category.icon} iconPosition="start" />
+                <Tab
+                  key={category.label}
+                  label={category.label}
+                  icon={category.icon}
+                  iconPosition="start"
+                />
               ))}
             </Tabs>
             <Grid container spacing={4}>
@@ -238,10 +270,18 @@ export default function HallOfHustlePage() {
                       }}
                     />
                     <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography variant="h5" component="h3" sx={{ mb: 2, fontWeight: 600 }}>
+                      <Typography
+                        variant="h5"
+                        component="h3"
+                        sx={{ mb: 2, fontWeight: 600 }}
+                      >
                         {story.title}
                       </Typography>
-                      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                      <Typography
+                        variant="body1"
+                        color="text.secondary"
+                        sx={{ mb: 3 }}
+                      >
                         {story.description}
                       </Typography>
                       <Button
@@ -289,5 +329,5 @@ export default function HallOfHustlePage() {
         </Box>
       </Container>
     </Box>
-  )
+  );
 }

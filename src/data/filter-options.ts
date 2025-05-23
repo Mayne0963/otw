@@ -1,4 +1,8 @@
-import type { Category, DietaryOption, RestaurantFeature } from "../types/restaurant"
+import type {
+  Category,
+  DietaryOption,
+  RestaurantFeature,
+} from "../types/restaurant";
 
 export const restaurantCategories: Category[] = [
   { id: "all", name: "All" },
@@ -20,7 +24,7 @@ export const restaurantCategories: Category[] = [
   { id: "vegan", name: "Vegan" },
   { id: "vegetarian", name: "Vegetarian" },
   { id: "gluten_free", name: "Gluten-Free" },
-]
+];
 
 export const dietaryOptions: DietaryOption[] = [
   { id: "vegetarian", name: "Vegetarian" },
@@ -30,7 +34,7 @@ export const dietaryOptions: DietaryOption[] = [
   { id: "nut_free", name: "Nut-Free" },
   { id: "keto", name: "Keto" },
   { id: "paleo", name: "Paleo" },
-]
+];
 
 export const restaurantFeatures: RestaurantFeature[] = [
   { id: "outdoor_seating", name: "Outdoor Seating" },
@@ -41,4 +45,4 @@ export const restaurantFeatures: RestaurantFeature[] = [
   { id: "late_night", name: "Late Night" },
   { id: "family_friendly", name: "Family Friendly" },
   { id: "live_music", name: "Live Music" },
-]
+];

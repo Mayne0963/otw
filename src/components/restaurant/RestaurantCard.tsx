@@ -1,10 +1,10 @@
-import React from 'react';
-import { Restaurant } from "@/lib/restaurants"
-import { Card, CardContent } from "@/components/ui/card"
-import Image from "next/image"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Clock, DollarSign, MapPin, Star } from "lucide-react" // Removed unused Check import
+import React from "react";
+import { Restaurant } from "@/lib/restaurants";
+import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Clock, DollarSign, MapPin, Star } from "lucide-react"; // Removed unused Check import
 
 // Removed local Restaurant interface, assuming imported Restaurant type is comprehensive
 
@@ -35,7 +35,12 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant }) => {
                 className="object-contain"
               />
             </div>
-            {restaurant.isPartner && <Badge className="bg-[#FFD700] text-black text-xs font-medium">OTW Partner</Badge>} {/* Assuming 'isPartner' is a property */}
+            {restaurant.isPartner && (
+              <Badge className="bg-[#FFD700] text-black text-xs font-medium">
+                OTW Partner
+              </Badge>
+            )}{" "}
+            {/* Assuming 'isPartner' is a property */}
           </div>
         </div>
         <CardContent className="p-4 flex-grow">
@@ -43,22 +48,31 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant }) => {
             <h3 className="text-xl font-bold text-white">{restaurant.name}</h3>
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 text-[#FFD700] fill-[#FFD700]" />
-              <span className="text-white font-medium">{restaurant.rating}</span>
-              <span className="text-gray-400 text-sm">({restaurant.reviewCount})</span> {/* Assuming 'reviewCount' is a property */}
+              <span className="text-white font-medium">
+                {restaurant.rating}
+              </span>
+              <span className="text-gray-400 text-sm">
+                ({restaurant.reviewCount})
+              </span>{" "}
+              {/* Assuming 'reviewCount' is a property */}
             </div>
           </div>
-
           <div className="flex flex-wrap gap-1 mb-3">
             {/* Assuming 'categories' is an array of strings */}
-            {restaurant.categories?.map((category: string) => ( 
-              <Badge key={category} variant="outline" className="text-xs text-gray-300 border-gray-600">
+            {restaurant.categories?.map((category: string) => (
+              <Badge
+                key={category}
+                variant="outline"
+                className="text-xs text-gray-300 border-gray-600"
+              >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
               </Badge>
             ))}
           </div>
-
-          <p className="text-gray-400 text-sm mb-4 line-clamp-2">{restaurant.description}</p> {/* Assuming 'description' is a property */}
-
+          <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+            {restaurant.description}
+          </p>{" "}
+          {/* Assuming 'description' is a property */}
           <div className="grid grid-cols-2 gap-2 mb-3">
             <div className="flex items-center gap-1 text-sm text-gray-300">
               <Clock className="h-4 w-4 text-gray-400" />
@@ -67,23 +81,23 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant }) => {
             <div className="flex items-center gap-1 text-sm text-gray-300">
               <DollarSign className="h-4 w-4 text-gray-400" />
               {/* Assuming 'deliveryFee' is a number */}
-              <span>${restaurant.deliveryFee?.toFixed(2)} delivery</span> 
+              <span>${restaurant.deliveryFee?.toFixed(2)} delivery</span>
             </div>
             <div className="flex items-center gap-1 text-sm text-gray-300">
               <MapPin className="h-4 w-4 text-gray-400" />
               {/* Assuming 'distance' is a number */}
-              <span>{restaurant.distance?.toFixed(1)} mi</span> 
+              <span>{restaurant.distance?.toFixed(1)} mi</span>
             </div>
             <div className="flex items-center gap-1 text-sm text-gray-300">
               {/* Assuming 'priceLevel' is a property */}
-              <span className="text-gray-400">{restaurant.priceLevel}</span> 
+              <span className="text-gray-400">{restaurant.priceLevel}</span>
               <span>Price Level</span>
             </div>
           </div>
         </CardContent>
       </Link>
     </Card>
-  )
-}
+  );
+};
 
 export default RestaurantCard; // Added export default

@@ -1,59 +1,69 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { createContext, useState, useContext, useEffect, type ReactNode } from "react"
-import type { ChatContextType, ChatMessage } from "../../types"
+import type React from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  type ReactNode,
+} from "react";
+import type { ChatContextType, ChatMessage } from "../../types";
 
 // Create the context with a default undefined value
-const ChatContext = createContext<ChatContextType | undefined>(undefined)
+const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 // Provider component
-export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [userId, setUserId] = useState<string | null>(null)
+export const ChatProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Generate a unique user ID if not already set
   useEffect(() => {
     if (!userId) {
-      setUserId(`user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`)
+      setUserId(
+        `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      );
     }
-  }, [userId])
+  }, [userId]);
 
   // Load chat history from localStorage
   useEffect(() => {
     try {
-      const savedMessages = localStorage.getItem("chatHistory")
+      const savedMessages = localStorage.getItem("chatHistory");
       if (savedMessages) {
-        setMessages(JSON.parse(savedMessages))
+        setMessages(JSON.parse(savedMessages));
       }
     } catch (error) {
-      console.error("Failed to load chat history:", error)
+      console.error("Failed to load chat history:", error);
     }
-  }, [])
+  }, []);
 
   // Save chat history to localStorage when it changes
   useEffect(() => {
     try {
       // Only save if there are messages
       if (messages.length > 0) {
-        localStorage.setItem("chatHistory", JSON.stringify(messages))
+        localStorage.setItem("chatHistory", JSON.stringify(messages));
       }
     } catch (error) {
-      console.error("Failed to save chat history:", error)
+      console.error("Failed to save chat history:", error);
     }
-  }, [messages])
+  }, [messages]);
 
   // Send a message and get a response
   const sendMessage = async (text: string) => {
-    if (!text.trim()) return
+    if (!text.trim()) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       // Add user message to the chat
-      const userMessage: ChatMessage = { role: "user", text }
-      setMessages((current) => [...current, userMessage])
+      const userMessage: ChatMessage = { role: "user", text };
+      setMessages((current) => [...current, userMessage]);
 
       // Get response from API
       const response = await fetch("/api/chat", {
@@ -65,24 +75,26 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           messages: [...messages, userMessage],
           userId,
         }),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`)
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json()
+      const data = await response.json();
 
       // Add assistant response to the chat
       setMessages((current) => [
         ...current,
         {
           role: "assistant",
-          text: data.text || "I'm sorry, I couldn't process your request. Please try again.",
+          text:
+            data.text ||
+            "I'm sorry, I couldn't process your request. Please try again.",
         },
-      ])
+      ]);
     } catch (error) {
-      console.error("Error sending message:", error)
+      console.error("Error sending message:", error);
       // Add a fallback response when the API fails
       setMessages((current) => [
         ...current,
@@ -90,17 +102,17 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           role: "assistant",
           text: "I'm having trouble connecting to my services. Please try again later.",
         },
-      ])
+      ]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   // Clear chat history
   const clearChat = () => {
-    setMessages([])
-    localStorage.removeItem("chatHistory")
-  }
+    setMessages([]);
+    localStorage.removeItem("chatHistory");
+  };
 
   return (
     <ChatContext.Provider
@@ -113,16 +125,16 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     >
       {children}
     </ChatContext.Provider>
-  )
-}
+  );
+};
 
 // Custom hook to use the chat context
 export const useChat = (): ChatContextType => {
-  const context = useContext(ChatContext)
+  const context = useContext(ChatContext);
 
   if (context === undefined) {
-    throw new Error("useChat must be used within a ChatProvider")
+    throw new Error("useChat must be used within a ChatProvider");
   }
 
-  return context
-}
+  return context;
+};

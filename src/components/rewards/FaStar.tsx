@@ -1,2 +1,2 @@
-import { FaStar } from "react-icons/fa"
-export default FaStar
+import { FaStar } from "react-icons/fa";
+export default FaStar;

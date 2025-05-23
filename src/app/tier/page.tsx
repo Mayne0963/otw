@@ -1,8 +1,8 @@
-import { Button } from "../../components/ui/button"
-import { Check, Star, Shield, Clock, Gift, Zap } from "lucide-react"
-import Link from "next/link"
+import { Button } from "../../components/ui/button";
+import { Check, Star, Shield, Clock, Gift, Zap } from "lucide-react";
+import Link from "next/link";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default function TierMembershipPage() {
   return (
@@ -17,9 +17,12 @@ export default function TierMembershipPage() {
           ></div>
         </div>
         <div className="container mx-auto px-4 z-10 text-center">
-          <h1 className="text-5xl font-bold mb-4 text-white">OTW Tier Membership</h1>
+          <h1 className="text-5xl font-bold mb-4 text-white">
+            OTW Tier Membership
+          </h1>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Join our premium membership program and unlock exclusive benefits, savings, and perks.
+            Join our premium membership program and unlock exclusive benefits,
+            savings, and perks.
           </p>
         </div>
       </section>
@@ -33,9 +36,14 @@ export default function TierMembershipPage() {
               <div className="p-6">
                 <h3 className="text-2xl font-bold mb-2">Bronze</h3>
                 <div className="text-4xl font-bold text-otw-gold mb-4">
-                  $9.99<span className="text-lg font-normal text-gray-400">/month</span>
+                  $9.99
+                  <span className="text-lg font-normal text-gray-400">
+                    /month
+                  </span>
                 </div>
-                <p className="text-gray-400 mb-6">Perfect for occasional users who want to save on fees.</p>
+                <p className="text-gray-400 mb-6">
+                  Perfect for occasional users who want to save on fees.
+                </p>
 
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-start">
@@ -64,13 +72,20 @@ export default function TierMembershipPage() {
 
             {/* Silver Tier */}
             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl border-2 border-otw-gold transform scale-105 z-10">
-              <div className="bg-otw-gold text-black text-center py-2 font-bold text-sm">MOST POPULAR</div>
+              <div className="bg-otw-gold text-black text-center py-2 font-bold text-sm">
+                MOST POPULAR
+              </div>
               <div className="p-6">
                 <h3 className="text-2xl font-bold mb-2">Silver</h3>
                 <div className="text-4xl font-bold text-otw-gold mb-4">
-                  $19.99<span className="text-lg font-normal text-gray-400">/month</span>
+                  $19.99
+                  <span className="text-lg font-normal text-gray-400">
+                    /month
+                  </span>
                 </div>
-                <p className="text-gray-400 mb-6">Great for regular users who want premium benefits.</p>
+                <p className="text-gray-400 mb-6">
+                  Great for regular users who want premium benefits.
+                </p>
 
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-start">
@@ -106,9 +121,14 @@ export default function TierMembershipPage() {
               <div className="p-6">
                 <h3 className="text-2xl font-bold mb-2">Gold</h3>
                 <div className="text-4xl font-bold text-otw-gold mb-4">
-                  $39.99<span className="text-lg font-normal text-gray-400">/month</span>
+                  $39.99
+                  <span className="text-lg font-normal text-gray-400">
+                    /month
+                  </span>
                 </div>
-                <p className="text-gray-400 mb-6">For power users who want the ultimate OTW experience.</p>
+                <p className="text-gray-400 mb-6">
+                  For power users who want the ultimate OTW experience.
+                </p>
 
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-start">
@@ -149,7 +169,9 @@ export default function TierMembershipPage() {
       {/* Features Section */}
       <section className="py-16 bg-gray-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Membership Benefits</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">
+            Membership Benefits
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-gray-800 p-6 rounded-lg">
@@ -158,7 +180,8 @@ export default function TierMembershipPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Exclusive Savings</h3>
               <p className="text-gray-400">
-                Save on delivery fees, service charges, and enjoy special member-only discounts on all OTW services.
+                Save on delivery fees, service charges, and enjoy special
+                member-only discounts on all OTW services.
               </p>
             </div>
 
@@ -168,7 +191,8 @@ export default function TierMembershipPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Priority Service</h3>
               <p className="text-gray-400">
-                Skip the queue with priority booking, faster delivery times, and preferred scheduling for all services.
+                Skip the queue with priority booking, faster delivery times, and
+                preferred scheduling for all services.
               </p>
             </div>
 
@@ -178,7 +202,8 @@ export default function TierMembershipPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Premium Support</h3>
               <p className="text-gray-400">
-                Enjoy dedicated customer support with faster response times and personalized assistance.
+                Enjoy dedicated customer support with faster response times and
+                personalized assistance.
               </p>
             </div>
 
@@ -188,7 +213,8 @@ export default function TierMembershipPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Free Ride Tokens</h3>
               <p className="text-gray-400">
-                Receive monthly ride tokens that can be redeemed for free rides anywhere in our service area.
+                Receive monthly ride tokens that can be redeemed for free rides
+                anywhere in our service area.
               </p>
             </div>
 
@@ -198,7 +224,8 @@ export default function TierMembershipPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Exclusive Features</h3>
               <p className="text-gray-400">
-                Access member-only features like advanced scheduling, recurring deliveries, and special requests.
+                Access member-only features like advanced scheduling, recurring
+                deliveries, and special requests.
               </p>
             </div>
 
@@ -208,7 +235,8 @@ export default function TierMembershipPage() {
               </div>
               <h3 className="text-xl font-bold mb-3">Special Events</h3>
               <p className="text-gray-400">
-                Get invited to exclusive member events, tastings, and special promotions throughout the year.
+                Get invited to exclusive member events, tastings, and special
+                promotions throughout the year.
               </p>
             </div>
           </div>
@@ -218,20 +246,27 @@ export default function TierMembershipPage() {
       {/* Testimonials Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">What Our Members Say</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">
+            What Our Members Say
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-gray-900 p-6 rounded-lg">
               <div className="flex items-center text-otw-gold mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <svg
+                    key={i}
+                    className="w-5 h-5 fill-current"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                   </svg>
                 ))}
               </div>
               <p className="text-gray-300 mb-4">
-                "The Silver membership has paid for itself in just two weeks! I use OTW for food delivery almost daily,
-                and the savings on fees alone is worth it."
+                "The Silver membership has paid for itself in just two weeks! I
+                use OTW for food delivery almost daily, and the savings on fees
+                alone is worth it."
               </p>
               <p className="font-bold">- Michael R.</p>
               <p className="text-sm text-gray-400">Silver Member</p>
@@ -240,14 +275,19 @@ export default function TierMembershipPage() {
             <div className="bg-gray-900 p-6 rounded-lg">
               <div className="flex items-center text-otw-gold mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <svg
+                    key={i}
+                    className="w-5 h-5 fill-current"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                   </svg>
                 ))}
               </div>
               <p className="text-gray-300 mb-4">
-                "As a Gold member, I love the unlimited free grocery delivery. It's so convenient to have my groceries
-                delivered whenever I need them without worrying about fees."
+                "As a Gold member, I love the unlimited free grocery delivery.
+                It's so convenient to have my groceries delivered whenever I
+                need them without worrying about fees."
               </p>
               <p className="font-bold">- Jessica T.</p>
               <p className="text-sm text-gray-400">Gold Member</p>
@@ -256,14 +296,19 @@ export default function TierMembershipPage() {
             <div className="bg-gray-900 p-6 rounded-lg">
               <div className="flex items-center text-otw-gold mb-4">
                 {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <svg
+                    key={i}
+                    className="w-5 h-5 fill-current"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                   </svg>
                 ))}
               </div>
               <p className="text-gray-300 mb-4">
-                "The ride tokens that come with my Bronze membership are perfect for my needs. I use them for my weekly
-                grocery trips and save a ton on transportation costs."
+                "The ride tokens that come with my Bronze membership are perfect
+                for my needs. I use them for my weekly grocery trips and save a
+                ton on transportation costs."
               </p>
               <p className="font-bold">- David L.</p>
               <p className="text-sm text-gray-400">Bronze Member</p>
@@ -275,38 +320,52 @@ export default function TierMembershipPage() {
       {/* FAQ Section */}
       <section className="py-16 bg-gray-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-12 text-center">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-bold mb-12 text-center">
+            Frequently Asked Questions
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">How do ride tokens work?</h3>
+              <h3 className="text-xl font-bold mb-3">
+                How do ride tokens work?
+              </h3>
               <p className="text-gray-400">
-                Ride tokens are credits you can use for OTW rides. Each token is worth up to $10 in ride value. They're
-                automatically applied to your account each month and expire at the end of the month if unused.
+                Ride tokens are credits you can use for OTW rides. Each token is
+                worth up to $10 in ride value. They're automatically applied to
+                your account each month and expire at the end of the month if
+                unused.
               </p>
             </div>
 
             <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">Can I cancel my membership anytime?</h3>
+              <h3 className="text-xl font-bold mb-3">
+                Can I cancel my membership anytime?
+              </h3>
               <p className="text-gray-400">
-                Yes, you can cancel your membership at any time. Your benefits will continue until the end of your
-                current billing cycle.
+                Yes, you can cancel your membership at any time. Your benefits
+                will continue until the end of your current billing cycle.
               </p>
             </div>
 
             <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">How do I upgrade my membership?</h3>
+              <h3 className="text-xl font-bold mb-3">
+                How do I upgrade my membership?
+              </h3>
               <p className="text-gray-400">
-                You can upgrade your membership at any time from your account settings. The new rate will be prorated
-                for the remainder of your billing cycle.
+                You can upgrade your membership at any time from your account
+                settings. The new rate will be prorated for the remainder of
+                your billing cycle.
               </p>
             </div>
 
             <div className="bg-gray-800 p-6 rounded-lg">
-              <h3 className="text-xl font-bold mb-3">Is there a family plan available?</h3>
+              <h3 className="text-xl font-bold mb-3">
+                Is there a family plan available?
+              </h3>
               <p className="text-gray-400">
-                Yes, we offer family plans that allow up to 5 members to share benefits under one account. Contact our
-                customer support for more information.
+                Yes, we offer family plans that allow up to 5 members to share
+                benefits under one account. Contact our customer support for
+                more information.
               </p>
             </div>
           </div>
@@ -318,15 +377,18 @@ export default function TierMembershipPage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">Ready to Join?</h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Start saving today with an OTW Tier Membership. Choose the plan that's right for you and enjoy exclusive
-            benefits.
+            Start saving today with an OTW Tier Membership. Choose the plan
+            that's right for you and enjoy exclusive benefits.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link href="/checkout?plan=bronze">
               <Button size="lg">Join Bronze</Button>
             </Link>
             <Link href="/checkout?plan=silver">
-              <Button size="lg" className="bg-otw-gold text-black hover:bg-otw-gold/90">
+              <Button
+                size="lg"
+                className="bg-otw-gold text-black hover:bg-otw-gold/90"
+              >
                 Join Silver
               </Button>
             </Link>
@@ -337,5 +399,5 @@ export default function TierMembershipPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

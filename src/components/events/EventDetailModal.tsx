@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import type React from "react"
-import Image from "next/image"
+import type React from "react";
+import Image from "next/image";
 
 import {
   FaCalendarAlt,
@@ -13,33 +13,38 @@ import {
   FaUtensils,
   FaGlassMartiniAlt,
   FaMusic,
-} from "react-icons/fa"
-import type { Event } from "../../types/event"
+} from "react-icons/fa";
+import type { Event } from "../../types/event";
 
 interface EventDetailModalProps {
-  event: Event
-  categoryName: string
-  onClose: () => void
-  onRegister: () => void
+  event: Event;
+  categoryName: string;
+  onClose: () => void;
+  onRegister: () => void;
 }
 
-const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, categoryName, onClose, onRegister }) => {
+const EventDetailModal: React.FC<EventDetailModalProps> = ({
+  event,
+  categoryName,
+  onClose,
+  onRegister,
+}) => {
   // Format date
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       weekday: "long",
       month: "long",
       day: "numeric",
       year: "numeric",
-    })
-  }
+    });
+  };
 
   // Check if event is sold out
-  const isSoldOut = event.capacity <= event.registered
+  const isSoldOut = event.capacity <= event.registered;
 
   // Check if event is in the past
-  const isPast = new Date(event.date) < new Date()
+  const isPast = new Date(event.date) < new Date();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80">
@@ -55,24 +60,35 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, categoryName
           </button>
 
           {/* Event image */}
-          <div className="h-64 bg-cover bg-center relative" style={{ backgroundImage: `url(${event.image})` }}>
+          <div
+            className="h-64 bg-cover bg-center relative"
+            style={{ backgroundImage: `url(${event.image})` }}
+          >
             <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] to-transparent"></div>
 
             {/* Category Badge */}
             <div className="absolute top-4 left-4">
-              <span className="bg-[#333333] text-white text-xs px-3 py-1 rounded-full">{categoryName}</span>
+              <span className="bg-[#333333] text-white text-xs px-3 py-1 rounded-full">
+                {categoryName}
+              </span>
             </div>
 
             {/* Status Badges */}
             <div className="absolute top-4 right-16 flex gap-2">
               {event.featured && (
-                <span className="bg-gold-foil text-black text-xs font-bold px-3 py-1 rounded-full">FEATURED</span>
+                <span className="bg-gold-foil text-black text-xs font-bold px-3 py-1 rounded-full">
+                  FEATURED
+                </span>
               )}
               {isSoldOut && (
-                <span className="bg-blood-red text-white text-xs font-bold px-3 py-1 rounded-full">SOLD OUT</span>
+                <span className="bg-blood-red text-white text-xs font-bold px-3 py-1 rounded-full">
+                  SOLD OUT
+                </span>
               )}
               {isPast && (
-                <span className="bg-[#555555] text-white text-xs font-bold px-3 py-1 rounded-full">PAST EVENT</span>
+                <span className="bg-[#555555] text-white text-xs font-bold px-3 py-1 rounded-full">
+                  PAST EVENT
+                </span>
               )}
             </div>
           </div>
@@ -107,19 +123,31 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, categoryName
 
               <div className="flex items-center text-gray-300">
                 <FaUserFriends className="mr-2 text-gold-foil flex-shrink-0" />
-                <span>{isSoldOut ? "Sold Out" : `${event.registered}/${event.capacity} registered`}</span>
+                <span>
+                  {isSoldOut
+                    ? "Sold Out"
+                    : `${event.registered}/${event.capacity} registered`}
+                </span>
               </div>
             </div>
 
             <div className="space-y-3">
               {event.features.map((feature, index) => (
                 <div key={index} className="flex items-center text-gray-300">
-                  {feature.includes("Food") && <FaUtensils className="mr-2 text-gold-foil flex-shrink-0" />}
-                  {feature.includes("Drink") && <FaGlassMartiniAlt className="mr-2 text-gold-foil flex-shrink-0" />}
-                  {feature.includes("Music") && <FaMusic className="mr-2 text-gold-foil flex-shrink-0" />}
-                  {!feature.includes("Food") && !feature.includes("Drink") && !feature.includes("Music") && (
-                    <span className="w-2 h-2 bg-gold-foil rounded-full mr-2 flex-shrink-0"></span>
+                  {feature.includes("Food") && (
+                    <FaUtensils className="mr-2 text-gold-foil flex-shrink-0" />
                   )}
+                  {feature.includes("Drink") && (
+                    <FaGlassMartiniAlt className="mr-2 text-gold-foil flex-shrink-0" />
+                  )}
+                  {feature.includes("Music") && (
+                    <FaMusic className="mr-2 text-gold-foil flex-shrink-0" />
+                  )}
+                  {!feature.includes("Food") &&
+                    !feature.includes("Drink") &&
+                    !feature.includes("Music") && (
+                      <span className="w-2 h-2 bg-gold-foil rounded-full mr-2 flex-shrink-0"></span>
+                    )}
                   <span>{feature}</span>
                 </div>
               ))}
@@ -128,7 +156,9 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, categoryName
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">About This Event</h3>
-            <p className="text-gray-300 whitespace-pre-line">{event.description}</p>
+            <p className="text-gray-300 whitespace-pre-line">
+              {event.description}
+            </p>
           </div>
 
           {event.schedule && (
@@ -137,7 +167,9 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, categoryName
               <ul className="space-y-2">
                 {event.schedule.map((item, index) => (
                   <li key={index} className="flex">
-                    <span className="text-gold-foil font-medium mr-3">{item.time}</span>
+                    <span className="text-gold-foil font-medium mr-3">
+                      {item.time}
+                    </span>
                     <span className="text-gray-300">{item.activity}</span>
                   </li>
                 ))}
@@ -175,7 +207,11 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, categoryName
             </button>
 
             {!isPast && (
-              <button className="btn-primary" onClick={onRegister} disabled={isSoldOut}>
+              <button
+                className="btn-primary"
+                onClick={onRegister}
+                disabled={isSoldOut}
+              >
                 {isSoldOut ? "Sold Out" : "Register Now"}
               </button>
             )}
@@ -183,7 +219,7 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({ event, categoryName
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EventDetailModal
+export default EventDetailModal;

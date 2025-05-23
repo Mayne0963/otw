@@ -1,78 +1,88 @@
-"use client"
+"use client";
 
-import { useState } from 'react'
-import { signIn } from 'next-auth/react'
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 // import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Icons } from '@/components/ui/icons'
-import { useToast } from '@/components/ui/use-toast'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Icons } from "@/components/ui/icons";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function SignUpPage() {
   // const router = useRouter() // Uncomment when navigation is needed
-  const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
-  const [email, setEmail] = useState('')
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const result = await signIn('email', {
+      const result = await signIn("email", {
         email,
         redirect: false,
-      })
+      });
 
       if (result?.error) {
         toast({
-          title: 'Error',
+          title: "Error",
           description: result.error,
-          variant: 'destructive',
-        })
+          variant: "destructive",
+        });
       } else {
         toast({
-          title: 'Check your email',
-          description: 'We sent you a sign-up link. Be sure to check your spam folder.',
-        })
+          title: "Check your email",
+          description:
+            "We sent you a sign-up link. Be sure to check your spam folder.",
+        });
       }
     } catch (error) {
       // Log error in development environment
-      console.error(error)
+      console.error(error);
       toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      })
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleSignUp = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await signIn('google', { callbackUrl: '/' })
+      await signIn("google", { callbackUrl: "/" });
     } catch (error) {
       // Log error in development environment
-      console.error(error)
+      console.error(error);
       toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      })
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="container flex h-screen w-screen flex-col items-center justify-center">
       <Card className="w-[350px]">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Create an account</CardTitle>
+          <CardTitle className="text-2xl text-center">
+            Create an account
+          </CardTitle>
           <CardDescription className="text-center">
             Choose your preferred sign up method
           </CardDescription>
@@ -146,5 +156,5 @@ export default function SignUpPage() {
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }

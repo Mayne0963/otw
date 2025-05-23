@@ -1,35 +1,39 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
-export default function AnimatedSection({ children, delay = 0, direction = "up" }) {
-  const [isVisible, setIsVisible] = useState(false)
+export default function AnimatedSection({
+  children,
+  delay = 0,
+  direction = "up",
+}) {
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsVisible(true)
-    }, delay)
+      setIsVisible(true);
+    }, delay);
 
-    return () => clearTimeout(timer)
-  }, [delay])
+    return () => clearTimeout(timer);
+  }, [delay]);
 
   const getTransformClass = () => {
     if (!isVisible) {
       switch (direction) {
         case "up":
-          return "translate-y-10"
+          return "translate-y-10";
         case "down":
-          return "translate-y-[-10px]"
+          return "translate-y-[-10px]";
         case "left":
-          return "translate-x-10"
+          return "translate-x-10";
         case "right":
-          return "translate-x-[-10px]"
+          return "translate-x-[-10px]";
         default:
-          return "translate-y-10"
+          return "translate-y-10";
       }
     }
-    return "translate-y-0 translate-x-0"
-  }
+    return "translate-y-0 translate-x-0";
+  };
 
   return (
     <div
@@ -37,5 +41,5 @@ export default function AnimatedSection({ children, delay = 0, direction = "up" 
     >
       {children}
     </div>
-  )
+  );
 }

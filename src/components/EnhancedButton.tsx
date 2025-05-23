@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { useState, PropsWithChildren } from 'react'
-import Link from "next/link"
+import { useState, PropsWithChildren } from "react";
+import Link from "next/link";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   href?: string;
-  variant?: 'primary' | 'secondary';
+  variant?: "primary" | "secondary";
   disabled?: boolean;
   fullWidth?: boolean;
   glow?: boolean;
@@ -13,17 +13,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function EnhancedButton({
   href,
-  variant = 'primary',
+  variant = "primary",
   children,
-  className = '',
+  className = "",
   fullWidth = false,
   glow = true,
   ...props
 }: PropsWithChildren<ButtonProps>) {
-  const [isHovered, setIsHovered] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
 
   const baseClasses =
-    "relative font-bold py-3 px-8 rounded-md transition-all duration-300 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 overflow-hidden"
+    "relative font-bold py-3 px-8 rounded-md transition-all duration-300 inline-flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 overflow-hidden";
 
   const variantClasses = {
     primary: `
@@ -36,14 +36,14 @@ export default function EnhancedButton({
       ${glow ? "shadow-lg shadow-[#C1272D]/50 hover:shadow-[#C1272D]/70" : ""}
       transform hover:-translate-y-1
     `,
-  }
+  };
 
-  const widthClass = fullWidth ? "w-full" : ""
-  const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${widthClass} ${className}`
+  const widthClass = fullWidth ? "w-full" : "";
+  const buttonClasses = `${baseClasses} ${variantClasses[variant]} ${widthClass} ${className}`;
 
   // Add subtle particle effect on hover
   const renderParticles = () => {
-    if (!isHovered) return null
+    if (!isHovered) return null;
 
     return (
       <span className="absolute inset-0 pointer-events-none">
@@ -54,8 +54,8 @@ export default function EnhancedButton({
           <span className="absolute top-0 left-1/2 w-1 h-1 rounded-full bg-[#C1272D] animate-ping"></span>
         )}
       </span>
-    )
-  }
+    );
+  };
 
   if (href) {
     return (
@@ -64,12 +64,12 @@ export default function EnhancedButton({
         className={buttonClasses}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        {...props}
+        {...(props as any)} // Cast props to any to avoid TypeScript errors with event handlers
       >
         {renderParticles()}
         {children}
       </Link>
-    )
+    );
   }
 
   return (
@@ -82,5 +82,5 @@ export default function EnhancedButton({
       {renderParticles()}
       {children}
     </button>
-  )
+  );
 }

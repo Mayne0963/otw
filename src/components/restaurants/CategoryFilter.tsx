@@ -1,14 +1,18 @@
-"use client"
-import type { Category } from "../../types/restaurant"
-import React from 'react';
+"use client";
+import type { Category } from "../../types/restaurant";
+import React from "react";
 
 interface CategoryFilterProps {
-  categories: Category[]
-  selectedCategory: string
-  setSelectedCategory: (category: string) => void
+  categories: Category[];
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
 }
 
-export default function CategoryFilter({ categories, selectedCategory, setSelectedCategory }: CategoryFilterProps) {
+export default function CategoryFilter({
+  categories,
+  selectedCategory,
+  setSelectedCategory,
+}: CategoryFilterProps) {
   return (
     <div className="w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
       <div className="flex space-x-2 min-w-max">
@@ -27,5 +31,5 @@ export default function CategoryFilter({ categories, selectedCategory, setSelect
         ))}
       </div>
     </div>
-  )
+  );
 }

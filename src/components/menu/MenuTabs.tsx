@@ -1,48 +1,53 @@
-"use client"
+"use client";
 
-import React from 'react'
-import { useEffect, useState } from 'react'
-import { Tabs, Tab } from '../ui/tabs'
-import { Input } from '../ui/input'
-import MenuGrid from './MenuGrid'
-import { MenuItem } from '../../lib/firestoreModels'
+import React from "react";
+import { useEffect, useState } from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+import { Input } from "../ui/input";
+import MenuGrid from "./MenuGrid";
+import { MenuItem } from "../../lib/firestoreModels";
 
 export default function MenuTabs() {
-  const [menu, setMenu] = useState<MenuItem[]>([])
-  const [tab, setTab] = useState<'classic' | 'infused'>('classic')
-  const [search, setSearch] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [menu, setMenu] = useState<MenuItem[]>([]);
+  const [tab, setTab] = useState<"classic" | "infused">("classic");
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchMenu() {
-      setLoading(true)
-      const res = await fetch('/api/fetch-menu', { method: 'POST' })
-      const data = await res.json()
-      setMenu(data.menuItems || [])
-      setLoading(false)
+      setLoading(true);
+      const res = await fetch("/api/fetch-menu", { method: "POST" });
+      const data = await res.json();
+      setMenu(data.menuItems || []);
+      setLoading(false);
     }
-    fetchMenu()
-  }, [])
+    fetchMenu();
+  }, []);
 
   const filtered = menu.filter(
     (item) =>
       item.type === tab &&
       (item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.description.toLowerCase().includes(search.toLowerCase()))
-  )
+        item.description.toLowerCase().includes(search.toLowerCase())),
+  );
 
   return (
     <div className="w-full max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <Tabs value={tab} onValueChange={v => setTab(v as 'classic' | 'infused')}>
-          <Tab value="classic">Classic</Tab>
-          <Tab value="infused">Infused</Tab>
+        <Tabs
+          value={tab}
+          onValueChange={(v) => setTab(v as "classic" | "infused")}
+        >
+          <TabsList>
+            <TabsTrigger value="classic">Classic</TabsTrigger>
+            <TabsTrigger value="infused">Infused</TabsTrigger>
+          </TabsList>
         </Tabs>
         <Input
           type="text"
           placeholder="Search menu..."
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
           className="max-w-xs"
         />
       </div>
@@ -52,5 +57,5 @@ export default function MenuTabs() {
         <MenuGrid items={filtered} />
       )}
     </div>
-  )
-} 
+  );
+}

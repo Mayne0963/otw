@@ -1,58 +1,62 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRewards } from "../../lib/context/RewardsContext"
-import { rewards } from "../../data/rewards-data"
-import RewardCard from "../../components/rewards/RewardCard"
-import PointsTracker from "../../components/rewards/PointsTracker"
-import RewardHistory from "../../components/rewards/RewardHistory"
-import SpinGame from "../../components/rewards/SpinGame"
-import RedeemModal from "../../components/rewards/RedeemModal"
-import { FaTrophy, FaGift, FaHistory, FaGamepad } from "react-icons/fa"
-import type { Reward } from "../../types/reward"
+import { useState } from "react";
+import { useRewards } from "../../lib/context/RewardsContext";
+import { rewards } from "../../data/rewards-data";
+import RewardCard from "../../components/rewards/RewardCard";
+import PointsTracker from "../../components/rewards/PointsTracker";
+import RewardHistory from "../../components/rewards/RewardHistory";
+import SpinGame from "../../components/rewards/SpinGame";
+import RedeemModal from "../../components/rewards/RedeemModal";
+import { FaTrophy, FaGift, FaHistory, FaGamepad } from "react-icons/fa";
+import type { Reward } from "../../types/reward";
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default function RewardsPage() {
-  const { points, tier, history } = useRewards()
-  const [activeTab, setActiveTab] = useState("rewards")
-  const [selectedReward, setSelectedReward] = useState<Reward | null>(null)
-  const [showRedeemModal, setShowRedeemModal] = useState(false)
-  const [showSpinGame, setShowSpinGame] = useState(false)
+  const { points, tier, history } = useRewards();
+  const [activeTab, setActiveTab] = useState("rewards");
+  const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
+  const [showRedeemModal, setShowRedeemModal] = useState(false);
+  const [showSpinGame, setShowSpinGame] = useState(false);
 
   // Determine next tier details
   const getNextTierInfo = () => {
     if (tier === "Gold") {
-      return { name: "Gold", points: 1000 }
+      return { name: "Gold", points: 1000 };
     } else if (tier === "Silver") {
-      return { name: "Gold", points: 1000 }
+      return { name: "Gold", points: 1000 };
     } else {
-      return { name: "Silver", points: 500 }
+      return { name: "Silver", points: 500 };
     }
-  }
+  };
 
-  const nextTier = getNextTierInfo()
+  const nextTier = getNextTierInfo();
 
   // Handle selecting a reward
   const handleSelectReward = (reward: Reward) => {
-    setSelectedReward(reward)
-    setShowRedeemModal(true)
-  }
+    setSelectedReward(reward);
+    setShowRedeemModal(true);
+  };
 
   // Handle closing the redeem modal
   const handleCloseRedeemModal = () => {
-    setShowRedeemModal(false)
-    setSelectedReward(null)
-  }
+    setShowRedeemModal(false);
+    setSelectedReward(null);
+  };
 
   // Group rewards by category
-  const categoryGroups = rewards.reduce<Record<string, Reward[]>>((groups, reward) => {
-    if (!groups[reward.category]) {
-      groups[reward.category] = []
-    }
-    groups[reward.category].push(reward)
-    return groups
-  }, {})
+  const categoryGroups = rewards.reduce<Record<string, Reward[]>>(
+    (groups, reward) => {
+      if (!groups[reward.category]) {
+        groups[reward.category] = [];
+      }
+      // TypeScript now knows groups[reward.category] is defined
+      groups[reward.category]!.push(reward);
+      return groups;
+    },
+    {},
+  );
 
   return (
     <div className="min-h-screen pb-20">
@@ -66,9 +70,12 @@ export default function RewardsPage() {
           ></div>
         </div>
         <div className="container mx-auto px-4 z-10 text-center">
-          <h1 className="heading-xl mb-4 text-white gritty-shadow">Rewards Program</h1>
+          <h1 className="heading-xl mb-4 text-white gritty-shadow">
+            Rewards Program
+          </h1>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Earn points with every purchase and redeem them for exclusive rewards.
+            Earn points with every purchase and redeem them for exclusive
+            rewards.
           </p>
         </div>
       </section>
@@ -83,17 +90,26 @@ export default function RewardsPage() {
                   <FaTrophy className="text-gold-foil text-2xl" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gold-foil">{points}</h2>
+                  <h2 className="text-2xl font-bold text-gold-foil">
+                    {points}
+                  </h2>
                   <p className="text-gray-400">Available Points</p>
                 </div>
               </div>
 
               <div className="w-full md:w-1/2">
-                <PointsTracker currentPoints={points} nextTierPoints={nextTier.points} nextTierName={nextTier.name} />
+                <PointsTracker
+                  currentPoints={points}
+                  nextTierPoints={nextTier.points}
+                  nextTierName={nextTier.name}
+                />
               </div>
 
               <div>
-                <button onClick={() => setShowSpinGame(true)} className="btn-primary flex items-center gap-2">
+                <button
+                  onClick={() => setShowSpinGame(true)}
+                  className="btn-primary flex items-center gap-2"
+                >
                   <FaGamepad /> Daily Spin
                 </button>
               </div>
@@ -136,24 +152,27 @@ export default function RewardsPage() {
           {/* Rewards Tab */}
           {activeTab === "rewards" && (
             <div className="animate-fade-in">
-              {Object.entries(categoryGroups).map(([category, categoryRewards]) => (
-                <div key={category} className="mb-12">
-                  <h2 className="text-2xl font-bold mb-6">
-                    {category.charAt(0).toUpperCase() + category.slice(1)} Rewards
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {categoryRewards.map((reward: Reward) => (
-                      <RewardCard
-                        key={reward.id}
-                        reward={reward}
-                        userPoints={points}
-                        onSelect={() => handleSelectReward(reward)}
-                        userTier={tier.toLowerCase()}
-                      />
-                    ))}
+              {Object.entries(categoryGroups).map(
+                ([category, categoryRewards]) => (
+                  <div key={category} className="mb-12">
+                    <h2 className="text-2xl font-bold mb-6">
+                      {category.charAt(0).toUpperCase() + category.slice(1)}{" "}
+                      Rewards
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {categoryRewards.map((reward: Reward) => (
+                        <RewardCard
+                          key={reward.id}
+                          reward={reward}
+                          userPoints={points}
+                          onSelect={() => handleSelectReward(reward)}
+                          userTier={tier.toLowerCase()}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           )}
 
@@ -169,7 +188,11 @@ export default function RewardsPage() {
 
       {/* Redeem Modal */}
       {selectedReward && showRedeemModal && (
-        <RedeemModal reward={selectedReward} userPoints={points} onClose={handleCloseRedeemModal} />
+        <RedeemModal
+          reward={selectedReward}
+          userPoints={points}
+          onClose={handleCloseRedeemModal}
+        />
       )}
 
       {/* Spin Game Modal */}
@@ -182,5 +205,5 @@ export default function RewardsPage() {
         </div>
       )}
     </div>
-  )
+  );
 }

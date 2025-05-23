@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { Card } from "../ui/card"
-import { Award, Clock, Heart } from "lucide-react"
+import { Card } from "../ui/card";
+import { Award, Clock, Heart } from "lucide-react";
 
 const mockStories = [
   {
@@ -21,7 +21,7 @@ const mockStories = [
     story:
       "Being part of the OTW volunteer team has shown me just how much we can accomplish when we work together. The moving assistance program has been particularly rewarding - helping families transition to their new homes with dignity and support.",
   },
-]
+];
 
 export default function VolunteerFeed() {
   return (
@@ -30,7 +30,13 @@ export default function VolunteerFeed() {
         <Card key={story.id} className="p-6">
           <div className="flex gap-4">
             <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-              <Image src={story.image} alt={story.name} width={64} height={64} className="w-full h-full object-cover" />
+              <Image
+                src={story.image}
+                alt={story.name}
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="flex-1 space-y-4">
               <div>
@@ -49,7 +55,10 @@ export default function VolunteerFeed() {
 
               <div className="flex flex-wrap gap-2">
                 {story.badges.map((badge) => (
-                  <div key={badge} className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-800 text-xs">
+                  <div
+                    key={badge}
+                    className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-800 text-xs"
+                  >
                     <Award className="w-3 h-3 text-otw-gold" />
                     {badge}
                   </div>
@@ -69,8 +78,10 @@ export default function VolunteerFeed() {
       ))}
 
       <div className="text-center">
-        <button className="text-otw-gold hover:text-otw-red transition-colors">Load more stories...</button>
+        <button className="text-otw-gold hover:text-otw-red transition-colors">
+          Load more stories...
+        </button>
       </div>
     </div>
-  )
+  );
 }

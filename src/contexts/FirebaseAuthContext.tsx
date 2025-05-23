@@ -18,7 +18,11 @@ export function useFirebaseAuth() {
   return useContext(AuthContext);
 }
 
-export function FirebaseAuthProvider({ children }: { children: React.ReactNode }) {
+export function FirebaseAuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -39,4 +43,4 @@ export function FirebaseAuthProvider({ children }: { children: React.ReactNode }
       {children}
     </AuthContext.Provider>
   );
-} 
+}

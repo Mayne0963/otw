@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchAndNormalizeMenus } from '../../../../lib/scrapeMenus'
 import { firestore } from '../../../../lib/firebaseAdmin'
+import { MenuItem } from '../../../../lib/firestoreModels'
 
 const MENU_COLLECTION = 'menuItems'
 const SNAPSHOT_COLLECTION = 'menuSnapshots'
@@ -15,7 +16,7 @@ export async function POST(req: NextRequest) {
   }
   try {
     // Scrape and normalize
-    const menuItems = await fetchAndNormalizeMenus()
+    const menuItems: MenuItem[] = await fetchAndNormalizeMenus()
 
     // Store in Firestore (overwrite all)
     const batch = firestore.batch()
@@ -36,6 +37,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, count: menuItems.length })
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return NextResponse.json({ error: err.message || 'Unknown error occurred' }, { status: 500 })
   }
-} 
+}

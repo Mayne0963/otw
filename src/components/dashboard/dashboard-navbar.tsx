@@ -1,12 +1,16 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "../../lib/utils"
-import { Menu } from "lucide-react"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "../../lib/utils";
+import { Menu } from "lucide-react";
 
-export default function DashboardNavbar({ onMenuToggle }: { onMenuToggle?: () => void }) {
-  const pathname = usePathname()
+export default function DashboardNavbar({
+  onMenuToggle,
+}: {
+  onMenuToggle?: () => void;
+}) {
+  const pathname = usePathname();
 
   const navItems = [
     {
@@ -21,7 +25,7 @@ export default function DashboardNavbar({ onMenuToggle }: { onMenuToggle?: () =>
       name: "Settings",
       href: "/dashboard/settings",
     },
-  ]
+  ];
 
   return (
     <nav className="flex items-center justify-between px-4 h-16 border-b border-white/10">
@@ -31,19 +35,19 @@ export default function DashboardNavbar({ onMenuToggle }: { onMenuToggle?: () =>
         </Link>
         <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
           {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            "text-sm font-medium transition-colors hover:text-primary",
-            pathname === item.href
-              ? "text-primary"
-              : "text-muted-foreground"
-          )}
-        >
-          {item.name}
-        </Link>
-      ))}
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                pathname === item.href
+                  ? "text-primary"
+                  : "text-muted-foreground",
+              )}
+            >
+              {item.name}
+            </Link>
+          ))}
         </div>
       </div>
       <button
@@ -53,5 +57,5 @@ export default function DashboardNavbar({ onMenuToggle }: { onMenuToggle?: () =>
         <Menu className="h-6 w-6" />
       </button>
     </nav>
-  )
+  );
 }

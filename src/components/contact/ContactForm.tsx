@@ -1,9 +1,15 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { FaUser, FaEnvelope, FaPhone, FaComment, FaCheck } from "react-icons/fa"
+import { useState } from "react";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaComment,
+  FaCheck,
+} from "react-icons/fa";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -12,64 +18,68 @@ const ContactForm = () => {
     phone: "",
     subject: "",
     message: "",
-  })
+  });
 
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-    })
+    });
 
     // Clear error when field is updated
     if (errors[name]) {
       setErrors({
         ...errors,
         [name]: "",
-      })
+      });
     }
-  }
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required"
+      newErrors.name = "Name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid"
+      newErrors.email = "Email is invalid";
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = "Message is required"
+      newErrors.message = "Message is required";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!validateForm()) {
-      return
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
       // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Show success message
-      setIsSubmitted(true)
+      setIsSubmitted(true);
 
       // Reset form
       setFormData({
@@ -78,19 +88,27 @@ const ContactForm = () => {
         phone: "",
         subject: "",
         message: "",
-      })
+      });
     } catch (error) {
-      console.error("Form submission error:", error)
+      console.error("Form submission error:", error);
       setErrors({
         ...errors,
         form: "An error occurred. Please try again later.",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  const subjectOptions = ["General Inquiry", "Catering", "Events", "Delivery", "Feedback", "Career", "Other"]
+  const subjectOptions = [
+    "General Inquiry",
+    "Catering",
+    "Events",
+    "Delivery",
+    "Feedback",
+    "Career",
+    "Other",
+  ];
 
   return (
     <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
@@ -100,14 +118,21 @@ const ContactForm = () => {
             <FaCheck className="text-emerald-green text-2xl" />
           </div>
           <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
-          <p className="text-gray-300 mb-6">Thank you for reaching out. We'll get back to you as soon as possible.</p>
+          <p className="text-gray-300 mb-6">
+            Thank you for reaching out. We'll get back to you as soon as
+            possible.
+          </p>
           <button className="btn-primary" onClick={() => setIsSubmitted(false)}>
             Send Another Message
           </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
-          {errors.form && <div className="bg-blood-red bg-opacity-20 text-blood-red p-4 rounded-md">{errors.form}</div>}
+          {errors.form && (
+            <div className="bg-blood-red bg-opacity-20 text-blood-red p-4 rounded-md">
+              {errors.form}
+            </div>
+          )}
 
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-1">
@@ -127,7 +152,9 @@ const ContactForm = () => {
                 placeholder="Your name"
               />
             </div>
-            {errors.name && <p className="mt-1 text-sm text-blood-red">{errors.name}</p>}
+            {errors.name && (
+              <p className="mt-1 text-sm text-blood-red">{errors.name}</p>
+            )}
           </div>
 
           <div>
@@ -148,7 +175,9 @@ const ContactForm = () => {
                 placeholder="your@email.com"
               />
             </div>
-            {errors.email && <p className="mt-1 text-sm text-blood-red">{errors.email}</p>}
+            {errors.email && (
+              <p className="mt-1 text-sm text-blood-red">{errors.email}</p>
+            )}
           </div>
 
           <div>
@@ -209,10 +238,16 @@ const ContactForm = () => {
                 placeholder="How can we help you?"
               ></textarea>
             </div>
-            {errors.message && <p className="mt-1 text-sm text-blood-red">{errors.message}</p>}
+            {errors.message && (
+              <p className="mt-1 text-sm text-blood-red">{errors.message}</p>
+            )}
           </div>
 
-          <button type="submit" className="btn-primary w-full" disabled={isSubmitting}>
+          <button
+            type="submit"
+            className="btn-primary w-full"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? (
               <span className="flex items-center justify-center">
                 <svg
@@ -221,7 +256,14 @@ const ContactForm = () => {
                   fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -237,7 +279,7 @@ const ContactForm = () => {
         </form>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ContactForm
+export default ContactForm;

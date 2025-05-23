@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { LoadingAnimation } from "./loading-animation"
-import { cn } from "../../lib/utils"
+import { useEffect, useState } from "react";
+import { LoadingAnimation } from "./loading-animation";
+import { cn } from "../../lib/utils";
 
 interface LoadingOverlayProps {
-  isLoading: boolean
-  className?: string
-  fullScreen?: boolean
-  message?: string
-  subMessage?: string
-  minDisplayTime?: number
+  isLoading: boolean;
+  className?: string;
+  fullScreen?: boolean;
+  message?: string;
+  subMessage?: string;
+  minDisplayTime?: number;
 }
 
 export function LoadingOverlay({
@@ -21,22 +21,22 @@ export function LoadingOverlay({
   subMessage,
   minDisplayTime = 500,
 }: LoadingOverlayProps) {
-  const [show, setShow] = useState(isLoading)
+  const [show, setShow] = useState(isLoading);
 
   useEffect(() => {
     if (isLoading) {
-      setShow(true)
-      return
+      setShow(true);
+      return;
     }
 
     const timer = setTimeout(() => {
-      setShow(false)
-    }, minDisplayTime)
+      setShow(false);
+    }, minDisplayTime);
 
-    return () => clearTimeout(timer)
-  }, [isLoading, minDisplayTime])
+    return () => clearTimeout(timer);
+  }, [isLoading, minDisplayTime]);
 
-  if (!show) return null
+  if (!show) return null;
 
   return (
     <div
@@ -47,8 +47,13 @@ export function LoadingOverlay({
       )}
     >
       <div className="flex flex-col items-center justify-center p-6 rounded-lg">
-        <LoadingAnimation size={fullScreen ? "large" : "medium"} showText={true} text={message} subText={subMessage} />
+        <LoadingAnimation
+          size={fullScreen ? "large" : "medium"}
+          showText={true}
+          text={message}
+          subText={subMessage}
+        />
       </div>
     </div>
-  )
+  );
 }

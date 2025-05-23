@@ -1,21 +1,25 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import Image from "next/image"
-import { useState } from "react"
-import { FaShoppingCart, FaEye, FaStar, FaFire } from "react-icons/fa"
-import type { Product } from "../../types/merch"
+import Image from "next/image";
+import { useState } from "react";
+import { FaShoppingCart, FaEye, FaStar, FaFire } from "react-icons/fa";
+import type { Product } from "../../types/merch";
 
 interface ProductCardProps {
-  product: Product
-  onAddToCart: () => void
-  onQuickView: () => void
+  product: Product;
+  onAddToCart: () => void;
+  onQuickView: () => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onQuickView }) => {
-  const [isHovered, setIsHovered] = useState(false)
-  const [isImageLoading, setIsImageLoading] = useState(true)
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  onAddToCart,
+  onQuickView,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
 
   return (
     <div
@@ -28,11 +32,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onQuick
           <div className="absolute inset-0 bg-gray-800 animate-pulse" />
         )}
         <Image
-          src={isHovered && product.images.length > 1 ? product.images[1] : product.images[0]}
+          src={
+            isHovered && product.images.length > 1
+              ? product.images[1]
+              : product.images[0]
+          }
           alt={product.name}
           fill
           className={`object-cover transition-all duration-500 ${
-            isImageLoading ? 'opacity-0' : 'opacity-100'
+            isImageLoading ? "opacity-0" : "opacity-100"
           }`}
           onLoadingComplete={() => setIsImageLoading(false)}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -59,9 +67,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onQuick
           <button
             className="bg-gold-foil text-black p-2 rounded-full hover:bg-opacity-80 transition-colors"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onQuickView()
+              e.preventDefault();
+              e.stopPropagation();
+              onQuickView();
             }}
             aria-label="Quick view"
           >
@@ -70,9 +78,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onQuick
           <button
             className="bg-gold-foil text-black p-2 rounded-full hover:bg-opacity-80 transition-colors"
             onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onAddToCart()
+              e.preventDefault();
+              e.stopPropagation();
+              onAddToCart();
             }}
             aria-label="Add to cart"
           >
@@ -83,10 +91,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onQuick
 
       {/* Product Info */}
       <div className="p-4">
-        <h3 className="text-lg font-bold mb-1 line-clamp-1" title={product.name}>
+        <h3
+          className="text-lg font-bold mb-1 line-clamp-1"
+          title={product.name}
+        >
           {product.name}
         </h3>
-        <p className="text-gray-400 text-sm mb-2 line-clamp-2" title={product.description}>
+        <p
+          className="text-gray-400 text-sm mb-2 line-clamp-2"
+          title={product.description}
+        >
           {product.description}
         </p>
         <div className="flex justify-between items-center">
@@ -101,7 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, onQuick
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ProductCard
+export default ProductCard;

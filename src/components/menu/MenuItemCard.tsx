@@ -7,24 +7,26 @@ import CustomizationModal from "./CustomizationModal"
 import { getItemCustomizationOptions } from "../../data/menu-data"
 import type { CustomizationOption } from "../../types"
 
-interface MenuItemProps {
-  item: {
-    id: string
-    name: string
-    description: string
-    price: number
-    image: string
-    category: string
-    popular?: boolean
-    new?: boolean
-    infused?: boolean
-    dietary?: {
-      vegetarian?: boolean
-      vegan?: boolean
-      glutenFree?: boolean
-      dairyFree?: boolean
-    }
+interface MenuItem {
+  id: string
+  name: string
+  description: string
+  price: number
+  image: string
+  category: string
+  popular?: boolean
+  new?: boolean
+  infused?: boolean
+  dietary?: {
+    vegetarian?: boolean
+    vegan?: boolean
+    glutenFree?: boolean
+    dairyFree?: boolean
   }
+}
+
+interface MenuItemProps {
+  item: MenuItem
   onAddToCart: (quantity: number, customizations?: { [categoryId: string]: CustomizationOption[] }) => void
 }
 
