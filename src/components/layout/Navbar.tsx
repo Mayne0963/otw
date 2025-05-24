@@ -58,6 +58,14 @@ const Navbar: React.FC = () => {
           <Link href="/contact" className={`nav-link ${pathname === "/contact" ? "nav-link-active" : ""}`}>
             Contact
           </Link>
+          <a 
+            href="https://otw-chi.vercel.app" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="nav-link bg-gradient-to-r from-[#D4AF37] to-[#880808] text-white px-4 py-2 rounded-md hover:opacity-90 transition-opacity duration-300 font-semibold"
+          >
+            OTW
+          </a>
 
           <CartDropdown />
 
@@ -142,6 +150,15 @@ const Navbar: React.FC = () => {
           >
             Contact
           </Link>
+          <a 
+            href="https://otw-chi.vercel.app" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="py-2 bg-gradient-to-r from-[#D4AF37] to-[#880808] text-white px-4 rounded-md hover:opacity-90 transition-opacity duration-300 font-semibold text-center"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            OTW
+          </a>
           <Link
             href="/cart"
             className="py-2 flex items-center hover:text-gold-foil transition-colors duration-300"
