@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { generateChatResponse } from "../../../lib/services/openai-chat";
-import { indexAllContent } from "../../../lib/utils/contentIndexer";
+// import { generateChatResponse } from "../../../lib/services/openai-chat";
+// import { indexAllContent } from "../../../lib/utils/contentIndexer";
 
 interface ChatMessage {
   role: string;
@@ -13,15 +13,16 @@ interface ChatRequest {
 }
 
 // Ensure content is indexed before handling requests
-let isIndexed = false;
+// let isIndexed = false;
 
 export async function POST(request: Request) {
   try {
+    // Temporarily disabled chat functionality
     // Index content if not already indexed
-    if (!isIndexed) {
-      await indexAllContent();
-      isIndexed = true;
-    }
+    // if (!isIndexed) {
+    //   await indexAllContent();
+    //   isIndexed = true;
+    // }
 
     const data = await request.json();
     const { messages } = data as ChatRequest;
@@ -54,8 +55,8 @@ export async function POST(request: Request) {
         ? userMessages[userMessages.length - 1]?.text || ""
         : "";
 
-    // Generate response using OpenAI
-    const responseText = await generateChatResponse(messages, lastUserMessage);
+    // Temporary fallback response
+    const responseText = "Hello! I'm BroskiBot, the AI assistant for Broski's Kitchen. Chat functionality is currently being set up. Please check back soon!";
 
     return NextResponse.json({
       role: "assistant",

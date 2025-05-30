@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { verifyIDWithAI } from "../../../lib/services/openai";
-import { storeVerificationStatus } from "../../../lib/services/firebase";
+// import { verifyIDWithAI } from "../../../lib/services/openai";
+// import { storeVerificationStatus } from "../../../lib/services/firebase";
 
 export const dynamic = "force-dynamic";
 
@@ -15,22 +15,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify ID using OpenAI
-    const verificationResult = await verifyIDWithAI(idImage, selfieImage);
-
-    // If verification is successful, store the status in Firebase
-    if (verificationResult.success) {
-      try {
-        const expiryDays = process.env.AGE_VERIFICATION_EXPIRY_DAYS
-          ? Number.parseInt(process.env.AGE_VERIFICATION_EXPIRY_DAYS)
-          : 30;
-
-        await storeVerificationStatus(userId, true, expiryDays);
-      } catch (error) {
-        console.error("Error storing verification status:", error);
-        // Continue even if storing fails, as we'll use localStorage as fallback
-      }
-    }
+    // Temporarily disabled ID verification
+    const verificationResult = {
+      success: false,
+      message: "ID verification is currently being set up. Please check back soon."
+    };
 
     return NextResponse.json(verificationResult);
   } catch (error) {

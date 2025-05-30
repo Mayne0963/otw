@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth, firestore } from '../../../lib/firebaseAdmin'
+// import { auth, firestore } from '../../../lib/firebaseAdmin'
 
 interface Prize {
   name: string;
@@ -27,27 +27,32 @@ const PRIZES: Prize[] = [
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get('authorization')
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-    const idTokenParts = authHeader.split(' ')
-    if (idTokenParts.length < 2 || !idTokenParts[1]) {
-      return NextResponse.json({ error: 'Malformed token' }, { status: 401 })
-    }
-    const idToken = idTokenParts[1];
-    const decoded = await auth.verifyIdToken(idToken)
-    const userId = decoded.uid
-    if (!userId) {
-      return NextResponse.json({ error: 'Invalid token: UID missing' }, { status: 401 })
-    }
+    // Temporarily disabled spin functionality
+    return NextResponse.json({ 
+      error: 'Spin feature is currently being set up. Please check back soon!' 
+    }, { status: 503 })
+    
+    // const authHeader = req.headers.get('authorization')
+    // if (!authHeader?.startsWith('Bearer ')) {
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // }
+    // const idTokenParts = authHeader.split(' ')
+    // if (idTokenParts.length < 2 || !idTokenParts[1]) {
+    //   return NextResponse.json({ error: 'Malformed token' }, { status: 401 })
+    // }
+    // const idToken = idTokenParts[1];
+    // const decoded = await auth.verifyIdToken(idToken)
+    // const userId = decoded.uid
+    // if (!userId) {
+    //   return NextResponse.json({ error: 'Invalid token: UID missing' }, { status: 401 })
+    // }
 
-    // Rate limit (in-memory, per instance)
-    const now = Date.now()
-    if (rateLimit[userId] && now - rateLimit[userId] < COOLDOWN_MS) {
-      const wait = Math.ceil((COOLDOWN_MS - (now - rateLimit[userId])) / 1000)
-      return NextResponse.json({ error: 'Cooldown', wait }, { status: 429 })
-    }
+    // // Rate limit (in-memory, per instance)
+    // const now = Date.now()
+    // if (rateLimit[userId] && now - rateLimit[userId] < COOLDOWN_MS) {
+    //   const wait = Math.ceil((COOLDOWN_MS - (now - rateLimit[userId])) / 1000)
+    //   return NextResponse.json({ error: 'Cooldown', wait }, { status: 429 })
+    // }
 
     // Get rewards doc
     const rewardRef = firestore.collection('rewards').doc(userId)

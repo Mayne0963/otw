@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth, firestore } from "../../../../../lib/firebaseAdmin";
+// import { auth, firestore } from "../../../../../lib/firebaseAdmin";
 import { menuItemSchema } from "../../../../../lib/firestoreModels";
 import { handleAPIError, apiErrors } from "../../../../../lib/utils/apiErrors";
 import { z } from "zod";
@@ -25,29 +25,34 @@ const bulkOperationSchema = z.object({
     .max(1000),
 });
 
-async function isAdmin(userId: string) {
-  const userSnap = await firestore.collection("users").doc(userId).get();
-  const userData = userSnap.data();
-  return userSnap.exists && userData ? userData.role === "admin" : false;
-}
+// async function isAdmin(userId: string) {
+//   const userSnap = await firestore.collection("users").doc(userId).get();
+//   const userData = userSnap.data();
+//   return userSnap.exists && userData ? userData.role === "admin" : false;
+// }
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      throw apiErrors.unauthorized();
-    }
+    // Temporarily disabled admin functionality
+    return NextResponse.json({ 
+      error: 'Admin functionality is currently being set up. Please check back soon!' 
+    }, { status: 503 })
+    
+    // const authHeader = req.headers.get("authorization");
+    // if (!authHeader?.startsWith("Bearer ")) {
+    //   throw apiErrors.unauthorized();
+    // }
 
-    const idToken = authHeader.split(" ")[1];
-    if (!idToken) {
-      throw apiErrors.unauthorized("Invalid authentication token");
-    }
-    const decoded = (await auth.verifyIdToken(idToken)) as AuthUser;
-    const userId = decoded.uid;
+    // const idToken = authHeader.split(" ")[1];
+    // if (!idToken) {
+    //   throw apiErrors.unauthorized("Invalid authentication token");
+    // }
+    // const decoded = (await auth.verifyIdToken(idToken)) as AuthUser;
+    // const userId = decoded.uid;
 
-    if (!(await isAdmin(userId))) {
-      throw apiErrors.forbidden("Only admins can perform bulk operations");
-    }
+    // if (!(await isAdmin(userId))) {
+    //   throw apiErrors.forbidden("Only admins can perform bulk operations");
+    // }
 
     const data = await req.json();
     const { operation, items } = bulkOperationSchema.parse(data);
