@@ -4,6 +4,14 @@ export const env = {
   GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY || "",
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || "",
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
+  
+  // External API Keys
+  DOCUMENU_API_KEY: process.env.DOCUMENU_API_KEY || "",
+  ZOMATO_API_KEY: process.env.ZOMATO_API_KEY || "",
+  YELP_API_KEY: process.env.YELP_API_KEY || "",
+  KROGER_CLIENT_ID: process.env.KROGER_CLIENT_ID || "",
+  KROGER_CLIENT_SECRET: process.env.KROGER_CLIENT_SECRET || "",
+  BESTBUY_API_KEY: process.env.BESTBUY_API_KEY || "",
 
   // Firebase Configuration
   FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "",
@@ -35,6 +43,12 @@ export function validateEnv() {
     "FIREBASE_API_KEY",
     "FIREBASE_AUTH_DOMAIN",
     "FIREBASE_PROJECT_ID",
+    // External APIs are optional for now
+    // "DOCUMENU_API_KEY",
+    // "ZOMATO_API_KEY", 
+    // "YELP_API_KEY",
+    // "KROGER_CLIENT_ID",
+    // "BESTBUY_API_KEY",
   ];
 
   const missingVars = requiredVars.filter((key) => {

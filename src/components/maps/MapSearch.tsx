@@ -74,22 +74,26 @@ export default function MapSearch({
   const onPlacesChanged = () => {
     if (searchBox) {
       const place = searchBox.getPlace();
-      if (place && place.geometry) {
-        // const selectedPlace = place; // Removed unused variable
-        if (place.geometry && place.geometry.location) {
-          const location = place.geometry.location;
-          setSelectedLocation(location);
-          if (map) {
-            map.panTo(location);
-            map.setZoom(15);
-          }
-          if (onLocationSelect) {
-            onLocationSelect({
-              lat: location.lat(),
-              lng: location.lng(),
-              address: place.formatted_address || "",
-            });
-          }
+      if (place && place.geometry && place.geometry.location) {
+        const location = place.geometry.location;
+        setSelectedLocation(location);
+        
+        // Update the visible input field
+        if (searchInputRef.current) {
+          searchInputRef.current.value = place.formatted_address || place.name || "";
+        }
+        
+        if (map) {
+          map.panTo(location);
+          map.setZoom(15);
+        }
+        
+        if (onLocationSelect) {
+          onLocationSelect({
+            lat: location.lat(),
+            lng: location.lng(),
+            address: place.formatted_address || place.name || "",
+          });
         }
       }
     }
@@ -123,24 +127,33 @@ export default function MapSearch({
       {showSearchBar && (
         <div className="p-4 border-b">
           <div className="relative">
-            <Input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Search for a location..."
-              className="pl-10 pr-4 py-2 w-full"
-            />
+            <Autocomplete
+              onLoad={onSearchBoxLoad}
+              onPlaceChanged={onPlacesChanged}
+              options={{
+                types: ['address', 'establishment'],
+                componentRestrictions: { country: 'us' },
+              }}
+            >
+              <Input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search for a location..."
+                className="pl-10 pr-12 py-2 w-full"
+              />
+            </Autocomplete>
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              onClick={handleCurrentLocation}
+              title="Use current location"
+            >
+              <Navigation className="h-4 w-4" />
+            </Button>
           </div>
-          <Autocomplete
-            onLoad={onSearchBoxLoad}
-            onPlaceChanged={onPlacesChanged}
-          >
-            <input
-              type="text"
-              placeholder="Search for a location..."
-              className="hidden"
-            />
-          </Autocomplete>
         </div>
       )}
 
@@ -170,13 +183,16 @@ export default function MapSearch({
           )}
         </GoogleMap>
 
-        <Button
-          onClick={handleCurrentLocation}
-          className="absolute bottom-4 right-4 bg-white text-black hover:bg-gray-100 shadow-lg"
-          size="icon"
-        >
-          <Navigation className="h-5 w-5" />
-        </Button>
+        {!showSearchBar && (
+          <Button
+            onClick={handleCurrentLocation}
+            className="absolute bottom-4 right-4 bg-white text-black hover:bg-gray-100 shadow-lg"
+            size="icon"
+            title="Use current location"
+          >
+            <Navigation className="h-5 w-5" />
+          </Button>
+        )}
       </div>
     </Card>
   );
