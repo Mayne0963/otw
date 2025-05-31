@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../lib/context/AuthContext";
 import { FaHistory, FaShoppingBag, FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -12,9 +13,34 @@ export default function OrderHistoryPage() {
   const { user, isLoading } = useAuth();
 
   // Redirect to login if not authenticated
-  if (!isLoading && !user) {
-    router.push("/auth/login");
-    return null;
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push("/auth/login");
+    }
+  }, [isLoading, user, router]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gold-foil mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading your orders...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Please log in to view your orders.</p>
+          <Link href="/auth/login" className="text-gold-foil hover:underline">
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   // This would normally be fetched from an API

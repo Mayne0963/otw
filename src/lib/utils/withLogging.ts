@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "./logger";
-import { auth } from "../firebaseAdmin";
+// import { auth } from "../firebaseAdmin";
 
 type RouteHandler = (
   req: NextRequest,
@@ -16,19 +16,20 @@ export function withLogging(handler: RouteHandler): RouteHandler {
 
     try {
       // Extract user ID from auth token if present
-      const authHeader = req.headers.get("authorization");
-      if (authHeader?.startsWith("Bearer ")) {
-        const tokenParts = authHeader.split(" ");
-        const idToken = tokenParts[1];
-        if (idToken) {
-          try {
-            const decoded = await auth.verifyIdToken(idToken);
-            userId = decoded.uid;
-          } catch {
-            // Ignore token verification errors here as they'll be handled by the route
-          }
-        }
-      }
+      // Temporarily disabled during Firebase setup
+      // const authHeader = req.headers.get("authorization");
+      // if (authHeader?.startsWith("Bearer ")) {
+      //   const tokenParts = authHeader.split(" ");
+      //   const idToken = tokenParts[1];
+      //   if (idToken) {
+      //     try {
+      //       const decoded = await auth.verifyIdToken(idToken);
+      //       userId = decoded.uid;
+      //     } catch {
+      //       // Ignore token verification errors here as they'll be handled by the route
+      //     }
+      //   }
+      // }
 
       // Execute the route handler
       response = await handler(req, context);

@@ -37,75 +37,90 @@ const mainNavItems = [
     icon: <HelpingHand className="mr-3 h-4 w-4" />,
   },
   {
+    name: "Volunteers",
+    href: "/volunteers",
+    icon: <HelpingHand className="mr-3 h-4 w-4" />,
+  },
+  {
     name: "Restaurants",
     href: "/restaurants",
     icon: <Utensils className="mr-3 h-4 w-4" />,
   },
   {
     name: "Membership",
-    href: "/membership",
+    href: "/tier",
     icon: <Crown className="mr-3 h-4 w-4" />,
   },
 ];
 
-const Navbar = () => {
+export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, signOut } = useFirebaseAuth();
-  const { items: cartItems } = useCart();
+  const [, setUserMenuOpen] = useState(false);
+  useCart(); // Keep the context connected without destructuring
   const pathname = usePathname();
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const { user, logout } = useFirebaseAuth();
+  const menuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const [hideHeader, setHideHeader] = useState(false);
+  const lastScrollY = useRef(0);
 
-  useOnClickOutside(mobileMenuRef, () => setMobileMenuOpen(false));
-
+  // Close mobile menu when route changes
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMobileMenuOpen(false);
-      }
-    };
+    setMobileMenuOpen(false);
+    setUserMenuOpen(false);
+  }, [pathname, setMobileMenuOpen, setUserMenuOpen]);
 
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
     if (mobileMenuOpen) {
-      document.addEventListener("keydown", handleEscape);
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "auto";
     };
   }, [mobileMenuOpen]);
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      setMobileMenuOpen(false);
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
+  // Close menus when clicking outside
+  useOnClickOutside<HTMLDivElement>(menuRef, () => setMobileMenuOpen(false));
+  useOnClickOutside<HTMLDivElement>(userMenuRef, () => setUserMenuOpen(false));
 
-  const cartItemCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY.current && window.scrollY > 50) {
+        setHideHeader(true);
+      } else {
+        setHideHeader(false);
+      }
+      lastScrollY.current = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-otw-black/95 backdrop-blur-md border-b border-otw-gold/20">
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full bg-black shadow-lg border-b border-otw-gold/10 transition-transform duration-300",
+        hideHeader ? "-translate-y-full" : "translate-y-0"
+      )}
+    >
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8"
         aria-label="Global"
       >
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">On The Way Delivery</span>
             <Image
-              className="h-8 w-auto"
-              src="/images/otw-logo.png"
-              alt="On The Way Delivery"
-              width={120}
-              height={32}
+              className="h-12 w-auto"
+              src="/assets/logos/logo.png"
+              alt="OTW Delivery"
+              width={48}
+              height={48}
+              priority
             />
           </Link>
         </div>
@@ -136,53 +151,52 @@ const Navbar = () => {
           ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
-          <Link
-            href="/cart"
-            className="relative -m-2.5 p-2.5 text-white/70 hover:text-otw-gold transition-colors"
-          >
-            <span className="sr-only">Shopping cart</span>
-            <ShoppingBag className="h-6 w-6" aria-hidden="true" />
-            {cartItemCount > 0 && (
-              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-otw-gold text-xs font-medium text-black flex items-center justify-center">
-                {cartItemCount}
-              </span>
-            )}
+          <Link href="/cart">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white/70 hover:text-otw-gold"
+            >
+              <ShoppingBag className="h-5 w-5" />
+              <span className="sr-only">Shopping cart</span>
+            </Button>
           </Link>
           {user ? (
-            <div className="flex items-center gap-x-4">
-              <Link
-                href="/profile"
-                className="-m-2.5 p-2.5 text-white/70 hover:text-otw-gold transition-colors"
-              >
-                <span className="sr-only">Profile</span>
-                <User className="h-6 w-6" aria-hidden="true" />
+            <>
+              <Link href="/profile">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white/70 hover:text-otw-gold"
+                >
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Profile</span>
+                </Button>
               </Link>
               <Button
-                onClick={handleSignOut}
                 variant="outline"
-                size="sm"
-                className="border-otw-gold/20 text-white/70 hover:text-otw-gold hover:border-otw-gold"
+                onClick={() => logout()}
+                className="text-white border-white/20 hover:bg-otw-gold hover:text-otw-black"
               >
                 Sign out
               </Button>
-            </div>
+            </>
           ) : (
-            <div className="flex items-center gap-x-4">
-              <Link
-                href="/signin"
-                className="text-sm font-semibold leading-6 text-white/70 hover:text-otw-gold transition-colors"
-              >
-                Sign in
+            <>
+              <Link href="/signin">
+                <Button
+                  variant="ghost"
+                  className="text-white/70 hover:text-otw-gold"
+                >
+                  Sign in
+                </Button>
               </Link>
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="border-otw-gold/20 text-white/70 hover:text-otw-gold hover:border-otw-gold"
-              >
-                <Link href="/signup">Sign up</Link>
-              </Button>
-            </div>
+              <Link href="/signup">
+                <Button className="bg-otw-gold text-otw-black hover:bg-otw-gold-600">
+                  Sign up
+                </Button>
+              </Link>
+            </>
           )}
         </div>
       </nav>
@@ -204,9 +218,9 @@ const Navbar = () => {
               <span className="sr-only">On The Way Delivery</span>
               <Image
                 className="h-8 w-auto"
-                src="/images/otw-logo.png"
-                alt="On The Way Delivery"
-                width={120}
+                src="/assets/logos/logo.png"
+                alt="OTW Delivery"
+                width={32}
                 height={32}
               />
             </Link>
@@ -227,12 +241,11 @@ const Navbar = () => {
                     key={item.name}
                     href={item.href}
                     className={cn(
-                      "-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 transition-colors",
+                      "flex items-center -mx-3 rounded-lg px-3 py-2 text-base font-semibold leading-7 transition-colors",
                       pathname === item.href
-                        ? "text-otw-gold bg-otw-gold/5"
+                        ? "text-otw-gold bg-otw-gold/10"
                         : "text-white/70 hover:text-otw-gold hover:bg-otw-gold/5",
                     )}
-                    onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.icon}
                     {item.name}
@@ -244,23 +257,13 @@ const Navbar = () => {
                   <>
                     <Link
                       href="/profile"
-                      className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white/70 hover:text-otw-gold hover:bg-otw-gold/5"
-                      onClick={() => setMobileMenuOpen(false)}
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white/70 hover:text-otw-gold hover:bg-otw-gold/5"
                     >
-                      <User className="mr-3 h-4 w-4" />
                       Profile
                     </Link>
-                    <Link
-                      href="/cart"
-                      className="-mx-3 flex items-center rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white/70 hover:text-otw-gold hover:bg-otw-gold/5"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <ShoppingBag className="mr-3 h-4 w-4" />
-                      Cart ({cartItemCount})
-                    </Link>
                     <button
-                      onClick={handleSignOut}
-                      className="-mx-3 block w-full text-left rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white/70 hover:text-otw-gold hover:bg-otw-gold/5"
+                      onClick={() => logout()}
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-white/70 hover:text-otw-gold hover:bg-otw-gold/5"
                     >
                       Sign out
                     </button>
@@ -289,5 +292,3 @@ const Navbar = () => {
     </header>
   );
 };
-
-export default Navbar;

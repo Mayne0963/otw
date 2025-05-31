@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { firestore } from "../firebaseAdmin";
+// import { firestore } from "../firebaseAdmin";
 
 interface LogEntry {
   timestamp: Date;
@@ -82,24 +82,28 @@ class Logger {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+      // Temporarily disabled during Firebase setup
       // Delete old logs periodically (1% chance per request)
-      if (Math.random() < 0.01) {
-        const oldLogs = await firestore
-          .collection(this.collection)
-          .where("timestamp", "<", thirtyDaysAgo)
-          .limit(100)
-          .get();
+      // if (Math.random() < 0.01) {
+      //   const oldLogs = await firestore
+      //     .collection(this.collection)
+      //     .where("timestamp", "<", thirtyDaysAgo)
+      //     .limit(100)
+      //     .get();
 
-        const batch = firestore.batch();
-        oldLogs.docs.forEach((doc) => batch.delete(doc.ref));
-        await batch.commit();
-      }
+      //   const batch = firestore.batch();
+      //   oldLogs.docs.forEach((doc) => batch.delete(doc.ref));
+      //   await batch.commit();
+      // }
 
       // Save new log
-      await firestore.collection(this.collection).add({
-        ...entry,
-        _ttl: thirtyDaysAgo, // For Firestore TTL if enabled
-      });
+      // await firestore.collection(this.collection).add({
+      //   ...entry,
+      //   _ttl: thirtyDaysAgo, // For Firestore TTL if enabled
+      // });
+      
+      // Console log for now
+      console.log('Log entry:', entry);
     } catch (error) {
       console.error("Failed to save log entry:", error);
     }
@@ -163,35 +167,43 @@ class Logger {
     path?: string,
     limit = 100,
   ): Promise<LogEntry[]> {
-    let query = firestore
-      .collection(this.collection)
-      .orderBy("timestamp", "desc")
-      .limit(limit);
+    // Temporarily disabled during Firebase setup
+    // let query = firestore
+    //   .collection(this.collection)
+    //   .orderBy("timestamp", "desc")
+    //   .limit(limit);
 
-    if (userId) {
-      query = query.where("userId", "==", userId);
-    }
-    if (path) {
-      query = query.where("path", "==", path);
-    }
+    // if (userId) {
+    //   query = query.where("userId", "==", userId);
+    // }
+    // if (path) {
+    //   query = query.where("path", "==", path);
+    // }
 
-    const snapshot = await query.get();
-    return snapshot.docs.map((doc) => doc.data() as LogEntry);
+    // const snapshot = await query.get();
+    // return snapshot.docs.map((doc) => doc.data() as LogEntry);
+    
+    console.log('getRecentLogs called with:', { userId, path, limit });
+    return [];
   }
 
   public async getErrorLogs(hours = 24, limit = 100): Promise<LogEntry[]> {
-    const since = new Date();
-    since.setHours(since.getHours() - hours);
+    // Temporarily disabled during Firebase setup
+    // const since = new Date();
+    // since.setHours(since.getHours() - hours);
 
-    const snapshot = await firestore
-      .collection(this.collection)
-      .where("timestamp", ">", since)
-      .where("error", "!=", null)
-      .orderBy("timestamp", "desc")
-      .limit(limit)
-      .get();
+    // const snapshot = await firestore
+    //   .collection(this.collection)
+    //   .where("timestamp", ">", since)
+    //   .where("error", "!=", null)
+    //   .orderBy("timestamp", "desc")
+    //   .limit(limit)
+    //   .get();
 
-    return snapshot.docs.map((doc) => doc.data() as LogEntry);
+    // return snapshot.docs.map((doc) => doc.data() as LogEntry);
+    
+    console.log('getErrorLogs called with:', { hours, limit });
+    return [];
   }
 
   public async getEndpointMetrics(
@@ -206,13 +218,15 @@ class Logger {
     const since = new Date();
     since.setHours(since.getHours() - hours);
 
-    const snapshot = await firestore
-      .collection(this.collection)
-      .where("path", "==", path)
-      .where("timestamp", ">", since)
-      .get();
+    // Temporarily disabled during Firebase setup
+    // const snapshot = await firestore
+    //   .collection(this.collection)
+    //   .where("path", "==", path)
+    //   .where("timestamp", ">", since)
+    //   .get();
 
-    const logs = snapshot.docs.map((doc) => doc.data() as LogEntry);
+    // const logs = snapshot.docs.map((doc) => doc.data() as LogEntry);
+    const logs: LogEntry[] = [];
     const totalRequests = logs.length;
     const totalDuration = logs.reduce((sum, log) => sum + log.duration, 0);
     const errorCount = logs.filter((log) => log.error).length;

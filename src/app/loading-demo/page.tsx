@@ -1,5 +1,6 @@
 "use client";
 
+import type { Metadata } from "next";
 import { useState } from "react";
 import { LoadingAnimation } from "../../components/ui/loading-animation";
 import { LoadingOverlay } from "../../components/ui/loading-overlay";

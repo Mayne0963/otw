@@ -1,31 +1,31 @@
 "use client";
 
-import type React from "react";
-
+import type { Metadata } from "next";
 import {
-  Box,
-  Container,
-  Typography,
-  Grid,
   Card,
   CardContent,
-  Avatar,
-  Tabs,
-  Tab,
-  Divider,
-  Button,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../components/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar";
+import { Progress } from "../../components/ui/progress";
 import { useState } from "react";
+import type React from "react";
+
 import Link from "next/link";
-import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import StarIcon from "@mui/icons-material/Star";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import RestaurantIcon from "@mui/icons-material/Restaurant";
-import StorefrontIcon from "@mui/icons-material/Storefront";
+import { Trophy, Star, Truck, Utensils, Store } from "lucide-react";
 
 const topPerformers = [
   {
@@ -48,59 +48,59 @@ const topPerformers = [
     role: "Restaurant Partner",
     image: "/assets/restaurant1.jpg",
     achievements: [
-      "5000+ orders fulfilled",
-      "Fastest preparation time",
-      "Most consistent quality rating",
+      "Highest rated restaurant in downtown",
+      "500+ orders per week",
+      "Featured in local food magazine",
     ],
     stats: {
-      orders: "5,678",
+      deliveries: "8,567",
       rating: "4.8",
-      customers: "3,000+",
+      hours: "1,800+",
     },
   },
   {
     name: "David Chen",
-    role: "Retail Partner",
-    image: "/assets/retail1.jpg",
+    role: "Store Manager",
+    image: "/assets/store1.jpg",
     achievements: [
-      "2000+ deliveries completed",
-      "Best inventory management",
-      "Highest customer retention",
+      "Best customer service award",
+      "Increased store revenue by 40%",
+      "Mentored 15+ new employees",
     ],
     stats: {
-      orders: "2,345",
+      deliveries: "3,421",
       rating: "4.9",
-      customers: "1,500+",
+      hours: "3,200+",
     },
   },
 ];
 
 const successStories = [
   {
-    title: "From Part-Time to Full-Time Success",
-    description: "How Sarah turned her delivery gig into a thriving business",
+    title: "From Student to Top Earner",
+    description: "How Sarah turned her part-time delivery job into a full-time career",
     image: "/assets/success1.jpg",
-    category: "Drivers",
+    category: "driver",
   },
   {
-    title: "Restaurant Growth Story",
-    description: "How a local restaurant expanded their reach by 300%",
+    title: "Restaurant Revival",
+    description: "How Tony's Pizza doubled their revenue with our platform",
     image: "/assets/success2.jpg",
-    category: "Restaurants",
+    category: "restaurant",
   },
   {
-    title: "Retail Revolution",
-    description: "How a small shop became a regional delivery hub",
+    title: "Community Impact",
+    description: "Local store creates 20 new jobs through delivery expansion",
     image: "/assets/success3.jpg",
-    category: "Retail",
+    category: "retail",
   },
 ];
 
 const categories = [
-  { label: "All", icon: <EmojiEventsIcon /> },
-  { label: "Drivers", icon: <LocalShippingIcon /> },
-  { label: "Restaurants", icon: <RestaurantIcon /> },
-  { label: "Retail", icon: <StorefrontIcon /> },
+  { label: "All", icon: <Trophy /> },
+  { label: "Drivers", icon: <Truck /> },
+  { label: "Restaurants", icon: <Utensils /> },
+  { label: "Retail", icon: <Store /> },
 ];
 
 export default function HallOfHustlePage() {
@@ -114,220 +114,117 @@ export default function HallOfHustlePage() {
   };
 
   return (
-    <Box sx={{ bgcolor: "background.default", color: "text.primary", py: 8 }}>
-      <Container maxWidth="lg">
-        {/* Hero Section */}
-        <Box
-          sx={{
-            textAlign: "center",
-            mb: 8,
-          }}
-        >
-          <Typography
-            variant="h1"
-            sx={{
-              mb: 2,
-              fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4rem" },
-              fontWeight: 700,
-            }}
-          >
-            Hall of Hustle
-          </Typography>
-          <Typography
-            variant="h5"
-            color="text.secondary"
-            sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}
-          >
-            Celebrating our top performers and success stories
-          </Typography>
-        </Box>
+    <div className="container mx-auto py-8 px-4">
+      <div className="text-center mb-8">
+        <h1 className="mb-4 text-4xl sm:text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent">
+          Hall of Hustle
+        </h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Celebrating our top performers and success stories
+        </p>
+      </div>
 
-        {/* Top Performers Section */}
-        <Box sx={{ mb: 12 }}>
-          <Typography
-            variant="h2"
-            sx={{
-              mb: 6,
-              textAlign: "center",
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-            }}
-          >
-            Top Performers
-          </Typography>
-          <Grid container spacing={4}>
-            {topPerformers.map((performer) => (
-              <Grid item xs={12} md={4} key={performer.name}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    transition: "transform 0.3s ease-in-out",
-                    "&:hover": {
-                      transform: "translateY(-8px)",
-                    },
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1, p: 4 }}>
-                    <Box sx={{ textAlign: "center", mb: 3 }}>
-                      <Avatar
-                        src={performer.image}
-                        alt={performer.name}
-                        sx={{ width: 120, height: 120, mx: "auto", mb: 2 }}
-                      />
-                      <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
-                        {performer.name}
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        color="primary"
-                        sx={{ mb: 2 }}
-                      >
-                        {performer.role}
-                      </Typography>
-                    </Box>
-                    <List>
-                      {performer.achievements.map((achievement) => (
-                        <ListItem key={achievement} sx={{ px: 0 }}>
-                          <ListItemIcon sx={{ minWidth: 40 }}>
-                            <StarIcon color="primary" />
-                          </ListItemIcon>
-                          <ListItemText primary={achievement} />
-                        </ListItem>
-                      ))}
-                    </List>
-                    <Divider sx={{ my: 3 }} />
-                    <Grid container spacing={2}>
-                      {Object.entries(performer.stats).map(([key, value]) => (
-                        <Grid item xs={4} key={key}>
-                          <Typography
-                            variant="h6"
-                            color="primary"
-                            sx={{ fontWeight: 700 }}
-                          >
-                            {value}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {key.charAt(0).toUpperCase() + key.slice(1)}
-                          </Typography>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+      {/* Top Performers Section */}
+      <div className="mb-12">
+        <h2 className="mb-6 text-center text-2xl sm:text-3xl md:text-4xl font-bold">
+          Top Performers
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {topPerformers.map((performer) => (
+            <Card key={performer.name} className="h-full">
+              <CardHeader className="text-center">
+                <Avatar className="w-20 h-20 mx-auto mb-4">
+                  <AvatarImage src={performer.image} alt={performer.name} />
+                  <AvatarFallback>{performer.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                </Avatar>
+                <CardTitle>{performer.name}</CardTitle>
+                <CardDescription>{performer.role}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4">
+                  <h4 className="font-semibold mb-2">Achievements:</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    {performer.achievements.map((achievement) => (
+                      <li key={achievement} className="flex items-center">
+                        <Star className="w-4 h-4 text-yellow-500 mr-2" />
+                        {achievement}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  {Object.entries(performer.stats).map(([key, value]) => (
+                    <div key={key} className="p-2 bg-gray-50 rounded">
+                      <div className="font-bold text-lg">{value}</div>
+                      <div className="text-xs text-gray-600 capitalize">{key}</div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
 
-        {/* Success Stories Section */}
-        <Box>
-          <Typography
-            variant="h2"
-            sx={{
-              mb: 6,
-              textAlign: "center",
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-            }}
-          >
-            Success Stories
-          </Typography>
-          <Box sx={{ mb: 6 }}>
-            <Tabs
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-              variant="scrollable"
-              scrollButtons="auto"
-              sx={{ mb: 4 }}
-            >
-              {categories.map((category) => (
-                <Tab
-                  key={category.label}
-                  label={category.label}
-                  icon={category.icon}
-                  iconPosition="start"
-                />
+      {/* Success Stories Section */}
+      <div className="mb-12">
+        <h2 className="mb-6 text-center text-2xl sm:text-3xl md:text-4xl font-bold">
+          Success Stories
+        </h2>
+        <div className="mb-6">
+          <Tabs value={selectedCategory.toString()} onValueChange={(value) => setSelectedCategory(parseInt(value))} className="mb-4">
+            <TabsList className="grid w-full grid-cols-4">
+              {categories.map((category, index) => (
+                <TabsTrigger key={category.label} value={index.toString()} className="flex items-center gap-2">
+                  {category.icon}
+                  {category.label}
+                </TabsTrigger>
               ))}
-            </Tabs>
-            <Grid container spacing={4}>
-              {successStories.map((story) => (
-                <Grid item xs={12} md={4} key={story.title}>
-                  <Card
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Box
-                      component="img"
+            </TabsList>
+            <TabsContent value={selectedCategory.toString()}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {successStories.map((story) => (
+                  <Card key={story.title} className="h-full flex flex-col">
+                    <img
                       src={story.image}
                       alt={story.title}
-                      sx={{
-                        width: "100%",
-                        height: 200,
-                        objectFit: "cover",
-                      }}
+                      className="w-full h-48 object-cover"
                     />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography
-                        variant="h5"
-                        component="h3"
-                        sx={{ mb: 2, fontWeight: 600 }}
-                      >
+                    <CardContent className="flex-grow">
+                      <h3 className="mb-2 text-xl font-semibold">
                         {story.title}
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        color="text.secondary"
-                        sx={{ mb: 3 }}
-                      >
+                      </h3>
+                      <p className="text-gray-600 mb-4">
                         {story.description}
-                      </Typography>
-                      <Button
-                        component={Link}
-                        href={`/hall-of-hustle/stories/${story.title.toLowerCase().replace(/\s+/g, "-")}`}
-                        variant="outlined"
-                        color="primary"
-                      >
-                        Read More
+                      </p>
+                      <Button asChild>
+                        <Link href={`/hall-of-hustle/stories/${story.title.toLowerCase().replace(/\s+/g, "-")}`}>
+                          Read More
+                        </Link>
                       </Button>
                     </CardContent>
                   </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        </Box>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
 
-        {/* CTA Section */}
-        <Box
-          sx={{
-            textAlign: "center",
-            p: 6,
-            bgcolor: "primary.main",
-            color: "white",
-            borderRadius: 2,
-          }}
-        >
-          <Typography variant="h3" sx={{ mb: 2, fontWeight: 700 }}>
-            Be Part of the Success
-          </Typography>
-          <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-            Join our community and create your own success story
-          </Typography>
-          <Button
-            component={Link}
-            href="/signup"
-            variant="contained"
-            color="secondary"
-            size="large"
-            sx={{ py: 1.5, px: 4 }}
-          >
+      {/* CTA Section */}
+      <div className="text-center p-8 bg-orange-500 text-white rounded-lg">
+        <h3 className="mb-4 text-3xl font-bold">
+          Be Part of the Success
+        </h3>
+        <p className="mb-6 text-lg opacity-90">
+          Join our community and create your own success story
+        </p>
+        <Button asChild size="lg">
+          <Link href="/signup">
             Get Started
-          </Button>
-        </Box>
-      </Container>
-    </Box>
+          </Link>
+        </Button>
+      </div>
+    </div>
   );
 }

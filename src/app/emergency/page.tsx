@@ -1,47 +1,39 @@
 "use client";
 
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  Button,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Alert,
-  Paper,
-} from "@mui/material";
+import type { Metadata } from "next";
+import { Card, CardContent } from "../../components/ui/card";
+import { Button } from "../../components/ui/button";
+import { Alert, AlertDescription } from "../../components/ui/alert";
+import { useState } from "react";
 import Link from "next/link";
-import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
-import PhoneIcon from "@mui/icons-material/Phone";
-import WarningIcon from "@mui/icons-material/Warning";
-import SecurityIcon from "@mui/icons-material/Security";
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { 
+  Heart, 
+  Phone, 
+  AlertTriangle, 
+  Shield, 
+  Car, 
+  MapPin, 
+  Clock 
+} from "lucide-react";
 
 const emergencyContacts = [
   {
     name: "Emergency Services",
     number: "911",
     description: "For life-threatening emergencies",
-    icon: <LocalHospitalIcon color="error" />,
+    icon: <Heart className="w-6 h-6 text-red-500" />,
   },
   {
     name: "OTW Emergency Line",
     number: "1-800-OTW-HELP",
     description: "24/7 support for OTW-related emergencies",
-    icon: <PhoneIcon color="error" />,
+    icon: <Phone className="w-6 h-6 text-red-500" />,
   },
   {
     name: "Roadside Assistance",
     number: "1-800-ROAD-HELP",
     description: "For vehicle breakdowns and accidents",
-    icon: <DirectionsCarIcon color="error" />,
+    icon: <Car className="w-6 h-6 text-red-500" />,
   },
 ];
 
@@ -49,19 +41,19 @@ const safetyResources = [
   {
     title: "Driver Safety",
     description: "Essential safety guidelines for drivers",
-    icon: <SecurityIcon />,
+    icon: <Shield className="w-6 h-6 text-blue-500" />,
     link: "/emergency/driver-safety",
   },
   {
     title: "Customer Safety",
     description: "Safety tips for customers",
-    icon: <SecurityIcon />,
+    icon: <Shield className="w-6 h-6 text-blue-500" />,
     link: "/emergency/customer-safety",
   },
   {
     title: "Emergency Procedures",
     description: "Step-by-step emergency response procedures",
-    icon: <WarningIcon />,
+    icon: <AlertTriangle className="w-6 h-6 text-yellow-500" />,
     link: "/emergency/procedures",
   },
 ];
@@ -89,220 +81,136 @@ const nearbyHospitals = [
 
 export default function EmergencyPage() {
   return (
-    <Box sx={{ bgcolor: "background.default", color: "text.primary", py: 8 }}>
-      <Container maxWidth="lg">
+    <div className="bg-background text-foreground py-8">
+      <div className="container mx-auto px-4 max-w-6xl">
         {/* Emergency Alert Banner */}
-        <Alert
-          severity="error"
-          sx={{
-            mb: 4,
-            fontSize: "1.1rem",
-            "& .MuiAlert-icon": { fontSize: "2rem" },
-          }}
-        >
-          <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+        <Alert className="mb-4 border-red-500 bg-red-50 text-red-800">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription className="text-lg font-semibold">
             If this is a life-threatening emergency, call 911 immediately
-          </Typography>
+          </AlertDescription>
         </Alert>
 
         {/* Hero Section */}
-        <Box
-          sx={{
-            textAlign: "center",
-            mb: 8,
-          }}
-        >
-          <Typography
-            variant="h1"
-            sx={{
-              mb: 2,
-              fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4rem" },
-              fontWeight: 700,
-            }}
-          >
+        <div className="text-center mb-8">
+          <h1 className="mb-4 text-4xl sm:text-5xl md:text-6xl font-bold">
             Emergency Resources
-          </Typography>
-          <Typography
-            variant="h5"
-            color="text.secondary"
-            sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}
+          </h1>
+          <p className="text-xl text-gray-600 mb-4 max-w-3xl mx-auto"
           >
             Quick access to emergency contacts and safety information
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
         {/* Emergency Contacts Section */}
-        <Box sx={{ mb: 8 }}>
-          <Typography
-            variant="h2"
-            sx={{
-              mb: 4,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-            }}
-          >
+        <div className="mb-8">
+          <h2 className="mb-4 text-3xl sm:text-4xl md:text-5xl font-bold">
             Emergency Contacts
-          </Typography>
-          <Grid container spacing={4}>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {emergencyContacts.map((contact) => (
-              <Grid item xs={12} md={4} key={contact.name}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    border: "2px solid",
-                    borderColor: "error.main",
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1, p: 4 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                      {contact.icon}
-                      <Typography variant="h5" sx={{ ml: 2, fontWeight: 600 }}>
-                        {contact.name}
-                      </Typography>
-                    </Box>
-                    <Typography
-                      variant="h4"
-                      color="error"
-                      sx={{ mb: 2, fontWeight: 700 }}
-                    >
-                      {contact.number}
-                    </Typography>
-                    <Typography color="text.secondary">
-                      {contact.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
+              <Card key={contact.name} className="h-full border-2 border-red-500">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    {contact.icon}
+                    <h3 className="ml-3 text-xl font-semibold">
+                      {contact.name}
+                    </h3>
+                  </div>
+                  <div className="text-2xl font-bold text-red-600 mb-2">
+                    {contact.number}
+                  </div>
+                  <p className="text-gray-600">
+                    {contact.description}
+                  </p>
+                </CardContent>
+              </Card>
             ))}
-          </Grid>
-        </Box>
+          </div>
+        </div>
 
         {/* Safety Resources Section */}
-        <Box sx={{ mb: 8 }}>
-          <Typography
-            variant="h2"
-            sx={{
-              mb: 4,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-            }}
-          >
+        <div className="mb-8">
+          <h2 className="mb-4 text-3xl sm:text-4xl md:text-5xl font-bold">
             Safety Resources
-          </Typography>
-          <Grid container spacing={4}>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {safetyResources.map((resource) => (
-              <Grid item xs={12} md={4} key={resource.title}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <CardContent sx={{ flexGrow: 1, p: 4 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                      {resource.icon}
-                      <Typography variant="h5" sx={{ ml: 2, fontWeight: 600 }}>
-                        {resource.title}
-                      </Typography>
-                    </Box>
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      sx={{ mb: 3 }}
-                    >
-                      {resource.description}
-                    </Typography>
-                    <Button
-                      component={Link}
-                      href={resource.link}
-                      variant="outlined"
-                      color="primary"
-                    >
+              <Card key={resource.title} className="h-full">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    {resource.icon}
+                    <h3 className="ml-3 text-xl font-semibold">
+                      {resource.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-600 mb-4">
+                    {resource.description}
+                  </p>
+                  <Button asChild variant="outline">
+                    <Link href={resource.link}>
                       Learn More
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grid>
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
             ))}
-          </Grid>
-        </Box>
+          </div>
+        </div>
 
         {/* Nearby Hospitals Section */}
-        <Box>
-          <Typography
-            variant="h2"
-            sx={{
-              mb: 4,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-            }}
-          >
+        <div>
+          <h2 className="mb-4 text-3xl sm:text-4xl md:text-5xl font-bold">
             Nearby Hospitals
-          </Typography>
-          <Grid container spacing={4}>
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {nearbyHospitals.map((hospital) => (
-              <Grid item xs={12} md={4} key={hospital.name}>
-                <Paper
-                  elevation={2}
-                  sx={{
-                    p: 3,
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+              <Card key={hospital.name} className="h-full">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold mb-4">
                     {hospital.name}
-                  </Typography>
-                  <List dense>
-                    <ListItem>
-                      <ListItemIcon>
-                        <LocationOnIcon />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={hospital.address}
-                        secondary={`${hospital.distance} away`}
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <PhoneIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={hospital.phone} />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemIcon>
-                        <AccessTimeIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="24/7 Emergency Care" />
-                    </ListItem>
-                  </List>
-                  <Button
-                    component={Link}
-                    href={`https://maps.google.com/?q=${encodeURIComponent(hospital.address)}`}
-                    target="_blank"
-                    variant="outlined"
-                    color="primary"
-                    sx={{ mt: 2 }}
-                  >
-                    Get Directions
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <MapPin className="w-5 h-5 text-gray-500 mt-0.5" />
+                      <div>
+                        <p className="font-medium">{hospital.address}</p>
+                        <p className="text-sm text-gray-500">{hospital.distance} away</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Phone className="w-5 h-5 text-gray-500" />
+                      <p>{hospital.phone}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-gray-500" />
+                      <p>24/7 Emergency Care</p>
+                    </div>
+                  </div>
+                  <Button asChild variant="outline" className="mt-4 w-full">
+                    <Link
+                      href={`https://maps.google.com/?q=${encodeURIComponent(hospital.address)}`}
+                      target="_blank"
+                    >
+                      Get Directions
+                    </Link>
                   </Button>
-                </Paper>
-              </Grid>
+                </CardContent>
+              </Card>
             ))}
-          </Grid>
-        </Box>
+          </div>
+        </div>
 
         {/* Additional Information */}
-        <Box sx={{ mt: 8, textAlign: "center" }}>
-          <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+        <div className="mt-8 text-center">
+          <p className="text-lg text-gray-600">
             For non-emergency assistance, please visit our{" "}
-            <Link href="/help" style={{ color: "inherit" }}>
+            <Link href="/help" className="text-blue-600 hover:underline">
               Help Center
             </Link>
-          </Typography>
-        </Box>
-      </Container>
-    </Box>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }

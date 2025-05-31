@@ -1,8 +1,11 @@
 "use client";
+
+import type { Metadata } from "next";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
-import { Textarea } from "../../../components/ui/textarea";
+
 import {
   Select,
   SelectContent,
@@ -10,12 +13,50 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
+import { Separator } from "../../../components/ui/separator";
+import { Badge } from "../../../components/ui/badge";
 import { Calendar } from "../../../components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "../../../components/ui/popover";
+import {
+  FaTruck,
+  FaClock,
+  FaMapMarkerAlt,
+  FaDollarSign,
+  FaShieldAlt,
+  FaCalendarAlt,
+  FaWeight,
+  FaRuler,
+  FaPhone,
+  FaEnvelope,
+  FaUser,
+  FaHome,
+  FaBuilding,
+  FaGift,
+  FaSnowflake,
+  FaExclamationTriangle,
+  FaCheckCircle,
+  FaInfoCircle,
+  FaStar,
+  FaThumbsUp,
+  FaHeart,
+  FaShare,
+  FaComment,
+  FaEye,
+  FaDownload,
+  FaPrint,
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaMinus,
+  FaArrowLeft,
+  FaArrowRight,
+  FaArrowUp,
+  FaArrowDown,
+} from "react-icons/fa";
 import {
   CalendarIcon,
   Clock,

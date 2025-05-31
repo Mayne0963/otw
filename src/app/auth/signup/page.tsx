@@ -1,11 +1,12 @@
 "use client";
 
+import type { Metadata } from "next";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 // import { useRouter } from 'next/navigation'
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Label } from "../../../components/ui/label";
 import {
   Card,
   CardContent,
@@ -13,9 +14,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Icons } from "@/components/ui/icons";
-import { useToast } from "@/components/ui/use-toast";
+} from "../../../components/ui/card";
+import { Icons } from "../../../components/ui/icons";
+import { useToast } from "../../../components/ui/use-toast";
 
 export default function SignUpPage() {
   // const router = useRouter() // Uncomment when navigation is needed

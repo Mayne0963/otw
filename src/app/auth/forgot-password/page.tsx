@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useToast } from "@/components/ui/use-toast";
-import Button from "@/components/Button";
+import { useToast } from "../../../components/ui/use-toast";
+import { Button } from "../../../components/ui/button";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");

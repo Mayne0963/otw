@@ -1,7 +1,11 @@
-"use client"
+"use client";
 
 export const dynamic = "force-dynamic"
 
+import type { Metadata } from "next"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
+import { Button } from "../../components/ui/button"
+import { Badge } from "../../components/ui/badge"
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { useCart } from "../../lib/context/CartContext"

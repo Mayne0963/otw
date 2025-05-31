@@ -1,4 +1,4 @@
-import { firestore } from "../firebaseAdmin";
+// import { firestore } from "../firebaseAdmin";
 import { calculateRoute, geocodeAddress, type Location } from "../maps";
 import { createCheckoutSession } from "../stripe";
 import { z } from "zod";
@@ -115,21 +115,22 @@ export async function createDeliveryRequest(
     },
   });
 
+  // Temporarily disabled during Firebase setup
   // Store delivery request
-  const deliveryRef = firestore.collection("deliveries").doc();
-  await deliveryRef.set({
-    userId,
-    status: "pending_payment",
-    request: validatedRequest,
-    estimate,
-    stripeSessionId: session.id,
-    total,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+  // const deliveryRef = firestore.collection("deliveries").doc();
+  // await deliveryRef.set({
+  //   userId,
+  //   status: "pending_payment",
+  //   request: validatedRequest,
+  //   estimate,
+  //   stripeSessionId: session.id,
+  //   total,
+  //   createdAt: new Date(),
+  //   updatedAt: new Date(),
+  // });
 
   return {
-    deliveryId: deliveryRef.id,
+    deliveryId: "temp-delivery-id",
     checkoutUrl: session.url,
     estimate,
     total,
@@ -137,11 +138,19 @@ export async function createDeliveryRequest(
 }
 
 export async function getDeliveryStatus(deliveryId: string) {
-  const doc = await firestore.collection("deliveries").doc(deliveryId).get();
-  if (!doc.exists) {
-    throw new Error("Delivery not found");
-  }
-  return doc.data();
+  // Temporarily disabled during Firebase setup
+  // const doc = await firestore.collection("deliveries").doc(deliveryId).get();
+  // if (!doc.exists) {
+  //   throw new Error("Delivery not found");
+  // }
+  // return doc.data();
+  
+  console.log('getDeliveryStatus called with:', deliveryId);
+  return {
+    status: "pending",
+    deliveryId,
+    message: "Delivery service temporarily unavailable"
+  };
 }
 
 export async function updateDeliveryStatus(
@@ -162,12 +171,15 @@ export async function updateDeliveryStatus(
     notes: string;
   }> = {},
 ) {
-  const ref = firestore.collection("deliveries").doc(deliveryId);
-  await ref.update({
-    status,
-    ...updates,
-    updatedAt: new Date(),
-  });
+  // Temporarily disabled during Firebase setup
+  // const ref = firestore.collection("deliveries").doc(deliveryId);
+  // await ref.update({
+  //   status,
+  //   ...updates,
+  //   updatedAt: new Date(),
+  // });
+  
+  console.log('updateDeliveryStatus called with:', { deliveryId, status, updates });
 }
 
 // Helper function to format address

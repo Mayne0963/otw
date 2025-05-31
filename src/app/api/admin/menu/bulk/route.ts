@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { firestore } from "../../../../../lib/firebaseAdmin";
+// import { firestore } from "../../../../../lib/firebaseAdmin";
 // import { auth } from "../../../../../lib/firebaseAdmin";
 import { menuItemSchema } from "../../../../../lib/firestoreModels";
 import { handleAPIError, apiErrors } from "../../../../../lib/utils/apiErrors";

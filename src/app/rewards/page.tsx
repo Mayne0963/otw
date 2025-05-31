@@ -1,5 +1,7 @@
 "use client";
 
+import type { Metadata } from "next";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { useState } from "react";
 import { useRewards } from "../../lib/context/RewardsContext";
 import { rewards } from "../../data/rewards-data";

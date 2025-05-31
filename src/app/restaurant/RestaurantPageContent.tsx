@@ -1,5 +1,5 @@
-import RestaurantCard from "@/components/restaurant/RestaurantCard";
-import { getFeaturedRestaurants } from "@/lib/restaurants";
+import { RestaurantCard } from "../../components/restaurant/RestaurantCard";
+import { getFeaturedRestaurants } from "../../lib/restaurants";
 
 export default async function RestaurantPageContent() {
   const restaurants = await getFeaturedRestaurants();

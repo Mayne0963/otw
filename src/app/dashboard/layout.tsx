@@ -1,5 +1,7 @@
 "use client";
 
+import type { Metadata } from "next";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { useState } from "react";
 import DashboardNavbar from "../../components/dashboard/dashboard-navbar";
 import DashboardSidebar from "../../components/dashboard/dashboard-sidebar";

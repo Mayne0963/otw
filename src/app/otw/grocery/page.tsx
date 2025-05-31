@@ -1,4 +1,7 @@
 "use client";
+
+import type { Metadata } from "next";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
@@ -10,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../components/ui/select";
+import { Badge } from "../../../components/ui/badge";
+import { Separator } from "../../../components/ui/separator";
 import { Calendar } from "../../../components/ui/calendar";
 import {
   Popover,
@@ -38,6 +43,39 @@ import {
   Milk,
   Package,
 } from "lucide-react";
+import {
+  FaShoppingCart,
+  FaMapMarkerAlt,
+  FaClock,
+  FaDollarSign,
+  FaStar,
+  FaHeart,
+  FaSearch,
+  FaFilter,
+  FaStore,
+  FaLeaf,
+  FaSnowflake,
+  FaFire,
+  FaAppleAlt,
+  FaBreadSlice,
+  FaCheese,
+  FaFish,
+  FaCarrot,
+  FaWineBottle,
+  FaShoppingBag,
+  FaTruck,
+  FaCheckCircle,
+  FaInfoCircle,
+  FaExclamationTriangle,
+  FaPlus,
+  FaMinus,
+  FaTrash,
+  FaEdit,
+  FaEye,
+  FaShare,
+  FaDownload,
+  FaPrint,
+} from "react-icons/fa";
 import Link from "next/link";
 import { useState } from "react";
 

@@ -6,8 +6,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Icons } from "@/components/ui/icons";
+} from "../../../components/ui/card";
+import { Icons } from "../../../components/ui/icons";
 
 export default function VerifyRequestPage() {
   return (

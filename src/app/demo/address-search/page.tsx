@@ -1,15 +1,16 @@
 "use client";
 
+import type { Metadata } from "next";
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { Label } from '../../../components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
+import { Badge } from '../../../components/ui/badge';
+import { Separator } from '../../../components/ui/separator';
+import { Alert, AlertDescription } from '../../../components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
 import { 
   MapPin, 
   Calculator, 
@@ -22,9 +23,9 @@ import {
   Zap,
   Timer
 } from 'lucide-react';
-import AddressSearch from '@/components/maps/AddressSearch';
-import MapSearch from '@/components/maps/MapSearch';
-import { feeCalculator, formatCurrency, formatDistance, formatDuration, type DeliveryEstimate } from '@/lib/services/fee-calculator';
+import AddressSearch from '../../../components/maps/AddressSearch';
+import MapSearch from '../../../components/maps/MapSearch';
+import { feeCalculator, formatCurrency, formatDistance, formatDuration, type DeliveryEstimate } from '../../../lib/services/fee-calculator';
 
 export default function AddressSearchDemo() {
   const [selectedOrigin, setSelectedOrigin] = useState<{
