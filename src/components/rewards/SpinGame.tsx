@@ -67,7 +67,7 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
         ctx.arc(centerX, centerY, radius, startAngle, endAngle);
         ctx.closePath();
 
-        ctx.fillStyle = colors[i];
+        ctx.fillStyle = colors[i] || '#D4AF37';
         ctx.fill();
         ctx.strokeStyle = "#000";
         ctx.lineWidth = 1;
@@ -79,7 +79,7 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
         ctx.textAlign = "right";
         ctx.fillStyle = "white";
         ctx.font = "bold 16px sans-serif";
-        ctx.fillText(segments[i].toString(), radius - 20, 5);
+        ctx.fillText((segments[i] || 0).toString(), radius - 20, 5);
         ctx.restore();
       }
 
@@ -113,7 +113,7 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
 
     // Determine a random segment to land on
     const randomSegmentIndex = Math.floor(Math.random() * segments.length);
-    const points = segments[randomSegmentIndex];
+    const points = segments[randomSegmentIndex] || 50;
     setFinalPoints(points);
 
     // Calculate the exact stop angle based on the segment
@@ -145,13 +145,16 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
 
       // Redraw the wheel
       const canvas = canvasRef.current;
-      if (canvas && canvas.getContext("2d")) {
-        drawWheel(
-          canvas.getContext("2d"),
-          canvas.width,
-          canvas.height,
-          newAngle,
-        );
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          drawWheel(
+            ctx,
+            canvas.width,
+            canvas.height,
+            newAngle,
+          );
+        }
       }
 
       if (time < 1) {
@@ -169,13 +172,16 @@ const SpinGame: React.FC<SpinGameProps> = ({ onComplete }) => {
   // Initialize wheel on component mount
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (canvas && canvas.getContext("2d")) {
-      drawWheel(
-        canvas.getContext("2d"),
-        canvas.width,
-        canvas.height,
-        spinAngle,
-      );
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        drawWheel(
+          ctx,
+          canvas.width,
+          canvas.height,
+          spinAngle,
+        );
+      }
     }
   }, [spinAngle, drawWheel]);
 

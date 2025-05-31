@@ -14,7 +14,7 @@ import {
   DocumentData,
   QueryConstraint,
 } from "firebase/firestore";
-import { db } from "../lib/firebase";
+import { db } from "../lib/api";
 
 export function useFirestore<T extends DocumentData>(collectionName: string) {
   const [loading, setLoading] = useState(true);

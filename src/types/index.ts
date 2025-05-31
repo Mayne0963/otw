@@ -4,6 +4,33 @@ export interface User {
   name: string;
   email: string;
   role: "user" | "admin";
+  preferences?: {
+    theme?: string;
+    language?: string;
+    notifications?: boolean;
+  };
+  notificationSettings?: {
+    email?: boolean;
+    push?: boolean;
+    sms?: boolean;
+  };
+  activityHistory?: Array<{
+    id: string;
+    type: string;
+    timestamp: Date;
+    description: string;
+  }>;
+  savedItems?: Array<{
+    itemId: string;
+    type: string;
+    savedAt: Date;
+  }>;
+  profileImage?: string;
+}
+
+export interface AuthError {
+  code: string;
+  message: string;
 }
 
 // Auth types

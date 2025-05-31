@@ -1,6 +1,6 @@
 import { Client } from "@googlemaps/google-maps-services-js";
 import type { LatLngLiteral } from "@googlemaps/google-maps-services-js";
-import { env } from './env';
+
 
 // Initialize Google Maps client for server-side operations
 const client = new Client({});
@@ -10,36 +10,9 @@ interface Location {
   lng: number;
 }
 
-interface RouteResult {
-  distance: {
-    text: string;
-    value: number; // in meters
-  };
-  duration: {
-    text: string;
-    value: number; // in seconds
-  };
-  polyline: string;
-  steps?: google.maps.DirectionsStep[];
-  warnings?: string[];
-}
 
-interface PlaceResult {
-  place_id: string;
-  name: string;
-  formatted_address: string;
-  geometry: {
-    location: Location;
-  };
-  rating?: number;
-  price_level?: number;
-  types: string[];
-  photos?: google.maps.places.PlacePhoto[];
-  opening_hours?: {
-    open_now: boolean;
-    weekday_text: string[];
-  };
-}
+
+
 
 interface DistanceMatrixResult {
   distance: {
@@ -64,15 +37,7 @@ interface GeocodeResult {
   address_components: google.maps.GeocoderAddressComponent[];
 }
 
-interface AutocompleteResult {
-  place_id: string;
-  description: string;
-  structured_formatting: {
-    main_text: string;
-    secondary_text: string;
-  };
-  types: string[];
-}
+
 
 export interface RouteInfo {
   distance: {

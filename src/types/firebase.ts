@@ -1,3 +1,6 @@
+import type { StorageReference } from 'firebase/storage';
+import type { CollectionReference, DocumentReference } from 'firebase/firestore';
+
 interface FirebaseApp {
   storage: () => Storage;
   firestore: () => Firestore;

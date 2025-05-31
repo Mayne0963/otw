@@ -7,17 +7,26 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get('action');
 
     if (action === 'products') {
-      const params = {
-        q: searchParams.get('q') || undefined,
-        categoryId: searchParams.get('categoryId') || undefined,
-        format: searchParams.get('format') as 'json' | 'xml' || undefined,
-        show: searchParams.get('show') || undefined,
-        sort: searchParams.get('sort') || undefined,
-        facet: searchParams.get('facet') || undefined,
-        cursorMark: searchParams.get('cursorMark') || undefined,
-        pageSize: searchParams.get('pageSize') ? parseInt(searchParams.get('pageSize')!) : undefined,
-        page: searchParams.get('page') ? parseInt(searchParams.get('page')!) : undefined,
-      };
+      const params: any = {};
+      const q = searchParams.get('q');
+      const categoryId = searchParams.get('categoryId');
+      const format = searchParams.get('format') as 'json' | 'xml';
+      const show = searchParams.get('show');
+      const sort = searchParams.get('sort');
+      const facet = searchParams.get('facet');
+      const cursorMark = searchParams.get('cursorMark');
+      const pageSize = searchParams.get('pageSize');
+      const page = searchParams.get('page');
+      
+      if (q) params.q = q;
+      if (categoryId) params.categoryId = categoryId;
+      if (format) params.format = format;
+      if (show) params.show = show;
+      if (sort) params.sort = sort;
+      if (facet) params.facet = facet;
+      if (cursorMark) params.cursorMark = cursorMark;
+      if (pageSize) params.pageSize = parseInt(pageSize);
+      if (page) params.page = parseInt(page);
 
       const result = await BestBuyService.searchProducts(params);
       return NextResponse.json({ success: true, data: result });

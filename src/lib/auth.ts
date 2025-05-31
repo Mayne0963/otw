@@ -14,15 +14,15 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     EmailProvider({
-      server: process.env.EMAIL_SERVER,
-      from: process.env.EMAIL_FROM,
+      server: process.env.EMAIL_SERVER || '',
+      from: process.env.EMAIL_FROM || '',
       sendVerificationRequest: async ({ identifier, url, provider }) => {
         // Get the email server configuration from environment variables
         const { host, port, user, pass } = {
-          host: process.env.EMAIL_SERVER_HOST,
+          host: process.env.EMAIL_SERVER_HOST || '',
           port: parseInt(process.env.EMAIL_SERVER_PORT || "587"),
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
+          user: process.env.EMAIL_SERVER_USER || '',
+          pass: process.env.EMAIL_SERVER_PASSWORD || '',
         };
 
         // Create a nodemailer transporter

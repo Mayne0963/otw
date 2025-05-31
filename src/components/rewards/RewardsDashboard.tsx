@@ -152,7 +152,7 @@ export default function RewardsDashboard() {
       <Card className="p-6 flex flex-col gap-4">
         <h2 className="text-2xl font-bold mb-2">Rewards Dashboard</h2>
         <div className="flex items-center gap-4">
-          <Badge variant="success">Points: {user.rewardPoints}</Badge>
+          <Badge variant="default">Points: {user.rewardPoints}</Badge>
           <Badge variant={spinsRemaining > 0 ? "default" : "destructive"}>
             Spins Remaining: {spinsRemaining}
           </Badge>

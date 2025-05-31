@@ -55,46 +55,46 @@ export async function POST(req: NextRequest) {
     // }
 
     // Get rewards doc
-    const rewardRef = firestore.collection('rewards').doc(userId)
-    const rewardSnap = await rewardRef.get()
-    const rewardData: RewardData | undefined = rewardSnap.exists ? rewardSnap.data() as RewardData : undefined
+    // const rewardRef = firestore.collection('rewards').doc(userId)
+    // const rewardSnap = await rewardRef.get()
+    // const rewardData: RewardData | undefined = rewardSnap.exists ? rewardSnap.data() as RewardData : undefined
 
-    if (!rewardData || typeof rewardData.spinsRemaining !== 'number' || rewardData.spinsRemaining < 1) {
-      return NextResponse.json({ error: 'No spins remaining' }, { status: 403 })
-    }
+    // if (!rewardData || typeof rewardData.spinsRemaining !== 'number' || rewardData.spinsRemaining < 1) {
+    //   return NextResponse.json({ error: 'No spins remaining' }, { status: 403 })
+    // }
 
-    // Assign prize
-    const prizeIndex = Math.floor(Math.random() * PRIZES.length)
-    const prize = PRIZES[prizeIndex]
-    if (!prize) {
-      return NextResponse.json({ error: 'Failed to select prize' }, { status: 500 })
-    }
+    // // Assign prize
+    // const prizeIndex = Math.floor(Math.random() * PRIZES.length)
+    // const prize = PRIZES[prizeIndex]
+    // if (!prize) {
+    //   return NextResponse.json({ error: 'Failed to select prize' }, { status: 500 })
+    // }
     
-    const prizeHistory = rewardData.prizeHistory || []
-    const spinsUsed = (rewardData.spinsUsed || 0) + 1
-    const spinsRemaining = rewardData.spinsRemaining - 1
-    const lastSpinTime = new Date()
+    // const prizeHistory = rewardData.prizeHistory || []
+    // const spinsUsed = (rewardData.spinsUsed || 0) + 1
+    // const spinsRemaining = rewardData.spinsRemaining - 1
+    // const lastSpinTime = new Date()
 
-    await rewardRef.set({
-      spinsUsed,
-      spinsRemaining,
-      lastSpinTime,
-      prizeHistory: [
-        ...prizeHistory,
-        { prize: prize.name, date: lastSpinTime },
-      ],
-    }, { merge: true })
+    // await rewardRef.set({
+    //   spinsUsed,
+    //   spinsRemaining,
+    //   lastSpinTime,
+    //   prizeHistory: [
+    //     ...prizeHistory,
+    //     { prize: prize.name, date: lastSpinTime },
+    //   ],
+    // }, { merge: true })
 
-    // Set rate limit
-    rateLimit[userId] = now
+    // // Set rate limit
+    // rateLimit[userId] = now
 
-    return NextResponse.json({
-      prize,
-      spinsRemaining,
-      spinsUsed,
-      lastSpinTime,
-      cooldown: COOLDOWN_MS / 1000,
-    })
+    // return NextResponse.json({
+    //   prize,
+    //   spinsRemaining,
+    //   spinsUsed,
+    //   lastSpinTime,
+    //   cooldown: COOLDOWN_MS / 1000,
+    // })
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }

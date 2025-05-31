@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-// import { auth, firestore } from "../../../../../lib/firebaseAdmin";
+import { firestore } from "../../../../../lib/firebaseAdmin";
+// import { auth } from "../../../../../lib/firebaseAdmin";
 import { menuItemSchema } from "../../../../../lib/firestoreModels";
 import { handleAPIError, apiErrors } from "../../../../../lib/utils/apiErrors";
 import { z } from "zod";
@@ -128,14 +129,15 @@ export async function POST(req: NextRequest) {
             batch.update(item.docRef, {
               ...item.validatedData,
               updatedAt: new Date(),
-              updatedBy: userId,
+              // updatedBy: userId,
             });
           }
           if ("validatedData" in item) {
-            results.success.push({
-              id: item.id,
-              data: item.validatedData,
-            });
+            const successItem: any = { id: item.id };
+            if (item.validatedData) {
+              successItem.data = item.validatedData;
+            }
+            results.success.push(successItem);
           } else {
             results.success.push({
               id: item.id,

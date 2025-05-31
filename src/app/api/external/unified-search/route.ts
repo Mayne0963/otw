@@ -7,14 +7,32 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
 
     if (type === 'restaurants') {
-      const params = {
-        latitude: searchParams.get('latitude') ? parseFloat(searchParams.get('latitude')!) : undefined,
-        longitude: searchParams.get('longitude') ? parseFloat(searchParams.get('longitude')!) : undefined,
-        location: searchParams.get('location') || undefined,
-        term: searchParams.get('term') || undefined,
-        radius: searchParams.get('radius') ? parseInt(searchParams.get('radius')!) : undefined,
-        limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
-      };
+      const params: {
+        latitude?: number;
+        longitude?: number;
+        location?: string;
+        term?: string;
+        radius?: number;
+        limit?: number;
+      } = {};
+      
+      const latParam = searchParams.get('latitude');
+      if (latParam) params.latitude = parseFloat(latParam);
+      
+      const lngParam = searchParams.get('longitude');
+      if (lngParam) params.longitude = parseFloat(lngParam);
+      
+      const locationParam = searchParams.get('location');
+      if (locationParam) params.location = locationParam;
+      
+      const termParam = searchParams.get('term');
+      if (termParam) params.term = termParam;
+      
+      const radiusParam = searchParams.get('radius');
+      if (radiusParam) params.radius = parseInt(radiusParam);
+      
+      const limitParam = searchParams.get('limit');
+      if (limitParam) params.limit = parseInt(limitParam);
 
       const results = await UnifiedSearchService.searchRestaurants(params);
       return NextResponse.json({ success: true, data: results });
@@ -29,11 +47,12 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      const params = {
-        query,
-        location: searchParams.get('location') || undefined,
-        limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
-      };
+      const params: any = { query };
+      const location = searchParams.get('location');
+      const limit = searchParams.get('limit');
+      
+      if (location) params.location = location;
+      if (limit) params.limit = parseInt(limit);
 
       const results = await UnifiedSearchService.searchProducts(params);
       return NextResponse.json({ success: true, data: results });

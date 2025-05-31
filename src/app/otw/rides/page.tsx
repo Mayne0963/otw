@@ -36,8 +36,8 @@ import { useState } from "react";
 export default function RidesPage() {
   const [pickup, setPickup] = useState("");
   const [destination, setDestination] = useState("");
-  const [estimatedFare, setEstimatedFare] = useState(null);
-  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
 
   const vehicleTypes = [
     {

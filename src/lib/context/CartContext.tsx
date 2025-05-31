@@ -44,7 +44,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
           newItem.customizations &&
           Object.keys(newItem.customizations).length > 0
         ) {
-          toast.success(`${newItem.name} added to your cart`, 3000);
+          toast({ title: "Success", description: `${newItem.name} added to your cart` });
           return [...currentItems, newItem];
         }
 
@@ -61,22 +61,19 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
           const updatedItems = [...currentItems];
           updatedItems[existingItemIndex].quantity += newItem.quantity;
 
-          toast.success(
-            `${newItem.name} quantity increased to ${updatedItems[existingItemIndex].quantity}`,
-            3000,
-          );
+          toast({ title: "Success", description: `${newItem.name} quantity increased to ${updatedItems[existingItemIndex].quantity}` });
 
           return updatedItems;
         } else {
           // Add new item if it doesn't exist
-          toast.success(`${newItem.name} added to your cart`, 3000);
+          toast({ title: "Success", description: `${newItem.name} added to your cart` });
           return [...currentItems, newItem];
         }
       });
     } catch (err) {
       console.error("Failed to add item to cart:", err);
       setError("Failed to add item to cart. Please try again.");
-      toast.error("Failed to add item to cart. Please try again.");
+      toast({ title: "Error", description: "Failed to add item to cart. Please try again.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -91,14 +88,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       setItems((currentItems) => {
         const itemToRemove = currentItems.find((item) => item.id === id);
         if (itemToRemove) {
-          toast.error(`${itemToRemove.name} removed from your cart`, 3000);
+          toast({ title: "Removed", description: `${itemToRemove.name} removed from your cart`, variant: "destructive" });
         }
         return currentItems.filter((item) => item.id !== id);
       });
     } catch (err) {
       console.error("Failed to remove item from cart:", err);
       setError("Failed to remove item from cart. Please try again.");
-      toast.error("Failed to remove item from cart. Please try again.");
+      toast({ title: "Error", description: "Failed to remove item from cart. Please try again.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -123,7 +120,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     } catch (err) {
       console.error("Failed to update item quantity:", err);
       setError("Failed to update item quantity. Please try again.");
-      toast.error("Failed to update item quantity. Please try again.");
+      toast({ title: "Error", description: "Failed to update item quantity. Please try again.", variant: "destructive" });
     } finally {
       setLoading(false);
     }

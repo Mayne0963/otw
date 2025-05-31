@@ -156,7 +156,6 @@ export default function UserProfile() {
     label: string;
     color:
       | "destructive"
-      | "success"
       | "default"
       | "secondary"
       | "outline"
@@ -166,7 +165,7 @@ export default function UserProfile() {
 
   const badges: BadgeInfo[] = [
     user.role === "admin" && { label: "Admin", color: "destructive" },
-    user.rewardPoints > 100 && { label: "VIP", color: "success" },
+    user.rewardPoints > 100 && { label: "VIP", color: "secondary" },
     orders && orders.length > 0 && { label: "First Order", color: "default" },
   ].filter(Boolean) as BadgeInfo[];
 

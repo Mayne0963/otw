@@ -7,28 +7,40 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get('action');
 
     if (action === 'products') {
-      const params = {
-        q: searchParams.get('q') || undefined,
-        locationId: searchParams.get('locationId') || undefined,
-        productId: searchParams.get('productId') || undefined,
-        brand: searchParams.get('brand') || undefined,
-        fulfillment: searchParams.get('fulfillment') as 'ais' | 'csp' | 'dug' | 'sto' || undefined,
-        start: searchParams.get('start') ? parseInt(searchParams.get('start')!) : undefined,
-        limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
-      };
+      const params: any = {};
+      const q = searchParams.get('q');
+      const locationId = searchParams.get('locationId');
+      const productId = searchParams.get('productId');
+      const brand = searchParams.get('brand');
+      const fulfillment = searchParams.get('fulfillment') as 'ais' | 'csp' | 'dug' | 'sto';
+      const start = searchParams.get('start');
+      const limit = searchParams.get('limit');
+      
+      if (q) params.q = q;
+      if (locationId) params.locationId = locationId;
+      if (productId) params.productId = productId;
+      if (brand) params.brand = brand;
+      if (fulfillment) params.fulfillment = fulfillment;
+      if (start) params.start = parseInt(start);
+      if (limit) params.limit = parseInt(limit);
 
       const result = await KrogerService.searchProducts(params);
       return NextResponse.json({ success: true, data: result });
     }
 
     if (action === 'locations') {
-      const params = {
-        'filter.zipCode.near': searchParams.get('zipCode') || undefined,
-        'filter.radiusInMiles': searchParams.get('radius') ? parseInt(searchParams.get('radius')!) : undefined,
-        'filter.limit': searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined,
-        'filter.chain': searchParams.get('chain') || undefined,
-        'filter.department': searchParams.get('department') || undefined,
-      };
+      const params: any = {};
+      const zipCode = searchParams.get('zipCode');
+      const radius = searchParams.get('radius');
+      const limit = searchParams.get('limit');
+      const chain = searchParams.get('chain');
+      const department = searchParams.get('department');
+      
+      if (zipCode) params['filter.zipCode.near'] = zipCode;
+      if (radius) params['filter.radiusInMiles'] = parseInt(radius);
+      if (limit) params['filter.limit'] = parseInt(limit);
+      if (chain) params['filter.chain'] = chain;
+      if (department) params['filter.department'] = department;
 
       const result = await KrogerService.getLocations(params);
       return NextResponse.json({ success: true, data: result });

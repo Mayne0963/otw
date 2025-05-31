@@ -5,7 +5,7 @@ import { Card } from "../ui/card";
 import { Progress } from "../ui/progress";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { MapSearch } from "../maps/MapSearch";
+import MapSearch from "../maps/MapSearch";
 import { Phone, MessageCircle, AlertCircle } from "lucide-react";
 import Image from "next/image";
 
@@ -79,10 +79,10 @@ export default function OrderTracking({ orderId }: { orderId: string }) {
           </div>
           <Badge
             variant={
-              trackingStatus.status === "arrived" ? "success" : "default"
+              trackingStatus.status === "arrived" ? "secondary" : "default"
             }
           >
-            {statusSteps[currentStepIndex].label}
+            {statusSteps[currentStepIndex]?.label || 'Unknown Status'}
           </Badge>
         </div>
 

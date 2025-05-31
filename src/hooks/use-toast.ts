@@ -18,7 +18,10 @@ export function useToast() {
     duration = 5000,
   }: Omit<Toast, "id">) => {
     const id = Math.random().toString(36).substr(2, 9);
-    const newToast = { id, title, description, action, duration };
+    const newToast: Toast = { id, duration };
+    if (title !== undefined) newToast.title = title;
+    if (description !== undefined) newToast.description = description;
+    if (action !== undefined) newToast.action = action;
 
     setToasts((currentToasts) => [...currentToasts, newToast]);
 

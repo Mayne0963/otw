@@ -43,9 +43,8 @@ export function LiveTracker({ orderId, socket }: LiveTrackerProps) {
     <div className="rounded-lg overflow-hidden">
       <MapComponent
         onLocationSelect={() => {}}
-        initialLatitude={location?.lat}
-        initialLongitude={location?.lng}
-        showSearchBox={false}
+        {...(location && { defaultLocation: { lat: location.lat, lng: location.lng } })}
+        showSearchBar={false}
       />
       {/* Removed eta reference but kept conditional rendering structure for future use */}
       <div className="mt-4 p-4 bg-gray-100 rounded">

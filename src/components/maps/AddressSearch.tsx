@@ -7,12 +7,11 @@ import {
   GoogleMap,
   Marker,
   Autocomplete,
-  DirectionsRenderer,
 } from "@react-google-maps/api";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Badge } from "../ui/badge";
+
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 
@@ -164,7 +163,10 @@ export default function AddressSearch({
       }
 
       const route = result.routes[0];
+      if (!route) return;
+      
       const leg = route.legs[0];
+      if (!leg) return;
       
       const distance = leg.distance?.value || 0;
       const duration = leg.duration?.value || 0;
@@ -206,12 +208,15 @@ export default function AddressSearch({
         setOriginLocation(location);
         
         if (onAddressSelect) {
-          onAddressSelect({
+          const addressData: any = {
             formatted_address: place.formatted_address || "",
             lat: location.lat(),
             lng: location.lng(),
-            place_id: place.place_id,
-          });
+          };
+          if (place.place_id) {
+            addressData.place_id = place.place_id;
+          }
+          onAddressSelect(addressData);
         }
         
         if (map) {

@@ -98,7 +98,7 @@ export default function AdvancedSearch({
 
   // Handle delivery time change
   const handleDeliveryTimeChange = (value: number[]) => {
-    const newFilters = { ...filters, deliveryTimeMax: value[0] };
+    const newFilters = { ...filters, deliveryTimeMax: value[0] || null };
     setFilters(newFilters);
     setActiveFiltersCount(countActiveFilters(newFilters));
   };

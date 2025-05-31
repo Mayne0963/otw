@@ -34,8 +34,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Image
           src={
             isHovered && product.images.length > 1
-              ? product.images[1]
-              : product.images[0]
+              ? product.images[1] || product.images[0] || ''
+              : product.images[0] || ''
           }
           alt={product.name}
           fill

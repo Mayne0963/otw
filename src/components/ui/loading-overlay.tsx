@@ -51,7 +51,7 @@ export function LoadingOverlay({
           size={fullScreen ? "large" : "medium"}
           showText={true}
           text={message}
-          subText={subMessage}
+          {...(subMessage && { subText: subMessage })}
         />
       </div>
     </div>

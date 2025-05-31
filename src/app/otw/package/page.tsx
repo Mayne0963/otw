@@ -45,7 +45,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function PackagePage() {
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
   const [pickupAddress, setPickupAddress] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [packageType, setPackageType] = useState("");

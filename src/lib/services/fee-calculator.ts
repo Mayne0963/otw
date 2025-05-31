@@ -1,4 +1,4 @@
-import { calculateRoute, geocodeAddress, type Location } from "../maps";
+import { calculateRoute, geocodeAddress } from "../maps";
 
 export interface FeeCalculationOptions {
   baseFee?: number;
@@ -120,7 +120,7 @@ export class FeeCalculatorService {
         place_id: geocodeResult.place_id,
         address_components: addressComponents,
       };
-    } catch (error) {
+    } catch {
       return {
         isValid: false,
         formatted_address: address,

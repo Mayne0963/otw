@@ -93,8 +93,8 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0">
                 <Image
-                  src={testimonials[currentIndex].image || "/placeholder.svg"}
-                  alt={testimonials[currentIndex].name}
+                  src={testimonials[currentIndex]?.image || "/placeholder.svg"}
+                  alt={testimonials[currentIndex]?.name || 'Testimonial'}
                   width={96}
                   height={96}
                   className="object-cover w-full h-full"
@@ -103,14 +103,14 @@ const TestimonialSlider: React.FC<TestimonialSliderProps> = ({
 
               <div>
                 <p className="text-lg text-gray-300 italic mb-6">
-                  {testimonials[currentIndex].quote}
+                  {testimonials[currentIndex]?.quote}
                 </p>
                 <div>
                   <h4 className="font-bold text-lg">
-                    {testimonials[currentIndex].name}
+                    {testimonials[currentIndex]?.name}
                   </h4>
                   <p className="text-gold-foil">
-                    {testimonials[currentIndex].role}
+                    {testimonials[currentIndex]?.role}
                   </p>
                 </div>
               </div>
