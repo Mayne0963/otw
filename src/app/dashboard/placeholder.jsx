@@ -6,21 +6,21 @@ export default function DashboardPlaceholder() {
   return (
     <div className="bg-black text-white min-h-screen flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full bg-gray-900 rounded-lg p-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Dashboard Coming Soon</h1>
+        <h1 className="text-3xl font-bold mb-4">Your Dashboard</h1>
         <p className="text-gray-300 mb-6">
-          We're currently building this feature. The dashboard will allow you to
-          track your orders, manage your tier membership, and more.
+          Welcome to your personal dashboard! Here you can manage your orders,
+          track deliveries, and access your account settings.
         </p>
-        <div className="bg-primary-red p-4 rounded-lg mb-6">
+        <div className="bg-otw-gold bg-opacity-20 p-4 rounded-lg mb-6">
           <p className="text-white">
-            <strong>Features planned:</strong>
+            <strong>Available Features:</strong>
           </p>
           <ul className="text-left mt-2 space-y-1">
-            <li>• Order history and tracking</li>
-            <li>• Tier membership management</li>
-            <li>• Favorite representatives</li>
-            <li>• Payment methods</li>
-            <li>• Account settings</li>
+            <li>• View order history and status</li>
+            <li>• Manage tier membership benefits</li>
+            <li>• Update delivery preferences</li>
+            <li>• Manage payment methods</li>
+            <li>• Account and notification settings</li>
           </ul>
         </div>
         <Link
