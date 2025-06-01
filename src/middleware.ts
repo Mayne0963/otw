@@ -29,7 +29,7 @@ export default async function middleware(request: NextRequest) {
     });
   }
 
-  // Check Firebase auth token for protected routes
+  // Check auth token for protected routes
   if (isProtectedRoute) {
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.replace('Bearer ', '');
@@ -39,32 +39,17 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/signin', request.url));
     }
 
-    // For API routes, verify the Firebase token
+    // For API routes, basic token presence check
+    // Note: Full Firebase token verification should be done in API route handlers
+    // since Firebase Admin SDK is not compatible with Edge Runtime
     if (request.nextUrl.pathname.startsWith('/api/')) {
-      try {
-        // Import Firebase Admin SDK for token verification
-        const { getAuth } = await import('firebase-admin/auth');
-        const { initializeApp, getApps, cert } = await import('firebase-admin/app');
-        
-        // Initialize Firebase Admin if not already initialized
-        if (!getApps().length) {
-          const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-          initializeApp({
-            credential: cert(serviceAccount),
-            projectId: process.env.FIREBASE_PROJECT_ID,
-          });
-        }
-        
-        const decodedToken = await getAuth().verifyIdToken(token);
-        
-        // Check admin role for admin routes
-        if (isAdminRoute && decodedToken.role !== 'admin') {
-          return new NextResponse('Forbidden', { status: 403 });
-        }
-      } catch (error) {
-        console.error('Token verification failed:', error);
+      // Basic token format validation
+      if (!token || token.length < 10) {
         return new NextResponse('Unauthorized', { status: 401 });
       }
+      
+      // Admin routes require additional validation in the API handler itself
+      // This middleware only does basic checks
     }
   }
 

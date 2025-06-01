@@ -101,3 +101,4 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({ restaurant }) => {
 };
 
 export default RestaurantCard; // Added export default
+export { RestaurantCard }; // Named export for compatibility
