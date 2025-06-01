@@ -10,7 +10,7 @@ import { AgeVerificationProvider } from "./AgeVerificationContext";
 import { RewardsProvider } from "./RewardsContext";
 import { ChatProvider } from "./ChatContext";
 import { MediaPlayerProvider } from "./MediaPlayerContext";
-import { AuthProvider } from "./AuthContext";
+import { AuthProvider } from "../../contexts/AuthContext";
 import { ErrorBoundary } from "../../components/ui/error-boundary";
 import { AnalyticsScript } from "../../components/analytics-script";
 
