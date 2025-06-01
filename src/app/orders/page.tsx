@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useAuth } from "../../lib/context/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { FaHistory, FaShoppingBag, FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
 import { useEffect } from "react";

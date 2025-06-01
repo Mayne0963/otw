@@ -1,7 +1,7 @@
 "use client";
 
 import { RewardsProvider } from "../../lib/context/RewardsContext";
-import { AuthProvider } from "../../lib/context/AuthContext";
+import { AuthProvider } from "../../contexts/AuthContext";
 
 export default function LoyaltyLayout({
   children,

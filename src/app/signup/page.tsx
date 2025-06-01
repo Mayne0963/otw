@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAuth } from "../../../contexts/AuthContext";
-import Link from "next/link";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+import { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import Link from 'next/link';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import {
   Card,
   CardContent,
@@ -13,18 +13,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
-import { Alert, AlertDescription } from "../../../components/ui/alert";
-import { Loader2 } from "lucide-react";
+} from '../../components/ui/card';
+import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Loader2 } from 'lucide-react';
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuth();
 
@@ -37,16 +37,16 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters long");
+      setError('Password must be at least 6 characters long');
       return;
     }
 
@@ -55,13 +55,11 @@ export default function SignUpPage() {
     try {
       await signUp(formData.email, formData.password, formData.name);
     } catch (err: any) {
-      setError(err.message || "Failed to create account");
+      setError(err.message || 'Failed to create account');
     } finally {
       setIsLoading(false);
     }
   };
-
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-otw-black via-gray-900 to-otw-black flex items-center justify-center p-4">

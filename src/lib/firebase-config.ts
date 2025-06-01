@@ -28,18 +28,3 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 export default app;
-
-declare global {
-  interface Window {
-    firebase: typeof firebase;
-  }
-}
-
-export async function updateUserProfile(
-  userId: string,
-  updates: Partial<UserProfile>,
-): Promise<UserProfile> {
-  const docRef = doc(firestore, "users", userId);
-  await updateDoc(docRef, updates);
-  return (await getDoc(docRef)).data() as UserProfile;
-}

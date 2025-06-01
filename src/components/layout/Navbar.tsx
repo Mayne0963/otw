@@ -17,7 +17,7 @@ import {
   HelpingHand,
 } from "lucide-react";
 import { useCart } from "../../lib/context/CartContext";
-import { useFirebaseAuth } from "../../contexts/FirebaseAuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import Button from "../Button";
 import { useOnClickOutside } from "../../hooks/useOnClickOutside";
 import { cn } from "../../lib/utils";
@@ -50,7 +50,7 @@ const mainNavItems = [
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, signOut } = useFirebaseAuth();
+  const { user, signOut } = useAuth();
   const { items: cartItems } = useCart();
   const pathname = usePathname();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -102,7 +102,7 @@ const Navbar = () => {
             <span className="sr-only">On The Way Delivery</span>
             <Image
               className="h-8 w-auto"
-              src="/images/otw-logo.png"
+              src="/assets/logos/otw-logo-new-red-transparent.png"
               alt="On The Way Delivery"
               width={120}
               height={32}

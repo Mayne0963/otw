@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useAuth } from "../../../contexts/AuthContext";
-import Link from "next/link";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
+import { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import Link from 'next/link';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import {
   Card,
   CardContent,
@@ -13,32 +13,30 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
-import { Alert, AlertDescription } from "../../../components/ui/alert";
-import { Loader2 } from "lucide-react";
+} from '../../components/ui/card';
+import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Loader2 } from 'lucide-react';
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+export default function SignInPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setIsLoading(true);
 
     try {
       await signIn(email, password);
     } catch (err: any) {
-      setError(err.message || "Failed to sign in");
+      setError(err.message || 'Failed to sign in');
     } finally {
       setIsLoading(false);
     }
   };
-
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-otw-black via-gray-900 to-otw-black flex items-center justify-center p-4">

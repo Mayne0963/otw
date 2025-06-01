@@ -1,6 +1,6 @@
 "use client";
 
-import { AuthProvider } from "../../lib/context/AuthContext";
+import { AuthProvider } from "../../contexts/AuthContext";
 
 export default function OrdersLayout({
   children,
