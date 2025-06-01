@@ -39,32 +39,18 @@ export default async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/signin', request.url));
     }
 
-    // For API routes, verify the Firebase token
+    // For API routes, we'll handle token verification in the API routes themselves
+    // since Firebase Admin SDK is not compatible with Edge Runtime
     if (request.nextUrl.pathname.startsWith('/api/')) {
-      try {
-        // Import Firebase Admin SDK for token verification
-        const { getAuth } = await import('firebase-admin/auth');
-        const { initializeApp, getApps, cert } = await import('firebase-admin/app');
-        
-        // Initialize Firebase Admin if not already initialized
-        if (!getApps().length) {
-          const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-          initializeApp({
-            credential: cert(serviceAccount),
-            projectId: process.env.FIREBASE_PROJECT_ID,
-          });
-        }
-        
-        const decodedToken = await getAuth().verifyIdToken(token);
-        
-        // Check admin role for admin routes
-        if (isAdminRoute && decodedToken.role !== 'admin') {
-          return new NextResponse('Forbidden', { status: 403 });
-        }
-      } catch (error) {
-        console.error('Token verification failed:', error);
-        return new NextResponse('Unauthorized', { status: 401 });
-      }
+      // Pass the token through headers for API route verification
+      const requestHeaders = new Headers(request.headers);
+      requestHeaders.set('x-firebase-token', token);
+      
+      return NextResponse.next({
+        request: {
+          headers: requestHeaders,
+        },
+      });
     }
   }
 
