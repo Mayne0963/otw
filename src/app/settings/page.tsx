@@ -56,7 +56,7 @@ export default function SettingsPage() {
                     <Input
                       id="name"
                       placeholder="Your name"
-                      defaultValue="OTW Member"
+                      defaultValue="Sarah Mitchell"
                     />
                   </div>
                   <div className="space-y-2">
@@ -64,7 +64,7 @@ export default function SettingsPage() {
                     <Input
                       id="email"
                       placeholder="Your email"
-                      defaultValue="member@otwdelivery.com"
+                      defaultValue="sarah.mitchell@gmail.com"
                       type="email"
                     />
                   </div>
@@ -73,7 +73,7 @@ export default function SettingsPage() {
                     <Input
                       id="phone"
                       placeholder="Your phone number"
-                      defaultValue="(260) 555-0123"
+                      defaultValue="(260) 555-7892"
                     />
                   </div>
                   <div className="space-y-2">
@@ -81,7 +81,7 @@ export default function SettingsPage() {
                     <Input
                       id="address"
                       placeholder="Your address"
-                      defaultValue="1234 Coliseum Blvd, Fort Wayne, IN 46805"
+                      defaultValue="2847 Stellhorn Road, Fort Wayne, IN 46815"
                     />
                   </div>
                 </div>
@@ -313,7 +313,7 @@ export default function SettingsPage() {
                     <Input
                       id="billing-name"
                       placeholder="Name on card"
-                      defaultValue="John Doe"
+                      defaultValue="Sarah Mitchell"
                     />
                   </div>
                   <div className="space-y-2">
@@ -321,7 +321,7 @@ export default function SettingsPage() {
                     <Input
                       id="billing-address"
                       placeholder="Street address"
-                      defaultValue="1234 Coliseum Blvd"
+                      defaultValue="2847 Stellhorn Road"
                     />
                   </div>
                   <div className="space-y-2">
@@ -345,7 +345,7 @@ export default function SettingsPage() {
                     <Input
                       id="billing-zip"
                       placeholder="ZIP Code"
-                      defaultValue="46805"
+                      defaultValue="46815"
                     />
                   </div>
                   <div className="space-y-2">

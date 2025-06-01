@@ -39,29 +39,38 @@ export default function ProfilePage() {
 
   // User data - will be populated from authentication context
   const user = {
-    name: "OTW Member",
-    email: "member@otwdelivery.com",
-    phone: "(260) 555-0123",
-    avatar: "/images/avatar.jpg",
-    memberSince: "January 2024",
-    tier: "Gold",
+    name: "Sarah Mitchell",
+    email: "sarah.mitchell@gmail.com",
+    phone: "(260) 555-7892",
+    avatar: "/assets/users/sarah-mitchell.jpg",
+    memberSince: "March 2023",
+    tier: "Platinum",
     addresses: [
       {
         id: 1,
         name: "Home",
-        street: "1234 Coliseum Blvd",
+        street: "2847 Stellhorn Road",
         city: "Fort Wayne",
         state: "IN",
-        zip: "46805",
+        zip: "46815",
         default: true,
       },
       {
         id: 2,
         name: "Work",
-        street: "456 Office Blvd",
+        street: "1025 W Rudisill Blvd",
         city: "Fort Wayne",
         state: "IN",
-        zip: "46805",
+        zip: "46807",
+        default: false,
+      },
+      {
+        id: 3,
+        name: "Mom's House",
+        street: "4521 Covington Road",
+        city: "Fort Wayne",
+        state: "IN",
+        zip: "46804",
         default: false,
       },
     ],
@@ -69,15 +78,22 @@ export default function ProfilePage() {
       {
         id: 1,
         type: "Visa",
-        last4: "4242",
-        expiry: "04/25",
+        last4: "8734",
+        expiry: "12/26",
         default: true,
       },
       {
         id: 2,
         type: "Mastercard",
-        last4: "5555",
-        expiry: "08/24",
+        last4: "2156",
+        expiry: "09/25",
+        default: false,
+      },
+      {
+        id: 3,
+        type: "American Express",
+        last4: "9087",
+        expiry: "03/27",
         default: false,
       },
     ],
@@ -94,7 +110,7 @@ export default function ProfilePage() {
                 <div className="flex flex-col items-center">
                   <Avatar className="h-24 w-24 mb-4">
                     <AvatarImage
-                      src={user.avatar || "/placeholder.svg"}
+                      src={user.avatar || "/assets/users/default-avatar.jpg"}
                       alt={user.name}
                     />
                     <AvatarFallback>

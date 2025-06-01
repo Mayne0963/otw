@@ -5,9 +5,9 @@ import Image from "next/image"
 import Link from "next/link"
 
 export default function QRTipComponent({
-  repName = "Your Rep",
-  repId = "12345",
-  repPhoto = "/assets/logos/otw-logo.jpg",
+  repName = "Aaliyah Johnson",
+  repId = "OTW2847",
+  repPhoto = "/assets/volunteers/aaliyah.jpg",
 }) {
   const [tipAmount, setTipAmount] = useState(5)
   const [showTipModal, setShowTipModal] = useState(false)
@@ -56,7 +56,7 @@ export default function QRTipComponent({
         <h3 className="text-xl font-bold mb-4">Rep Storyline</h3>
         <div className="flex items-start">
           <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4 flex-shrink-0">
-            <Image src={repPhoto || "/placeholder.svg"} alt={repName} fill style={{ objectFit: "cover" }} />
+            <Image src={repPhoto || "/assets/users/default-avatar.jpg"} alt={repName} fill style={{ objectFit: "cover" }} />
           </div>
           <div>
             <h4 className="font-bold">{repName}</h4>
@@ -115,7 +115,7 @@ export default function QRTipComponent({
 
                 <div className="flex items-center mb-6">
                   <div className="relative h-12 w-12 rounded-full overflow-hidden mr-3">
-                    <Image src={repPhoto || "/placeholder.svg"} alt={repName} fill style={{ objectFit: "cover" }} />
+                    <Image src={repPhoto || "/assets/users/default-avatar.jpg"} alt={repName} fill style={{ objectFit: "cover" }} />
                   </div>
                   <div>
                     <p className="font-bold">{repName}</p>

@@ -43,9 +43,9 @@ export default function OrderTracking({ orderId }: { orderId: string }) {
     },
     driver: {
       name: "Marcus Thompson",
-      phone: "+1 (260) 555-0198",
-      vehicle: "Honda Civic - OTW247",
-      photo: "/assets/drivers/marcus.jpg",
+      phone: "+1 (260) 555-8934",
+      vehicle: "Toyota Camry - OTW156",
+      photo: "/assets/volunteers/marcus.jpg",
     },
   });
 
