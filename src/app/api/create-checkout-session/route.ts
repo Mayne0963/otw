@@ -6,6 +6,14 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    // Check if Firebase Admin is available
+    if (!adminAuth) {
+      return NextResponse.json(
+        { error: 'Firebase Admin not initialized' },
+        { status: 500 }
+      );
+    }
+
     // Get the authorization header
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
