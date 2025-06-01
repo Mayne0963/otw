@@ -121,7 +121,7 @@ export default function Home() {
             <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] hover:border-[#FFD700] transition-all duration-300">
               <div className="h-40 relative">
                 <Image
-                  src="/assets/images/placeholder.svg?key=3aeoi"
+                  src="/assets/restaurants/broskis-hero.jpg"
                   alt="Broski's Kitchen"
                   fill
                   className="object-cover"
@@ -147,7 +147,7 @@ export default function Home() {
             <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] hover:border-[#FFD700] transition-all duration-300">
               <div className="h-40 relative">
                 <Image
-                  src="/assets/images/placeholder.svg?key=3zcfz"
+                  src="/assets/restaurants/pizza-hero.jpg"
                   alt="Fort Wayne Pizza Co."
                   fill
                   className="object-cover"
@@ -173,7 +173,7 @@ export default function Home() {
             <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] hover:border-[#FFD700] transition-all duration-300">
               <div className="h-40 relative">
                 <Image
-                  src="/assets/images/placeholder.svg?key=26tm0"
+                  src="/assets/restaurants/taqueria-hero.jpg"
                   alt="Taqueria Jalisco"
                   fill
                   className="object-cover"
@@ -199,7 +199,7 @@ export default function Home() {
             <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] hover:border-[#FFD700] transition-all duration-300">
               <div className="h-40 relative">
                 <Image
-                  src="/assets/images/placeholder.svg?key=3p6ah"
+                  src="/assets/restaurants/korean-hero.jpg"
                   alt="Seoul Garden"
                   fill
                   className="object-cover"

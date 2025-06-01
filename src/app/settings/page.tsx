@@ -56,7 +56,7 @@ export default function SettingsPage() {
                     <Input
                       id="name"
                       placeholder="Your name"
-                      defaultValue="John Doe"
+                      defaultValue="OTW Member"
                     />
                   </div>
                   <div className="space-y-2">
@@ -64,7 +64,7 @@ export default function SettingsPage() {
                     <Input
                       id="email"
                       placeholder="Your email"
-                      defaultValue="john@example.com"
+                      defaultValue="member@otwdelivery.com"
                       type="email"
                     />
                   </div>
@@ -73,7 +73,7 @@ export default function SettingsPage() {
                     <Input
                       id="phone"
                       placeholder="Your phone number"
-                      defaultValue="(555) 123-4567"
+                      defaultValue="(260) 555-0123"
                     />
                   </div>
                   <div className="space-y-2">
@@ -81,7 +81,7 @@ export default function SettingsPage() {
                     <Input
                       id="address"
                       placeholder="Your address"
-                      defaultValue="123 Main St, Anytown, USA"
+                      defaultValue="1234 Coliseum Blvd, Fort Wayne, IN 46805"
                     />
                   </div>
                 </div>
@@ -321,7 +321,7 @@ export default function SettingsPage() {
                     <Input
                       id="billing-address"
                       placeholder="Street address"
-                      defaultValue="123 Main St"
+                      defaultValue="1234 Coliseum Blvd"
                     />
                   </div>
                   <div className="space-y-2">
@@ -329,7 +329,7 @@ export default function SettingsPage() {
                     <Input
                       id="billing-city"
                       placeholder="City"
-                      defaultValue="Anytown"
+                      defaultValue="Fort Wayne"
                     />
                   </div>
                   <div className="space-y-2">
@@ -337,7 +337,7 @@ export default function SettingsPage() {
                     <Input
                       id="billing-state"
                       placeholder="State"
-                      defaultValue="CA"
+                      defaultValue="IN"
                     />
                   </div>
                   <div className="space-y-2">
@@ -345,7 +345,7 @@ export default function SettingsPage() {
                     <Input
                       id="billing-zip"
                       placeholder="ZIP Code"
-                      defaultValue="12345"
+                      defaultValue="46805"
                     />
                   </div>
                   <div className="space-y-2">

@@ -60,22 +60,22 @@ const safetyResources = [
 
 const nearbyHospitals = [
   {
-    name: "City General Hospital",
-    address: "123 Medical Center Dr",
-    distance: "2.5 miles",
-    phone: "(555) 123-4567",
+    name: "Fort Wayne Police Department",
+    phone: "(260) 427-1222",
+    address: "1 E Main St, Fort Wayne, IN 46802",
+    type: "police",
   },
   {
-    name: "Community Medical Center",
-    address: "456 Health Ave",
-    distance: "3.1 miles",
-    phone: "(555) 234-5678",
+    name: "Fort Wayne Fire Department",
+    phone: "(260) 427-1234",
+    address: "226 E Berry St, Fort Wayne, IN 46802",
+    type: "fire",
   },
   {
-    name: "Regional Emergency Care",
-    address: "789 Emergency Ln",
-    distance: "4.2 miles",
-    phone: "(555) 345-6789",
+    name: "Parkview Regional Medical Center",
+    phone: "(260) 266-1000",
+    address: "11109 Parkview Plaza Dr, Fort Wayne, IN 46845",
+    type: "medical",
   },
 ];
 

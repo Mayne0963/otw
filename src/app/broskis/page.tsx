@@ -222,7 +222,7 @@ export default function BroskisKitchenPage() {
                 <h3 className="text-xl font-bold mb-2">Downtown Fort Wayne</h3>
                 <div className="flex items-center mb-2">
                   <MapPin className="text-otw-gold mr-2" />
-                  <span>123 Main Street, Fort Wayne, IN 46802</span>
+                  <span>1127 Broadway, Fort Wayne, IN 46802</span>
                 </div>
                 <div className="flex items-center mb-4">
                   <Clock className="text-otw-gold mr-2" />

@@ -59,7 +59,7 @@ export default function VolunteerSignup() {
           <Input
             id="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder="volunteer@otwdelivery.com"
             required
           />
         </div>

@@ -105,7 +105,7 @@ export default function OrderTracker() {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className="text-gray-400">Pickup Location</p>
-              <p>123 Main St, Fort Wayne</p>
+              <p>1127 Broadway, Fort Wayne, IN 46802</p>
             </div>
             <div>
               <p className="text-gray-400">Dropoff Location</p>

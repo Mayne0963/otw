@@ -203,7 +203,7 @@ export default function OTWServicesPage() {
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center">
                     <Phone className="w-5 h-5 text-otw-gold mr-3" />
-                    <span>Call us: (260) 555-1234</span>
+                    <span>Call us: (260) 555-OTWD</span>
                   </div>
                   <div className="flex items-center">
                     <Calendar className="w-5 h-5 text-otw-gold mr-3" />

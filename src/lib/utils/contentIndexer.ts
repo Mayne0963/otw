@@ -115,7 +115,7 @@ function getSimulatedContent(url: string): { title: string; content: string } {
     case "/contact":
       return {
         title: "Contact Us - Broski's Kitchen",
-        content: `You can contact us through our Contact page, by email at info@broskiskitchen.com, or by phone at (213) 555-1234.
+        content: `You can contact us through our Contact page, by email at info@broskiskitchen.com, or by phone at (260) 555-BROS.
         Our headquarters is located at 420 S Grand Ave, Los Angeles, CA 90071.
         For catering inquiries, contact catering@broskiskitchen.com or call (213) 555-5678.`,
       };

@@ -9,28 +9,40 @@ export interface Volunteer {
   hoursServed: number;
 }
 
-export const mockVolunteers: Volunteer[] = [
+export const featuredVolunteers: Volunteer[] = [
   {
     id: "vol1",
     name: "Aaliyah Johnson",
-    area: "Downtown",
+    area: "Downtown Fort Wayne",
     availability: "Weekends",
-    contact: "aaliyah@email.com",
-    photoUrl: "/assets/logos/broskis-logo.jpg",
-    quote: "I love giving back to my city!",
-    hoursServed: 42,
+    contact: "aaliyah.j@otwvolunteers.org",
+    photoUrl: "/assets/volunteers/aaliyah.jpg",
+    quote: "Proud to serve my Fort Wayne community through OTW!",
+    hoursServed: 127,
   },
   {
     id: "vol2",
-    name: "Marcus Lee",
-    area: "North Side",
-    availability: "Evenings",
-    contact: "marcus@email.com",
-    hoursServed: 18,
+    name: "Marcus Thompson",
+    area: "Northeast Side",
+    availability: "Evenings & Weekends",
+    contact: "marcus.t@otwvolunteers.org",
+    photoUrl: "/assets/volunteers/marcus.jpg",
+    quote: "Every delivery makes a difference in someone's day.",
+    hoursServed: 89,
+  },
+  {
+    id: "vol3",
+    name: "Carmen Rodriguez",
+    area: "Southwest Fort Wayne",
+    availability: "Flexible Schedule",
+    contact: "carmen.r@otwvolunteers.org",
+    photoUrl: "/assets/volunteers/carmen.jpg",
+    quote: "Connecting our community one delivery at a time.",
+    hoursServed: 156,
   },
 ];
 
 export function getFeaturedVolunteers(): Volunteer[] {
-  // In real app, fetch from DB. Here, return mock.
-  return mockVolunteers;
+  // In real app, fetch from database. Currently returns featured volunteers.
+  return featuredVolunteers;
 }

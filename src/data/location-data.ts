@@ -1,12 +1,12 @@
 export const locationData = [
   {
     id: "1",
-    name: "Broskis Downtown",
-    address: "123 Main Street",
+    name: "Broski's Kitchen Downtown",
+    address: "1127 Broadway",
     city: "Fort Wayne",
     state: "IN",
     zipCode: "46802",
-    phone: "(260) 555-1234",
+    phone: "(260) 555-BROS",
     coordinates: {
       lat: 41.0793,
       lng: -85.1394,

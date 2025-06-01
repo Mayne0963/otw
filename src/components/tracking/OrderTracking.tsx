@@ -38,14 +38,14 @@ export default function OrderTracking({ orderId }: { orderId: string }) {
     estimatedArrival: "30 mins",
     currentLocation: {
       lat: 40.7128,
-      lng: -74.006,
-      address: "123 Main St, New York, NY",
+      lng: -85.1394,
+      address: "1127 Broadway, Fort Wayne, IN",
     },
     driver: {
-      name: "John Doe",
-      phone: "+1 (555) 123-4567",
-      vehicle: "Toyota Camry - ABC123",
-      photo: "/placeholder-driver.jpg",
+      name: "Marcus Thompson",
+      phone: "+1 (260) 555-0198",
+      vehicle: "Honda Civic - OTW247",
+      photo: "/assets/drivers/marcus.jpg",
     },
   });
 

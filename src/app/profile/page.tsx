@@ -37,22 +37,22 @@ export default function ProfilePage() {
     }
   };
 
-  // Mock user data
+  // User data - will be populated from authentication context
   const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "(555) 123-4567",
+    name: "OTW Member",
+    email: "member@otwdelivery.com",
+    phone: "(260) 555-0123",
     avatar: "/images/avatar.jpg",
-    memberSince: "January 2023",
-    tier: "Silver",
+    memberSince: "January 2024",
+    tier: "Gold",
     addresses: [
       {
         id: 1,
         name: "Home",
-        street: "123 Main St",
+        street: "1234 Coliseum Blvd",
         city: "Fort Wayne",
         state: "IN",
-        zip: "46802",
+        zip: "46805",
         default: true,
       },
       {

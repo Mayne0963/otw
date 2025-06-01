@@ -38,7 +38,7 @@ export default function ContactPage() {
     {
       question: "Do you offer catering services?",
       answer:
-        "Yes, we offer catering for events of all sizes. Please fill out our contact form or call our catering line directly at (555) 123-4567 to discuss your needs.",
+        "Yes, we offer catering for events of all sizes. Please fill out our contact form or call our catering line directly at (260) 555-CATER to discuss your needs.",
     },
     {
       question: "Do you take reservations?",
@@ -127,9 +127,9 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-bold mb-1">Phone</h3>
-                      <p className="text-gray-300">Main: (213) 555-1234</p>
-                      <p className="text-gray-300">Catering: (213) 555-5678</p>
-                      <p className="text-gray-300">Delivery: (213) 555-9012</p>
+                      <p className="text-gray-300">Main: (260) 555-OTWD</p>
+                      <p className="text-gray-300">Catering: (260) 555-CATER</p>
+                       <p className="text-gray-300">Delivery: (260) 555-DLVR</p>
                     </div>
                   </div>
 

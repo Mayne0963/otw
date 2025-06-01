@@ -26,7 +26,7 @@ export const restaurants: Restaurant[] = [
     priceLevel: "$$",
     deliveryFee: 3.99,
     deliveryTime: "25-40 min",
-    address: "123 Main Street, Fort Wayne, IN",
+    address: "1127 Broadway, Fort Wayne, IN 46802",
     distance: 1.2,
     isPartner: true,
     featured: true,
@@ -192,30 +192,20 @@ export const restaurantImages = {
   pizza: "/menu-1.jpg",
   mexican: "/lobster-tacos.jpg",
   korean: "/korean-wings.jpg",
-  italian:
-    "/placeholder.svg?height=300&width=600&query=traditional italian trattoria with rustic decor",
+  italian: "/assets/restaurants/italian-interior.jpg",
   healthy: "/vegan-burger.jpg",
   bakery: "/golden-cheesecake.jpg",
-  breakfast:
-    "/placeholder.svg?height=300&width=600&query=bright breakfast cafe with coffee bar",
+  breakfast: "/assets/restaurants/breakfast-cafe.jpg",
 };
 
 // Generate placeholder logos for restaurants
 export const restaurantLogos = {
-  broskis:
-    "/placeholder.svg?height=100&width=100&query=luxury BK logo gold and black",
-  pizza:
-    "/placeholder.svg?height=100&width=100&query=pizza logo with red and green",
-  mexican:
-    "/placeholder.svg?height=100&width=100&query=mexican restaurant logo colorful",
-  korean:
-    "/placeholder.svg?height=100&width=100&query=korean restaurant logo minimalist",
-  italian:
-    "/placeholder.svg?height=100&width=100&query=italian restaurant logo with flag colors",
-  healthy:
-    "/placeholder.svg?height=100&width=100&query=green healthy food logo with leaf",
-  bakery:
-    "/placeholder.svg?height=100&width=100&query=bakery logo with cupcake",
-  breakfast:
-    "/placeholder.svg?height=100&width=100&query=breakfast cafe logo with sun and coffee",
+  "broskis-kitchen": "/assets/logos/broskis-logo.png",
+  "pizza-co": "/assets/logos/pizza-co-logo.png",
+  "taqueria-jalisco": "/assets/logos/taqueria-logo.png",
+  "seoul-garden": "/assets/logos/seoul-garden-logo.png",
+  "nonna-mias": "/assets/logos/nonna-mias-logo.png",
+  "green-leaf": "/assets/logos/green-leaf-logo.png",
+  "sweet-treats": "/assets/logos/sweet-treats-logo.png",
+  "sunrise-cafe": "/assets/logos/sunrise-cafe-logo.png",
 };

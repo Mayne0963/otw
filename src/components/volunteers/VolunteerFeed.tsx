@@ -2,31 +2,29 @@ import Image from "next/image";
 import { Card } from "../ui/card";
 import { Award, Clock, Heart } from "lucide-react";
 
-const mockStories = [
+const volunteerStories = [
   {
     id: 1,
-    name: "Sarah Johnson",
-    image: "/placeholder-user.jpg",
-    hours: 156,
-    badges: ["Emergency Hero", "Senior Support"],
+    name: "Aaliyah",
+    image: "/assets/volunteers/aaliyah.jpg",
     story:
-      "I've been volunteering with OTW for 6 months, and it's been incredible to see the direct impact we have on our community. From helping seniors with groceries to emergency assistance during storms, every day brings new opportunities to make a difference.",
+      "Just delivered groceries to Mrs. Johnson on the northeast side. Her smile made my whole day! 🥰",
+    time: "2 hours ago",
   },
   {
     id: 2,
-    name: "Mike Thompson",
-    image: "/placeholder-user.jpg",
-    hours: 89,
-    badges: ["Moving Master", "Community Star"],
+    name: "Marcus",
+    image: "/assets/volunteers/marcus.jpg",
     story:
-      "Being part of the OTW volunteer team has shown me just how much we can accomplish when we work together. The moving assistance program has been particularly rewarding - helping families transition to their new homes with dignity and support.",
+      "Helped a family move their furniture today. Love being part of this amazing Fort Wayne community! 💪",
+    time: "4 hours ago",
   },
 ];
 
 export default function VolunteerFeed() {
   return (
     <div className="space-y-6">
-      {mockStories.map((story) => (
+      {volunteerStories.map((story) => (
         <Card key={story.id} className="p-6">
           <div className="flex gap-4">
             <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
@@ -44,25 +42,13 @@ export default function VolunteerFeed() {
                 <div className="flex items-center gap-4 text-sm text-gray-400">
                   <div className="flex items-center gap-1">
                     <Clock className="w-4 h-4" />
-                    {story.hours} hours
+                    {story.time}
                   </div>
                   <div className="flex items-center gap-1">
                     <Heart className="w-4 h-4 text-otw-red" />
                     Volunteer
                   </div>
                 </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {story.badges.map((badge) => (
-                  <div
-                    key={badge}
-                    className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-800 text-xs"
-                  >
-                    <Award className="w-3 h-3 text-otw-gold" />
-                    {badge}
-                  </div>
-                ))}
               </div>
 
               <p className="text-gray-300">{story.story}</p>

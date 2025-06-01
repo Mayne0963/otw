@@ -3,43 +3,43 @@ import { Button } from "../ui/button";
 import { MapPin, Star, Heart } from "lucide-react";
 import Image from "next/image";
 
-const mockLocations = [
+const favoriteLocations = [
   {
     id: 1,
     name: "Home",
-    address: "123 Main St, Fort Wayne, IN 46802",
+    address: "1234 Coliseum Blvd, Fort Wayne, IN 46805",
     type: "Residential",
   },
   {
     id: 2,
     name: "Work",
-    address: "456 Business Ave, Fort Wayne, IN 46825",
+    address: "200 E Berry St, Fort Wayne, IN 46802",
     type: "Commercial",
   },
   {
     id: 3,
-    name: "Mom's House",
-    address: "789 Family Rd, Fort Wayne, IN 46814",
+    name: "Family",
+    address: "5678 Lima Rd, Fort Wayne, IN 46808",
     type: "Residential",
   },
 ];
 
-const mockReps = [
+const favoriteReps = [
   {
     id: 1,
-    name: "John D.",
+    name: "Marcus T.",
     rating: 4.9,
-    orders: 12,
-    specialties: ["Food Delivery", "Errands"],
-    image: "/placeholder-user.jpg",
+    orders: 47,
+    specialties: ["Food Delivery", "Grocery Shopping"],
+    image: "/assets/team/rep-1.jpg",
   },
   {
     id: 2,
-    name: "Sarah M.",
+    name: "Jessica L.",
     rating: 4.8,
-    orders: 8,
-    specialties: ["Moving Help", "Roadside"],
-    image: "/placeholder-user.jpg",
+    orders: 32,
+    specialties: ["Package Delivery", "Errands"],
+    image: "/assets/team/rep-2.jpg",
   },
 ];
 
@@ -56,7 +56,7 @@ export default function Favorites() {
           </Button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {mockLocations.map((location) => (
+          {favoriteLocations.map((location) => (
             <Card key={location.id} className="p-4">
               <div className="flex justify-between items-start">
                 <div>
@@ -85,7 +85,7 @@ export default function Favorites() {
           </h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {mockReps.map((rep) => (
+          {favoriteReps.map((rep) => (
             <Card key={rep.id} className="p-4">
               <div className="flex gap-4">
                 <div className="w-12 h-12 rounded-full overflow-hidden relative">
