@@ -1,18 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createCheckoutSession } from "../../../lib/stripe";
-import { auth } from "firebase-admin";
-import { initializeApp, getApps, cert } from "firebase-admin/app";
+import { adminAuth } from "../../../lib/firebaseAdmin";
 
 export const dynamic = "force-dynamic";
-
-// Initialize Firebase Admin if not already initialized
-if (!getApps().length) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
-  initializeApp({
-    credential: cert(serviceAccount),
-    projectId: process.env.FIREBASE_PROJECT_ID,
-  });
-}
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,7 +19,7 @@ export async function POST(req: NextRequest) {
     const token = authHeader.split('Bearer ')[1];
     let decodedToken;
     try {
-      decodedToken = await auth().verifyIdToken(token);
+      decodedToken = await adminAuth.verifyIdToken(token);
     } catch (error) {
       return NextResponse.json(
         { error: 'Unauthorized - Invalid token' },
