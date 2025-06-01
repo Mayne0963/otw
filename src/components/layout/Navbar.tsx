@@ -15,6 +15,7 @@ import {
   MapPin,
   Crown,
   HelpingHand,
+  Camera,
 } from "lucide-react";
 import { useCart } from "../../lib/context/CartContext";
 import { useAuth } from "../../contexts/AuthContext";
@@ -31,6 +32,11 @@ const mainNavItems = [
     icon: <Car className="mr-3 h-4 w-4" />,
   },
   { name: "Track", href: "/track", icon: <MapPin className="mr-3 h-4 w-4" /> },
+  {
+    name: "Screenshot Order",
+    href: "/order-screenshot",
+    icon: <Camera className="mr-3 h-4 w-4" />,
+  },
   {
     name: "Partners",
     href: "/partners",
