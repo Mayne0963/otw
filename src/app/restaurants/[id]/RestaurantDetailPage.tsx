@@ -7,7 +7,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useCart } from "../../../lib/context/CartContext"
 import { Star, ChevronLeft, Search, ShoppingBag } from "lucide-react"
-import { menuItems, categories } from "../../../data/menu-data"
+import { categories } from "../../../data/menu-data"
 import MenuItemCard from "../../../components/menu/MenuItemCard"
 import CategoryFilter from "../../../components/menu/CategoryFilter"
 import type { Restaurant } from "../../../types/restaurant"
@@ -24,7 +24,36 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
   const { itemCount, addItem } = cartContext || { itemCount: 0, addItem: undefined }
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
-  const [filteredItems, setFilteredItems] = useState(menuItems)
+  const [menuItems, setMenuItems] = useState<any[]>([])
+  const [filteredItems, setFilteredItems] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Fetch menu items for this restaurant
+  useEffect(() => {
+    async function fetchMenuItems() {
+      try {
+        setLoading(true)
+        const response = await fetch(`/api/restaurants/${restaurant.id}/menu`)
+        const data = await response.json()
+        
+        if (data.success) {
+          setMenuItems(data.menu || [])
+        } else {
+          setError('Failed to fetch menu items')
+        }
+      } catch (err) {
+        setError('Error fetching menu items')
+        console.error('Error fetching menu items:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (restaurant?.id) {
+      fetchMenuItems()
+    }
+  }, [restaurant?.id])
 
   // Get the correct image and logo based on restaurant id
   const getRestaurantImage = () => {
@@ -57,7 +86,7 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
     }
 
     setFilteredItems(filtered)
-  }, [selectedCategory, searchQuery])
+  }, [selectedCategory, searchQuery, menuItems])
 
   return (
     <div className="min-h-screen pb-20">
@@ -144,7 +173,22 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
       {/* Menu Items Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          {filteredItems.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C1272D] mx-auto mb-4"></div>
+              <p className="text-white">Loading menu items...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500 mb-4">{error}</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="bg-[#C1272D] text-white px-4 py-2 rounded hover:bg-[#A01F24]"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : filteredItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredItems.map((item) => (
                 <MenuItemCard

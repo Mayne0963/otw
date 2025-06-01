@@ -21,11 +21,21 @@ import {
 import { Badge } from "../../components/ui/badge";
 import { User, CreditCard, MapPin, Bell, Shield, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "../../contexts/AuthContext";
 
 export const dynamic = "force-dynamic";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("account");
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   // Mock user data
   const user = {
@@ -150,7 +160,11 @@ export default function ProfilePage() {
                 </nav>
               </CardContent>
               <CardFooter>
-                <Button variant="destructive" className="w-full">
+                <Button 
+                  variant="destructive" 
+                  className="w-full"
+                  onClick={handleSignOut}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </Button>

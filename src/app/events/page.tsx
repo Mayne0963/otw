@@ -15,7 +15,7 @@ import EventCard from "../../components/events/EventCard";
 import EventFilter from "../../components/events/EventFilter";
 import EventDetailModal from "../../components/events/EventDetailModal";
 import RegistrationModal from "../../components/events/RegistrationModal";
-import { events, categories, locations } from "../../data/event-data";
+import { categories, locations } from "../../data/event-data";
 import type { Event } from "../../types/event";
 
 export const dynamic = "force-dynamic";
@@ -30,6 +30,30 @@ export default function EventsPage() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch events data from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/events');
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        setEvents(data.data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   // Filter events based on search query, category, location, and time frame
   useEffect(() => {
@@ -78,7 +102,7 @@ export default function EventsPage() {
     });
 
     setFilteredEvents(filtered);
-  }, [searchQuery, selectedCategory, selectedLocation, timeFrame]);
+  }, [events, searchQuery, selectedCategory, selectedLocation, timeFrame]);
 
   // Handle event selection
   const handleEventSelect = (event: Event) => {
@@ -303,7 +327,21 @@ export default function EventsPage() {
             </div>
           </div>
 
-          {filteredEvents.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-foil"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-400 mb-4">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="btn-primary"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : filteredEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.map((event) => (
                 <EventCard

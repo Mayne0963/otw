@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { useState } from "react";
 import { useRewards } from "../../lib/context/RewardsContext";
-import { rewards } from "../../data/rewards-data";
+import { useEffect } from "react";
 import RewardCard from "../../components/rewards/RewardCard";
 import PointsTracker from "../../components/rewards/PointsTracker";
 import RewardHistory from "../../components/rewards/RewardHistory";
@@ -21,6 +21,30 @@ export default function RewardsPage() {
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [showRedeemModal, setShowRedeemModal] = useState(false);
   const [showSpinGame, setShowSpinGame] = useState(false);
+  const [rewards, setRewards] = useState<Reward[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch rewards data from API
+  useEffect(() => {
+    const fetchRewards = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/rewards');
+        if (!response.ok) {
+          throw new Error('Failed to fetch rewards');
+        }
+        const data = await response.json();
+        setRewards(data.data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRewards();
+  }, []);
 
   // Determine next tier details
   const getNextTierInfo = () => {
@@ -154,26 +178,42 @@ export default function RewardsPage() {
           {/* Rewards Tab */}
           {activeTab === "rewards" && (
             <div className="animate-fade-in">
-              {Object.entries(categoryGroups).map(
-                ([category, categoryRewards]) => (
-                  <div key={category} className="mb-12">
-                    <h2 className="text-2xl font-bold mb-6">
-                      {category.charAt(0).toUpperCase() + category.slice(1)}{" "}
-                      Rewards
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {categoryRewards.map((reward: Reward) => (
-                        <RewardCard
-                          key={reward.id}
-                          reward={reward}
-                          userPoints={points}
-                          onSelect={() => handleSelectReward(reward)}
-                          userTier={tier.toLowerCase()}
-                        />
-                      ))}
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-foil"></div>
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <p className="text-red-400 mb-4">{error}</p>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="btn-primary"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              ) : (
+                Object.entries(categoryGroups).map(
+                  ([category, categoryRewards]) => (
+                    <div key={category} className="mb-12">
+                      <h2 className="text-2xl font-bold mb-6">
+                        {category.charAt(0).toUpperCase() + category.slice(1)}{" "}
+                        Rewards
+                      </h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {categoryRewards.map((reward: Reward) => (
+                          <RewardCard
+                            key={reward.id}
+                            reward={reward}
+                            userPoints={points}
+                            onSelect={() => handleSelectReward(reward)}
+                            userTier={tier.toLowerCase()}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ),
+                  ),
+                )
               )}
             </div>
           )}

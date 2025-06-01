@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { restaurants } from "../../../data/restaurants-data";
 import RestaurantDetailPage from "./RestaurantDetailPage";
 import { notFound } from "next/navigation";
 
@@ -9,10 +8,27 @@ interface RestaurantPageProps {
   };
 }
 
+async function getRestaurant(id: string) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/restaurants`, {
+      cache: 'no-store'
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+      return data.data.find((r: any) => r.id === id);
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching restaurant:', error);
+    return null;
+  }
+}
+
 export async function generateMetadata({
   params,
 }: RestaurantPageProps): Promise<Metadata> {
-  const restaurant = restaurants.find((r) => r.id === params.id);
+  const restaurant = await getRestaurant(params.id);
 
   if (!restaurant) {
     return {
@@ -27,8 +43,8 @@ export async function generateMetadata({
   };
 }
 
-export default function RestaurantPage({ params }: RestaurantPageProps) {
-  const restaurant = restaurants.find((r) => r.id === params.id);
+export default async function RestaurantPage({ params }: RestaurantPageProps) {
+  const restaurant = await getRestaurant(params.id);
 
   if (!restaurant) {
     notFound();

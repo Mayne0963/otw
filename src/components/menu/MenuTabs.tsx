@@ -15,11 +15,23 @@ export default function MenuTabs() {
 
   useEffect(() => {
     async function fetchMenu() {
-      setLoading(true);
-      const res = await fetch("/api/fetch-menu", { method: "POST" });
-      const data = await res.json();
-      setMenu(data.menuItems || []);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const res = await fetch("/api/menu");
+        const data = await res.json();
+        
+        if (data.success) {
+          setMenu(data.data || []);
+        } else {
+          console.error('Failed to fetch menu:', data.error);
+          setMenu([]);
+        }
+      } catch (error) {
+        console.error('Error fetching menu:', error);
+        setMenu([]);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchMenu();
   }, []);

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { restaurants } from "../../data/restaurants-data";
 import {
   restaurantCategories,
   dietaryOptions,
@@ -24,8 +23,35 @@ export default function RestaurantsClientPage() {
     features: [],
   });
 
-  const [filteredRestaurants, setFilteredRestaurants] =
-    useState<Restaurant[]>(restaurants);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+  const [filteredRestaurants, setFilteredRestaurants] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch restaurants from API
+  useEffect(() => {
+    async function fetchRestaurants() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/restaurants');
+        const data = await response.json();
+        
+        if (data.success) {
+          setRestaurants(data.data);
+          setFilteredRestaurants(data.data);
+        } else {
+          setError('Failed to fetch restaurants');
+        }
+      } catch (err) {
+        setError('Error fetching restaurants');
+        console.error('Error fetching restaurants:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRestaurants();
+  }, []);
 
   // Filter restaurants based on selected filters
   useEffect(() => {
@@ -180,7 +206,22 @@ export default function RestaurantsClientPage() {
       {/* Restaurants Section */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          {filteredRestaurants.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#C1272D] mx-auto mb-4"></div>
+              <p className="text-white">Loading restaurants...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500 mb-4">{error}</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="bg-[#C1272D] text-white px-4 py-2 rounded hover:bg-[#A01F24]"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : filteredRestaurants.length > 0 ? (
             <>
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-white">
