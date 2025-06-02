@@ -1,407 +1,390 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
-
-import type { Metadata } from "next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
-import { Textarea } from "../../../components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../../components/ui/select";
-import { Badge } from "../../../components/ui/badge";
-import { Separator } from "../../../components/ui/separator";
-import { Calendar } from "../../../components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../../components/ui/popover";
-import {
-  CalendarIcon,
-  Clock,
-  MapPin,
-  ShoppingCart,
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  ClipboardList, 
+  MapPin, 
+  Clock, 
+  Star, 
+  Search, 
+  Filter, 
+  ArrowRight, 
+  CheckCircle, 
+  Info, 
+  Timer, 
+  Users, 
+  Shield, 
   CreditCard,
-  Info,
-  Star,
-  Shield,
-  Zap,
-  Users,
-  ArrowRight,
-  Search,
-  Store,
-  Truck,
-  Timer,
-  CheckCircle,
-  Apple,
-  Beef,
-  Milk,
+  Camera,
+  Upload,
   Package,
-} from "lucide-react";
-import {
-  FaShoppingCart,
-  FaMapMarkerAlt,
-  FaClock,
-  FaDollarSign,
-  FaStar,
-  FaHeart,
-  FaSearch,
-  FaFilter,
-  FaStore,
-  FaLeaf,
-  FaSnowflake,
-  FaFire,
-  FaAppleAlt,
-  FaBreadSlice,
-  FaCheese,
-  FaFish,
-  FaCarrot,
-  FaWineBottle,
-  FaShoppingBag,
-  FaTruck,
-  FaCheckCircle,
-  FaInfoCircle,
-  FaExclamationTriangle,
-  FaPlus,
-  FaMinus,
-  FaTrash,
-  FaEdit,
-  FaEye,
-  FaShare,
-  FaDownload,
-  FaPrint,
-} from "react-icons/fa";
-import Link from "next/link";
-import { useState } from "react";
+  ShoppingBag,
+  Utensils,
+  AlertCircle,
+  Phone,
+  MessageSquare,
+  Navigation,
+  DollarSign
+} from 'lucide-react';
 
-export default function GroceryPage() {
-  const [selectedStore, setSelectedStore] = useState(null);
-  const [deliveryAddress, setDeliveryAddress] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+export default function TaskPage() {
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTask, setSelectedTask] = useState(null);
 
-  const popularStores = [
+  const tasks = [
     {
-      id: "kroger",
-      name: "Kroger",
-      description: "Fresh produce, pantry essentials, and more",
-      deliveryTime: "30-45 min",
-      deliveryFee: "$2.99",
-      rating: 4.8,
-      image: "/images/stores/kroger.jpg",
-      categories: ["Produce", "Meat & Seafood", "Dairy", "Bakery"],
+      id: 1,
+      type: "grocery",
+      customer: "Sarah Johnson",
+      store: "Fresh Market",
+      address: "123 Oak Street, Downtown",
+      orderValue: "$87.50",
+      estimatedTime: "45 min",
+      priority: "high",
+      status: "pending",
+      screenshot: "/api/placeholder/300/200",
+      items: ["Organic bananas", "Whole milk", "Bread", "Chicken breast", "Spinach"],
+      notes: "Please check expiration dates carefully. Customer prefers organic when available.",
+      distance: "0.8 miles",
+      payment: "$12.50"
     },
     {
-      id: "walmart",
-      name: "Walmart Supercenter",
-      description: "Everyday low prices on groceries and household items",
-      deliveryTime: "45-60 min",
-      deliveryFee: "$3.95",
-      rating: 4.6,
-      image: "/images/stores/walmart.jpg",
-      categories: ["Groceries", "Household", "Electronics", "Pharmacy"],
+      id: 2,
+      type: "food",
+      customer: "Mike Chen",
+      store: "Tony's Pizza",
+      address: "456 Pine Avenue, Midtown",
+      orderValue: "$34.99",
+      estimatedTime: "25 min",
+      priority: "medium",
+      status: "in-progress",
+      screenshot: "/api/placeholder/300/200",
+      items: ["Large pepperoni pizza", "Garlic bread", "2L Coke"],
+      notes: "Order is ready for pickup. Customer requested extra napkins.",
+      distance: "1.2 miles",
+      payment: "$8.75"
     },
     {
-      id: "meijer",
-      name: "Meijer",
-      description: "One-stop shopping for fresh food and essentials",
-      deliveryTime: "35-50 min",
-      deliveryFee: "$4.95",
-      rating: 4.7,
-      image: "/images/stores/meijer.jpg",
-      categories: ["Fresh Food", "Organic", "Baby", "Pet Supplies"],
+      id: 3,
+      type: "grocery",
+      customer: "Emily Davis",
+      store: "SuperMart",
+      address: "789 Elm Drive, Suburbs",
+      orderValue: "$156.20",
+      estimatedTime: "60 min",
+      priority: "low",
+      status: "pending",
+      screenshot: "/api/placeholder/300/200",
+      items: ["Weekly groceries", "Cleaning supplies", "Baby formula", "Fresh vegetables"],
+      notes: "Large order. Customer will help unload. Baby formula is priority item.",
+      distance: "2.5 miles",
+      payment: "$18.50"
     },
+    {
+      id: 4,
+      type: "food",
+      customer: "David Wilson",
+      store: "Burger Palace",
+      address: "321 Main Street, City Center",
+      orderValue: "$28.75",
+      estimatedTime: "20 min",
+      priority: "high",
+      status: "completed",
+      screenshot: "/api/placeholder/300/200",
+      items: ["Double cheeseburger", "Large fries", "Milkshake"],
+      notes: "Delivered successfully. Customer was very satisfied.",
+      distance: "0.5 miles",
+      payment: "$7.25"
+    }
   ];
 
-  const categories = [
-    { name: "Fresh Produce", icon: Apple, color: "bg-green-500" },
-    { name: "Meat & Seafood", icon: Beef, color: "bg-red-500" },
-    { name: "Dairy & Eggs", icon: Milk, color: "bg-blue-500" },
-    { name: "Bakery", icon: Apple, color: "bg-yellow-500" },
-    { name: "Pantry", icon: Package, color: "bg-purple-500" },
-    { name: "Frozen", icon: Package, color: "bg-cyan-500" },
+  const taskTypes = [
+    { value: "all", label: "All Tasks", icon: ClipboardList, color: "bg-gray-500" },
+    { value: "grocery", label: "Grocery Pickup", icon: ShoppingBag, color: "bg-green-500" },
+    { value: "food", label: "Food Pickup", icon: Utensils, color: "bg-orange-500" }
   ];
+
+  const filteredTasks = tasks.filter(task => {
+    const matchesFilter = selectedFilter === 'all' || task.type === selectedFilter;
+    const matchesSearch = task.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         task.store.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'high': return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low': return 'bg-green-100 text-green-800 border-green-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'in-progress': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'completed': return 'bg-green-100 text-green-800 border-green-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
 
   return (
-    <div className="min-h-screen pb-20 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Enhanced Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-green-900 via-emerald-800 to-green-900">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent z-10"></div>
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-40"
-            style={{ backgroundImage: "url('/images/grocery-hero.jpg')" }}
-          ></div>
-          {/* Animated background elements */}
-          <div className="absolute top-20 left-10 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-1 h-1 bg-otw-gold rounded-full animate-ping"></div>
-          <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse delay-1000"></div>
-        </div>
-        
-        <div className="container mx-auto px-4 z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left side - Hero content */}
-            <div className="text-left">
-              <div className="inline-flex items-center bg-green-500/10 border border-green-500/20 rounded-full px-4 py-2 mb-6">
-                <Truck className="w-4 h-4 text-green-400 mr-2" />
-                <span className="text-green-400 text-sm font-medium">Free delivery on orders $35+</span>
-              </div>
-              <h1 className="text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight">
-                Fresh groceries
-                <span className="block text-green-400">delivered fast</span>
-              </h1>
-              <p className="text-xl text-gray-300 mb-8 max-w-lg">
-                Shop from your favorite local stores. Fresh produce, pantry essentials, and household items delivered to your door.
-              </p>
-              
-              {/* Quick stats */}
-              <div className="flex flex-wrap gap-6 mb-8">
-                <div className="flex items-center text-gray-300">
-                  <Timer className="w-5 h-5 text-green-400 mr-2" />
-                  <span>30-60 min delivery</span>
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-500/10"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-12">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Task Dashboard
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Manage your pickup tasks efficiently. View customer orders, screenshots, and complete deliveries with ease.
+            </p>
+            
+            {/* Enhanced Search Bar */}
+            <div className="max-w-2xl mx-auto mb-8">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-400" />
                 </div>
-                <div className="flex items-center text-gray-300">
-                  <Store className="w-5 h-5 text-green-400 mr-2" />
-                  <span>15+ local stores</span>
-                </div>
-                <div className="flex items-center text-gray-300">
-                  <CheckCircle className="w-5 h-5 text-green-400 mr-2" />
-                  <span>Fresh guarantee</span>
-                </div>
+                <Input
+                  type="text"
+                  placeholder="Search tasks by customer or store..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-blue-500 shadow-lg"
+                />
               </div>
             </div>
 
-            {/* Right side - Quick search form */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-              <h3 className="text-2xl font-bold text-white mb-6">Start shopping</h3>
-              
-              <div className="space-y-4">
-                <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <Input
-                    placeholder="Enter delivery address"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
-                  />
-                </div>
-                
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <Input
-                    placeholder="Search for products or stores"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
-                  />
-                </div>
-                
-                <Button 
-                  size="lg" 
-                  className="w-full h-14 text-lg font-semibold bg-green-500 hover:bg-green-600 text-white"
-                  disabled={!deliveryAddress}
-                >
-                  Find stores near me
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
+            {/* Quick Stats */}
+            <div className="flex flex-wrap justify-center gap-8 text-center">
+              <div className="flex items-center">
+                <ClipboardList className="w-6 h-6 text-blue-500 mr-2" />
+                <span className="text-gray-700 font-medium">{tasks.filter(t => t.status === 'pending').length} Pending Tasks</span>
+              </div>
+              <div className="flex items-center">
+                <Timer className="w-6 h-6 text-blue-500 mr-2" />
+                <span className="text-gray-700 font-medium">{tasks.filter(t => t.status === 'in-progress').length} In Progress</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle className="w-6 h-6 text-blue-500 mr-2" />
+                <span className="text-gray-700 font-medium">{tasks.filter(t => t.status === 'completed').length} Completed Today</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Store Selection Section */}
-      <section className="py-20 bg-gray-50">
+      {/* Task Management Section */}
+      <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Choose your store</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Shop from your favorite local stores with fast delivery and fresh guarantee.
-            </p>
-          </div>
-
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {popularStores.map((store) => (
-              <div
-                key={store.id}
-                className={`relative bg-white rounded-2xl overflow-hidden shadow-lg border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
-                  selectedStore === store.id
-                    ? "border-green-500 shadow-lg scale-105"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
-                onClick={() => setSelectedStore(store.id)}
-              >
-                {selectedStore === store.id && (
-                  <div className="absolute top-4 right-4 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center z-10">
-                    <CheckCircle className="w-5 h-5 text-white" />
-                  </div>
-                )}
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Filters Sidebar */}
+            <div className="lg:w-1/4">
+              <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 sticky top-6">
+                <h3 className="text-lg font-bold mb-4 text-gray-900">Filter Tasks</h3>
                 
-                <div className="h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                  <Store className="w-16 h-16 text-gray-400" />
-                </div>
-                
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xl font-bold text-gray-900">{store.name}</h3>
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="ml-1 text-sm font-medium text-gray-700">{store.rating}</span>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-gray-700 font-medium">Task Type</Label>
+                    <div className="mt-2 space-y-2">
+                      {taskTypes.map((type) => {
+                        const IconComponent = type.icon;
+                        return (
+                          <button
+                            key={type.value}
+                            onClick={() => setSelectedFilter(type.value)}
+                            className={`w-full flex items-center p-3 rounded-lg border transition-all duration-200 ${
+                              selectedFilter === type.value
+                                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                            }`}
+                          >
+                            <div className={`w-8 h-8 ${type.color} rounded-lg flex items-center justify-center mr-3`}>
+                              <IconComponent className="w-4 h-4 text-white" />
+                            </div>
+                            <span className="font-medium">{type.label}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                   
-                  <p className="text-gray-600 mb-4">{store.description}</p>
-                  
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                    <div className="flex items-center">
-                      <Timer className="w-4 h-4 mr-1" />
-                      {store.deliveryTime}
-                    </div>
-                    <div className="flex items-center">
-                      <Truck className="w-4 h-4 mr-1" />
-                      {store.deliveryFee} delivery
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {store.categories.slice(0, 3).map((category) => (
-                      <span
-                        key={category}
-                        className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full"
-                      >
-                        {category}
-                      </span>
-                    ))}
-                    {store.categories.length > 3 && (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                        +{store.categories.length - 3} more
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Categories Section */}
-          <div className="mt-16">
-            <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">Shop by category</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {categories.map((category) => {
-                const IconComponent = category.icon;
-                return (
-                  <div
-                    key={category.name}
-                    className="group bg-white rounded-xl p-6 text-center hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 hover:border-gray-300"
-                  >
-                    <div className={`w-12 h-12 ${category.color} rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                      <IconComponent className="w-6 h-6 text-white" />
-                    </div>
-                    <h4 className="font-semibold text-gray-900 text-sm">{category.name}</h4>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Detailed Shopping Form */}
-          <div className="max-w-3xl mx-auto mt-16">
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-              <h3 className="text-2xl font-bold text-gray-900 mb-8">Complete your order</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <Label className="text-gray-700 font-medium">When do you need this delivered?</Label>
-                  <div className="grid grid-cols-2 gap-3 mt-2">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="justify-start text-left font-normal h-12">
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          <span>Pick date</span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" initialFocus />
-                      </PopoverContent>
-                    </Popover>
-                    
+                  <div>
+                    <Label className="text-gray-700 font-medium">Priority</Label>
                     <Select>
-                      <SelectTrigger className="h-12">
-                        <SelectValue placeholder="Time" />
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="All priorities" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="asap">ASAP (30-60 min)</SelectItem>
-                        <SelectItem value="morning">Morning (8am-12pm)</SelectItem>
-                        <SelectItem value="afternoon">Afternoon (12pm-5pm)</SelectItem>
-                        <SelectItem value="evening">Evening (5pm-9pm)</SelectItem>
+                        <SelectItem value="high">High Priority</SelectItem>
+                        <SelectItem value="medium">Medium Priority</SelectItem>
+                        <SelectItem value="low">Low Priority</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-gray-700 font-medium">Status</Label>
+                    <Select>
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="All statuses" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="in-progress">In Progress</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-                
-                <div>
-                  <Label className="text-gray-700 font-medium">Budget Range</Label>
+              </div>
+            </div>
+
+            {/* Task Grid */}
+            <div className="lg:w-3/4">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Active Tasks ({filteredTasks.length})</h2>
+                <div className="flex items-center gap-2">
+                  <Filter className="w-5 h-5 text-gray-500" />
                   <Select>
-                    <SelectTrigger className="mt-2 h-12">
-                      <SelectValue placeholder="Select budget" />
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Sort by" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="under-50">Under $50</SelectItem>
-                      <SelectItem value="50-100">$50 - $100</SelectItem>
-                      <SelectItem value="100-200">$100 - $200</SelectItem>
-                      <SelectItem value="over-200">Over $200</SelectItem>
+                      <SelectItem value="priority">Priority</SelectItem>
+                      <SelectItem value="distance">Distance</SelectItem>
+                      <SelectItem value="payment">Payment</SelectItem>
+                      <SelectItem value="time">Estimated Time</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              <div className="mb-6">
-                <Label className="text-gray-700 font-medium">Shopping list (optional)</Label>
-                <Textarea
-                  placeholder="List the items you need, or upload your shopping list. Our personal shoppers will handle the rest!"
-                  className="mt-2 min-h-[120px]"
-                />
-              </div>
-
-              <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-6 rounded-xl mb-8 border border-green-500/20">
-                <div className="flex items-start">
-                  <Info className="w-6 h-6 text-green-600 mr-3 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">How it works</h4>
-                    <div className="space-y-2 text-sm text-gray-700">
-                      <div className="flex items-center">
-                        <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                        <span>Personal shopper carefully selects fresh items</span>
+              <div className="grid grid-cols-1 gap-6 mb-12">
+                {filteredTasks.map((task) => (
+                  <Card 
+                    key={task.id} 
+                    className="group hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-blue-500 overflow-hidden"
+                    onClick={() => setSelectedTask(task.id)}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex flex-col lg:flex-row gap-6">
+                        {/* Task Info */}
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start mb-4">
+                            <div>
+                              <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                                {task.customer}
+                              </h3>
+                              <p className="text-gray-600 flex items-center mt-1">
+                                <MapPin className="w-4 h-4 mr-1" />
+                                {task.store}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Badge className={`${getPriorityColor(task.priority)} border`}>
+                                {task.priority.toUpperCase()}
+                              </Badge>
+                              <Badge className={`${getStatusColor(task.status)} border`}>
+                                {task.status.replace('-', ' ').toUpperCase()}
+                              </Badge>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <div className="flex items-center text-sm text-gray-600">
+                              <DollarSign className="w-4 h-4 mr-1 text-green-500" />
+                              <span className="font-medium">{task.orderValue}</span>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-600">
+                              <Clock className="w-4 h-4 mr-1 text-blue-500" />
+                              <span>{task.estimatedTime}</span>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-600">
+                              <Navigation className="w-4 h-4 mr-1 text-purple-500" />
+                              <span>{task.distance}</span>
+                            </div>
+                            <div className="flex items-center text-sm text-gray-600">
+                              <CreditCard className="w-4 h-4 mr-1 text-orange-500" />
+                              <span className="font-medium">Earn {task.payment}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="mb-4">
+                            <p className="text-sm text-gray-600 mb-2">
+                              <strong>Address:</strong> {task.address}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              <strong>Items:</strong> {task.items.join(', ')}
+                            </p>
+                          </div>
+                          
+                          {task.notes && (
+                            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                              <div className="flex items-start">
+                                <Info className="w-4 h-4 text-yellow-600 mr-2 flex-shrink-0 mt-0.5" />
+                                <p className="text-sm text-yellow-800">{task.notes}</p>
+                              </div>
+                            </div>
+                          )}
+                          
+                          <div className="flex gap-2">
+                            {task.status === 'pending' && (
+                              <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+                                Accept Task
+                              </Button>
+                            )}
+                            {task.status === 'in-progress' && (
+                              <Button className="bg-green-500 hover:bg-green-600 text-white">
+                                Mark Complete
+                              </Button>
+                            )}
+                            <Button variant="outline" className="flex items-center">
+                              <Phone className="w-4 h-4 mr-2" />
+                              Call Customer
+                            </Button>
+                            <Button variant="outline" className="flex items-center">
+                              <MessageSquare className="w-4 h-4 mr-2" />
+                              Message
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        {/* Screenshot */}
+                        <div className="lg:w-80">
+                          <div className="bg-gray-100 rounded-lg p-4">
+                            <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                              <Camera className="w-4 h-4 mr-2" />
+                              Order Screenshot
+                            </h4>
+                            <img 
+                              src={task.screenshot} 
+                              alt="Order screenshot"
+                              className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                            />
+                            <Button variant="outline" className="w-full mt-3 text-sm">
+                              <Upload className="w-4 h-4 mr-2" />
+                              View Full Size
+                            </Button>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center">
-                        <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                        <span>Real-time updates and substitution approvals</span>
-                      </div>
-                      <div className="flex items-center">
-                        <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                        <span>Contactless delivery to your door</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="outline" className="flex-1 h-12">
-                  Save list for later
-                </Button>
-                <Link href="/checkout" className="flex-1">
-                  <Button className="w-full h-12 bg-green-500 hover:bg-green-600 text-white font-semibold">
-                    Start shopping
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </Link>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </div>
           </div>
@@ -413,31 +396,31 @@ export default function GroceryPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">
-              Why shoppers love OTW Grocery
+              Why drivers love OTW Tasks
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Experience the convenience of professional grocery shopping and delivery with our commitment to freshness and quality.
+              Experience efficient task management with clear instructions, fair compensation, and customer support.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="group text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Timer className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">Fast delivery</h3>
+              <h3 className="text-xl font-bold mb-3 text-white">Flexible scheduling</h3>
               <p className="text-gray-400">
-                Get fresh groceries delivered in 30-60 minutes from your favorite stores.
+                Choose your own hours and work when it's convenient for you.
               </p>
             </div>
 
             <div className="group text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Users className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <DollarSign className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">Personal shoppers</h3>
+              <h3 className="text-xl font-bold mb-3 text-white">Fair compensation</h3>
               <p className="text-gray-400">
-                Trained shoppers pick the freshest produce and contact you for substitutions.
+                Earn competitive rates with transparent pricing and instant payouts.
               </p>
             </div>
 
@@ -445,19 +428,19 @@ export default function GroceryPage() {
               <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Shield className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">Fresh guarantee</h3>
+              <h3 className="text-xl font-bold mb-3 text-white">Driver support</h3>
               <p className="text-gray-400">
-                100% satisfaction guarantee. If you're not happy, we'll make it right.
+                24/7 support team ready to help with any questions or issues.
               </p>
             </div>
 
             <div className="group text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <CreditCard className="w-10 h-10 text-white" />
+                <Users className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">Fair pricing</h3>
+              <h3 className="text-xl font-bold mb-3 text-white">Community driven</h3>
               <p className="text-gray-400">
-                Same store prices plus transparent service fees. No hidden markups.
+                Join a community of drivers helping local customers every day.
               </p>
             </div>
           </div>
@@ -466,31 +449,30 @@ export default function GroceryPage() {
           <div className="mt-16 text-center">
             <div className="inline-flex items-center bg-white/10 rounded-full px-8 py-4">
               <div className="flex -space-x-2 mr-4">
-                <div className="w-8 h-8 bg-green-500 rounded-full border-2 border-white"></div>
                 <div className="w-8 h-8 bg-blue-500 rounded-full border-2 border-white"></div>
+                <div className="w-8 h-8 bg-green-500 rounded-full border-2 border-white"></div>
                 <div className="w-8 h-8 bg-purple-500 rounded-full border-2 border-white"></div>
                 <div className="w-8 h-8 bg-orange-500 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white">+</div>
               </div>
-              <span className="text-white font-medium">Join 5,000+ families saving time with grocery delivery</span>
+              <span className="text-white font-medium">Join 500+ active drivers earning with OTW</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Tier Membership CTA */}
+      {/* Driver CTA */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl overflow-hidden shadow-2xl p-8 text-center">
+          <div className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl overflow-hidden shadow-2xl p-8 text-center">
             <h2 className="text-3xl font-bold mb-4 text-white">
-              Save More with Tier Membership
+              Ready to Start Earning?
             </h2>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join our Tier Membership program and enjoy exclusive benefits like
-              free delivery, member-only deals, and priority shopping.
+              Join our driver network and start earning money by helping customers with their pickup and delivery needs.
             </p>
-            <Link href="/tier">
-              <Button size="lg" className="bg-white text-green-600 hover:bg-gray-100 font-semibold">
-                Learn About Tier Membership
+            <Link href="/driver-signup">
+              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 font-semibold">
+                Become a Driver
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
