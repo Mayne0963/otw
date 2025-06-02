@@ -27,7 +27,7 @@ const footerSections = [
     title: "Support",
     links: [
       { name: "Help Center", path: "/help" },
-      { name: "Track Order", path: "/track" },
+
       { name: "Contact Us", path: "/contact" },
       { name: "Emergency", path: "/emergency" },
     ],

@@ -36,7 +36,7 @@ const mainNavItems = [
       href: "/restaurants",
     icon: <Utensils className="mr-3 h-4 w-4" />,
   },
-  { name: "Track Order", href: "/track", icon: <MapPin className="mr-3 h-4 w-4" /> },
+
   {
     name: "Loyalty",
     href: "/loyalty",
@@ -56,7 +56,7 @@ const mainNavItems = [
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth();
   const { items: cartItems } = useCart();
   const pathname = usePathname();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -85,7 +85,7 @@ const Navbar = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await logout();
       setMobileMenuOpen(false);
     } catch (error) {
       console.error("Error signing out:", error);

@@ -69,7 +69,7 @@ export default function Home() {
             </span>
             <br />
             <span className="bg-gradient-to-r from-otw-red via-otw-gold to-otw-red bg-clip-text text-transparent">
-              Black-Owned
+              Task Service
             </span>
           </h1>
           
@@ -79,10 +79,10 @@ export default function Home() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-            <Button variant="primary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
+            <Button href="/restaurants" variant="primary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
               Order From Broskis = Free Delivery
             </Button>
-            <Button href="/" variant="secondary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
+            <Button href="/grocery-delivery" variant="secondary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
               Order Groceries
             </Button>
           </div>
@@ -151,7 +151,7 @@ export default function Home() {
               icon="🛒"
               title="Grocery Delivery"
               description="Fresh groceries delivered to your door. Same-day delivery from local stores."
-              href="/grocery"
+              href="/grocery-delivery"
               buttonText="Shop Groceries"
               buttonVariant="secondary"
             />
@@ -159,7 +159,7 @@ export default function Home() {
               icon="🎉"
               title="Event Catering"
               description="Large orders for parties, meetings, and events. Professional catering services."
-              href="/catering"
+              href="/events"
               buttonText="Plan Event"
               buttonVariant="primary"
             />
@@ -191,9 +191,11 @@ export default function Home() {
                 placeholder="Enter your address"
                 className="md:w-64 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
               />
-              <Button variant="primary" className="px-8 py-4">
-                Search
-              </Button>
+              <Link href="/restaurants">
+                <Button variant="primary" className="px-8 py-4">
+                  Search
+                </Button>
+              </Link>
             </div>
             
             <MapSearch />
@@ -215,58 +217,24 @@ export default function Home() {
           
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             {['All', 'Pizza', 'Asian', 'Mexican', 'American', 'Healthy'].map((category) => (
-              <button
-                key={category}
-                className="px-6 py-3 bg-white/10 hover:bg-otw-gold/20 border border-white/20 hover:border-otw-gold/50 rounded-full text-white hover:text-otw-gold transition-all duration-300"
-              >
-                {category}
-              </button>
+              <Link key={category} href={`/restaurants?category=${category.toLowerCase()}`}>
+                <button
+                  className="px-6 py-3 bg-white/10 hover:bg-otw-gold/20 border border-white/20 hover:border-otw-gold/50 rounded-full text-white hover:text-otw-gold transition-all duration-300"
+                >
+                  {category}
+                </button>
+              </Link>
             ))}
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                name: "Tony's Pizza",
-                cuisine: "Italian",
-                rating: 4.8,
-                deliveryTime: "25-35 min",
-                image: "/restaurants/tonys.jpg"
-              },
-              {
-                name: "Pho Saigon",
-                cuisine: "Vietnamese",
-                rating: 4.9,
-                deliveryTime: "20-30 min",
-                image: "/restaurants/pho.jpg"
-              },
-              {
-                name: "Taco Libre",
-                cuisine: "Mexican",
-                rating: 4.7,
-                deliveryTime: "15-25 min",
-                image: "/restaurants/taco.jpg"
-              },
-              {
-                name: "Burger Haven",
+                name: "Broskis",
                 cuisine: "American",
-                rating: 4.6,
-                deliveryTime: "20-30 min",
-                image: "/restaurants/burger.jpg"
-              },
-              {
-                name: "Green Bowl",
-                cuisine: "Healthy",
-                rating: 4.8,
-                deliveryTime: "25-35 min",
-                image: "/restaurants/green.jpg"
-              },
-              {
-                name: "Sushi Zen",
-                cuisine: "Japanese",
                 rating: 4.9,
-                deliveryTime: "30-40 min",
-                image: "/restaurants/sushi.jpg"
+                deliveryTime: "15-25 min",
+                image: "/restaurants/broskis.jpg"
               }
             ].map((restaurant, index) => (
               <div key={index} className="otw-card group cursor-pointer">
@@ -287,9 +255,11 @@ export default function Home() {
                       <span className="text-yellow-400 mr-1">⭐</span>
                       <span className="text-white font-semibold">{restaurant.rating}</span>
                     </div>
-                    <Button variant="primary" className="text-sm px-4 py-2">
-                      Order Now
-                    </Button>
+                    <Link href={`/restaurant/${restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
+                      <Button variant="primary" className="text-sm px-4 py-2">
+                        Order Now
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -298,79 +268,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Live Order Tracking */}
-      <section className="py-24 bg-gradient-to-r from-otw-red/10 to-otw-gold/10">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Live Order Tracking
-            </h2>
-            <p className="text-xl text-white/80">
-              Real-time updates on your delivery
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              {
-                orderId: "#OTW-2847",
-                restaurant: "Tony's Pizza",
-                status: "Out for Delivery",
-                driver: "Mike Johnson",
-                eta: "8 minutes",
-                progress: 75
-              },
-              {
-                orderId: "#OTW-2848",
-                restaurant: "Pho Saigon",
-                status: "Preparing",
-                driver: "Sarah Chen",
-                eta: "15 minutes",
-                progress: 45
-              }
-            ].map((order, index) => (
-              <div key={index} className="otw-card">
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-lg font-bold text-white">{order.orderId}</h3>
-                      <p className="text-white/70">{order.restaurant}</p>
-                    </div>
-                    <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      order.status === 'Out for Delivery' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
-                    }`}>
-                      {order.status}
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm text-white/70 mb-2">
-                      <span>Progress</span>
-                      <span>{order.progress}%</span>
-                    </div>
-                    <div className="w-full bg-white/10 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-otw-red to-otw-gold h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${order.progress}%` }}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="text-white font-semibold">Driver: {order.driver}</p>
-                      <p className="text-white/70 text-sm">ETA: {order.eta}</p>
-                    </div>
-                    <Button variant="secondary" className="text-sm px-4 py-2">
-                      Track Live
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Interactive Map */}
       <section className="py-24">
@@ -512,14 +410,14 @@ export default function Home() {
                 Get the OTW App
               </h2>
               <p className="text-xl text-white/80 mb-8">
-                Download our app for exclusive deals, faster ordering, and real-time tracking
+                Download our app for exclusive deals, faster ordering, and secure delivery
               </p>
               
               <div className="grid md:grid-cols-3 gap-8 mb-12">
                 {[
                   { icon: "🎯", title: "Exclusive Deals", description: "App-only discounts and promotions" },
                   { icon: "⚡", title: "Faster Ordering", description: "One-tap reordering and saved favorites" },
-                  { icon: "📍", title: "Live Tracking", description: "Real-time GPS tracking of your order" }
+                  { icon: "🔒", title: "Secure Delivery", description: "Safe and reliable delivery service" }
                 ].map((feature, index) => (
                   <div key={index} className="text-center">
                     <div className="text-4xl mb-4">{feature.icon}</div>
@@ -589,7 +487,7 @@ export default function Home() {
               icon="🥘"
               title="Catering Services"
               description="Professional catering for events, meetings, and special occasions with premium presentation."
-              href="/catering"
+              href="/events"
               buttonText="Plan Event"
               buttonVariant="primary"
             />
@@ -597,7 +495,7 @@ export default function Home() {
               icon="🛍️"
               title="Personal Shopping"
               description="Grocery shopping, pharmacy runs, and retail pickup services delivered to your door."
-              href="/shopping"
+              href="/shop"
               buttonText="Start Shopping"
               buttonVariant="secondary"
             />
@@ -648,9 +546,11 @@ export default function Home() {
                   placeholder="Phone (optional)"
                   className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold backdrop-blur-sm"
                 />
-                <Button variant="primary" className="px-8 py-4 whitespace-nowrap">
-                  Join Now
-                </Button>
+                <Link href="/signup">
+                  <Button variant="primary" className="px-8 py-4 whitespace-nowrap">
+                    Join Now
+                  </Button>
+                </Link>
               </form>
             </div>
           </div>
