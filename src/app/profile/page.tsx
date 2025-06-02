@@ -1,7 +1,7 @@
 "use client";
 
 import type { Metadata } from "next";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -22,82 +22,154 @@ import { Badge } from "../../components/ui/badge";
 import { User, CreditCard, MapPin, Bell, Shield, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "../../contexts/AuthContext";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../../lib/firebase-config";
+import type { UserProfile } from "../../types";
 
 export const dynamic = "force-dynamic";
 
+interface Address {
+  id: string;
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  default: boolean;
+}
+
+interface PaymentMethod {
+  id: string;
+  type: string;
+  last4: string;
+  expiry: string;
+  default: boolean;
+}
+
+interface UserData {
+  name: string;
+  email: string;
+  phone?: string;
+  avatar?: string;
+  memberSince: string;
+  tier: string;
+  rewardPoints: number;
+  addresses: Address[];
+  paymentMethods: PaymentMethod[];
+}
+
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("account");
-  const { signOut } = useAuth();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { user, logout } = useAuth();
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await logout();
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
 
-  // User data - will be populated from authentication context
-  const user = {
-    name: "Alex Johnson",
-    email: "alex.johnson@email.com",
-    phone: "(260) 555-0123",
-    avatar: "/assets/users/alex-johnson.jpg",
-    memberSince: "January 2024",
-    tier: "Gold",
-    addresses: [
-      {
-        id: 1,
-        name: "Home",
-        street: "1234 Main Street",
-        city: "Fort Wayne",
-        state: "IN",
-        zip: "46802",
-        default: true,
-      },
-      {
-        id: 2,
-        name: "Work",
-        street: "567 Jefferson Blvd",
-        city: "Fort Wayne",
-        state: "IN",
-        zip: "46801",
-        default: false,
-      },
-      {
-        id: 3,
-        name: "University",
-        street: "2101 E Coliseum Blvd",
-        city: "Fort Wayne",
-        state: "IN",
-        zip: "46805",
-        default: false,
-      },
-    ],
-    paymentMethods: [
-      {
-        id: 1,
-        type: "Visa",
-        last4: "4567",
-        expiry: "08/27",
-        default: true,
-      },
-      {
-        id: 2,
-        type: "Mastercard",
-        last4: "8901",
-        expiry: "11/26",
-        default: false,
-      },
-      {
-        id: 3,
-        type: "Discover",
-        last4: "2345",
-        expiry: "05/28",
-        default: false,
-      },
-    ],
-  };
+  // Fetch user profile data from Firebase
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user?.uid) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch user profile from Firestore
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        let profileData: Partial<UserProfile> = {};
+        if (userDoc.exists()) {
+          profileData = userDoc.data() as UserProfile;
+        }
+
+        // Fetch user addresses
+        const addressesQuery = query(
+          collection(db, 'addresses'),
+          where('userId', '==', user.uid)
+        );
+        const addressesSnapshot = await getDocs(addressesQuery);
+        const addresses: Address[] = addressesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Address[];
+
+        // Fetch user payment methods
+        const paymentMethodsQuery = query(
+          collection(db, 'paymentMethods'),
+          where('userId', '==', user.uid)
+        );
+        const paymentMethodsSnapshot = await getDocs(paymentMethodsQuery);
+        const paymentMethods: PaymentMethod[] = paymentMethodsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as PaymentMethod[];
+
+        // Calculate member since date
+        const memberSince = profileData.createdAt 
+          ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long' 
+            })
+          : 'Recently';
+
+        // Determine tier based on reward points
+        const points = profileData.rewardPoints || 0;
+        let tier = 'Bronze';
+        if (points >= 1000) tier = 'Gold';
+        else if (points >= 500) tier = 'Silver';
+
+        setUserData({
+          name: user.displayName || profileData.displayName || 'User',
+          email: user.email || profileData.email || '',
+          phone: profileData.phone || '',
+          avatar: user.photoURL || profileData.photoURL || '',
+          memberSince,
+          tier,
+          rewardPoints: points,
+          addresses,
+          paymentMethods
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pb-20 pt-24 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-otw-gold mx-auto mb-4"></div>
+          <p className="text-lg">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !userData) {
+    return (
+      <div className="min-h-screen pb-20 pt-24 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg mb-4">Please sign in to view your profile.</p>
+          <Link href="/auth/signin">
+            <Button>Sign In</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-20 pt-24">
@@ -110,22 +182,22 @@ export default function ProfilePage() {
                 <div className="flex flex-col items-center">
                   <Avatar className="h-24 w-24 mb-4">
                     <AvatarImage
-                      src={user.avatar || "/assets/users/default-avatar.jpg"}
-                      alt={user.name}
+                      src={userData.avatar || "/assets/users/default-avatar.jpg"}
+                      alt={userData.name}
                     />
                     <AvatarFallback>
-                      {user.name
+                      {userData.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <CardTitle>{user.name}</CardTitle>
+                  <CardTitle>{userData.name}</CardTitle>
                   <CardDescription>
-                    Member since {user.memberSince}
+                    Member since {userData.memberSince}
                   </CardDescription>
                   <Badge className="mt-2 bg-otw-gold text-black">
-                    {user.tier} Member
+                    {userData.tier} Member
                   </Badge>
                 </div>
               </CardHeader>
@@ -194,7 +266,11 @@ export default function ProfilePage() {
               <CardContent>
                 <div className="flex items-center justify-between mb-4">
                   <span>Current Tier:</span>
-                  <Badge className="bg-otw-gold text-black">{user.tier}</Badge>
+                  <Badge className="bg-otw-gold text-black">{userData.tier}</Badge>
+                </div>
+                <div className="flex items-center justify-between mb-4">
+                  <span>Reward Points:</span>
+                  <span className="font-semibold">{userData.rewardPoints}</span>
                 </div>
                 <Link href="/tier">
                   <Button variant="outline" className="w-full">
@@ -223,7 +299,7 @@ export default function ProfilePage() {
                         <Label htmlFor="name">Full Name</Label>
                         <Input
                           id="name"
-                          defaultValue={user.name}
+                          defaultValue={userData.name}
                           className="mt-1"
                         />
                       </div>
@@ -232,7 +308,7 @@ export default function ProfilePage() {
                         <Input
                           id="email"
                           type="email"
-                          defaultValue={user.email}
+                          defaultValue={userData.email}
                           className="mt-1"
                         />
                       </div>
@@ -243,7 +319,7 @@ export default function ProfilePage() {
                         <Label htmlFor="phone">Phone Number</Label>
                         <Input
                           id="phone"
-                          defaultValue={user.phone}
+                          defaultValue={userData.phone || ''}
                           className="mt-1"
                         />
                       </div>
@@ -272,7 +348,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {user.addresses.map((address) => (
+                    {userData.addresses.map((address) => (
                       <div
                         key={address.id}
                         className="bg-gray-900 p-4 rounded-lg border border-gray-800"
@@ -314,7 +390,7 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-6">
-                    {user.paymentMethods.map((method) => (
+                    {userData.paymentMethods.map((method) => (
                       <div
                         key={method.id}
                         className="bg-gray-900 p-4 rounded-lg border border-gray-800"
