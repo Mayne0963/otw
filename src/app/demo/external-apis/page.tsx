@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = "force-dynamic";
+
 import type { Metadata } from "next";
 import React, { useState } from 'react';
 import { useExternalAPIs } from '../../../hooks/useExternalAPIs';

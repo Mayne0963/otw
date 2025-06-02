@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import ScreenshotOrderForm from "../../components/orders/ScreenshotOrderForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";

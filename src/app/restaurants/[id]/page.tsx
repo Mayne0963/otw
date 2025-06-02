@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import RestaurantDetailPage from "./RestaurantDetailPage";
+
+export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 
 interface RestaurantPageProps {
