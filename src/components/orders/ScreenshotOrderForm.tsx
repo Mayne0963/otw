@@ -2,14 +2,15 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
-  FaCamera,
+  FaArrowLeft,
   FaUpload,
-  FaTrash,
   FaCheck,
   FaExclamationTriangle,
-  FaArrowLeft,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaSpinner,
 } from "react-icons/fa";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
@@ -53,11 +54,11 @@ export default function ScreenshotOrderForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
+    
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
@@ -137,7 +138,7 @@ export default function ScreenshotOrderForm() {
     }
 
     if (!formData.screenshot) {
-      newErrors.screenshot = "Screenshot of your order is required";
+      newErrors.screenshot = "Screenshot is required";
     }
 
     setErrors(newErrors);
@@ -146,7 +147,7 @@ export default function ScreenshotOrderForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       setError("Please correct the errors in the form");
       return;
@@ -268,30 +269,30 @@ export default function ScreenshotOrderForm() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-4">
                 <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-white font-bold text-sm">1</span>
+                  <span className="text-white text-sm font-bold">1</span>
                 </div>
-                <h3 className="font-semibold text-sm mb-1">Upload Screenshot</h3>
-                <p className="text-xs text-gray-400">Share your order details</p>
+                <h3 className="font-semibold mb-1">Upload Screenshot</h3>
+                <p className="text-xs text-gray-400">Share your order image</p>
               </div>
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-4">
                 <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-white font-bold text-sm">2</span>
+                  <span className="text-white text-sm font-bold">2</span>
                 </div>
-                <h3 className="font-semibold text-sm mb-1">We Confirm</h3>
-                <p className="text-xs text-gray-400">Call within 15-30 mins</p>
+                <h3 className="font-semibold mb-1">We Review</h3>
+                <p className="text-xs text-gray-400">Confirm details with you</p>
               </div>
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-4">
                 <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-white font-bold text-sm">3</span>
+                  <span className="text-white text-sm font-bold">3</span>
                 </div>
-                <h3 className="font-semibold text-sm mb-1">We Order & Pickup</h3>
-                <p className="text-xs text-gray-400">Handle everything for you</p>
+                <h3 className="font-semibold mb-1">We Order</h3>
+                <p className="text-xs text-gray-400">Place & pick up for you</p>
               </div>
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-4">
                 <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-white font-bold text-sm">4</span>
+                  <span className="text-white text-sm font-bold">4</span>
                 </div>
-                <h3 className="font-semibold text-sm mb-1">Fast Delivery</h3>
+                <h3 className="font-semibold mb-1">Fast Delivery</h3>
                 <p className="text-xs text-gray-400">Right to your door</p>
               </div>
             </div>
@@ -305,6 +306,7 @@ export default function ScreenshotOrderForm() {
           </Alert>
         )}
 
+        {/* Main Form */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Form */}
           <div className="lg:col-span-2">
@@ -315,319 +317,327 @@ export default function ScreenshotOrderForm() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Step 1: Customer Information */}
-              <div className="space-y-6">
-                <div className="border-l-4 border-orange-500 pl-4">
-                  <h3 className="text-xl font-semibold mb-2">Step 1: Your Contact Information</h3>
-                  <p className="text-gray-400 text-sm">We need this to contact you about your order</p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="customerName" className="text-base font-medium">Full Name *</Label>
-                    <Input
-                      id="customerName"
-                      name="customerName"
-                      value={formData.customerName}
-                      onChange={handleInputChange}
-                      className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerName ? 'border-red-500' : ''}`}
-                      placeholder="Enter your full name"
-                    />
-                    {errors.customerName && (
-                      <p className="text-red-500 text-sm mt-1">{errors.customerName}</p>
-                    )}
-                  </div>
+                  {/* Step 1: Customer Information */}
+                  <div className="space-y-6">
+                    <div className="border-l-4 border-orange-500 pl-4">
+                      <h3 className="text-xl font-semibold mb-2">Step 1: Your Information</h3>
+                      <p className="text-gray-400 text-sm">We need this to contact you about your order</p>
+                    </div>
 
-                  <div>
-                    <Label htmlFor="customerPhone" className="text-base font-medium">Phone Number *</Label>
-                    <Input
-                      id="customerPhone"
-                      name="customerPhone"
-                      value={formData.customerPhone}
-                      onChange={handleInputChange}
-                      className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerPhone ? 'border-red-500' : ''}`}
-                      placeholder="(555) 123-4567"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">We'll call you to confirm your order</p>
-                    {errors.customerPhone && (
-                      <p className="text-red-500 text-sm mt-1">{errors.customerPhone}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="customerEmail" className="text-base font-medium">Email Address *</Label>
-                  <Input
-                    id="customerEmail"
-                    name="customerEmail"
-                    type="email"
-                    value={formData.customerEmail}
-                    onChange={handleInputChange}
-                    className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerEmail ? 'border-red-500' : ''}`}
-                    placeholder="your.email@example.com"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">For order updates and confirmation</p>
-                  {errors.customerEmail && (
-                    <p className="text-red-500 text-sm mt-1">{errors.customerEmail}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Step 2: Restaurant Information */}
-              <div className="space-y-6">
-                <div className="border-l-4 border-orange-500 pl-4">
-                  <h3 className="text-xl font-semibold mb-2">Step 2: Restaurant & Order Details</h3>
-                  <p className="text-gray-400 text-sm">Tell us where to pick up your order</p>
-                </div>
-                
-                <div>
-                  <Label htmlFor="restaurantName" className="text-base font-medium">Restaurant Name *</Label>
-                  <Input
-                    id="restaurantName"
-                    name="restaurantName"
-                    value={formData.restaurantName}
-                    onChange={handleInputChange}
-                    className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.restaurantName ? 'border-red-500' : ''}`}
-                    placeholder="e.g., McDonald's, Chipotle, Local Diner"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">The name of the restaurant you're ordering from</p>
-                  {errors.restaurantName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.restaurantName}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="pickupLocation" className="text-base font-medium">Pickup Location *</Label>
-                  <Input
-                    id="pickupLocation"
-                    name="pickupLocation"
-                    value={formData.pickupLocation}
-                    onChange={handleInputChange}
-                    className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.pickupLocation ? 'border-red-500' : ''}`}
-                    placeholder="123 Main St, City, State or specific location details"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Full address or specific location where we should pick up</p>
-                  {errors.pickupLocation && (
-                    <p className="text-red-500 text-sm mt-1">{errors.pickupLocation}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="estimatedTotal" className="text-base font-medium">Order Total *</Label>
-                  <Input
-                    id="estimatedTotal"
-                    name="estimatedTotal"
-                    value={formData.estimatedTotal}
-                    onChange={handleInputChange}
-                    className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.estimatedTotal ? 'border-red-500' : ''}`}
-                    placeholder="$25.99"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Total amount from your order (including tax & tip)</p>
-                  {errors.estimatedTotal && (
-                    <p className="text-red-500 text-sm mt-1">{errors.estimatedTotal}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Step 3: Screenshot Upload */}
-              <div className="space-y-6">
-                <div className="border-l-4 border-orange-500 pl-4">
-                  <h3 className="text-xl font-semibold mb-2">Step 3: Upload Your Order Screenshot *</h3>
-                  <p className="text-gray-400 text-sm">
-                    Upload a clear screenshot showing your order details, total amount, and restaurant info
-                  </p>
-                </div>
-                
-                {/* Screenshot Tips */}
-                <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-300 mb-2">📸 What makes a good screenshot?</h4>
-                  <ul className="text-sm text-blue-200 space-y-1">
-                    <li>• Order details and items are clearly visible</li>
-                    <li>• Total amount is shown</li>
-                    <li>• Restaurant name and location are visible</li>
-                    <li>• Screenshot is not blurry or cut off</li>
-                  </ul>
-                </div>
-                
-                {!formData.screenshotPreview ? (
-                  <div
-                    className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                      errors.screenshot ? 'border-red-500' : 'border-[#333333] hover:border-[#555555]'
-                    }`}
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <FaUpload className="text-4xl text-gray-400 mx-auto mb-4" />
-                    <p className="text-lg font-medium mb-2">Upload Screenshot</p>
-                    <p className="text-gray-400 text-sm">
-                      Click to select or drag and drop your order screenshot
-                    </p>
-                    <p className="text-gray-500 text-xs mt-2">
-                      Supports: JPG, PNG, WebP (Max 10MB)
-                    </p>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <div className="border border-[#333333] rounded-lg p-4">
-                      <div className="relative w-full h-64 mb-4">
-                        <Image
-                          src={formData.screenshotPreview}
-                          alt="Order screenshot preview"
-                          fill
-                          className="object-contain rounded"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="customerName" className="text-base font-medium mb-2 block">
+                          Full Name *
+                        </Label>
+                        <Input
+                          id="customerName"
+                          name="customerName"
+                          type="text"
+                          value={formData.customerName}
+                          onChange={handleInputChange}
+                          className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerName ? 'border-red-500' : ''}`}
+                          placeholder="John Doe"
                         />
+                        {errors.customerName && (
+                          <p className="text-red-500 text-sm mt-1">{errors.customerName}</p>
+                        )}
                       </div>
-                      <div className="flex justify-between items-center">
-                        <p className="text-sm text-gray-400">
-                          {formData.screenshot?.name} ({Math.round((formData.screenshot?.size || 0) / 1024)}KB)
-                        </p>
-                        <Button
-                          type="button"
-                          onClick={removeScreenshot}
-                          variant="outline"
-                          size="sm"
-                          className="border-red-500 text-red-500 hover:bg-red-500/10"
-                        >
-                          <FaTrash className="mr-2" /> Remove
-                        </Button>
+
+                      <div>
+                        <Label htmlFor="customerPhone" className="text-base font-medium mb-2 block">
+                          Phone Number *
+                        </Label>
+                        <Input
+                          id="customerPhone"
+                          name="customerPhone"
+                          type="tel"
+                          value={formData.customerPhone}
+                          onChange={handleInputChange}
+                          className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerPhone ? 'border-red-500' : ''}`}
+                          placeholder="(555) 123-4567"
+                        />
+                        {errors.customerPhone && (
+                          <p className="text-red-500 text-sm mt-1">{errors.customerPhone}</p>
+                        )}
                       </div>
                     </div>
+
+                    <div>
+                      <Label htmlFor="customerEmail" className="text-base font-medium mb-2 block">
+                        Email Address *
+                      </Label>
+                      <Input
+                        id="customerEmail"
+                        name="customerEmail"
+                        type="email"
+                        value={formData.customerEmail}
+                        onChange={handleInputChange}
+                        className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerEmail ? 'border-red-500' : ''}`}
+                        placeholder="john@example.com"
+                      />
+                      {errors.customerEmail && (
+                        <p className="text-red-500 text-sm mt-1">{errors.customerEmail}</p>
+                      )}
+                    </div>
                   </div>
-                )}
-                
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                
-                {errors.screenshot && (
-                  <p className="text-red-500 text-sm">{errors.screenshot}</p>
-                )}
-              </div>
 
-              {/* Step 4: Special Instructions */}
-              <div className="space-y-4">
-                <div className="border-l-4 border-orange-500 pl-4">
-                  <h3 className="text-xl font-semibold mb-2">Step 4: Additional Notes (Optional)</h3>
-                  <p className="text-gray-400 text-sm">Any special requests or important details we should know</p>
-                </div>
-                
-                <div>
-                  <Label htmlFor="specialInstructions" className="text-base font-medium">Special Instructions</Label>
-                  <Textarea
-                    id="specialInstructions"
-                    name="specialInstructions"
-                    value={formData.specialInstructions}
-                    onChange={handleInputChange}
-                    className="bg-[#111111] border-[#333333] min-h-[120px] text-base"
-                    placeholder="Examples: No onions, extra sauce on the side, call when you arrive, etc."
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Dietary restrictions, delivery preferences, or other special requests</p>
-                </div>
-              </div>
+                  {/* Step 2: Restaurant Information */}
+                  <div className="space-y-6">
+                    <div className="border-l-4 border-orange-500 pl-4">
+                      <h3 className="text-xl font-semibold mb-2">Step 2: Restaurant Details</h3>
+                      <p className="text-gray-400 text-sm">Tell us where to pick up your order</p>
+                    </div>
 
-              {/* Submit Button */}
-              <div className="pt-4">
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full btn-primary py-4 text-lg font-semibold"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Submitting Your Order...
-                    </>
-                  ) : (
-                    <>
-                      <FaCamera className="mr-2" />
-                      Submit Screenshot Order
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-      
-      {/* Sidebar with helpful information */}
-      <div className="lg:col-span-1 space-y-6">
-        {/* Important Notice */}
-        <Card className="bg-yellow-500/10 border-yellow-500/20">
-          <CardHeader>
-            <CardTitle className="text-yellow-300 flex items-center gap-2">
-              <FaExclamationTriangle className="h-5 w-5" />
-              Important Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="text-yellow-200 text-sm space-y-2">
-              <p><strong>📞 We'll call you:</strong> Within 15-30 minutes to confirm details</p>
-              <p><strong>💰 Payment:</strong> Collected when we pick up your order</p>
-              <p><strong>🚗 Service fee:</strong> Will be discussed during confirmation call</p>
-              <p><strong>⏰ Processing:</strong> Orders handled Mon-Sun, 10 AM - 10 PM</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* How it Works */}
-        <Card className="bg-[#1A1A1A] border-[#333333]">
-          <CardHeader>
-            <CardTitle className="text-green-400">✅ How It Works</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3 text-sm">
-              <div className="flex gap-3">
-                <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
-                <div>
-                  <p className="font-medium">You submit this form</p>
-                  <p className="text-gray-400 text-xs">With your screenshot and details</p>
+                    <div>
+                      <Label htmlFor="restaurantName" className="text-base font-medium mb-2 block">
+                        Restaurant Name *
+                      </Label>
+                      <Input
+                        id="restaurantName"
+                        name="restaurantName"
+                        type="text"
+                        value={formData.restaurantName}
+                        onChange={handleInputChange}
+                        className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.restaurantName ? 'border-red-500' : ''}`}
+                        placeholder="McDonald's, Chipotle, etc."
+                      />
+                      {errors.restaurantName && (
+                        <p className="text-red-500 text-sm mt-1">{errors.restaurantName}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="pickupLocation" className="text-base font-medium mb-2 block">
+                        Pickup Location *
+                      </Label>
+                      <Input
+                        id="pickupLocation"
+                        name="pickupLocation"
+                        type="text"
+                        value={formData.pickupLocation}
+                        onChange={handleInputChange}
+                        className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.pickupLocation ? 'border-red-500' : ''}`}
+                        placeholder="123 Main St, Fort Wayne, IN"
+                      />
+                      {errors.pickupLocation && (
+                        <p className="text-red-500 text-sm mt-1">{errors.pickupLocation}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="estimatedTotal" className="text-base font-medium mb-2 block">
+                        Estimated Total *
+                      </Label>
+                      <Input
+                        id="estimatedTotal"
+                        name="estimatedTotal"
+                        type="text"
+                        value={formData.estimatedTotal}
+                        onChange={handleInputChange}
+                        className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.estimatedTotal ? 'border-red-500' : ''}`}
+                        placeholder="$25.99"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Total amount from your order (including tax & tip)</p>
+                      {errors.estimatedTotal && (
+                        <p className="text-red-500 text-sm mt-1">{errors.estimatedTotal}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Step 3: Screenshot Upload */}
+                  <div className="space-y-6">
+                    <div className="border-l-4 border-orange-500 pl-4">
+                      <h3 className="text-xl font-semibold mb-2">Step 3: Upload Screenshot</h3>
+                      <p className="text-gray-400 text-sm">Share a clear image of your order details</p>
+                    </div>
+
+                    {/* Screenshot Tips */}
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                      <h4 className="font-medium text-blue-300 mb-2">📸 Screenshot Tips:</h4>
+                      <ul className="text-sm text-blue-200 space-y-1">
+                        <li>• Include restaurant name, items, and total price</li>
+                        <li>• Make sure text is clear and readable</li>
+                        <li>• Include any special instructions or modifications</li>
+                        <li>• Screenshots from any food delivery app work!</li>
+                      </ul>
+                    </div>
+
+                    {!formData.screenshotPreview ? (
+                      <div
+                        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                          errors.screenshot ? 'border-red-500 bg-red-500/5' : 'border-[#333333] hover:border-orange-500 hover:bg-orange-500/5'
+                        }`}
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <FaUpload className="mx-auto text-4xl text-gray-400 mb-4" />
+                        <h3 className="text-lg font-medium mb-2">Upload Your Screenshot</h3>
+                        <p className="text-gray-400 mb-4">
+                          Click here or drag and drop your order screenshot
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Supports: JPG, PNG, WebP (Max 10MB)
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <div className="border border-[#333333] rounded-lg p-4">
+                          <div className="relative w-full h-64 mb-4">
+                            <img
+                              src={formData.screenshotPreview}
+                              alt="Order screenshot"
+                              className="w-full h-full object-contain rounded-lg bg-[#111111]"
+                            />
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-400">
+                              {formData.screenshot?.name} ({Math.round((formData.screenshot?.size || 0) / 1024)}KB)
+                            </span>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={removeScreenshot}
+                              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+                    {errors.screenshot && (
+                      <p className="text-red-500 text-sm">{errors.screenshot}</p>
+                    )}
+                  </div>
+
+                  {/* Step 4: Special Instructions */}
+                  <div className="space-y-4">
+                    <div className="border-l-4 border-orange-500 pl-4">
+                      <h3 className="text-xl font-semibold mb-2">Step 4: Additional Notes (Optional)</h3>
+                      <p className="text-gray-400 text-sm">Any special delivery instructions or notes</p>
+                    </div>
+
+                    <div>
+                      <Textarea
+                        id="specialInstructions"
+                        name="specialInstructions"
+                        value={formData.specialInstructions}
+                        onChange={handleInputChange}
+                        className="bg-[#111111] border-[#333333] min-h-[100px] text-base"
+                        placeholder="Leave at door, call when arriving, etc."
+                      />
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="pt-4">
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg h-auto"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          Submitting Order...
+                        </>
+                      ) : (
+                        <>
+                          <FaCheck className="mr-2" />
+                          Submit Screenshot Order
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Sidebar with helpful information */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Important Notice */}
+            <Card className="bg-yellow-500/10 border-yellow-500/20">
+              <CardHeader>
+                <CardTitle className="text-yellow-300 flex items-center gap-2">
+                  <FaExclamationTriangle className="h-5 w-5" />
+                  Important Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-yellow-200 text-sm space-y-2">
+                  <p><strong>📞 We'll call you:</strong> Within 15-30 minutes to confirm details</p>
+                  <p><strong>💰 Payment:</strong> Collected when we pick up your order</p>
+                  <p><strong>🚗 Service fee:</strong> Will be discussed during confirmation call</p>
+                  <p><strong>⏰ Processing:</strong> Orders handled Mon-Sun, 10 AM - 10 PM</p>
                 </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
-                <div>
-                  <p className="font-medium">We review & call you</p>
-                  <p className="text-gray-400 text-xs">To confirm details and payment</p>
+              </CardContent>
+            </Card>
+            
+            {/* How it Works */}
+            <Card className="bg-[#1A1A1A] border-[#333333]">
+              <CardHeader>
+                <CardTitle className="text-green-400">✅ How It Works</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3 text-sm">
+                  <div className="flex gap-3">
+                    <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</span>
+                    <div>
+                      <p className="font-medium">You submit this form</p>
+                      <p className="text-gray-400 text-xs">With your screenshot and details</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</span>
+                    <div>
+                      <p className="font-medium">We review & call you</p>
+                      <p className="text-gray-400 text-xs">To confirm details and payment</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
+                    <div>
+                      <p className="font-medium">We place & pick up</p>
+                      <p className="text-gray-400 text-xs">Your order from the restaurant</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</span>
+                    <div>
+                      <p className="font-medium">Fast delivery</p>
+                      <p className="text-gray-400 text-xs">Right to your door</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</span>
-                <div>
-                  <p className="font-medium">We place & pick up</p>
-                  <p className="text-gray-400 text-xs">Your order from the restaurant</p>
+              </CardContent>
+            </Card>
+            
+            {/* Contact Info */}
+            <Card className="bg-[#1A1A1A] border-[#333333]">
+              <CardHeader>
+                <CardTitle className="text-blue-400">📞 Need Help?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm">
+                  <p><strong>Call us:</strong> (555) 123-4567</p>
+                  <p><strong>Text us:</strong> (555) 123-4567</p>
+                  <p><strong>Email:</strong> support@ezyzip.com</p>
+                  <p className="text-gray-400 text-xs mt-3">Available Mon-Sun, 10 AM - 10 PM</p>
                 </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</span>
-                <div>
-                  <p className="font-medium">Fast delivery</p>
-                  <p className="text-gray-400 text-xs">Right to your door</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Contact Info */}
-        <Card className="bg-[#1A1A1A] border-[#333333]">
-          <CardHeader>
-            <CardTitle className="text-blue-400">📞 Need Help?</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 text-sm">
-              <p><strong>Call us:</strong> (555) 123-4567</p>
-              <p><strong>Text us:</strong> (555) 123-4567</p>
-              <p><strong>Email:</strong> support@ezyzip.com</p>
-              <p className="text-gray-400 text-xs mt-3">Available Mon-Sun, 10 AM - 10 PM</p>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
   );
 }
