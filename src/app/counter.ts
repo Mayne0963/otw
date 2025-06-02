@@ -36,9 +36,15 @@ export async function incrementAndLog() {
 
   // Log this access in memory (will be lost on restart)
   const accessTime = new Date().toISOString();
-  const recentAccessList = JSON.parse(
-    cookieStore.get("recent_access")?.value || "[]",
-  );
+  let recentAccessList;
+  try {
+    recentAccessList = JSON.parse(
+      cookieStore.get("recent_access")?.value || "[]",
+    );
+  } catch (error) {
+    console.error("Error parsing recent_access cookie:", error);
+    recentAccessList = [];
+  }
   recentAccessList.unshift({ accessed_at: accessTime });
 
   // Keep only the 5 most recent accesses
@@ -91,9 +97,15 @@ export async function getStats() {
   );
 
   // Get recent access list from cookie or default to empty array
-  const recentAccessList = JSON.parse(
-    cookieStore.get("recent_access")?.value || "[]",
-  );
+  let recentAccessList;
+  try {
+    recentAccessList = JSON.parse(
+      cookieStore.get("recent_access")?.value || "[]",
+    );
+  } catch (error) {
+    console.error("Error parsing recent_access cookie:", error);
+    recentAccessList = [];
+  }
 
   // Database query example (commented out):
   // const cf = await getCloudflareContext()

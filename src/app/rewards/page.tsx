@@ -15,8 +15,6 @@ import RedeemModal from "../../components/rewards/RedeemModal";
 import { FaTrophy, FaGift, FaHistory, FaGamepad } from "react-icons/fa";
 import type { Reward } from "../../types/reward";
 
-export const dynamic = "force-dynamic";
-
 export default function RewardsPage() {
   const { points, tier, history } = useRewards();
   const [activeTab, setActiveTab] = useState("rewards");

@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import type { Metadata } from "next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { useState } from "react";
@@ -21,8 +19,6 @@ import {
 import ContactForm from "../../components/contact/ContactForm";
 import ContactMap from "../../components/contact/ContactMap";
 import { locationData } from "../../data/location-data";
-
-export const dynamic = "force-dynamic";
 
 export default function ContactPage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);

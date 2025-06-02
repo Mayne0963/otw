@@ -68,7 +68,7 @@ export default function RootLayout({
             {/* Main content */}
             <div className="relative z-10 flex flex-col min-h-screen">
               <Navbar />
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow pt-20">{children}</main>
               <Footer className="bg-otw-black/80 border-t border-otw-gold/10" />
             </div>
 

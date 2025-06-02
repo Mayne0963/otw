@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import type { Metadata } from "next";
+
 import {
   Card,
   CardContent,
@@ -21,10 +21,7 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Switch } from "../../components/ui/switch";
 
-export const metadata: Metadata = {
-  title: "Settings | On The Way",
-  description: "Manage your account settings and preferences",
-};
+
 
 export default function SettingsPage() {
   return (

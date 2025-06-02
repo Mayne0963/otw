@@ -28,8 +28,6 @@ import { doc, getDoc, collection, query, where, getDocs } from "firebase/firesto
 import { db } from "../../lib/firebase-config";
 import type { UserProfile } from "../../types";
 
-export const dynamic = "force-dynamic";
-
 interface Address {
   id: string;
   name: string;

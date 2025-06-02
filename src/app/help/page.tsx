@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import {
   Accordion,
   AccordionContent,
@@ -24,11 +23,6 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Textarea } from "../../components/ui/textarea";
 import { Label } from "../../components/ui/label";
-
-export const metadata: Metadata = {
-  title: "Help & Support | On The Way",
-  description: "Get help and support for On The Way services",
-};
 
 export const dynamic = "force-dynamic";
 

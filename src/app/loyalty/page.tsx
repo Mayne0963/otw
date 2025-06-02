@@ -30,8 +30,6 @@ import TierBenefitsTable from "../../components/loyalty/TierBenefitsTable";
 import TestimonialCard from "../../components/loyalty/TestimonialCard";
 import { testimonials } from "../../data/loyalty-data";
 
-export const dynamic = "force-dynamic";
-
 export default function LoyaltyPage() {
   const { user } = useAuth();
   const { points } = useRewards();

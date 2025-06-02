@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import RestaurantDetailPage from "./RestaurantDetailPage";
 
-export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 
 interface RestaurantPageProps {
@@ -54,5 +53,3 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
 
   return <RestaurantDetailPage restaurant={restaurant} />;
 }
-
-export const dynamic = "force-dynamic";

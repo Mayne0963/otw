@@ -2,7 +2,6 @@
 
 export const dynamic = "force-dynamic";
 
-import type { Metadata } from "next";
 import {
   Tabs,
   TabsContent,
@@ -12,12 +11,6 @@ import {
 import OrderHistory from "../../components/dashboard/OrderHistory";
 import Favorites from "../../components/dashboard/Favorites";
 import TierPerks from "../../components/dashboard/TierPerks";
-
-export const metadata: Metadata = {
-  title: "Dashboard | OTW",
-  description:
-    "Manage your OTW account, view order history, and access tier perks.",
-};
 
 
 

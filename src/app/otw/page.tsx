@@ -17,8 +17,6 @@ import {
   Calendar,
 } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
 export default function OTWServicesPage() {
   return (
     <div className="min-h-screen pb-20 pt-24">

@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import type { Metadata } from "next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { useState, useEffect } from "react";
@@ -19,8 +17,6 @@ import EventDetailModal from "../../components/events/EventDetailModal";
 import RegistrationModal from "../../components/events/RegistrationModal";
 import { categories, locations } from "../../data/event-data";
 import type { Event } from "../../types/event";
-
-export const dynamic = "force-dynamic";
 
 export default function EventsPage() {
   const [searchQuery, setSearchQuery] = useState("");
