@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     }
     
     // Fetch from local database
-    let menuQuery = collection(db, 'menu_items');
+    const menuQuery = collection(db, 'menu_items');
     const constraints = [];
     
     if (restaurantId) {
@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
 async function fetchExternalMenu(source: string, restaurantId: string, location?: string) {
   try {
     let apiUrl = '';
-    let headers: Record<string, string> = {};
+    const headers: Record<string, string> = {};
     
     switch (source) {
       case 'documenu':

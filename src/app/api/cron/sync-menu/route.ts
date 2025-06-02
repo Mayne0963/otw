@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status');
     
     // Get sync configurations
-    let configQuery = collection(db, 'sync_configs');
+    const configQuery = collection(db, 'sync_configs');
     const configConstraints = [];
     
     if (restaurantId) {
@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
     });
     
     // Get recent sync logs
-    let logQuery = collection(db, 'sync_logs');
+    const logQuery = collection(db, 'sync_logs');
     const logConstraints = [];
     
     if (restaurantId) {

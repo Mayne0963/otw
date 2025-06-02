@@ -95,7 +95,7 @@ export async function GET(req: NextRequest) {
     }
     
     // Get multiple deliveries with filters
-    let q = collection(db, 'deliveries');
+    const q = collection(db, 'deliveries');
     const constraints = [];
     
     if (orderId) {
@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
     
     // Calculate estimated delivery time based on priority
     const now = new Date();
-    let estimatedDelivery = new Date(now);
+    const estimatedDelivery = new Date(now);
     
     switch (deliveryRequest.priority) {
       case 'urgent':

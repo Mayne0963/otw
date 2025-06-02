@@ -60,7 +60,7 @@ export default function Home() {
           {/* Live Status Badge */}
           <div className="inline-flex items-center px-6 py-3 bg-green-500/20 border border-green-500/30 rounded-full mb-8 animate-pulse">
             <div className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-ping" />
-            <span className="text-green-400 font-semibold">🔴 LIVE: 47 drivers delivering now</span>
+            <span className="text-green-400 font-semibold">🔴 THE WEBSITE IS LIVE!!!</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8">
@@ -69,21 +69,21 @@ export default function Home() {
             </span>
             <br />
             <span className="bg-gradient-to-r from-otw-red via-otw-gold to-otw-red bg-clip-text text-transparent">
-              #1 Food Delivery
+              Black-Owned
             </span>
           </h1>
           
           <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12 leading-relaxed">
-            Experience lightning-fast delivery from Fort Wayne's best restaurants. 
+            Experience lightning-fast delivery from Fort Wayne's OTW. 
             <span className="text-otw-gold font-semibold">Average delivery time: 22 minutes</span>
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
             <Button variant="primary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
-              🚀 Order Now - Free Delivery
+              Order From Broskis = Free Delivery
             </Button>
-            <Button variant="secondary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
-              📱 Download App
+            <Button href="/" variant="secondary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
+              Order Groceries
             </Button>
           </div>
           
