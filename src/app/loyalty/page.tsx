@@ -88,7 +88,7 @@ export default function LoyaltyPage() {
           </p>
           {!user && (
             <div className="mt-8">
-              <Link href="/auth/signup" className="btn-primary">
+              <Link href="/signup" className="btn-primary">
                 Join Now
               </Link>
             </div>
@@ -333,7 +333,7 @@ export default function LoyaltyPage() {
                       Sign up today and start earning points with your very
                       first purchase. Membership is completely free!
                     </p>
-                    <Link href="/auth/signup" className="btn-primary">
+                    <Link href="/signup" className="btn-primary">
                       Join Now
                     </Link>
                   </div>
@@ -392,7 +392,7 @@ export default function LoyaltyPage() {
                       </li>
                     </ul>
                     {!user ? (
-                      <Link href="/auth/signup" className="btn-primary w-full">
+                      <Link href="/signup" className="btn-primary w-full">
                         Join Now
                       </Link>
                     ) : userTier.name === "Bronze" ? (
@@ -444,7 +444,7 @@ export default function LoyaltyPage() {
                       </li>
                     </ul>
                     {!user ? (
-                      <Link href="/auth/signup" className="btn-primary w-full">
+                      <Link href="/signup" className="btn-primary w-full">
                         Join Now
                       </Link>
                     ) : userTier.name === "Silver" ? (
@@ -500,7 +500,7 @@ export default function LoyaltyPage() {
                       </li>
                     </ul>
                     {!user ? (
-                      <Link href="/auth/signup" className="btn-primary w-full">
+                      <Link href="/signup" className="btn-primary w-full">
                         Join Now
                       </Link>
                     ) : userTier.name === "Gold" ? (

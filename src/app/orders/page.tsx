@@ -15,7 +15,7 @@ export default function OrderHistoryPage() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push("/auth/login");
+      router.push("/signin");
     }
   }, [isLoading, user, router]);
 
@@ -35,7 +35,7 @@ export default function OrderHistoryPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-600 mb-4">Please log in to view your orders.</p>
-          <Link href="/auth/login" className="text-gold-foil hover:underline">
+          <Link href="/signin" className="text-gold-foil hover:underline">
             Go to Login
           </Link>
         </div>
