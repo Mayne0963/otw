@@ -11,6 +11,7 @@ import {
 import OrderHistory from "../../components/dashboard/OrderHistory";
 import Favorites from "../../components/dashboard/Favorites";
 import TierPerks from "../../components/dashboard/TierPerks";
+import Tasks from "../../components/dashboard/Tasks";
 
 
 
@@ -26,9 +27,10 @@ export default function DashboardPage() {
         </div>
 
         <Tabs defaultValue="orders" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="orders">Order History</TabsTrigger>
             <TabsTrigger value="favorites">Favorites</TabsTrigger>
+            <TabsTrigger value="tasks">Tasks</TabsTrigger>
             <TabsTrigger value="perks">Tier Perks</TabsTrigger>
           </TabsList>
 
@@ -38,6 +40,10 @@ export default function DashboardPage() {
 
           <TabsContent value="favorites">
             <Favorites />
+          </TabsContent>
+
+          <TabsContent value="tasks">
+            <Tasks />
           </TabsContent>
 
           <TabsContent value="perks">

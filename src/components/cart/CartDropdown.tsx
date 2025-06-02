@@ -69,7 +69,7 @@ export default function CartDropdown() {
                 onClick={() => setIsOpen(false)}
               >
                 <Button variant="primary" size="sm">
-                  Browse Restaurants
+                  Browse Broski's Kitchen
                 </Button>
               </Link>
             </div>

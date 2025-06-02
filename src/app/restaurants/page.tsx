@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import RestaurantsClientPage from "./RestaurantsClientPage";
+import { Metadata } from "next";
+import BroskisOrderPage from "./BroskisOrderPage";
 
 export const metadata: Metadata = {
-  title: "Restaurants | OTW",
+  title: "Broski's Kitchen | OTW",
   description:
-    "Order food from the best restaurants in Fort Wayne, delivered by OTW.",
+    "Order luxury street gourmet cuisine from Broski's Kitchen, delivered by OTW.",
 };
 
 export const dynamic = "force-dynamic";
 
 export default function RestaurantsPage() {
-  return <RestaurantsClientPage />;
+  return <BroskisOrderPage />;
 }

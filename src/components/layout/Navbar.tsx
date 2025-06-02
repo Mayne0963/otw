@@ -32,8 +32,8 @@ const mainNavItems = [
     icon: <Car className="mr-3 h-4 w-4" />,
   },
   {
-    name: "Restaurants",
-    href: "/restaurants",
+      name: "Broski's Kitchen",
+      href: "/restaurants",
     icon: <Utensils className="mr-3 h-4 w-4" />,
   },
   { name: "Track Order", href: "/track", icon: <MapPin className="mr-3 h-4 w-4" /> },

@@ -64,9 +64,9 @@ export default function Footer() {
               <li>
                 <a
                   href="/restaurants"
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  Restaurants
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                Broski's Kitchen
                 </a>
               </li>
               <li>

@@ -22,7 +22,7 @@ export default function Navbar() {
                 href="/restaurants"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                Restaurants
+                Broski's Kitchen
               </Link>
               <Link
                 href="/otw"
@@ -59,7 +59,7 @@ export default function Navbar() {
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
             onClick={() => setIsOpen(false)}
           >
-            Restaurants
+            Broski's Kitchen
           </Link>
           <Link
             href="/otw"
