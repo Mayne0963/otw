@@ -1,157 +1,77 @@
 "use client";
 
-import type React from "react";
-
+import React from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
-const TierBenefitsTable: React.FC = () => {
+interface MembershipTier {
+  name: string;
+  pointsRequired: number;
+  pointsPerDollar: number;
+  price: string;
+  monthlyPrice?: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  benefits: string[];
+}
+
+interface TierBenefitsTableProps {
+  membershipTiers: MembershipTier[];
+}
+
+const TierBenefitsTable: React.FC<TierBenefitsTableProps> = ({ membershipTiers }) => {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse">
+      <table className="w-full bg-[#1A1A1A] rounded-lg overflow-hidden">
         <thead>
-          <tr className="bg-[#111111]">
-            <th className="p-4 text-left border-b border-[#333333]">Benefit</th>
-            <th className="p-4 text-center border-b border-[#333333]">
-              <span className="flex items-center justify-center">
-                <span className="w-3 h-3 bg-[#CD7F32] rounded-full mr-2"></span>{" "}
-                Bronze
-              </span>
+          <tr className="bg-[#2A2A2A]">
+            <th className="text-left p-4 text-white font-semibold">
+              Benefits
             </th>
-            <th className="p-4 text-center border-b border-[#333333]">
-              <span className="flex items-center justify-center">
-                <span className="w-3 h-3 bg-gray-400 rounded-full mr-2"></span>{" "}
-                Silver
-              </span>
-            </th>
-            <th className="p-4 text-center border-b border-[#333333]">
-              <span className="flex items-center justify-center">
-                <span className="w-3 h-3 bg-gold-foil rounded-full mr-2"></span>{" "}
-                Gold
-              </span>
-            </th>
+            {membershipTiers.map((tier) => (
+              <th key={tier.name} className={`text-center p-4 ${tier.color} font-semibold`}>
+                <div>
+                  {tier.name}
+                  <div className="text-xs font-normal mt-1">
+                    {tier.price}
+                  </div>
+                </div>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Points per $1 spent</td>
-            <td className="p-4 text-center">1 point</td>
-            <td className="p-4 text-center">1.5 points</td>
-            <td className="p-4 text-center">2 points</td>
+          <tr className="border-b border-[#333333]">
+            <td className="p-4 text-white">Points earned per $1 spent</td>
+            {membershipTiers.map((tier) => (
+              <td key={tier.name} className={`p-4 text-center ${tier.color}`}>
+                {tier.pointsPerDollar}x
+              </td>
+            ))}
           </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Birthday reward</td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
+          <tr className="border-b border-[#333333]">
+            <td className="p-4 text-white">Points required to unlock</td>
+            {membershipTiers.map((tier) => (
+              <td key={tier.name} className={`p-4 text-center ${tier.color}`}>
+                {tier.pointsRequired}+
+              </td>
+            ))}
           </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Digital membership card</td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-          </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Priority pickup</td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-          </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Exclusive menu items</td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-          </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Free delivery</td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-          </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">VIP event invitations</td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-          </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Chef&apos;s table access</td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-          </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Early access to new menu items</td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-          </tr>
-          <tr className="border-b border-[#333333] hover:bg-[#1F1F1F]">
-            <td className="p-4">Cooking class priority</td>
-            <td className="p-4 text-center">
-              <FaTimes className="mx-auto text-blood-red" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-            <td className="p-4 text-center">
-              <FaCheck className="mx-auto text-emerald-green" />
-            </td>
-          </tr>
-          <tr className="hover:bg-[#1F1F1F]">
-            <td className="p-4">Partner benefits</td>
-            <td className="p-4 text-center">Limited</td>
-            <td className="p-4 text-center">Enhanced</td>
-            <td className="p-4 text-center">Premium</td>
-          </tr>
+          {/* Dynamic benefit rows based on all unique benefits */}
+          {Array.from(new Set(membershipTiers.flatMap(tier => tier.benefits))).map((benefit) => (
+            <tr key={benefit} className="border-b border-[#333333]">
+              <td className="p-4 text-white">{benefit}</td>
+              {membershipTiers.map((tier) => (
+                <td key={tier.name} className="p-4 text-center">
+                  {tier.benefits.includes(benefit) ? (
+                    <FaCheck className={`${tier.color} mx-auto`} />
+                  ) : (
+                    <FaTimes className="text-gray-500 mx-auto" />
+                  )}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

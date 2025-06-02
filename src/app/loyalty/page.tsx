@@ -36,21 +36,69 @@ export default function LoyaltyPage() {
   const [activeTab, setActiveTab] = useState("overview");
   const [showMembershipCard, setShowMembershipCard] = useState(false);
 
+  // Membership tiers with pricing and benefits
+  const membershipTiers = [
+    {
+      name: "Bronze",
+      color: "text-[#CD7F32]",
+      bgColor: "bg-[#CD7F32]",
+      borderColor: "border-[#CD7F32]",
+      pointsRequired: 0,
+      price: "Free",
+      monthlyPrice: null,
+      pointsPerDollar: 1,
+      benefits: [
+        "Earn 1 point per $1 spent",
+        "Access to basic rewards",
+        "Birthday reward",
+        "Digital membership card",
+        "Member-only promotions"
+      ]
+    },
+    {
+      name: "Silver",
+      color: "text-gray-400",
+      bgColor: "bg-gray-400",
+      borderColor: "border-gray-400",
+      pointsRequired: 500,
+      price: "$9.99/month",
+      monthlyPrice: 9.99,
+      pointsPerDollar: 1.5,
+      benefits: [
+        "Earn 1.5 points per $1 spent",
+        "Priority pickup",
+        "Exclusive menu items",
+        "10% discount on all orders",
+        "All Bronze benefits"
+      ]
+    },
+    {
+      name: "Gold",
+      color: "text-gold-foil",
+      bgColor: "bg-gold-foil",
+      borderColor: "border-gold-foil",
+      pointsRequired: 1000,
+      price: "$19.99/month",
+      monthlyPrice: 19.99,
+      pointsPerDollar: 2,
+      benefits: [
+        "Earn 2 points per $1 spent",
+        "Free delivery on all orders",
+        "VIP event invitations",
+        "20% discount on all orders",
+        "Priority customer support",
+        "All Silver benefits"
+      ]
+    }
+  ];
+
   // Determine user tier based on points
   const getUserTier = () => {
     if (points >= 1000)
-      return { name: "Gold", color: "text-gold-foil", next: null };
+      return { ...membershipTiers[2], next: null };
     if (points >= 500)
-      return {
-        name: "Silver",
-        color: "text-gray-400",
-        next: { name: "Silver", points: 500 },
-      };
-    return {
-      name: "Bronze",
-      color: "text-[#CD7F32]",
-      next: { name: "Silver", points: 500 },
-    };
+      return { ...membershipTiers[1], next: { name: "Gold", points: 1000 } };
+    return { ...membershipTiers[0], next: { name: "Silver", points: 500 } };
   };
 
   const userTier = getUserTier();
@@ -355,176 +403,91 @@ export default function LoyaltyPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                {/* Bronze Tier */}
-                <div
-                  className={`bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border ${
-                    userTier.name === "Bronze"
-                      ? "border-[#CD7F32]"
-                      : "border-[#333333]"
-                  }`}
-                >
-                  <div className="bg-[#CD7F32] bg-opacity-20 p-6 text-center">
-                    <div className="w-16 h-16 bg-[#CD7F32] bg-opacity-30 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <FaCrown className="text-[#CD7F32] text-2xl" />
+                {membershipTiers.map((tier, index) => (
+                  <div
+                    key={tier.name}
+                    className={`bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border ${
+                      userTier.name === tier.name
+                        ? tier.borderColor
+                        : "border-[#333333]"
+                    } ${userTier.name === tier.name ? 'ring-2 ring-opacity-50 ' + tier.borderColor.replace('border-', 'ring-') : ''}`}
+                  >
+                    <div className={`${tier.bgColor} bg-opacity-20 p-6 text-center relative`}>
+                      {userTier.name === tier.name && (
+                        <div className="absolute top-2 right-2 bg-emerald-green text-white text-xs px-2 py-1 rounded-full">
+                          Current
+                        </div>
+                      )}
+                      <div className={`w-16 h-16 ${tier.bgColor} bg-opacity-30 rounded-full flex items-center justify-center mx-auto mb-4`}>
+                        <FaCrown className={`${tier.color} text-2xl`} />
+                      </div>
+                      <h3 className={`text-2xl font-bold ${tier.color} mb-1`}>
+                        {tier.name}
+                      </h3>
+                      <p className="text-gray-300 mb-2">{tier.pointsRequired}+ Points</p>
+                      <div className={`text-xl font-bold ${tier.color}`}>
+                        {tier.price}
+                      </div>
+                      {tier.monthlyPrice && (
+                        <p className="text-sm text-gray-400 mt-1">
+                          Save 20% with annual billing
+                        </p>
+                      )}
                     </div>
-                    <h3 className="text-2xl font-bold text-[#CD7F32] mb-1">
-                      Bronze
-                    </h3>
-                    <p className="text-gray-300">0+ Points</p>
-                  </div>
-                  <div className="p-6">
-                    <ul className="space-y-3 mb-6">
-                      <li className="flex items-start">
-                        <FaCheck className="text-[#CD7F32] mt-1 mr-2 flex-shrink-0" />
-                        <span>Earn 1 point per $1 spent</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-[#CD7F32] mt-1 mr-2 flex-shrink-0" />
-                        <span>Access to basic rewards</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-[#CD7F32] mt-1 mr-2 flex-shrink-0" />
-                        <span>Birthday reward</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-[#CD7F32] mt-1 mr-2 flex-shrink-0" />
-                        <span>Digital membership card</span>
-                      </li>
-                    </ul>
-                    {!user ? (
-                      <Link href="/signup" className="btn-primary w-full">
-                        Join Now
-                      </Link>
-                    ) : userTier.name === "Bronze" ? (
-                      <div className="bg-[#CD7F32] bg-opacity-20 text-[#CD7F32] text-center py-2 rounded-md">
-                        Current Tier
+                    <div className="p-6">
+                      <div className="mb-4">
+                        <div className={`text-sm font-semibold ${tier.color} mb-2`}>
+                          Key Benefits:
+                        </div>
+                        <ul className="space-y-2 mb-6">
+                          {tier.benefits.slice(0, 4).map((benefit, benefitIndex) => (
+                            <li key={benefitIndex} className="flex items-start text-sm">
+                              <FaCheck className={`${tier.color} mt-1 mr-2 flex-shrink-0`} size={12} />
+                              <span>{benefit}</span>
+                            </li>
+                          ))}
+                          {tier.benefits.length > 4 && (
+                            <li className="text-xs text-gray-400">
+                              +{tier.benefits.length - 4} more benefits
+                            </li>
+                          )}
+                        </ul>
                       </div>
-                    ) : (
-                      <div className="bg-emerald-green bg-opacity-20 text-emerald-green text-center py-2 rounded-md">
-                        Tier Unlocked
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Silver Tier */}
-                <div
-                  className={`bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border ${
-                    userTier.name === "Silver"
-                      ? "border-gray-400"
-                      : "border-[#333333]"
-                  }`}
-                >
-                  <div className="bg-gray-400 bg-opacity-20 p-6 text-center">
-                    <div className="w-16 h-16 bg-gray-400 bg-opacity-30 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <FaCrown className="text-gray-400 text-2xl" />
+                      
+                      {!user ? (
+                        <Link href="/signup" className="btn-primary w-full text-sm">
+                          Join Now
+                        </Link>
+                      ) : userTier.name === tier.name ? (
+                        <div className={`${tier.bgColor} bg-opacity-20 ${tier.color} text-center py-3 rounded-md font-semibold`}>
+                          Your Current Tier
+                        </div>
+                      ) : points >= tier.pointsRequired ? (
+                        <div className="bg-emerald-green bg-opacity-20 text-emerald-green text-center py-3 rounded-md font-semibold">
+                          Tier Available
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="text-center py-2 text-sm text-gray-400">
+                            {tier.pointsRequired - points} more points to unlock
+                          </div>
+                          {tier.monthlyPrice && (
+                            <button className={`w-full py-2 px-4 rounded-md border ${tier.borderColor} ${tier.color} hover:${tier.bgColor} hover:bg-opacity-10 transition-colors text-sm`}>
+                              Upgrade Now
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-400 mb-1">
-                      Silver
-                    </h3>
-                    <p className="text-gray-300">500+ Points</p>
                   </div>
-                  <div className="p-6">
-                    <ul className="space-y-3 mb-6">
-                      <li className="flex items-start">
-                        <FaCheck className="text-gray-400 mt-1 mr-2 flex-shrink-0" />
-                        <span>Earn 1.5 points per $1 spent</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-gray-400 mt-1 mr-2 flex-shrink-0" />
-                        <span>Priority pickup</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-gray-400 mt-1 mr-2 flex-shrink-0" />
-                        <span>Exclusive menu items</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-gray-400 mt-1 mr-2 flex-shrink-0" />
-                        <span>All Bronze benefits</span>
-                      </li>
-                    </ul>
-                    {!user ? (
-                      <Link href="/signup" className="btn-primary w-full">
-                        Join Now
-                      </Link>
-                    ) : userTier.name === "Silver" ? (
-                      <div className="bg-gray-400 bg-opacity-20 text-gray-400 text-center py-2 rounded-md">
-                        Current Tier
-                      </div>
-                    ) : points >= 500 ? (
-                      <div className="bg-emerald-green bg-opacity-20 text-emerald-green text-center py-2 rounded-md">
-                        Tier Unlocked
-                      </div>
-                    ) : (
-                      <div className="text-center py-2 text-sm text-gray-400">
-                        {500 - points} more points to unlock
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Gold Tier */}
-                <div
-                  className={`bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border ${
-                    userTier.name === "Gold"
-                      ? "border-gold-foil"
-                      : "border-[#333333]"
-                  }`}
-                >
-                  <div className="bg-gold-foil bg-opacity-20 p-6 text-center">
-                    <div className="w-16 h-16 bg-gold-foil bg-opacity-30 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <FaCrown className="text-gold-foil text-2xl" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gold-foil mb-1">
-                      Gold
-                    </h3>
-                    <p className="text-gray-300">1000+ Points</p>
-                  </div>
-                  <div className="p-6">
-                    <ul className="space-y-3 mb-6">
-                      <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
-                        <span>Earn 2 points per $1 spent</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
-                        <span>Free delivery</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
-                        <span>VIP event invitations</span>
-                      </li>
-                      <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
-                        <span>All Silver benefits</span>
-                      </li>
-                    </ul>
-                    {!user ? (
-                      <Link href="/signup" className="btn-primary w-full">
-                        Join Now
-                      </Link>
-                    ) : userTier.name === "Gold" ? (
-                      <div className="bg-gold-foil bg-opacity-20 text-gold-foil text-center py-2 rounded-md">
-                        Current Tier
-                      </div>
-                    ) : points >= 1000 ? (
-                      <div className="bg-emerald-green bg-opacity-20 text-emerald-green text-center py-2 rounded-md">
-                        Tier Unlocked
-                      </div>
-                    ) : (
-                      <div className="text-center py-2 text-sm text-gray-400">
-                        {1000 - points} more points to unlock
-                      </div>
-                    )}
-                  </div>
-                </div>
+                ))}
               </div>
 
               <div className="mb-16">
                 <h3 className="text-2xl font-bold mb-6">
                   Detailed Benefits Comparison
                 </h3>
-                <TierBenefitsTable />
+                <TierBenefitsTable membershipTiers={membershipTiers} />
               </div>
 
               <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333] mb-8">
