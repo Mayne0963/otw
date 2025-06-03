@@ -5,7 +5,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import Button from "../components/Button";
+import Button from "../components/Button.jsx";
 
 const MapSearch = dynamic(() => import("../components/maps/MapSearch"), { ssr: false });
 
