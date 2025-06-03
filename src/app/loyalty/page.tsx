@@ -355,7 +355,7 @@ export default function LoyaltyPage() {
                   </div>
                   <div className="relative h-64 md:h-auto">
                     <Image
-                      src="/assets/images/grocery-hero.jpg"
+                      src="/assets/logo/otw-logo-new.jpeg"
                       alt="Broski's Kitchen Mobile App"
                       fill
                       className="object-cover"
