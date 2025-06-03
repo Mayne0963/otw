@@ -251,7 +251,11 @@ export const useAuth = () => {
               updatedAt: new Date().toISOString(),
             };
             await setDoc(doc(db, "users", firebaseUser.uid), newUser);
-            setUser(newUser as User);
+            setUser({
+            ...newUser,
+            name: firebaseUser.displayName || '',
+            role: 'user' as const
+          } as User);
           }
         } else {
           setUser(null);
@@ -283,14 +287,18 @@ export const useAuth = () => {
         setUser(userDoc.data() as User);
       } else {
         // Create user document if it doesn't exist
-        const newUser = {
+        const newUser: User = {
           id: userCredential.user.uid,
-          email: userCredential.user.email,
+          name: userCredential.user.displayName || '',
+          email: userCredential.user.email || '',
+          role: 'user' as const,
+        };
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+          ...newUser,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-        };
-        await setDoc(doc(db, "users", userCredential.user.uid), newUser);
-        setUser(newUser as User);
+        });
+        setUser(newUser);
       }
 
       router.push("/dashboard");
@@ -434,7 +442,7 @@ export const useAuth = () => {
 
   // Add activity to history
   const addActivity = async (
-    activity: User["activityHistory"][0],
+    activity: NonNullable<User["activityHistory"]>[0],
   ): Promise<void> => {
     try {
       setLoading(true);
@@ -464,7 +472,7 @@ export const useAuth = () => {
   };
 
   // Save an item
-  const saveItem = async (item: User["savedItems"][0]): Promise<void> => {
+  const saveItem = async (item: NonNullable<User["savedItems"]>[0]): Promise<void> => {
     try {
       setLoading(true);
       if (!user) throw new Error("No user logged in");
@@ -550,7 +558,11 @@ export const useAuth = () => {
           };
 
           await setDoc(doc(db, "users", result.user.uid), newUser);
-          setUser(newUser as User);
+          setUser({
+            ...newUser,
+            name: result.user.displayName || '',
+            role: 'user' as const
+          } as User);
         } else {
           setUser(userDoc.data() as User);
         }
@@ -815,7 +827,7 @@ export const useAuth = () => {
       if (userError) throw userError;
 
       // Update local state
-      setUser((prev) => (prev ? { ...prev, profileImage: null } : null));
+      setUser((prev) => (prev ? { ...prev, profileImage: undefined } : null));
     } catch (err: unknown) {
       const authError = handleFirebaseError(err);
       setError(authError);
