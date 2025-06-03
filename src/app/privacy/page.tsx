@@ -17,7 +17,7 @@ import {
   MapPin,
   ExternalLink,
   Download,
-  Print,
+  Printer,
   AlertTriangle,
   Clock,
   Globe,
@@ -239,7 +239,7 @@ export default function PrivacyPage() {
                 Download PDF
               </Button>
               <Button variant="outline" className="border-2 border-otw-gold text-otw-gold hover:bg-otw-gold hover:text-black px-6 py-3 rounded-full transition-all duration-300">
-                <Print className="w-5 h-5 mr-2" />
+                <Printer className="w-5 h-5 mr-2" />
                 Print Policy
               </Button>
             </div>
