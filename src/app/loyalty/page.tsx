@@ -116,100 +116,183 @@ export default function LoyaltyPage() {
   return (
     <div className="min-h-screen pb-20">
       {/* Hero Section */}
-      <section className="relative h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-black">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
-          <Image
-            src="/assets/images/loyalty-hero.jpg"
-            alt="OTW Loyalty Program Hero"
-            fill
-            className="object-contain object-center"
-            priority
-            sizes="100vw"
-          />
-        </div>
-        <div className="container mx-auto px-4 z-10 text-center">
-          <h1 className="heading-xl mb-4 text-white gritty-shadow">
-            OTW&apos;s Loyalty Program
-          </h1>
-          <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Join our exclusive loyalty program and unlock premium benefits,
-            rewards, and experiences.
-          </p>
-          {!user && (
-            <div className="mt-8">
-              <Link href="/signup" className="btn-primary">
-                Join Now
-              </Link>
+      <section className="relative py-24 bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#2A1A0A] overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/assets/images/loyalty-bg.jpg')] bg-cover bg-center opacity-15"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-gold-foil/5 via-transparent to-blood-red/5"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="mb-8">
+              <div className="w-24 h-24 bg-gradient-to-r from-gold-foil to-yellow-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-gold-foil/30">
+                <FaCrown className="text-4xl text-black" />
+              </div>
             </div>
-          )}
+            <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight">
+              Broski&apos;s Kitchen{" "}
+              <span className="bg-gradient-to-r from-gold-foil via-yellow-400 to-gold-foil bg-clip-text text-transparent animate-pulse">
+                Loyalty Program
+              </span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Earn points with every purchase, unlock exclusive rewards, and
+              enjoy premium benefits as a valued member of our culinary community.
+            </p>
+            {!user && (
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Link href="/signup" className="bg-gradient-to-r from-gold-foil to-yellow-400 text-black font-bold text-lg px-10 py-4 rounded-full hover:shadow-2xl hover:shadow-gold-foil/40 transition-all duration-300 transform hover:scale-105">
+                  Join Now - It&apos;s Free!
+                </Link>
+                <Link href="#overview" className="border-2 border-gold-foil text-gold-foil font-semibold text-lg px-10 py-4 rounded-full hover:bg-gold-foil hover:text-black transition-all duration-300">
+                  Learn More
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
       {/* Membership Status Section (for logged in users) */}
       {user && (
-        <section className="py-12 bg-[#111111]">
+        <section className="py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900">
           <div className="container mx-auto px-4">
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#111111] rounded-lg overflow-hidden shadow-lg border border-[#333333] p-6">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div>
-                  <h2 className="text-2xl font-bold mb-2">
-                    Welcome, {user.displayName || user.email}
-                  </h2>
-                  <div className="flex items-center mb-4">
-                    <FaCrown className={`mr-2 ${userTier.color}`} />
-                    <span className={`font-bold ${userTier.color}`}>
-                      {userTier.name} Member
-                    </span>
+            <div className="max-w-6xl mx-auto">
+              <div className="bg-gradient-to-br from-gray-800/80 via-gray-900/90 to-black/80 backdrop-blur-sm rounded-3xl p-10 border border-gold-foil/20 shadow-2xl shadow-gold-foil/10">
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+                  <div className="text-center lg:text-left flex-1">
+                    <div className="mb-6">
+                      <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white via-gray-200 to-gold-foil bg-clip-text text-transparent">
+                        Welcome back, {user.displayName || user.email}!
+                      </h2>
+                      <div className="flex items-center gap-4 mb-6 justify-center lg:justify-start">
+                        <div
+                          className={`w-6 h-6 rounded-full shadow-lg ${
+                            userTier.name === "Gold"
+                              ? "bg-gradient-to-r from-gold-foil to-yellow-400 shadow-gold-foil/50"
+                              : userTier.name === "Silver"
+                              ? "bg-gradient-to-r from-gray-300 to-gray-500 shadow-gray-400/50"
+                              : "bg-gradient-to-r from-amber-500 to-amber-700 shadow-amber-500/50"
+                          }`}
+                        ></div>
+                        <span className="text-2xl font-bold text-white">
+                          {userTier.name} Member
+                        </span>
+                        <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                          userTier.name === "Gold"
+                            ? "bg-gold-foil/20 text-gold-foil border border-gold-foil/30"
+                            : userTier.name === "Silver"
+                            ? "bg-gray-400/20 text-gray-300 border border-gray-400/30"
+                            : "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                        }`}>
+                          Elite Status
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-gold-foil/10 to-transparent rounded-2xl p-6 mb-8">
+                      <p className="text-gray-300 mb-2 text-lg">
+                        Available Points
+                      </p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-5xl font-bold bg-gradient-to-r from-gold-foil to-yellow-400 bg-clip-text text-transparent">
+                          {points}
+                        </span>
+                        <span className="text-xl text-gray-400">pts</span>
+                      </div>
+                    </div>
+
+                    {/* Progress to Next Tier */}
+                    {userTier.next && (
+                      <div className="mb-8">
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="text-lg font-semibold text-white">
+                            Progress to {userTier.next.name}
+                          </span>
+                          <span className="text-lg text-gold-foil font-bold">
+                            {points} / {userTier.next.points}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-700/50 rounded-full h-4 overflow-hidden">
+                          <div
+                            className="bg-gradient-to-r from-gold-foil via-yellow-400 to-gold-foil h-4 rounded-full transition-all duration-1000 ease-out shadow-lg shadow-gold-foil/30"
+                            style={{
+                              width: `${progressPercentage}%`,
+                            }}
+                          ></div>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-3">
+                          Only {userTier.next.points - points} points away from {userTier.next.name} status!
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-4">
+                      <button
+                        className="bg-gradient-to-r from-gold-foil to-yellow-400 text-black font-bold px-8 py-3 rounded-full hover:shadow-2xl hover:shadow-gold-foil/40 transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+                        onClick={() => setShowMembershipCard(true)}
+                      >
+                        <FaQrcode /> View Membership Card
+                      </button>
+                      <Link
+                        href="/rewards"
+                        className="border-2 border-gold-foil text-gold-foil font-semibold px-8 py-3 rounded-full hover:bg-gold-foil hover:text-black transition-all duration-300 flex items-center gap-2"
+                      >
+                        <FaGift /> Rewards
+                      </Link>
+                    </div>
                   </div>
 
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-gray-400">
-                        {userTier.next
-                          ? `Progress to ${userTier.next.name}`
-                          : "Maximum Tier Reached"}
-                      </span>
-                      <span className="text-gray-300">
-                        {points}/{userTier.next ? userTier.next.points : 1000}{" "}
-                        points
-                      </span>
-                    </div>
-                    <div className="w-full h-3 bg-[#333333] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-gold-foil to-blood-red transition-all duration-300"
-                        style={{ width: `${progressPercentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-3">
+                  {/* Membership Card */}
+                  <div className="relative flex-shrink-0">
                     <button
-                      className="btn-primary flex items-center gap-2"
                       onClick={() => setShowMembershipCard(true)}
+                      className="group relative overflow-hidden rounded-2xl transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-gold-foil/20"
                     >
-                      <FaQrcode /> View Membership Card
+                      <div
+                        className={`w-96 h-56 rounded-2xl p-8 text-white relative overflow-hidden ${
+                          userTier.name === "Gold"
+                            ? "bg-gradient-to-br from-yellow-400 via-gold-foil to-yellow-600"
+                            : userTier.name === "Silver"
+                            ? "bg-gradient-to-br from-gray-300 via-gray-400 to-gray-600"
+                            : "bg-gradient-to-br from-amber-500 via-amber-600 to-amber-800"
+                        }`}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20 rounded-2xl"></div>
+                        <div className="absolute top-4 right-4 w-16 h-16 bg-white/10 rounded-full"></div>
+                        <div className="absolute bottom-4 left-4 w-12 h-12 bg-white/5 rounded-full"></div>
+                        <div className="relative z-10 h-full flex flex-col justify-between">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="text-xl font-bold text-black">
+                                Broski&apos;s Kitchen
+                              </h3>
+                              <p className="text-sm text-black/80 font-semibold">
+                                {userTier.name} Member
+                              </p>
+                            </div>
+                            <FaCrown className="text-3xl text-black drop-shadow-lg" />
+                          </div>
+                          <div className="space-y-3">
+                            <div>
+                              <p className="text-xs text-black/70 font-semibold uppercase tracking-wider">Member Name</p>
+                              <p className="font-bold text-xl text-black">{user.displayName || user.email}</p>
+                            </div>
+                            <div className="flex justify-between items-end">
+                              <div>
+                                <p className="text-xs text-black/70 font-semibold uppercase tracking-wider">Points</p>
+                                <p className="font-bold text-lg text-black">{points}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-xs text-black/70 font-semibold uppercase tracking-wider">Since</p>
+                                <p className="font-bold text-sm text-black">2024</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </button>
-                    <Link
-                      href="/rewards"
-                      className="btn-outline flex items-center gap-2"
-                    >
-                      <FaGift /> Rewards
-                    </Link>
+                    <p className="text-center text-sm text-gray-400 mt-4 font-medium">
+                      🎯 Click to view full membership card
+                    </p>
                   </div>
-                </div>
-
-                <div className="bg-[#0A0A0A] p-6 rounded-lg border border-[#333333] flex flex-col items-center">
-                  <div className="text-5xl font-bold text-gold-foil mb-2">
-                    {points}
-                  </div>
-                  <p className="text-gray-400 mb-4">Available Points</p>
-                  <Link
-                    href="/rewards"
-                    className="text-gold-foil hover:underline flex items-center"
-                  >
-                    View Rewards <FaArrowRight className="ml-2" size={12} />
-                  </Link>
                 </div>
               </div>
             </div>
@@ -218,64 +301,72 @@ export default function LoyaltyPage() {
       )}
 
       {/* Tabs Section */}
-      <section className="py-8 bg-[#0A0A0A] sticky top-20 z-30 border-b border-[#333333]">
+      <section className="py-12 bg-gradient-to-r from-black via-gray-900 to-black sticky top-20 z-30 border-b border-gold-foil/20 backdrop-blur-sm" id="overview">
         <div className="container mx-auto px-4">
-          <div className="flex overflow-x-auto pb-2 hide-scrollbar">
-            <button
-              className={`px-6 py-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "overview"
-                  ? "text-gold-foil border-b-2 border-gold-foil"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              onClick={() => setActiveTab("overview")}
-            >
-              Program Overview
-            </button>
-            <button
-              className={`px-6 py-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "tiers"
-                  ? "text-gold-foil border-b-2 border-gold-foil"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              onClick={() => setActiveTab("tiers")}
-            >
-              Membership Tiers
-            </button>
-            <button
-              className={`px-6 py-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "earn"
-                  ? "text-gold-foil border-b-2 border-gold-foil"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              onClick={() => setActiveTab("earn")}
-            >
-              Ways to Earn
-            </button>
-            <button
-              className={`px-6 py-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "perks"
-                  ? "text-gold-foil border-b-2 border-gold-foil"
-                  : "text-gray-400 hover:text-white"
-              }`}
-              onClick={() => setActiveTab("perks")}
-            >
-              Exclusive Perks
-            </button>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-gradient-to-r from-gray-900/80 via-black/90 to-gray-900/80 backdrop-blur-sm rounded-2xl p-3 border border-gold-foil/20 shadow-2xl shadow-gold-foil/10">
+              <div className="flex flex-wrap justify-center gap-2">
+                <button
+                  className={`px-8 py-4 font-bold text-lg whitespace-nowrap rounded-xl transition-all duration-500 flex items-center gap-3 ${
+                    activeTab === "overview"
+                      ? "bg-gradient-to-r from-gold-foil to-yellow-400 text-black shadow-2xl shadow-gold-foil/40 transform scale-105"
+                      : "text-gray-400 hover:text-white hover:bg-gradient-to-r hover:from-gray-800/50 hover:to-gray-700/50 hover:shadow-lg hover:scale-102"
+                  }`}
+                  onClick={() => setActiveTab("overview")}
+                >
+                  <span className="text-xl">🏆</span>
+                  Program Overview
+                </button>
+                <button
+                  className={`px-8 py-4 font-bold text-lg whitespace-nowrap rounded-xl transition-all duration-500 flex items-center gap-3 ${
+                    activeTab === "tiers"
+                      ? "bg-gradient-to-r from-gold-foil to-yellow-400 text-black shadow-2xl shadow-gold-foil/40 transform scale-105"
+                      : "text-gray-400 hover:text-white hover:bg-gradient-to-r hover:from-gray-800/50 hover:to-gray-700/50 hover:shadow-lg hover:scale-102"
+                  }`}
+                  onClick={() => setActiveTab("tiers")}
+                >
+                  <span className="text-xl">👑</span>
+                  Membership Tiers
+                </button>
+                <button
+                  className={`px-8 py-4 font-bold text-lg whitespace-nowrap rounded-xl transition-all duration-500 flex items-center gap-3 ${
+                    activeTab === "earn"
+                      ? "bg-gradient-to-r from-gold-foil to-yellow-400 text-black shadow-2xl shadow-gold-foil/40 transform scale-105"
+                      : "text-gray-400 hover:text-white hover:bg-gradient-to-r hover:from-gray-800/50 hover:to-gray-700/50 hover:shadow-lg hover:scale-102"
+                  }`}
+                  onClick={() => setActiveTab("earn")}
+                >
+                  <span className="text-xl">💎</span>
+                  Ways to Earn
+                </button>
+                <button
+                  className={`px-8 py-4 font-bold text-lg whitespace-nowrap rounded-xl transition-all duration-500 flex items-center gap-3 ${
+                    activeTab === "perks"
+                      ? "bg-gradient-to-r from-gold-foil to-yellow-400 text-black shadow-2xl shadow-gold-foil/40 transform scale-105"
+                      : "text-gray-400 hover:text-white hover:bg-gradient-to-r hover:from-gray-800/50 hover:to-gray-700/50 hover:shadow-lg hover:scale-102"
+                  }`}
+                  onClick={() => setActiveTab("perks")}
+                >
+                  <span className="text-xl">🎁</span>
+                  Exclusive Perks
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Content Section */}
-      <section className="py-12">
+      <section className="py-20 bg-gradient-to-b from-black via-gray-900 to-black">
         <div className="container mx-auto px-4">
           {/* Program Overview Tab */}
           {activeTab === "overview" && (
             <div className="animate-fade-in">
-              <div className="max-w-3xl mx-auto text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">
+              <div className="max-w-4xl mx-auto text-center mb-16">
+                <h2 className="text-5xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-white via-gold-foil to-white bg-clip-text text-transparent">
                   About Our Loyalty Program
                 </h2>
-                <p className="text-gray-300 text-lg">
+                <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
                   Broski&apos;s Kitchen Loyalty Program rewards our most valued
                   customers with exclusive perks, discounts, and experiences.
                   Earn points with every purchase and unlock premium benefits as
@@ -283,49 +374,50 @@ export default function LoyaltyPage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333] text-center">
-                  <div className="w-16 h-16 bg-gold-foil bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaGift className="text-gold-foil text-2xl" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                <div className="group bg-gradient-to-br from-gray-800/80 via-gray-900/90 to-black/80 backdrop-blur-sm rounded-2xl p-8 border border-gold-foil/20 text-center hover:border-gold-foil/40 transition-all duration-500 hover:shadow-2xl hover:shadow-gold-foil/20 hover:scale-105">
+                  <div className="w-20 h-20 bg-gradient-to-r from-gold-foil/20 to-yellow-400/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-gold-foil/30 group-hover:to-yellow-400/30 transition-all duration-500 shadow-lg shadow-gold-foil/20">
+                    <FaGift className="text-gold-foil text-3xl group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2">Earn Points</h3>
-                  <p className="text-gray-400">
+                  <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-gold-foil transition-colors duration-300">Earn Points</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
                     Earn points with every purchase at Broski&apos;s Kitchen,
                     through referrals, and by participating in special
                     promotions.
                   </p>
                 </div>
 
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333] text-center">
-                  <div className="w-16 h-16 bg-gold-foil bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaCrown className="text-gold-foil text-2xl" />
+                <div className="group bg-gradient-to-br from-gray-800/80 via-gray-900/90 to-black/80 backdrop-blur-sm rounded-2xl p-8 border border-gold-foil/20 text-center hover:border-gold-foil/40 transition-all duration-500 hover:shadow-2xl hover:shadow-gold-foil/20 hover:scale-105">
+                  <div className="w-20 h-20 bg-gradient-to-r from-gold-foil/20 to-yellow-400/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-gold-foil/30 group-hover:to-yellow-400/30 transition-all duration-500 shadow-lg shadow-gold-foil/20">
+                    <FaCrown className="text-gold-foil text-3xl group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2">Unlock Tiers</h3>
-                  <p className="text-gray-400">
+                  <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-gold-foil transition-colors duration-300">Unlock Tiers</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
                     Progress through Bronze, Silver, and Gold tiers to unlock
                     increasingly valuable benefits and higher earning rates.
                   </p>
                 </div>
 
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333] text-center">
-                  <div className="w-16 h-16 bg-gold-foil bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaStar className="text-gold-foil text-2xl" />
+                <div className="group bg-gradient-to-br from-gray-800/80 via-gray-900/90 to-black/80 backdrop-blur-sm rounded-2xl p-8 border border-gold-foil/20 text-center hover:border-gold-foil/40 transition-all duration-500 hover:shadow-2xl hover:shadow-gold-foil/20 hover:scale-105">
+                  <div className="w-20 h-20 bg-gradient-to-r from-gold-foil/20 to-yellow-400/20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:from-gold-foil/30 group-hover:to-yellow-400/30 transition-all duration-500 shadow-lg shadow-gold-foil/20">
+                    <FaStar className="text-gold-foil text-3xl group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2">Enjoy Rewards</h3>
-                  <p className="text-gray-400">
+                  <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-gold-foil transition-colors duration-300">Enjoy Rewards</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
                     Redeem your points for free menu items, exclusive
                     experiences, merchandise, and more.
                   </p>
                 </div>
               </div>
 
-              <div className="bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border border-[#333333] mb-16">
+              {/* OTW App Download Section - Commented Out */}
+              {/* <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-xl overflow-hidden shadow-2xl border border-gold-foil/30 mb-16 hover:shadow-gold-foil/20 transition-all duration-300">
                 <div className="grid grid-cols-1 md:grid-cols-2">
                   <div className="p-8 flex flex-col justify-center">
-                    <h3 className="text-2xl font-bold mb-4">
+                    <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-gold-foil to-yellow-400 bg-clip-text text-transparent">
                       Download Our App
                     </h3>
-                    <p className="text-gray-300 mb-6">
+                    <p className="text-gray-300 mb-6 text-lg leading-relaxed">
                       Get the most out of your loyalty membership with our
                       mobile app. Track your points, view available rewards, and
                       access your digital membership card all in one place.
@@ -333,22 +425,22 @@ export default function LoyaltyPage() {
                     <div className="flex flex-wrap gap-4">
                       <a
                         href="#"
-                        className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-900 transition-colors"
+                        className="bg-gradient-to-r from-black to-gray-900 text-white px-6 py-3 rounded-xl flex items-center gap-3 hover:from-gray-900 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                       >
-                        <FaApple size={24} />
+                        <FaApple size={28} />
                         <div>
-                          <div className="text-xs">Download on the</div>
-                          <div className="font-bold">App Store</div>
+                          <div className="text-xs text-gray-400">Download on the</div>
+                          <div className="font-bold text-lg">App Store</div>
                         </div>
                       </a>
                       <a
                         href="#"
-                        className="bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-900 transition-colors"
+                        className="bg-gradient-to-r from-black to-gray-900 text-white px-6 py-3 rounded-xl flex items-center gap-3 hover:from-gray-900 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                       >
-                        <FaGooglePlay size={24} />
+                        <FaGooglePlay size={28} />
                         <div>
-                          <div className="text-xs">Get it on</div>
-                          <div className="font-bold">Google Play</div>
+                          <div className="text-xs text-gray-400">Get it on</div>
+                          <div className="font-bold text-lg">Google Play</div>
                         </div>
                       </a>
                     </div>
@@ -362,7 +454,7 @@ export default function LoyaltyPage() {
                     />
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="mb-16">
                 <h3 className="text-2xl font-bold mb-8 text-center">
@@ -566,90 +658,88 @@ export default function LoyaltyPage() {
           {/* Ways to Earn Tab */}
           {activeTab === "earn" && (
             <div className="animate-fade-in">
-              <div className="max-w-3xl mx-auto text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">Ways to Earn Points</h2>
-                <p className="text-gray-300 text-lg">
-                  There are many ways to earn points in our loyalty program.
+              <div className="max-w-3xl mx-auto text-center mb-12 bg-gradient-to-r from-purple-900/20 to-blue-900/20 p-8 rounded-2xl border border-purple-500/30 shadow-2xl">
+                <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">💰 Ways to Earn Points</h2>
+                <p className="text-gray-300 text-lg leading-relaxed">
+                  Discover multiple exciting ways to earn points in our loyalty program.
                   Here are the primary methods to boost your point balance and
-                  reach higher tiers faster.
+                  reach higher tiers faster! 🚀
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-xl p-8 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105 hover:border-purple-400/50">
                   <div className="flex items-start">
-                    <div className="bg-gold-foil bg-opacity-20 p-3 rounded-full mr-4 flex-shrink-0">
-                      <FaUtensils className="text-gold-foil text-xl" />
+                    <div className="bg-gradient-to-br from-gold-foil/30 to-yellow-500/30 p-4 rounded-full mr-6 flex-shrink-0 shadow-lg">
+                      <FaUtensils className="text-gold-foil text-2xl" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold mb-2">Purchases</h3>
-                      <p className="text-gray-300 mb-3">
-                        Earn points on every purchase at Broski&apos;s Kitchen.
+                      <h3 className="text-2xl font-bold mb-3 text-gold-foil">🍽️ Purchases</h3>
+                      <p className="text-gray-300 mb-4 leading-relaxed">
+                        Earn points on every purchase at Broski's Kitchen.
                         Point earning rates vary by tier:
                       </p>
-                      <ul className="space-y-1 text-gray-300">
-                        <li>• Bronze: 1 point per $1 spent</li>
-                        <li>• Silver: 1.5 points per $1 spent</li>
-                        <li>• Gold: 2 points per $1 spent</li>
+                      <ul className="space-y-2 text-gray-300">
+                        <li className="flex items-center"><span className="w-2 h-2 bg-bronze rounded-full mr-3"></span>Bronze: 1 point per $1 spent</li>
+                        <li className="flex items-center"><span className="w-2 h-2 bg-silver rounded-full mr-3"></span>Silver: 1.5 points per $1 spent</li>
+                        <li className="flex items-center"><span className="w-2 h-2 bg-gold-foil rounded-full mr-3"></span>Gold: 2 points per $1 spent</li>
                       </ul>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-xl p-8 border border-blue-500/30 shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 hover:scale-105 hover:border-blue-400/50">
                   <div className="flex items-start">
-                    <div className="bg-gold-foil bg-opacity-20 p-3 rounded-full mr-4 flex-shrink-0">
-                      <FaUserFriends className="text-gold-foil text-xl" />
+                    <div className="bg-gradient-to-br from-blue-500/30 to-cyan-500/30 p-4 rounded-full mr-6 flex-shrink-0 shadow-lg">
+                      <FaUserFriends className="text-blue-400 text-2xl" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold mb-2">Referrals</h3>
-                      <p className="text-gray-300 mb-3">
+                      <h3 className="text-2xl font-bold mb-3 text-blue-400">👥 Referrals</h3>
+                      <p className="text-gray-300 mb-4 leading-relaxed">
                         Earn 200 points for each friend you refer who signs up
                         and makes their first purchase.
                       </p>
-                      <p className="text-gray-300">
+                      <p className="text-gray-300 leading-relaxed">
                         Share your unique referral code with friends and family
-                        to earn bonus points.
+                        to earn bonus points! 🎁
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-xl p-8 border border-green-500/30 shadow-2xl hover:shadow-green-500/20 transition-all duration-300 hover:scale-105 hover:border-green-400/50">
                   <div className="flex items-start">
-                    <div className="bg-gold-foil bg-opacity-20 p-3 rounded-full mr-4 flex-shrink-0">
-                      <FaCalendarAlt className="text-gold-foil text-xl" />
+                    <div className="bg-gradient-to-br from-green-500/30 to-emerald-500/30 p-4 rounded-full mr-6 flex-shrink-0 shadow-lg">
+                      <FaCalendarAlt className="text-green-400 text-2xl" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold mb-2">Special Events</h3>
-                      <p className="text-gray-300 mb-3">
+                      <h3 className="text-2xl font-bold mb-3 text-green-400">🎉 Special Events</h3>
+                      <p className="text-gray-300 mb-4 leading-relaxed">
                         Earn bonus points by attending special events, tastings,
-                        and workshops at Broski&apos;s Kitchen.
+                        and workshops at Broski's Kitchen.
                       </p>
-                      <p className="text-gray-300">
+                      <p className="text-gray-300 leading-relaxed">
                         Events often feature double or triple point promotions
-                        for purchases made during the event.
+                        for purchases made during the event! ✨
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-xl p-8 border border-orange-500/30 shadow-2xl hover:shadow-orange-500/20 transition-all duration-300 hover:scale-105 hover:border-orange-400/50">
                   <div className="flex items-start">
-                    <div className="bg-gold-foil bg-opacity-20 p-3 rounded-full mr-4 flex-shrink-0">
-                      <FaGamepad className="text-gold-foil text-xl" />
+                    <div className="bg-gradient-to-br from-orange-500/30 to-red-500/30 p-4 rounded-full mr-6 flex-shrink-0 shadow-lg">
+                      <FaGamepad className="text-orange-400 text-2xl" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold mb-2">
-                        Games & Challenges
-                      </h3>
-                      <p className="text-gray-300 mb-3">
+                      <h3 className="text-2xl font-bold mb-3 text-orange-400">🎮 Games & Challenges</h3>
+                      {/* <p className="text-gray-300 mb-4 leading-relaxed">
                         Complete challenges and play games in our mobile app to
                         earn bonus points.
-                      </p>
-                      <p className="text-gray-300">
+                      </p> */}
+                      <p className="text-gray-300 leading-relaxed">
                         Daily spin-to-win games, ordering challenges, and social
-                        media tasks can all earn you extra points.
+                        media tasks can all earn you extra points! 🏆
                       </p>
                     </div>
                   </div>
@@ -739,99 +829,99 @@ export default function LoyaltyPage() {
           {/* Exclusive Perks Tab */}
           {activeTab === "perks" && (
             <div className="animate-fade-in">
-              <div className="max-w-3xl mx-auto text-center mb-12">
-                <h2 className="text-3xl font-bold mb-4">
-                  Exclusive Member Perks
+              <div className="max-w-3xl mx-auto text-center mb-12 bg-gradient-to-r from-emerald-900/20 to-teal-900/20 p-8 rounded-2xl border border-emerald-500/30 shadow-2xl">
+                <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                  ✨ Exclusive Member Perks
                 </h2>
-                <p className="text-gray-300 text-lg">
+                <p className="text-gray-300 text-lg leading-relaxed">
                   Beyond points and rewards, our loyalty program offers
-                  exclusive perks and benefits that enhance your Broski&apos;s
-                  Kitchen experience.
+                  exclusive perks and benefits that enhance your Broski's
+                  Kitchen experience! 🎁
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
-                  <div className="bg-gold-foil bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaPercent className="text-gold-foil text-2xl" />
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-xl p-8 border border-purple-500/30 shadow-2xl hover:shadow-purple-500/20 transition-all duration-300 hover:scale-105 hover:border-purple-400/50">
+                  <div className="bg-gradient-to-br from-purple-500/30 to-pink-500/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <FaPercent className="text-purple-400 text-3xl" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-center">
-                    Member-Only Discounts
+                  <h3 className="text-2xl font-bold mb-3 text-center text-purple-400">
+                    💰 Member-Only Discounts
                   </h3>
-                  <p className="text-gray-300 text-center">
+                  <p className="text-gray-300 text-center mb-6 leading-relaxed">
                     Exclusive discounts and offers available only to loyalty
                     program members.
                   </p>
-                  <div className="mt-4 pt-4 border-t border-[#333333]">
-                    <ul className="space-y-2">
+                  <div className="mt-4 pt-4 border-t border-purple-500/30">
+                    <ul className="space-y-3">
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-purple-400 mt-1 mr-3 flex-shrink-0" />
                         <span>Weekly member specials</span>
                       </li>
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-purple-400 mt-1 mr-3 flex-shrink-0" />
                         <span>Early access to promotions</span>
                       </li>
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-purple-400 mt-1 mr-3 flex-shrink-0" />
                         <span>Birthday discount (15% off)</span>
                       </li>
                     </ul>
                   </div>
                 </div>
 
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
-                  <div className="bg-gold-foil bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaTruck className="text-gold-foil text-2xl" />
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-xl p-8 border border-blue-500/30 shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 hover:scale-105 hover:border-blue-400/50">
+                  <div className="bg-gradient-to-br from-blue-500/30 to-cyan-500/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <FaTruck className="text-blue-400 text-3xl" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-center">
-                    Priority Service
+                  <h3 className="text-2xl font-bold mb-3 text-center text-blue-400">
+                    🚀 Priority Service
                   </h3>
-                  <p className="text-gray-300 text-center">
+                  <p className="text-gray-300 text-center mb-6 leading-relaxed">
                     Skip the wait with priority service for loyalty program
                     members.
                   </p>
-                  <div className="mt-4 pt-4 border-t border-[#333333]">
-                    <ul className="space-y-2">
+                  <div className="mt-4 pt-4 border-t border-blue-500/30">
+                    <ul className="space-y-3">
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-blue-400 mt-1 mr-3 flex-shrink-0" />
                         <span>Priority pickup (Silver+)</span>
                       </li>
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-blue-400 mt-1 mr-3 flex-shrink-0" />
                         <span>Free delivery (Gold)</span>
                       </li>
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-blue-400 mt-1 mr-3 flex-shrink-0" />
                         <span>Dedicated member support</span>
                       </li>
                     </ul>
                   </div>
                 </div>
 
-                <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333]">
-                  <div className="bg-gold-foil bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FaStar className="text-gold-foil text-2xl" />
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] rounded-xl p-8 border border-gold-foil/30 shadow-2xl hover:shadow-gold-foil/20 transition-all duration-300 hover:scale-105 hover:border-gold-foil/50">
+                  <div className="bg-gradient-to-br from-gold-foil/30 to-yellow-500/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <FaStar className="text-gold-foil text-3xl" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-center">
-                    Exclusive Experiences
+                  <h3 className="text-2xl font-bold mb-3 text-center text-gold-foil">
+                    🌟 Exclusive Experiences
                   </h3>
-                  <p className="text-gray-300 text-center">
+                  <p className="text-gray-300 text-center mb-6 leading-relaxed">
                     Access to special events and experiences reserved for
                     members.
                   </p>
-                  <div className="mt-4 pt-4 border-t border-[#333333]">
-                    <ul className="space-y-2">
+                  <div className="mt-4 pt-4 border-t border-gold-foil/30">
+                    <ul className="space-y-3">
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-gold-foil mt-1 mr-3 flex-shrink-0" />
                         <span>VIP event invitations (Gold)</span>
                       </li>
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-gold-foil mt-1 mr-3 flex-shrink-0" />
                         <span>Chef's table access (Gold)</span>
                       </li>
                       <li className="flex items-start">
-                        <FaCheck className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
+                        <FaCheck className="text-gold-foil mt-1 mr-3 flex-shrink-0" />
                         <span>Cooking class priority (Silver+)</span>
                       </li>
                     </ul>
