@@ -57,13 +57,26 @@ export default function RootLayout({
       <body
         className={cn(
           poppins.variable,
-          "font-sans antialiased bg-gradient-to-br from-otw-black to-otw-black/95 text-white min-h-screen flex flex-col",
+          "font-sans antialiased bg-otw-black text-white min-h-screen flex flex-col",
         )}
       >
         <CartProvider>
           <Providers>
-            {/* Background pattern */}
-            <div className="fixed inset-0 bg-[url('/assets/images/pattern.png')] opacity-5 pointer-events-none" />
+            {/* Background with OTW logo */}
+            <div 
+              className="fixed inset-0 pointer-events-none z-0"
+              style={{
+                backgroundImage: 'url(/images/otw-logo.png)',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'cover',
+                opacity: 0.4,
+                imageRendering: 'crisp-edges',
+                filter: 'contrast(1.1) brightness(1.05)'
+              }}
+            />
+            {/* Tint overlay */}
+            <div className="fixed inset-0 bg-otw-black/40 pointer-events-none z-1" />
 
             {/* Main content */}
             <div className="relative z-10 flex flex-col min-h-screen">

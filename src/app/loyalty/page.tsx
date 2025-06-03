@@ -45,7 +45,7 @@ export default function LoyaltyPage() {
       borderColor: "border-[#CD7F32]",
       pointsRequired: 0,
       price: "Free",
-      monthlyPrice: null,
+      monthlyPrice: undefined,
       pointsPerDollar: 1,
       benefits: [
         "Earn 1 point per $1 spent",
@@ -62,7 +62,7 @@ export default function LoyaltyPage() {
       borderColor: "border-gray-400",
       pointsRequired: 500,
       price: "$9.99/month",
-      monthlyPrice: 9.99,
+      monthlyPrice: "$9.99",
       pointsPerDollar: 1.5,
       benefits: [
         "Earn 1.5 points per $1 spent",
@@ -79,7 +79,7 @@ export default function LoyaltyPage() {
       borderColor: "border-gold-foil",
       pointsRequired: 1000,
       price: "$19.99/month",
-      monthlyPrice: 19.99,
+      monthlyPrice: "$19.99",
       pointsPerDollar: 2,
       benefits: [
         "Earn 2 points per $1 spent",
@@ -116,19 +116,21 @@ export default function LoyaltyPage() {
   return (
     <div className="min-h-screen pb-20">
       {/* Hero Section */}
-      <section className="relative h-[50vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[40vh] md:h-[50vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-black">
-          <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent opacity-70 z-10"></div>
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: "url('/assets/images/grocery-hero.jpg')",
-            }}
-          ></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent z-10"></div>
+          <Image
+            src="/assets/images/loyalty-hero.jpg"
+            alt="OTW Loyalty Program Hero"
+            fill
+            className="object-contain object-center"
+            priority
+            sizes="100vw"
+          />
         </div>
         <div className="container mx-auto px-4 z-10 text-center">
           <h1 className="heading-xl mb-4 text-white gritty-shadow">
-            Broski&apos;s Loyalty Program
+            OTW&apos;s Loyalty Program
           </h1>
           <p className="text-xl text-gray-200 max-w-2xl mx-auto">
             Join our exclusive loyalty program and unlock premium benefits,
@@ -152,7 +154,7 @@ export default function LoyaltyPage() {
               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">
-                    Welcome, {user.name}
+                    Welcome, {user.displayName || user.email}
                   </h2>
                   <div className="flex items-center mb-4">
                     <FaCrown className={`mr-2 ${userTier.color}`} />
@@ -975,7 +977,12 @@ export default function LoyaltyPage() {
             </div>
             <div className="p-6">
               <MembershipCard
-                user={user}
+                user={{
+                  id: user.uid,
+                  name: user.displayName || user.email || 'Member',
+                  email: user.email || '',
+                  role: 'user'
+                }}
                 points={points}
                 tier={userTier.name}
               />

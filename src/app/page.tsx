@@ -45,15 +45,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black overflow-hidden">
-      {/* Enhanced Hero Section with Dynamic Elements */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-otw-red/20 via-black to-otw-gold/20" />
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-otw-gold/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-otw-red/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+    <main className="min-h-screen overflow-hidden">
+        {/* Hero Section */}
+        <section className="relative min-h-screen flex items-center justify-center px-4">
+          {/* Animated Background */}
+          <div className="absolute inset-0">
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-otw-gold/10 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-otw-red/10 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
         </div>
         
         <div className="relative z-10 max-w-6xl mx-auto px-4">
@@ -65,13 +64,9 @@ export default function Home() {
           
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8">
             <span className="bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent animate-gradient-text">
-              Fort Wayne's
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-otw-red via-otw-gold to-otw-red bg-clip-text text-transparent">
-              Task Service
-            </span>
-          </h1>
+                OTW
+              </span>
+            </h1>
           
           <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12 leading-relaxed">
             Experience lightning-fast delivery from Fort Wayne's OTW. 
@@ -293,17 +288,23 @@ export default function Home() {
               </div>
               
               {/* Animated delivery zones */}
-              {Array.from({ length: 48 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-2 h-2 bg-otw-gold/30 rounded-full animate-pulse"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 3}s`
-                  }}
-                />
-              ))}
+              {Array.from({ length: 48 }).map((_, i) => {
+                // Use deterministic values based on index to avoid hydration mismatch
+                const left = ((i * 17 + 23) % 100);
+                const top = ((i * 31 + 47) % 100);
+                const delay = ((i * 0.13) % 3);
+                return (
+                  <div
+                    key={i}
+                    className="absolute w-2 h-2 bg-otw-gold/30 rounded-full animate-pulse"
+                    style={{
+                      left: `${left}%`,
+                      top: `${top}%`,
+                      animationDelay: `${delay}s`
+                    }}
+                  />
+                );
+              })}
               
               {/* Delivery trucks */}
               <div className="absolute top-1/4 left-1/4 text-2xl animate-bounce">
