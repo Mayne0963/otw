@@ -77,7 +77,7 @@ export default function Home() {
             <Button href="/restaurants" variant="primary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
               Order From Broskis = Free Delivery
             </Button>
-            <Button href="/grocery-delivery" variant="secondary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
+            <Button href="/otw/grocery-delivery" variant="secondary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
               Order Groceries
             </Button>
           </div>
@@ -146,7 +146,7 @@ export default function Home() {
               icon="🛒"
               title="Grocery Delivery"
               description="Fresh groceries delivered to your door. Same-day delivery from local stores."
-              href="/grocery-delivery"
+              href="/otw/grocery-delivery"
               buttonText="Shop Groceries"
               buttonVariant="secondary"
             />
