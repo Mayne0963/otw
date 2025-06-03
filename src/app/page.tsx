@@ -135,10 +135,10 @@ export default function Home() {
           
           <div className="grid md:grid-cols-3 gap-8">
             <ServiceCard
-              icon="🍕"
+              icon="🚗"
               title="Food Delivery"
               description="Order from 150+ restaurants with lightning-fast delivery. Average time: 22 minutes."
-              href="/menu"
+              href="/otw/rides"
               buttonText="Browse Restaurants"
               buttonVariant="primary"
             />
