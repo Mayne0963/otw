@@ -367,7 +367,7 @@ export default function LoyaltyPage() {
                   About Our Loyalty Program
                 </h2>
                 <p className="text-xl md:text-2xl text-gray-300 leading-relaxed">
-                  Broski&apos;s Kitchen Loyalty Program rewards our most valued
+                  OTW&apos;s Loyalty Program rewards our most valued
                   customers with exclusive perks, discounts, and experiences.
                   Earn points with every purchase and unlock premium benefits as
                   you progress through our membership tiers.
