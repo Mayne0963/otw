@@ -1223,8 +1223,8 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
+        {/* Order Summary */}
+        <div className="lg:col-span-1">
             <div className="bg-[#1A1A1A] rounded-lg border border-[#333333] p-6 sticky top-32">
               <h2 className="text-xl font-bold mb-6">Order Summary</h2>
 
