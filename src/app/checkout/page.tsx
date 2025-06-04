@@ -44,6 +44,7 @@ export default function CheckoutPage() {
     deliveryInstructions: "",
 
     // Payment Information
+    paymentMethod: "card", // card or cash
     cardNumber: "",
     cardName: "",
     expiryDate: "",
@@ -118,16 +119,110 @@ export default function CheckoutPage() {
     setError(null);
 
     try {
-      // Simulate API call to process payment and create order
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Check if payment on arrival is selected
+      if (formData.paymentMethod === 'cash') {
+        // Handle cash on arrival - create order without Stripe
+        const orderData = {
+          items: items.map(item => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            customizations: item.customizations
+          })),
+          orderType: formData.orderType,
+          contactInfo: {
+            email: formData.email,
+            phone: formData.phone
+          },
+          deliveryInfo: formData.orderType === 'delivery' ? {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            address: formData.address,
+            apartment: formData.apartment,
+            city: formData.city,
+            state: formData.state,
+            zipCode: formData.zipCode,
+            deliveryInstructions: formData.deliveryInstructions
+          } : {
+            pickupLocation: formData.pickupLocation
+          },
+          deliveryTime: formData.deliveryTime,
+          scheduledTime: formData.scheduledTime,
+          paymentMethod: 'cash',
+          subtotal: subtotal,
+          tax: tax,
+          total: total
+        };
 
-      // Generate a random order ID
-      const newOrderId = `BK-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 1000)}`;
-      setOrderId(newOrderId);
+        // Create order in database (you'll need to implement this API endpoint)
+        const response = await fetch('/api/orders/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData)
+        });
 
-      // Clear cart and show success
-      clearCart();
-      setOrderComplete(true);
+        if (!response.ok) {
+          throw new Error('Failed to create order');
+        }
+
+        const result = await response.json();
+        // Store order data in localStorage for the success page
+        localStorage.setItem(`order_${result.orderId}`, JSON.stringify({
+          ...orderData,
+          orderId: result.orderId
+        }));
+        // Redirect to cash success page
+        router.push(`/checkout/cash-success?orderId=${result.orderId}`);
+       } else {
+         // Handle Stripe payment
+         const token = await user?.getIdToken();
+         if (!token) {
+           throw new Error('Authentication required');
+         }
+
+         const checkoutData = {
+           items: items.map(item => ({
+             name: item.name,
+             price: item.price,
+             quantity: item.quantity,
+             description: item.customizations?.length > 0 
+               ? `Customizations: ${item.customizations.join(', ')}`
+               : undefined
+           })),
+           metadata: {
+             orderType: formData.orderType,
+             email: formData.email,
+             phone: formData.phone,
+             deliveryAddress: formData.orderType === 'delivery' 
+               ? `${formData.address}, ${formData.apartment ? formData.apartment + ', ' : ''}${formData.city}, ${formData.state} ${formData.zipCode}`
+               : undefined,
+             pickupLocation: formData.orderType === 'pickup' ? formData.pickupLocation : undefined,
+             deliveryTime: formData.deliveryTime,
+             scheduledTime: formData.scheduledTime
+           }
+         };
+
+         const response = await fetch('/api/create-checkout-session', {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+             'Authorization': `Bearer ${token}`
+           },
+           body: JSON.stringify(checkoutData)
+         });
+
+         if (!response.ok) {
+           const errorData = await response.json();
+           throw new Error(errorData.error || 'Failed to create checkout session');
+         }
+
+         const { url } = await response.json();
+         
+         // Redirect to Stripe Checkout
+         window.location.href = url;
+       }
     } catch (err) {
       console.error("Order processing error:", err);
       setError("There was an error processing your payment. Please try again.");
@@ -758,7 +853,41 @@ export default function CheckoutPage() {
                         </span>
                       </div>
 
-                      <div className="mb-4">
+                      <div className="mb-6">
+                        <h3 className="text-lg font-medium mb-4">Payment Method</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <button
+                            type="button"
+                            className={`p-4 rounded-lg border ${
+                              formData.paymentMethod === "card"
+                                ? "border-gold-foil bg-gold-foil bg-opacity-10"
+                                : "border-[#333333] hover:border-[#555555]"
+                            } flex flex-col items-center`}
+                            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "card" }))}
+                          >
+                            <span className="text-xl mb-2">💳</span>
+                            <span className="font-medium">Credit/Debit Card</span>
+                            <span className="text-xs text-gray-400 mt-1">Pay online with Stripe</span>
+                          </button>
+                          <button
+                            type="button"
+                            className={`p-4 rounded-lg border ${
+                              formData.paymentMethod === "cash"
+                                ? "border-gold-foil bg-gold-foil bg-opacity-10"
+                                : "border-[#333333] hover:border-[#555555]"
+                            } flex flex-col items-center`}
+                            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "cash" }))}
+                          >
+                            <span className="text-xl mb-2">💵</span>
+                            <span className="font-medium">Cash on Arrival</span>
+                            <span className="text-xs text-gray-400 mt-1">Pay when delivered/picked up</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {formData.paymentMethod === "card" && (
+                        <div className="space-y-4">
+                          <div className="mb-4">
                         <label
                           htmlFor="cardNumber"
                           className="block text-sm font-medium mb-1"
@@ -836,12 +965,14 @@ export default function CheckoutPage() {
                           />
                         </div>
                       </div>
-                    </div>
+                        </div>
+                      )}
 
-                    <div>
-                      <h2 className="text-xl font-bold mb-4">
-                        Billing Address
-                      </h2>
+                    {formData.paymentMethod === "card" && (
+                      <div>
+                        <h2 className="text-xl font-bold mb-4">
+                          Billing Address
+                        </h2>
                       <div className="mb-4">
                         <label className="flex items-center">
                           <input
@@ -853,7 +984,8 @@ export default function CheckoutPage() {
                           <span>Same as delivery address</span>
                         </label>
                       </div>
-                    </div>
+                      </div>
+                    )}
 
                     <div>
                       <h2 className="text-xl font-bold mb-4">Promo Code</h2>
