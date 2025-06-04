@@ -408,10 +408,11 @@ export default function CheckoutPage() {
                 Order Again
               </Link>
             </div>
-          </div>
         </div>
+
       </div>
-    );
+    </div>
+  );
   }
 
   return (
@@ -1161,7 +1162,7 @@ export default function CheckoutPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                </div>
                 )}
 
                 <div className="flex justify-between mt-8">
@@ -1220,6 +1221,7 @@ export default function CheckoutPage() {
               </form>
             </div>
           </div>
+        </div>
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
@@ -1271,6 +1273,7 @@ export default function CheckoutPage() {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
