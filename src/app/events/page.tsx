@@ -119,8 +119,8 @@ export default function EventsPage() {
     <div className="min-h-screen pb-20">
       {/* Hero Section */}
       <section className="relative h-[40vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0 bg-black">
-          <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent opacity-70 z-10"></div>
+        <div className="absolute inset-0 z-0 bg-otw-black">
+          <div className="absolute inset-0 bg-gradient-to-r from-otw-black to-transparent opacity-70 z-10"></div>
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: "url('/images/events-hero.jpg')" }}
@@ -130,7 +130,7 @@ export default function EventsPage() {
           <h1 className="heading-xl mb-4 text-white gritty-shadow">
             Events & Experiences
           </h1>
-          <p className="text-xl text-gray-200 max-w-2xl mx-auto">
+          <p className="text-xl text-white/80 max-w-2xl mx-auto">
             Join us for exclusive tastings, chef workshops, and special dining
             experiences.
           </p>
@@ -138,7 +138,7 @@ export default function EventsPage() {
       </section>
 
       {/* Search and Filter Section */}
-      <section className="bg-[#111111] py-8 sticky top-20 z-30 border-b border-[#333333]">
+      <section className="bg-otw-black-900 py-8 sticky top-20 z-30 border-b border-otw-black-800">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Search Bar */}
@@ -151,16 +151,16 @@ export default function EventsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label="Search events"
               />
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-otw-gold" />
             </div>
 
             {/* Time Frame Toggle */}
-            <div className="flex rounded-full bg-[#1A1A1A] p-1">
+            <div className="flex rounded-full bg-otw-black-800 p-1">
               <button
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   timeFrame === "upcoming"
-                    ? "bg-gold-foil text-black"
-                    : "text-white hover:bg-[#333333]"
+                    ? "bg-otw-gold text-otw-black"
+                    : "text-white hover:bg-otw-black-700"
                 }`}
                 onClick={() => setTimeFrame("upcoming")}
               >
@@ -169,8 +169,8 @@ export default function EventsPage() {
               <button
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   timeFrame === "past"
-                    ? "bg-gold-foil text-black"
-                    : "text-white hover:bg-[#333333]"
+                    ? "bg-otw-gold text-otw-black"
+                    : "text-white hover:bg-otw-black-700"
                 }`}
                 onClick={() => setTimeFrame("past")}
               >
@@ -193,7 +193,7 @@ export default function EventsPage() {
           {showFilters && (
             <div
               id="advanced-filters"
-              className="mt-6 p-4 bg-[#1A1A1A] rounded-lg border border-[#333333] animate-fade-in"
+              className="mt-6 p-4 bg-otw-black-800 rounded-lg border border-otw-black-700 animate-fade-in"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Category Filter */}
@@ -226,9 +226,9 @@ export default function EventsPage() {
         events.filter(
           (event) => event.featured && new Date(event.date) >= new Date(),
         ).length > 0 && (
-          <section className="py-12 bg-black">
+          <section className="py-12 bg-otw-black">
             <div className="container mx-auto px-4">
-              <h2 className="text-2xl font-bold mb-8 text-center">
+              <h2 className="text-2xl font-bold mb-8 text-center text-otw-gold">
                 Featured Event
               </h2>
 
@@ -241,7 +241,7 @@ export default function EventsPage() {
                 .map((event) => (
                   <div
                     key={event.id}
-                    className="bg-gradient-to-r from-[#1A1A1A] to-[#111111] rounded-lg overflow-hidden shadow-lg border border-gold-foil"
+                    className="bg-gradient-to-r from-otw-black-800 to-otw-black-900 rounded-lg overflow-hidden shadow-lg border border-otw-gold"
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2">
                       <div
@@ -251,10 +251,10 @@ export default function EventsPage() {
                       <div className="p-6 md:p-8 flex flex-col justify-between">
                         <div>
                           <div className="flex flex-wrap gap-2 mb-3">
-                            <span className="bg-gold-foil text-black text-xs font-bold px-3 py-1 rounded-full">
+                            <span className="bg-otw-gold text-otw-black text-xs font-bold px-3 py-1 rounded-full">
                               FEATURED
                             </span>
-                            <span className="bg-[#333333] text-white text-xs px-3 py-1 rounded-full">
+                            <span className="bg-otw-black-700 text-white text-xs px-3 py-1 rounded-full">
                               {
                                 categories.find((c) => c.id === event.category)
                                   ?.name
@@ -264,8 +264,8 @@ export default function EventsPage() {
                           <h3 className="text-2xl font-bold mb-2">
                             {event.title}
                           </h3>
-                          <div className="flex items-center text-gray-400 mb-2">
-                            <FaCalendarAlt className="mr-2 text-gold-foil" />
+                          <div className="flex items-center text-white/70 mb-2">
+                            <FaCalendarAlt className="mr-2 text-otw-gold" />
                             <span>
                               {new Date(event.date).toLocaleDateString(
                                 "en-US",
@@ -278,15 +278,15 @@ export default function EventsPage() {
                               )}
                             </span>
                           </div>
-                          <div className="flex items-center text-gray-400 mb-2">
-                            <FaClock className="mr-2 text-gold-foil" />
+                          <div className="flex items-center text-white/70 mb-2">
+                            <FaClock className="mr-2 text-otw-gold" />
                             <span>{event.time}</span>
                           </div>
-                          <div className="flex items-center text-gray-400 mb-4">
-                            <FaMapMarkerAlt className="mr-2 text-gold-foil" />
+                          <div className="flex items-center text-white/70 mb-4">
+                            <FaMapMarkerAlt className="mr-2 text-otw-gold" />
                             <span>{event.location.name}</span>
                           </div>
-                          <p className="text-gray-300 mb-6">
+                          <p className="text-white/80 mb-6">
                             {event.description.substring(0, 150)}...
                           </p>
                         </div>
@@ -319,7 +319,7 @@ export default function EventsPage() {
             <h2 className="text-2xl font-bold">
               {timeFrame === "upcoming" ? "Upcoming Events" : "Past Events"}
             </h2>
-            <div className="text-sm text-gray-400">
+            <div className="text-sm text-white/70">
               {filteredEvents.length}{" "}
               {filteredEvents.length === 1 ? "Event" : "Events"} Found
             </div>
@@ -327,11 +327,11 @@ export default function EventsPage() {
 
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold-foil"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-otw-gold"></div>
             </div>
           ) : error ? (
             <div className="text-center py-12">
-              <p className="text-red-400 mb-4">{error}</p>
+              <p className="text-otw-red mb-4">{error}</p>
               <button
                 onClick={() => window.location.reload()}
                 className="btn-primary"
@@ -355,10 +355,10 @@ export default function EventsPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-[#1A1A1A] rounded-lg p-8 text-center">
-              <FaCalendarAlt className="text-4xl text-gold-foil mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">No Events Found</h3>
-              <p className="text-gray-400 mb-4">
+            <div className="bg-otw-black-800 rounded-lg p-8 text-center">
+              <FaCalendarAlt className="text-4xl text-otw-gold mx-auto mb-4" />
+              <h3 className="text-xl font-bold mb-2 text-otw-gold">No Events Found</h3>
+              <p className="text-white/70 mb-4">
                 We couldn&apos;t find any events matching your search criteria.
               </p>
               <button
@@ -377,14 +377,14 @@ export default function EventsPage() {
       </section>
 
       {/* Host Your Own Event Section */}
-      <section className="py-16 bg-black relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/20 to-[#880808]/20 opacity-50"></div>
+      <section className="py-16 bg-otw-black relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-otw-gold/20 to-otw-red/20 opacity-50"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="heading-lg mb-4 gritty-shadow">
+            <h2 className="heading-lg mb-4 gritty-shadow text-otw-gold">
               Host Your Own Event
             </h2>
-            <p className="text-gray-300 mb-8">
+            <p className="text-white/80 mb-8">
               Looking for a unique venue for your next private event?
               Broski&apos;s Kitchen offers custom catering and private dining
               experiences for corporate events, birthdays, anniversaries, and
@@ -403,11 +403,11 @@ export default function EventsPage() {
       </section>
 
       {/* Event Newsletter Section */}
-      <section className="py-12 bg-[#111111]">
+      <section className="py-12 bg-otw-black-900">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-2xl font-bold mb-4">Stay Updated</h2>
-            <p className="text-gray-300 mb-6">
+            <h2 className="text-2xl font-bold mb-4 text-otw-gold">Stay Updated</h2>
+            <p className="text-white/80 mb-6">
               Subscribe to our newsletter to get notified about upcoming events
               and exclusive offers.
             </p>

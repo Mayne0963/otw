@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <main className="min-h-screen overflow-hidden">
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center px-4">
+        <section className="relative min-h-screen flex flex-col justify-start pt-32 px-4">
           {/* Animated Background */}
           <div className="absolute inset-0">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-otw-gold/10 rounded-full blur-3xl animate-pulse" />
@@ -55,25 +55,18 @@ export default function Home() {
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
         </div>
         
-        <div className="relative z-10 max-w-6xl mx-auto px-4">
-          {/* Live Status Badge */}
-          <div className="inline-flex items-center px-6 py-3 bg-green-500/20 border border-green-500/30 rounded-full mb-8 animate-pulse">
-            <div className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-ping" />
-            <span className="text-green-400 font-semibold">🔴 THE WEBSITE IS LIVE!!!</span>
-          </div>
-          
+        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8">
             <span className="bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent animate-gradient-text">
                 OTW
               </span>
             </h1>
           
-          <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-12 leading-relaxed">
-            Experience lightning-fast delivery from Fort Wayne's OTW. 
-            <span className="text-otw-gold font-semibold">Average delivery time: 22 minutes</span>
+          <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8 leading-relaxed">
+            Experience lightning-fast delivery from Fort Wayne's
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-24 mt-8">
             <Button href="/restaurants" variant="primary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
               Order From Broskis = Free Delivery
             </Button>
@@ -441,23 +434,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Floating Food Icons */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        {['🍕', '🍔', '🍜', '🌮', '🍣'].map((emoji, i) => (
-          <div
-            key={i}
-            className="absolute text-4xl opacity-10 animate-bounce"
-            style={{
-              left: `${10 + i * 20}%`,
-              top: `${20 + i * 15}%`,
-              animationDelay: `${i * 2}s`,
-              animationDuration: '3s'
-            }}
-          >
-            {emoji}
-          </div>
-        ))}
-      </div>
+
 
       {/* Enhanced Services Section */}
       <section className="py-24 relative">

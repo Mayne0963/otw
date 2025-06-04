@@ -175,7 +175,7 @@ export default function CheckoutPage() {
         }));
         // Redirect to cash success page
         router.push(`/checkout/cash-success?orderId=${result.orderId}`);
-       } else {
+      } else {
          // Handle Stripe payment
          const token = await user?.getIdToken();
          if (!token) {
@@ -222,7 +222,8 @@ export default function CheckoutPage() {
          
          // Redirect to Stripe Checkout
          window.location.href = url;
-       }
+      }
+      }
     } catch (err) {
       console.error("Order processing error:", err);
       setError("There was an error processing your payment. Please try again.");

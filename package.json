@@ -19,6 +19,7 @@
     "@auth/prisma-adapter": "^2.9.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@gannonh/firebase-mcp": "github:gannonh/firebase-mcp",
     "@googlemaps/google-maps-services-js": "^3.3.42",
     "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^5.15.10",

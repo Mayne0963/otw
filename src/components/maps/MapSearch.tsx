@@ -27,7 +27,7 @@ interface MapSearchProps {
 
 export default function MapSearch({
   onLocationSelect,
-  defaultLocation = { lat: 40.7128, lng: -74.006 }, // Default to NYC
+  defaultLocation = { lat: 41.0793, lng: -85.1394 }, // Default to Fort Wayne, IN
   height = "400px",
   showSearchBar = true,
 }: MapSearchProps) {
@@ -46,22 +46,35 @@ export default function MapSearch({
   });
 
   useEffect(() => {
+    // Set Fort Wayne as the initial center when map loads
+    if (map && !currentLocation && !selectedLocation) {
+      const fortWayneLocation = new google.maps.LatLng(41.0793, -85.1394);
+      map.panTo(fortWayneLocation);
+      map.setZoom(13);
+    }
+    
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           const location = new google.maps.LatLng(latitude, longitude);
           setCurrentLocation(location);
-          if (map) {
+          // Only pan to user location if they haven't selected anything yet
+          if (map && !selectedLocation) {
             map.panTo(location);
           }
         },
         (error) => {
           console.error("Error getting location:", error);
+          // If geolocation fails, ensure we stay centered on Fort Wayne
+          if (map) {
+            const fortWayneLocation = new google.maps.LatLng(41.0793, -85.1394);
+            map.panTo(fortWayneLocation);
+          }
         },
       );
     }
-  }, [map]);
+  }, [map, selectedLocation]);
 
   const onMapLoad = (map: google.maps.Map) => {
     setMap(map);
@@ -131,14 +144,19 @@ export default function MapSearch({
               onLoad={onSearchBoxLoad}
               onPlaceChanged={onPlacesChanged}
               options={{
-                types: ['address', 'establishment'],
+                types: ['address', 'establishment', 'geocode'],
                 componentRestrictions: { country: 'us' },
+                bounds: new google.maps.LatLngBounds(
+                  new google.maps.LatLng(40.9, -85.3), // Southwest corner
+                  new google.maps.LatLng(41.2, -85.0)  // Northeast corner
+                ),
+                strictBounds: false,
               }}
             >
               <Input
                 ref={searchInputRef}
                 type="text"
-                placeholder="Search for a location..."
+                placeholder="Enter address in Fort Wayne, IN..."
                 className="pl-10 pr-12 py-2 w-full"
               />
             </Autocomplete>

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import AddressAutocomplete from '../../../components/maps/AddressAutocomplete';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -94,13 +95,13 @@ export default function GroceryDeliveryPage() {
 
   if (orderSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-otw-gold/10 via-white to-otw-red/10 flex items-center justify-center">
         <Card className="w-full max-w-md mx-4">
           <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="mx-auto w-16 h-16 bg-otw-gold/20 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="w-8 h-8 text-otw-gold" />
             </div>
-            <CardTitle className="text-2xl text-white">Order Submitted!</CardTitle>
+            <CardTitle className="text-2xl text-otw-red">Order Submitted!</CardTitle>
             <CardDescription className="text-gray-300">
               Your grocery delivery order has been received and will be processed shortly.
             </CardDescription>
@@ -302,12 +303,10 @@ export default function GroceryDeliveryPage() {
                 </div>
                 <div>
                   <Label htmlFor="delivery-address" className="text-gray-300">Delivery Address</Label>
-                  <Textarea
-                    id="delivery-address"
-                    placeholder="123 Main St, Apt 4B, City, State 12345"
+                  <AddressAutocomplete
                     value={customerInfo.address}
-                    onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
-                    rows={3}
+                    onChange={(value) => setCustomerInfo({...customerInfo, address: value})}
+                    placeholder="Enter delivery address in Fort Wayne, IN..."
                     className="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
                   />
                 </div>

@@ -30,6 +30,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
 
 # vercel
 .vercel
@@ -37,3 +38,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Firebase sensitive files
+serviceAccountKey.json
+firebase-adminsdk-*.json
+
+# API keys and secrets
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+config/secrets/
+
+# Other sensitive files
+.env.*.local
+.env.*.production
+*.secret
+*-secret.json
+api-keys.json

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { FaCheckCircle, FaSpinner } from "react-icons/fa";
-import { useCart } from "../../../contexts/CartContext";
+import { useCart } from "../../../lib/context/CartContext";
 
 interface OrderDetails {
   id: string;
