@@ -413,7 +413,6 @@ export default function CheckoutPage() {
       </div>
     );
   }
-}
 
   return (
     <div className="min-h-screen py-20">
