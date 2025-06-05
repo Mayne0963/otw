@@ -57,3 +57,12 @@ config/secrets/
 *.secret
 *-secret.json
 api-keys.json
+
+# Temporary and build files
+eslint-results.json
+lint-errors.txt
+lint-output.txt
+run-mcp.js
+validate-jsx.js
+firebase-mcp.config.json
+.firebase-mcp/*
