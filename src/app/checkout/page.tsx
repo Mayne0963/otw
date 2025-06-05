@@ -382,9 +382,9 @@ export default function CheckoutPage() {
                 ) : (
                   <p className="text-gray-300 mb-2">
                     <strong>Pickup Location:</strong> {formData.pickupLocation}
-                  </p>
-                )}
-                <p className="text-gray-300">
+                   </p>
+                 )}
+                  <p className="text-gray-300">
                   <strong>Estimated Time:</strong>{" "}
                   {formData.deliveryTime === "asap"
                     ? "30-45 minutes"
@@ -701,10 +701,10 @@ export default function CheckoutPage() {
                           </option>
                         </select>
                       </div>
-                    </div>
-                  )}
+                      </div>
+                   )}
 
-                  {/* Delivery Time Options */}
+                    {/* Delivery Time Options */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label
@@ -787,11 +787,11 @@ export default function CheckoutPage() {
                           <option value="Today, 7:00 PM">Today, 7:00 PM</option>
                           <option value="Today, 8:00 PM">Today, 8:00 PM</option>
                         </select>
-                      </div>
-                    )}
+                        </div>
+                     )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Step 2: Payment Information */}
               {step === 2 && (
@@ -919,10 +919,10 @@ export default function CheckoutPage() {
                             />
                           </div>
                         </div>
-                      </div>
-                    )}
+                        </div>
+                     )}
 
-                    <div>
+                      <div>
                       <h2 className="text-xl font-bold mb-4">
                         Billing Address
                       </h2>
@@ -988,10 +988,9 @@ export default function CheckoutPage() {
                         </span>
                       </label>
                     </div>
-                  </div>
-                )}
+                 )}
 
-                {/* Step 3: Review Order */}
+                  {/* Step 3: Review Order */}
                 {step === 3 && (
                   <div className="space-y-6 animate-fade-in">
                     <div>
@@ -1043,10 +1042,10 @@ export default function CheckoutPage() {
                               <span className="font-medium">
                                 {formData.pickupLocation}
                               </span>
-                            </p>
-                          )}
+                             </p>
+                           )}
 
-                          <p>
+                            <p>
                             <span className="text-gray-400">Time:</span>{" "}
                             <span className="font-medium">
                               {formData.deliveryTime === "asap"
@@ -1096,8 +1095,8 @@ export default function CheckoutPage() {
                                   <div className="w-full h-full flex items-center justify-center">
                                     <FaShoppingBag className="text-gray-500" />
                                   </div>
-                                )}
-                              </div>
+                                 )}
+                               </div>
                               <div className="flex-grow">
                                 <div className="flex justify-between">
                                   <span className="font-medium">
@@ -1110,18 +1109,18 @@ export default function CheckoutPage() {
                                 {item.customizations && item.customizations.length > 0 && (
                                   <div className="text-xs text-gray-400 mt-1">
                                     {formatCustomizations(item)}
-                                  </div>
-                                )}
-                              </div>
+                                    </div>
+                                 )}
+                                </div>
                             </div>
                           ))}
                         </div>
                       </div>
                     </div>
-                </div>
-                )}
+                  </div>
+                 )}
 
-                {/* Navigation Buttons */}
+                  {/* Navigation Buttons */}
                 <div className="mt-8 flex justify-between">
                   {step > 1 && (
                     <button
@@ -1144,7 +1143,7 @@ export default function CheckoutPage() {
                       : "Place Order"}
                   </button>
                 </div>
-              </form>
+            </form>
           </div>
 
           {/* Order Summary */}
