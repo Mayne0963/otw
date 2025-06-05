@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Wrapper } from '@googlemaps/react-wrapper';
 
 interface PlaceDetails {
@@ -95,81 +95,87 @@ const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
   borderRadius = 'md',
   focusColor
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [inputValue, setInputValue] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!inputRef.current || !window.google) return;
+    if (!containerRef.current || !window.google) return;
 
-    // Initialize the autocomplete
-    autocompleteRef.current = new window.google.maps.places.Autocomplete(
-      inputRef.current,
-      {
-        types: ['address'],
-        fields: [
-          'formatted_address',
-          'place_id',
-          'geometry',
-          'address_components',
-          'name'
-        ]
-      }
-    );
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+      fields: [
+        'formattedAddress',
+        'id',
+        'location',
+        'addressComponents',
+        'displayName'
+      ]
+    });
+
+    // Configure the autocomplete element
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply custom styling to the autocomplete element
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : ''
+    ].filter(Boolean).join(' ');
+    
+    autocompleteElement.className = inputStyles;
+
+    // Add the element to the container
+    containerRef.current.appendChild(autocompleteElement);
 
     // Add place changed listener
-    const listener = autocompleteRef.current.addListener('place_changed', () => {
-      const place = autocompleteRef.current?.getPlace();
+    const handlePlaceSelect = (event: any) => {
+      const place = event.place;
       
-      if (place && place.geometry && place.geometry.location) {
+      if (place && place.location) {
         const placeDetails: PlaceDetails = {
-          formatted_address: place.formatted_address || '',
-          place_id: place.place_id || '',
+          formatted_address: place.formattedAddress || '',
+          place_id: place.id || '',
           geometry: {
             location: {
-              lat: () => place.geometry!.location!.lat(),
-              lng: () => place.geometry!.location!.lng()
+              lat: () => place.location.lat(),
+              lng: () => place.location.lng()
             }
           },
-          address_components: place.address_components || [],
-          name: place.name
+          address_components: place.addressComponents || [],
+          name: place.displayName
         };
         
         onPlaceSelect(placeDetails);
-        setInputValue(place.formatted_address || '');
       }
-    });
+    };
+
+    autocompleteElement.addEventListener('gmp-placeselect', handlePlaceSelect);
+
+    // Store reference for cleanup
+    autocompleteRef.current = autocompleteElement;
 
     // Cleanup
     return () => {
-      if (listener) {
-        window.google.maps.event.removeListener(listener);
+      if (autocompleteElement) {
+        autocompleteElement.removeEventListener('gmp-placeselect', handlePlaceSelect);
+        if (autocompleteElement.parentNode) {
+          autocompleteElement.parentNode.removeChild(autocompleteElement);
+        }
       }
     };
-  }, [onPlaceSelect]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleFocus = () => setIsFocused(true);
-  const handleBlur = () => setIsFocused(false);
-
-  // Build the complete input styles
-  const inputStyles = [
-    'w-full',
-    'outline-none',
-    'transition-all duration-200',
-    'focus:ring-2',
-    getSizeStyles(size),
-    getThemeStyles(theme, focusColor),
-    getBorderRadiusStyles(borderRadius),
-    disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
-    isFocused ? 'ring-2' : '',
-    customStyles?.input || '',
-    className
-  ].filter(Boolean).join(' ');
+  }, [onPlaceSelect, placeholder, disabled, theme, size, borderRadius, focusColor, className, customStyles, showIcon]);
 
   // Location icon SVG
   const LocationIcon = () => (
@@ -201,17 +207,7 @@ const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
           <LocationIcon />
         </div>
       )}
-      <input
-        ref={inputRef}
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        placeholder={placeholder}
-        disabled={disabled}
-        className={`${inputStyles} ${showIcon ? 'pl-10' : ''}`}
-      />
+      <div ref={containerRef} className="w-full" />
     </div>
   );
 };
