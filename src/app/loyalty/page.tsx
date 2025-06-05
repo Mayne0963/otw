@@ -24,20 +24,30 @@ import {
   FaGooglePlay,
   FaGamepad,
   FaTimes,
+  FaTrophy,
 } from "react-icons/fa";
 import MembershipCard from "../../components/loyalty/MembershipCard";
 import TierBenefitsTable from "../../components/loyalty/TierBenefitsTable";
 import TestimonialCard from "../../components/loyalty/TestimonialCard";
+import SpinGame from "../../components/rewards/SpinGame";
+import RedeemModal from "../../components/rewards/RedeemModal";
+import RewardCard from "../../components/rewards/RewardCard";
+import type { Reward } from "../../types/reward";
 // Dynamic testimonials loaded from API
 
 export default function LoyaltyPage() {
   const { user } = useAuth();
   const { points } = useRewards();
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState<'overview' | 'tiers' | 'earn' | 'perks' | 'rewards'>('overview');
   const [showMembershipCard, setShowMembershipCard] = useState(false);
   const [membershipTiersData, setMembershipTiersData] = useState<any[]>([]);
   const [testimonialsData, setTestimonialsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showSpinGame, setShowSpinGame] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
+  const [showRedeemModal, setShowRedeemModal] = useState(false);
+  const [rewards, setRewards] = useState<Reward[]>([]);
+  const [rewardsLoading, setRewardsLoading] = useState(false);
 
   // Fetch membership tiers and testimonials from API
   useEffect(() => {
@@ -66,6 +76,41 @@ export default function LoyaltyPage() {
 
     fetchData();
   }, []);
+
+  // Fetch rewards data from API
+  const fetchRewards = async () => {
+    try {
+      setRewardsLoading(true);
+      const response = await fetch('/api/rewards');
+      if (!response.ok) {
+        throw new Error('Failed to fetch rewards');
+      }
+      const data = await response.json();
+      setRewards(data.data || []);
+    } catch (err) {
+      console.error('Error fetching rewards:', err);
+    } finally {
+      setRewardsLoading(false);
+    }
+  };
+
+  // Handle selecting a reward
+  const handleSelectReward = (reward: Reward) => {
+    setSelectedReward(reward);
+    setShowRedeemModal(true);
+  };
+
+  // Handle closing the redeem modal
+  const handleCloseRedeemModal = () => {
+    setShowRedeemModal(false);
+    setSelectedReward(null);
+  };
+
+  // Handle spin game completion
+  const handleSpinComplete = (earnedPoints: number) => {
+    setShowSpinGame(false);
+    // Points are automatically added by the SpinGame component via useRewards context
+  };
 
   if (loading) {
     return (
@@ -237,6 +282,12 @@ export default function LoyaltyPage() {
                       >
                         <FaQrcode /> View Card
                       </button>
+                      <button
+                        className="bg-gradient-to-r from-otw-red to-otw-red-600 text-white font-bold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-otw-red/30 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 text-sm"
+                        onClick={() => setShowSpinGame(true)}
+                      >
+                        <FaGamepad /> Daily Spin
+                      </button>
                       <Link
                         href="/rewards"
                         className="border-2 border-otw-gold text-otw-gold font-semibold px-6 py-2.5 rounded-full hover:bg-otw-gold hover:text-white transition-all duration-300 flex items-center gap-2 text-sm"
@@ -359,6 +410,23 @@ export default function LoyaltyPage() {
                   <span className="text-lg">🎁</span>
                   <span className="hidden sm:inline">Exclusive Perks</span>
                   <span className="sm:hidden">Perks</span>
+                </button>
+                <button
+                  className={`px-4 py-3 font-semibold text-base whitespace-nowrap rounded-lg transition-all duration-300 flex items-center gap-2 ${
+                    activeTab === "rewards"
+                      ? "bg-gradient-to-r from-otw-red to-otw-red-600 text-white shadow-lg shadow-otw-red/30 transform scale-105"
+                      : "text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md"
+                  }`}
+                  onClick={() => {
+                    setActiveTab("rewards");
+                    if (rewards.length === 0) {
+                      fetchRewards();
+                    }
+                  }}
+                >
+                  <FaTrophy className="text-lg" />
+                  <span className="hidden sm:inline">Rewards</span>
+                  <span className="sm:hidden">Rewards</span>
                 </button>
               </div>
             </div>
@@ -1027,6 +1095,52 @@ export default function LoyaltyPage() {
               </div>
             </div>
           )}
+
+          {/* Rewards Tab */}
+          {activeTab === "rewards" && (
+            <div className="space-y-8">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold mb-4 text-gray-100">
+                  Redeem Your <span className="text-otw-gold">Rewards</span>
+                </h2>
+                <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                  Use your loyalty points to unlock exclusive rewards and experiences.
+                </p>
+              </div>
+
+              {rewardsLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {[...Array(6)].map((_, index) => (
+                    <div key={index} className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333] animate-pulse">
+                      <div className="h-48 bg-gray-700 rounded-lg mb-4"></div>
+                      <div className="h-6 bg-gray-700 rounded mb-2"></div>
+                      <div className="h-4 bg-gray-700 rounded mb-4"></div>
+                      <div className="h-10 bg-gray-700 rounded"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : rewards.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {rewards.map((reward) => (
+                    <RewardCard
+                      key={reward.id}
+                      reward={reward}
+                      userPoints={points}
+                      onSelect={handleSelectReward}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="text-6xl mb-4">🎁</div>
+                  <h3 className="text-2xl font-bold mb-4 text-gray-100">No Rewards Available</h3>
+                  <p className="text-gray-400 text-lg">
+                    Check back later for exciting rewards to redeem with your points!
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
@@ -1094,6 +1208,26 @@ export default function LoyaltyPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Spin Game Modal */}
+      {showSpinGame && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-80">
+          <div className="bg-[#1A1A1A] rounded-lg shadow-xl w-full max-w-2xl overflow-hidden animate-fade-in border border-[#333333]">
+            <SpinGame
+              onClose={() => setShowSpinGame(false)}
+              onSpinComplete={handleSpinComplete}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Redeem Modal */}
+      {showRedeemModal && selectedReward && (
+        <RedeemModal
+          reward={selectedReward}
+          onClose={handleCloseRedeemModal}
+        />
       )}
     </div>
   );

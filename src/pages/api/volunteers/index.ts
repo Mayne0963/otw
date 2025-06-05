@@ -11,7 +11,7 @@ export default async function handler(
     case 'GET':
       try {
         // Try to get from database first
-        let volunteerData = await databaseService.getVolunteers();
+        const volunteerData = await databaseService.getVolunteers();
 
         // TODO: Remove static data fallback - all data should come from database
         // If no data in database, volunteerData will remain empty

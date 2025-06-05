@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       try {
         // Try to get restaurant info and menu from database
         const restaurant = await databaseService.getRestaurant(id as string);
-        let menuData = await databaseService.getMenuItems(id as string);
+        const menuData = await databaseService.getMenuItems(id as string);
 
         // TODO: Remove static data fallback - all data should come from database
         // If no menu data in database, menuData will remain empty
