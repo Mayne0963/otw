@@ -45,7 +45,7 @@ interface CustomerInfo {
 }
 
 interface PaymentMethod {
-  type: 'contact' | 'card';
+  type: 'card';
   label: string;
   description: string;
   icon: React.ReactNode;
@@ -69,7 +69,7 @@ export default function OTWCheckoutPage() {
     address: '',
     specialInstructions: ''
   });
-  const [selectedPayment, setSelectedPayment] = useState<'contact' | 'card' | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState<'card' | null>('card');
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
@@ -78,12 +78,6 @@ export default function OTWCheckoutPage() {
   });
 
   const paymentMethods: PaymentMethod[] = [
-    {
-      type: 'contact',
-      label: 'Pay Upon Contact',
-      description: 'Pay when your service is delivered or completed. Cash, card, or digital payment accepted at time of service.',
-      icon: <Clock className="w-6 h-6" />
-    },
     {
       type: 'card',
       label: 'Pay with Card',
@@ -147,10 +141,7 @@ export default function OTWCheckoutPage() {
       case 2:
         return !!selectedPayment;
       case 3:
-        if (selectedPayment === 'card') {
-          return !!(cardDetails.number && cardDetails.expiry && cardDetails.cvv && cardDetails.name);
-        }
-        return true;
+        return !!(cardDetails.number && cardDetails.expiry && cardDetails.cvv && cardDetails.name);
       default:
         return false;
     }
@@ -181,54 +172,26 @@ export default function OTWCheckoutPage() {
         userId: user?.uid || null
       };
 
-      if (selectedPayment === 'card') {
-        // Process card payment
-        const response = await fetch('/api/otw/create-checkout-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': user ? `Bearer ${await user.getIdToken()}` : ''
-          },
-          body: JSON.stringify({
-            serviceDetails,
-            customerInfo,
-            amount: Math.round(serviceDetails?.estimatedPrice * 100) || 0
-          })
-        });
+      // Process card payment
+      const response = await fetch('/api/otw/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': user ? `Bearer ${await user.getIdToken()}` : ''
+        },
+        body: JSON.stringify({
+          serviceDetails,
+          customerInfo,
+          amount: Math.round(serviceDetails?.estimatedPrice * 100) || 0
+        })
+      });
 
-        if (response.ok) {
-          const { url } = await response.json();
-          window.location.href = url;
-          return;
-        } else {
-          throw new Error('Payment processing failed');
-        }
+      if (response.ok) {
+        const { url } = await response.json();
+        window.location.href = url;
+        return;
       } else {
-        // Process pay upon contact order
-        const response = await fetch('/api/otw/orders/create', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': user ? `Bearer ${await user.getIdToken()}` : ''
-          },
-          body: JSON.stringify(orderData)
-        });
-
-        if (response.ok) {
-          const { orderId } = await response.json();
-          setOrderId(orderId);
-          setOrderComplete(true);
-          
-          // Clear stored service details
-          localStorage.removeItem('otwServiceDetails');
-          
-          toast({
-            title: "Order Submitted Successfully!",
-            description: "Your service request has been received and will be processed shortly."
-          });
-        } else {
-          throw new Error('Order submission failed');
-        }
+        throw new Error('Payment processing failed');
       }
     } catch (error) {
       console.error('Order submission error:', error);
@@ -293,9 +256,7 @@ export default function OTWCheckoutPage() {
                 </div>
                 <div>
                   <Label className="text-gray-400">Payment Method</Label>
-                  <p className="text-white">
-                    {selectedPayment === 'contact' ? 'Pay Upon Contact' : 'Card Payment'}
-                  </p>
+                  <p className="text-white">Card Payment</p>
                 </div>
                 <div>
                   <Label className="text-gray-400">Estimated Total</Label>
@@ -310,10 +271,7 @@ export default function OTWCheckoutPage() {
                 <div>
                   <h4 className="text-white font-semibold mb-1">What's Next?</h4>
                   <p className="text-gray-400 text-sm">
-                    {selectedPayment === 'contact' 
-                      ? "A community helper will contact you shortly to confirm details and arrange service delivery. Payment will be collected upon completion."
-                      : "Your payment has been processed. A community helper will contact you shortly to arrange service delivery."
-                    }
+                    Your payment has been processed. A community helper will contact you shortly to arrange service delivery.
                   </p>
                 </div>
               </div>
@@ -487,18 +445,10 @@ export default function OTWCheckoutPage() {
                         <div className="flex-1">
                           <h3 className="text-white font-semibold mb-1">{method.label}</h3>
                           <p className="text-gray-400 text-sm">{method.description}</p>
-                          {method.type === 'contact' && (
-                            <div className="mt-2 flex items-center gap-2">
-                              <Shield className="w-4 h-4 text-otw-gold" />
-                              <span className="text-xs text-otw-gold">Secure • No upfront payment required</span>
-                            </div>
-                          )}
-                          {method.type === 'card' && (
-                            <div className="mt-2 flex items-center gap-2">
-                              <Shield className="w-4 h-4 text-otw-gold" />
-                              <span className="text-xs text-otw-gold">256-bit SSL encryption • Instant confirmation</span>
-                            </div>
-                          )}
+                          <div className="mt-2 flex items-center gap-2">
+                            <Shield className="w-4 h-4 text-otw-gold" />
+                            <span className="text-xs text-otw-gold">256-bit SSL encryption • Instant confirmation</span>
+                          </div>
                         </div>
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                           selectedPayment === method.type
@@ -516,8 +466,8 @@ export default function OTWCheckoutPage() {
               </Card>
             )}
 
-            {/* Step 3: Payment Details (Card Only) */}
-            {step === 3 && selectedPayment === 'card' && (
+            {/* Step 3: Payment Details */}
+            {step === 3 && (
               <Card className="bg-gray-900 border-otw-red/30">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-white">
@@ -580,43 +530,7 @@ export default function OTWCheckoutPage() {
               </Card>
             )}
 
-            {/* Step 3: Confirmation (Pay Upon Contact) */}
-            {step === 3 && selectedPayment === 'contact' && (
-              <Card className="bg-gray-900 border-otw-red/30">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-white">
-                    <CheckCircle className="w-5 h-5 text-otw-gold" />
-                    Order Confirmation
-                  </CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Review your order details before submitting.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="bg-otw-black/50 p-4 rounded-lg border border-otw-gold/20">
-                    <h4 className="text-white font-semibold mb-3">Payment Upon Contact Process:</h4>
-                    <div className="space-y-2 text-sm text-gray-400">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-otw-gold rounded-full" />
-                        <span>Your service request will be confirmed immediately</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-otw-gold rounded-full" />
-                        <span>A community helper will contact you to arrange service</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-otw-gold rounded-full" />
-                        <span>Payment will be collected when service is completed</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-otw-gold rounded-full" />
-                        <span>Accepted: Cash, Card, Digital payments (Venmo, PayPal, etc.)</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+
 
             {/* Navigation Buttons */}
             <div className="flex justify-between">
@@ -652,7 +566,7 @@ export default function OTWCheckoutPage() {
                   ) : (
                     <div className="flex items-center gap-2">
                       <CheckCircle className="w-4 h-4" />
-                      {selectedPayment === 'card' ? 'Pay Now' : 'Submit Order'}
+                      Pay Now
                     </div>
                   )}
                 </Button>
@@ -700,29 +614,18 @@ export default function OTWCheckoutPage() {
                   </div>
                 </div>
                 
-                {selectedPayment && (
-                  <>
-                    <Separator className="bg-otw-gold/20" />
-                    <div className="bg-otw-black/50 p-3 rounded-lg">
-                      <div className="flex items-center gap-2 mb-1">
-                        {selectedPayment === 'contact' ? (
-                          <Clock className="w-4 h-4 text-otw-gold" />
-                        ) : (
-                          <CreditCard className="w-4 h-4 text-otw-gold" />
-                        )}
-                        <span className="text-white text-sm font-semibold">
-                          {selectedPayment === 'contact' ? 'Pay Upon Contact' : 'Card Payment'}
-                        </span>
-                      </div>
-                      <p className="text-gray-400 text-xs">
-                        {selectedPayment === 'contact'
-                          ? 'Payment due when service is completed'
-                          : 'Secure payment processed immediately'
-                        }
-                      </p>
-                    </div>
-                  </>
-                )}
+                <Separator className="bg-otw-gold/20" />
+                <div className="bg-otw-black/50 p-3 rounded-lg">
+                  <div className="flex items-center gap-2 mb-1">
+                    <CreditCard className="w-4 h-4 text-otw-gold" />
+                    <span className="text-white text-sm font-semibold">
+                      Card Payment
+                    </span>
+                  </div>
+                  <p className="text-gray-400 text-xs">
+                    Secure payment processed immediately
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>
