@@ -431,9 +431,9 @@ export default function CheckoutPage() {
               </Link>
             </div>
           </div>
+          </div>
         </div>
-      </div>
-    );
+    );  
   }
 
   return (
@@ -1113,7 +1113,7 @@ export default function CheckoutPage() {
                                  )}
                                 </div>
                             </div>
-                          ))}
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1193,6 +1193,7 @@ export default function CheckoutPage() {
               </p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>
