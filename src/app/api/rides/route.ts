@@ -95,6 +95,35 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: true, data: vehicles });
     }
     
+    if (type === 'stats') {
+      // Fetch ride statistics
+      const ridesRef = collection(db, 'rides');
+      const ridesSnapshot = await getDocs(ridesRef);
+      
+      let totalRides = 0;
+      let totalRating = 0;
+      let ratingCount = 0;
+      
+      ridesSnapshot.forEach((doc) => {
+        const ride = doc.data();
+        totalRides++;
+        if (ride.rating) {
+          totalRating += ride.rating;
+          ratingCount++;
+        }
+      });
+      
+      const averageRating = ratingCount > 0 ? totalRating / ratingCount : 4.9;
+      
+      const stats = {
+        rating: Math.round(averageRating * 10) / 10, // Round to 1 decimal place
+        totalRides: totalRides || 10000, // Default to 10000 if no rides
+        averagePickupTime: 5 // This could be calculated from actual pickup times
+      };
+      
+      return NextResponse.json({ success: true, data: stats });
+    }
+    
     // Default: return all ride-related data
     const ridesRef = collection(db, 'rides');
     const ridesSnapshot = await getDocs(query(ridesRef, orderBy('createdAt', 'desc')));

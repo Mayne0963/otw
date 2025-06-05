@@ -407,20 +407,41 @@ export default function GroceryDeliveryPage() {
             {/* Submit Button */}
             <Button 
               className="w-full h-12 text-lg bg-otw-red hover:bg-otw-red/80 text-white disabled:bg-gray-600 disabled:text-gray-400"
-              onClick={handleSubmitOrder}
-              disabled={isSubmitting || !selectedStore || !customerInfo.name || !customerInfo.phone || !customerInfo.address || (!receiptPreview && !groceryList) || !deliveryTime}
+              onClick={() => {
+                // Store service details in localStorage for checkout
+                const serviceDetails = {
+                  type: 'grocery' as const,
+                  title: 'Grocery Shop & Drop',
+                  description: 'Personal grocery shopping and delivery service',
+                  estimatedPrice: 15.99,
+                  serviceDetails: {
+                    selectedStore,
+                    deliveryTime,
+                    receipt: receipt ? 'uploaded' : null,
+                    groceryList: groceryList || null
+                  }
+                };
+                
+                const customerDetails = {
+                  name: customerInfo.name,
+                  phone: customerInfo.phone,
+                  email: customerInfo.email,
+                  address: customerInfo.address,
+                  specialInstructions: `Store: ${selectedStore}, Delivery: ${deliveryTime}. ${receipt ? 'Receipt uploaded.' : ''} ${groceryList ? 'Grocery list provided.' : ''}`
+                };
+                
+                localStorage.setItem('otwServiceDetails', JSON.stringify(serviceDetails));
+                localStorage.setItem('otwCustomerInfo', JSON.stringify(customerDetails));
+                
+                // Navigate to checkout
+                window.location.href = '/otw/checkout?service=grocery';
+              }}
+              disabled={!selectedStore || !customerInfo.name || !customerInfo.phone || !customerInfo.address || (!receiptPreview && !groceryList) || !deliveryTime}
             >
-              {isSubmitting ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Submitting Order...
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
-                  Submit Order
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5" />
+                Proceed to Checkout
+              </div>
             </Button>
 
             <div className="text-xs text-gray-400 text-center">

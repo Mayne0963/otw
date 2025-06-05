@@ -2,7 +2,18 @@
 
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
+import { Badge } from "../../components/ui/badge";
+import { Separator } from "../../components/ui/separator";
+import type React from "react";
+
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useCart } from "../../lib/context/CartContext";
+import { toast } from "../../components/ui/use-toast";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import {
@@ -13,10 +24,72 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 import { MapPin, Clock, CreditCard } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
+
+// Define menu items
+const menuItems = [
+  {
+    id: "luxury-burger",
+    name: "Luxury Burger",
+    price: 18.99,
+    description: "Wagyu beef, truffle aioli, gold leaf, brioche bun",
+    image: "/assets/images/vegan-burger.jpg",
+    category: "burgers",
+    popular: true
+  },
+  {
+    id: "lobster-tacos",
+    name: "Lobster Tacos",
+    price: 22.99,
+    description: "Maine lobster, avocado crema, mango salsa",
+    image: "/assets/images/lobster-tacos.jpg",
+    category: "tacos",
+    popular: true
+  },
+  {
+    id: "truffle-pasta",
+    name: "Truffle Pasta",
+    price: 24.99,
+    description: "Fresh pasta with black truffle and parmesan",
+    image: "/assets/images/truffle-pasta.jpg",
+    category: "pasta",
+    popular: false
+  },
+  {
+    id: "wagyu-steak",
+    name: "Wagyu Steak",
+    price: 45.99,
+    description: "Premium wagyu beef with seasonal vegetables",
+    image: "/assets/images/wagyu-steak.jpg",
+    category: "steaks",
+    popular: true
+  }
+];
 
 export default function OrderPage() {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const { addItem } = useCart();
+
+  const handleAddToCart = (item: typeof menuItems[0]) => {
+    const cartItem = {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: 1,
+      image: item.image,
+      description: item.description
+    };
+    
+    addItem(cartItem);
+    toast({
+      title: "Added to Cart!",
+      description: `${item.name} has been added to your cart.`,
+    });
+  };
+
   return (
     <div className="min-h-screen pb-20 pt-24">
       {/* Hero Section */}
@@ -98,109 +171,38 @@ export default function OrderPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
-              <div className="relative h-48">
-                <Image
-                  src="/assets/images/vegan-burger.jpg"
-                  alt="Luxury Burger"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
-                  POPULAR
+            {menuItems.map((item) => (
+              <div key={item.id} className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
+                <div className="relative h-48">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
+                  {item.popular && (
+                    <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
+                      POPULAR
+                    </div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="text-lg font-bold">{item.name}</h3>
+                    <span className="text-otw-gold font-bold">${item.price}</span>
+                  </div>
+                  <p className="text-gray-400 text-sm mb-4">
+                    {item.description}
+                  </p>
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleAddToCart(item)}
+                  >
+                    Add to Cart
+                  </Button>
                 </div>
               </div>
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-bold">Luxury Burger</h3>
-                  <span className="text-otw-gold font-bold">$18.99</span>
-                </div>
-                <p className="text-gray-400 text-sm mb-4">
-                  Wagyu beef, truffle aioli, gold leaf, brioche bun
-                </p>
-                <Link href="/menu">
-                  <Button className="w-full">Add to Cart</Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
-              <div className="relative h-48">
-                <Image
-                  src="/assets/images/lobster-tacos.jpg"
-                  alt="Lobster Tacos"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
-                  POPULAR
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-bold">Lobster Tacos</h3>
-                  <span className="text-otw-gold font-bold">$22.99</span>
-                </div>
-                <p className="text-gray-400 text-sm mb-4">
-                  Maine lobster, avocado crema, mango salsa
-                </p>
-                <Link href="/menu">
-                  <Button className="w-full">Add to Cart</Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
-              <div className="relative h-48">
-                <Image
-                  src="/assets/images/truffle-fries.jpg"
-                  alt="Truffle Fries"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
-                  POPULAR
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-bold">Truffle Fries</h3>
-                  <span className="text-otw-gold font-bold">$12.99</span>
-                </div>
-                <p className="text-gray-400 text-sm mb-4">
-                  Hand-cut fries, truffle oil, parmesan, herbs
-                </p>
-                <Link href="/menu">
-                  <Button className="w-full">Add to Cart</Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-otw-gold transition-all duration-300">
-              <div className="relative h-48">
-                <Image
-                  src="/assets/images/golden-cheesecake.jpg"
-                  alt="Gold Leaf Cheesecake"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
-                  POPULAR
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-lg font-bold">Gold Leaf Cheesecake</h3>
-                  <span className="text-otw-gold font-bold">$14.99</span>
-                </div>
-                <p className="text-gray-400 text-sm mb-4">
-                  NY style cheesecake, gold leaf, berry compote
-                </p>
-                <Link href="/menu">
-                  <Button className="w-full">Add to Cart</Button>
-                </Link>
-              </div>
-            </div>
+            ))}
           </div>
 
           <div className="text-center mt-12">
@@ -265,20 +267,39 @@ export default function OrderPage() {
         </div>
       </section>
 
-      {/* Tier Membership CTA */}
+      {/* Quick Checkout Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="bg-gray-900 rounded-lg overflow-hidden shadow-lg border border-gray-800 p-8 text-center">
-            <h2 className="text-3xl font-bold mb-4">
-              Save on Delivery with Tier Membership
-            </h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-              Join our Tier Membership program and enjoy free delivery,
-              exclusive menu items, and more.
+          <div className="bg-gray-900 rounded-lg p-8 text-center border border-gray-800">
+            <h2 className="text-3xl font-bold text-white mb-4">Ready to Order?</h2>
+            <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
+              Add items to your cart and proceed to checkout, or browse our full menu for more options.
             </p>
-            <Link href="/tier">
-              <Button size="lg">Learn About Tier Membership</Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/cart">
+                <Button size="lg" className="bg-otw-gold text-black hover:bg-yellow-600">
+                  View Cart & Checkout
+                </Button>
+              </Link>
+              <Link href="/menu">
+                <Button size="lg" variant="outline">
+                  Browse Full Menu
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Tier Membership Section */}
+          <div className="bg-gradient-to-r from-otw-gold to-yellow-600 rounded-lg p-8 text-center mt-8">
+            <h2 className="text-3xl font-bold text-black mb-4">Join Our Tier Membership</h2>
+            <p className="text-black/80 mb-6 max-w-2xl mx-auto">
+              Unlock exclusive benefits, priority reservations, and special discounts with our premium membership program.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/tier">
+                <Button size="lg">Learn About Tier Membership</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

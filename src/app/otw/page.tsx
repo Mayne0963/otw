@@ -14,7 +14,11 @@ import {
   ArrowRight,
   CheckCircle,
   Users,
-  Truck
+  Truck,
+  Shield,
+  Phone,
+  Mail,
+  Calendar
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -131,6 +135,37 @@ export default function OTWServicesPage() {
                 <Users className="w-5 h-5 mr-2" />
                 Become a Helper
               </Button>
+            </div>
+            
+            {/* Quick Service Access */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Link href="/otw/package">
+                <Button variant="outline" className="w-full h-16 border-white/30 text-white hover:bg-white/10 flex items-center justify-center">
+                  <Package className="mr-3 w-6 h-6" />
+                  <div className="text-left">
+                    <div className="font-semibold">Package Delivery</div>
+                    <div className="text-sm opacity-80">Send packages anywhere</div>
+                  </div>
+                </Button>
+              </Link>
+              <Link href="/otw/rides">
+                <Button variant="outline" className="w-full h-16 border-white/30 text-white hover:bg-white/10 flex items-center justify-center">
+                  <Car className="mr-3 w-6 h-6" />
+                  <div className="text-left">
+                    <div className="font-semibold">Ride Service</div>
+                    <div className="text-sm opacity-80">Book your ride now</div>
+                  </div>
+                </Button>
+              </Link>
+              <Link href="/otw/grocery-delivery">
+                <Button variant="outline" className="w-full h-16 border-white/30 text-white hover:bg-white/10 flex items-center justify-center">
+                  <ShoppingCart className="mr-3 w-6 h-6" />
+                  <div className="text-left">
+                    <div className="font-semibold">Grocery Shopping</div>
+                    <div className="text-sm opacity-80">Shop & deliver groceries</div>
+                  </div>
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

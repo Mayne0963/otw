@@ -84,6 +84,11 @@ import {
   Globe,
   Smartphone,
   AlertCircle,
+  User,
+  Phone,
+  Mail,
+  Upload,
+  X
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -489,12 +494,58 @@ export default function PackagePage() {
                 <Button variant="outline" className="flex-1 h-12">
                   Save as template
                 </Button>
-                <Link href="/checkout" className="flex-1">
-                  <Button className="w-full h-12 bg-otw-red hover:bg-otw-red/80 text-white font-semibold">
-                    Schedule pickup
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </Link>
+                <Button 
+                  onClick={() => {
+                    // Get selected service details
+                    const selectedServiceData = deliveryServices.find(s => s.id === selectedService);
+                    
+                    if (!selectedServiceData) {
+                      alert('Please select a delivery service first');
+                      return;
+                    }
+                    
+                    // Store service details in localStorage for checkout
+                    const serviceDetails = {
+                      type: 'package' as const,
+                      title: selectedServiceData.name,
+                      description: selectedServiceData.description,
+                      estimatedPrice: calculateEstimatedPrice(selectedServiceData),
+                      serviceDetails: {
+                        pickupAddress,
+                        deliveryAddress,
+                        packageType,
+                        packageWeight,
+                        packageDimensions,
+                        specialInstructions,
+                        selectedService: selectedServiceData.name,
+                        estimatedDelivery: selectedServiceData.estimatedDelivery
+                      }
+                    };
+                    
+                    // Store basic customer info (will be completed in checkout)
+                    const customerDetails = {
+                      name: '',
+                      phone: '',
+                      email: '',
+                      address: pickupAddress,
+                      specialInstructions: `Pickup: ${pickupAddress}, Delivery: ${deliveryAddress}. Package: ${packageType}. ${specialInstructions}`
+                    };
+                    
+                    localStorage.setItem('otwServiceDetails', JSON.stringify(serviceDetails));
+                    localStorage.setItem('otwCustomerInfo', JSON.stringify(customerDetails));
+                    
+                    // Navigate to checkout
+                    window.location.href = '/otw/checkout?service=package';
+                  }}
+                  disabled={!selectedService || !pickupAddress || !deliveryAddress}
+                  className="flex-1 h-12 bg-otw-red hover:bg-otw-red/80 text-white font-semibold"
+                >
+                  <div className="flex items-center justify-center w-full">
+                     <CreditCard className="mr-2 w-5 h-5" />
+                     Proceed to Checkout
+                     <ArrowRight className="ml-2 w-5 h-5" />
+                   </div>
+                 </Button>
               </div>
             </div>
           </div>

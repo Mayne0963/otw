@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "../../lib/context/CartContext";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   FaArrowLeft,
   FaCreditCard,
@@ -21,6 +22,7 @@ import {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, tax, total, clearCart } = useCart();
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
