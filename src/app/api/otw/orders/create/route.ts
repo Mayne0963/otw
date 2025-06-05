@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { adminAuth, adminDb } from '@/lib/firebase/admin';
+import { adminAuth, adminDb } from '@/lib/firebaseAdmin';
 import { v4 as uuidv4 } from 'uuid';
 
 interface ServiceDetails {
