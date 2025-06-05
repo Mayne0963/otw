@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "../../lib/context/CartContext";
-import { useAuth } from "../../contexts/AuthContext";
 import {
   FaArrowLeft,
   FaCreditCard,
@@ -22,8 +21,7 @@ import {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, tax, total, clearCart } = useCart();
-  const { user } = useAuth();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<1 | 2>(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [orderComplete, setOrderComplete] = useState(false);
@@ -68,6 +66,28 @@ export default function CheckoutPage() {
     // Terms
     agreeToTerms: false,
   });
+
+  // Type definitions for cart items
+  type CustomizationOption = {
+    name: string;
+    value: string;
+  };
+
+  type CartItem = {
+    id: string;
+    name: string;
+    price: number;
+    quantity: number;
+    customizations?: CustomizationOption[];
+  };
+
+  // Format customizations for display
+  const formatCustomizations = (item: CartItem) => {
+    if (!item.customizations?.length) return "";
+    return `Customizations: ${item.customizations
+      .map((c) => `${c.name}: ${c.value}`)
+      .join(", ")}`;
+  };
 
   // Redirect to cart if cart is empty
   useEffect(() => {
@@ -417,83 +437,105 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen py-20">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Checkout</h1>
-          <Link
-            href="/cart"
-            className="text-gold-foil hover:underline flex items-center"
-          >
-            <FaArrowLeft className="mr-2" /> Back to Cart
-          </Link>
-        </div>
-
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Checkout Form */}
+          {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] mb-6">
-              {/* Progress Steps */}
-              <div className="bg-[#111111] p-4 border-b border-[#333333]">
-                <div className="flex items-center">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? "bg-gold-foil text-black" : "bg-[#333333] text-white"}`}
-                  >
-                    1
+            <form onSubmit={handleSubmit} className="p-6">
+              {/* Step 1: Delivery Information */}
+              {step === 1 && (
+                <div className="space-y-6 animate-fade-in">
+                  <div>
+                    <h2 className="text-xl font-bold mb-4">
+                      Contact Information
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          htmlFor="email"
+                          className="block text-sm font-medium mb-1"
+                        >
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="input w-full"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="phone"
+                          className="block text-sm font-medium mb-1"
+                        >
+                          Phone Number *
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className="input w-full"
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    className={`flex-1 h-1 mx-2 ${step >= 2 ? "bg-gold-foil" : "bg-[#333333]"}`}
-                  ></div>
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? "bg-gold-foil text-black" : "bg-[#333333] text-white"}`}
-                  >
-                    2
-                  </div>
-                  <div
-                    className={`flex-1 h-1 mx-2 ${step >= 3 ? "bg-gold-foil" : "bg-[#333333]"}`}
-                  ></div>
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 3 ? "bg-gold-foil text-black" : "bg-[#333333] text-white"}`}
-                  >
-                    3
-                  </div>
-                </div>
-                <div className="flex justify-between mt-2 text-xs">
-                  <span>Delivery</span>
-                  <span>Payment</span>
-                  <span>Review</span>
-                </div>
-              </div>
 
-              {/* Form */}
-              <form onSubmit={handleSubmit} className="p-6">
-                {error && (
-                  <div className="bg-blood-red bg-opacity-20 text-blood-red p-4 rounded-md mb-6 flex items-start">
-                    <FaExclamationTriangle className="mr-2 mt-1 flex-shrink-0" />
-                    <span>{error}</span>
+                  <div>
+                    <h2 className="text-xl font-bold mb-4">Order Type</h2>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <button
+                        type="button"
+                        className={`p-4 rounded-lg border ${
+                          formData.orderType === "delivery"
+                            ? "border-gold-foil bg-gold-foil bg-opacity-10"
+                            : "border-[#333333] hover:border-[#555555]"
+                        } flex flex-col items-center`}
+                        onClick={() => handleOrderTypeChange("delivery")}
+                      >
+                        <span className="text-xl mb-2">🚚</span>
+                        <span className="font-medium">Delivery</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`p-4 rounded-lg border ${
+                          formData.orderType === "pickup"
+                            ? "border-gold-foil bg-gold-foil bg-opacity-10"
+                            : "border-[#333333] hover:border-[#555555]"
+                        } flex flex-col items-center`}
+                        onClick={() => handleOrderTypeChange("pickup")}
+                      >
+                        <span className="text-xl mb-2">🏬</span>
+                        <span className="font-medium">Pickup</span>
+                      </button>
+                    </div>
                   </div>
-                )}
 
-                {/* Step 1: Delivery Information */}
-                {step === 1 && (
-                  <div className="space-y-6 animate-fade-in">
+                  {formData.orderType === "delivery" ? (
                     <div>
                       <h2 className="text-xl font-bold mb-4">
-                        Contact Information
+                        Delivery Address
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label
-                            htmlFor="email"
+                            htmlFor="firstName"
                             className="block text-sm font-medium mb-1"
                           >
-                            Email Address *
+                            First Name *
                           </label>
                           <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
+                            type="text"
+                            id="firstName"
+                            name="firstName"
+                            value={formData.firstName}
                             onChange={handleChange}
                             className="input w-full"
                             required
@@ -501,474 +543,384 @@ export default function CheckoutPage() {
                         </div>
                         <div>
                           <label
-                            htmlFor="phone"
+                            htmlFor="lastName"
                             className="block text-sm font-medium mb-1"
                           >
-                            Phone Number *
-                          </label>
-                          <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            className="input w-full"
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h2 className="text-xl font-bold mb-4">Order Type</h2>
-                      <div className="grid grid-cols-2 gap-4 mb-6">
-                        <button
-                          type="button"
-                          className={`p-4 rounded-lg border ${
-                            formData.orderType === "delivery"
-                              ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                              : "border-[#333333] hover:border-[#555555]"
-                          } flex flex-col items-center`}
-                          onClick={() => handleOrderTypeChange("delivery")}
-                        >
-                          <span className="text-xl mb-2">🚚</span>
-                          <span className="font-medium">Delivery</span>
-                        </button>
-                        <button
-                          type="button"
-                          className={`p-4 rounded-lg border ${
-                            formData.orderType === "pickup"
-                              ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                              : "border-[#333333] hover:border-[#555555]"
-                          } flex flex-col items-center`}
-                          onClick={() => handleOrderTypeChange("pickup")}
-                        >
-                          <span className="text-xl mb-2">🏬</span>
-                          <span className="font-medium">Pickup</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {formData.orderType === "delivery" ? (
-                      <div>
-                        <h2 className="text-xl font-bold mb-4">
-                          Delivery Address
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <label
-                              htmlFor="firstName"
-                              className="block text-sm font-medium mb-1"
-                            >
-                              First Name *
-                            </label>
-                            <input
-                              type="text"
-                              id="firstName"
-                              name="firstName"
-                              value={formData.firstName}
-                              onChange={handleChange}
-                              className="input w-full"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label
-                              htmlFor="lastName"
-                              className="block text-sm font-medium mb-1"
-                            >
-                              Last Name *
-                            </label>
-                            <input
-                              type="text"
-                              id="lastName"
-                              name="lastName"
-                              value={formData.lastName}
-                              onChange={handleChange}
-                              className="input w-full"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="mt-4">
-                          <label
-                            htmlFor="address"
-                            className="block text-sm font-medium mb-1"
-                          >
-                            Street Address *
+                            Last Name *
                           </label>
                           <input
                             type="text"
-                            id="address"
-                            name="address"
-                            value={formData.address}
+                            id="lastName"
+                            name="lastName"
+                            value={formData.lastName}
                             onChange={handleChange}
                             className="input w-full"
                             required
                           />
                         </div>
-
-                        <div className="mt-4">
-                          <label
-                            htmlFor="apartment"
-                            className="block text-sm font-medium mb-1"
-                          >
-                            Apartment, Suite, etc. (optional)
-                          </label>
-                          <input
-                            type="text"
-                            id="apartment"
-                            name="apartment"
-                            value={formData.apartment}
-                            onChange={handleChange}
-                            className="input w-full"
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                          <div>
-                            <label
-                              htmlFor="city"
-                              className="block text-sm font-medium mb-1"
-                            >
-                              City *
-                            </label>
-                            <input
-                              type="text"
-                              id="city"
-                              name="city"
-                              value={formData.city}
-                              onChange={handleChange}
-                              className="input w-full"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label
-                              htmlFor="state"
-                              className="block text-sm font-medium mb-1"
-                            >
-                              State *
-                            </label>
-                            <input
-                              type="text"
-                              id="state"
-                              name="state"
-                              value={formData.state}
-                              onChange={handleChange}
-                              className="input w-full"
-                              required
-                            />
-                          </div>
-                          <div>
-                            <label
-                              htmlFor="zipCode"
-                              className="block text-sm font-medium mb-1"
-                            >
-                              ZIP Code *
-                            </label>
-                            <input
-                              type="text"
-                              id="zipCode"
-                              name="zipCode"
-                              value={formData.zipCode}
-                              onChange={handleChange}
-                              className="input w-full"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="mt-4">
-                          <label
-                            htmlFor="deliveryInstructions"
-                            className="block text-sm font-medium mb-1"
-                          >
-                            Delivery Instructions (optional)
-                          </label>
-                          <textarea
-                            id="deliveryInstructions"
-                            name="deliveryInstructions"
-                            value={formData.deliveryInstructions}
-                            onChange={handleChange}
-                            className="input w-full h-20"
-                            placeholder="Apartment access code, delivery preferences, etc."
-                          />
-                        </div>
                       </div>
-                    ) : (
-                      <div>
-                        <h2 className="text-xl font-bold mb-4">
-                          Pickup Location
-                        </h2>
-                        <div>
-                          <label
-                            htmlFor="pickupLocation"
-                            className="block text-sm font-medium mb-1"
-                          >
-                            Select Location *
-                          </label>
-                          <select
-                            id="pickupLocation"
-                            name="pickupLocation"
-                            value={formData.pickupLocation}
-                            onChange={handleChange}
-                            className="input w-full"
-                            required
-                          >
-                            <option value="">Select a location</option>
-                            <option value="Downtown LA">
-                              Downtown LA - 420 S Grand Ave
-                            </option>
-                            <option value="Hollywood">
-                              Hollywood - 6801 Hollywood Blvd
-                            </option>
-                            <option value="SF Mission">
-                              SF Mission District - 2534 Mission St
-                            </option>
-                            <option value="SF Marina">
-                              SF Marina District - 2108 Chestnut St
-                            </option>
-                          </select>
-                        </div>
-                      </div>
-                    )}
 
-                    <div>
-                      <h2 className="text-xl font-bold mb-4">Delivery Time</h2>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="mt-4">
                         <label
-                          className={`p-4 rounded-lg border cursor-pointer ${
-                            formData.deliveryTime === "asap"
-                              ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                              : "border-[#333333]"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="deliveryTime"
-                            value="asap"
-                            checked={formData.deliveryTime === "asap"}
-                            onChange={handleChange}
-                            className="sr-only"
-                          />
-                          <div className="flex flex-col items-center">
-                            <span className="text-xl mb-2">⚡</span>
-                            <span className="font-medium">
-                              As Soon As Possible
-                            </span>
-                            <span className="text-xs text-gray-400 mt-1">
-                              30-45 min
-                            </span>
-                          </div>
-                        </label>
-                        <label
-                          className={`p-4 rounded-lg border cursor-pointer ${
-                            formData.deliveryTime === "scheduled"
-                              ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                              : "border-[#333333]"
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="deliveryTime"
-                            value="scheduled"
-                            checked={formData.deliveryTime === "scheduled"}
-                            onChange={handleChange}
-                            className="sr-only"
-                          />
-                          <div className="flex flex-col items-center">
-                            <span className="text-xl mb-2">🕒</span>
-                            <span className="font-medium">
-                              Schedule for Later
-                            </span>
-                            <span className="text-xs text-gray-400 mt-1">
-                              Select a time
-                            </span>
-                          </div>
-                        </label>
-                      </div>
-
-                      {formData.deliveryTime === "scheduled" && (
-                        <div className="mt-4">
-                          <label
-                            htmlFor="scheduledTime"
-                            className="block text-sm font-medium mb-1"
-                          >
-                            Select Time *
-                          </label>
-                          <select
-                            id="scheduledTime"
-                            name="scheduledTime"
-                            value={formData.scheduledTime}
-                            onChange={handleChange}
-                            className="input w-full"
-                            required
-                          >
-                            <option value="">Select a time</option>
-                            <option value="Today, 12:00 PM">
-                              Today, 12:00 PM
-                            </option>
-                            <option value="Today, 1:00 PM">
-                              Today, 1:00 PM
-                            </option>
-                            <option value="Today, 2:00 PM">
-                              Today, 2:00 PM
-                            </option>
-                            <option value="Today, 3:00 PM">
-                              Today, 3:00 PM
-                            </option>
-                            <option value="Today, 4:00 PM">
-                              Today, 4:00 PM
-                            </option>
-                            <option value="Today, 5:00 PM">
-                              Today, 5:00 PM
-                            </option>
-                            <option value="Today, 6:00 PM">
-                              Today, 6:00 PM
-                            </option>
-                            <option value="Today, 7:00 PM">
-                              Today, 7:00 PM
-                            </option>
-                            <option value="Today, 8:00 PM">
-                              Today, 8:00 PM
-                            </option>
-                          </select>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 2: Payment Information */}
-                {step === 2 && (
-                  <div className="space-y-6 animate-fade-in">
-                    <div>
-                      <h2 className="text-xl font-bold mb-4">
-                        Payment Information
-                      </h2>
-                      <div className="bg-[#111111] p-4 rounded-lg mb-6 flex items-center">
-                        <FaLock className="text-gold-foil mr-2" />
-                        <span className="text-sm">
-                          Your payment information is encrypted and secure.
-                        </span>
-                      </div>
-
-                      <div className="mb-6">
-                        <h3 className="text-lg font-medium mb-4">Payment Method</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <button
-                            type="button"
-                            className={`p-4 rounded-lg border ${
-                              formData.paymentMethod === "card"
-                                ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                                : "border-[#333333] hover:border-[#555555]"
-                            } flex flex-col items-center`}
-                            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "card" }))}
-                          >
-                            <span className="text-xl mb-2">💳</span>
-                            <span className="font-medium">Credit/Debit Card</span>
-                            <span className="text-xs text-gray-400 mt-1">Pay online with Stripe</span>
-                          </button>
-                          <button
-                            type="button"
-                            className={`p-4 rounded-lg border ${
-                              formData.paymentMethod === "cash"
-                                ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                                : "border-[#333333] hover:border-[#555555]"
-                            } flex flex-col items-center`}
-                            onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "cash" }))}
-                          >
-                            <span className="text-xl mb-2">💵</span>
-                            <span className="font-medium">Cash on Arrival</span>
-                            <span className="text-xs text-gray-400 mt-1">Pay when delivered/picked up</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      {formData.paymentMethod === "card" && (
-                        <div className="space-y-4">
-                          <div className="mb-4">
-                        <label
-                          htmlFor="cardNumber"
+                          htmlFor="address"
                           className="block text-sm font-medium mb-1"
                         >
-                          Card Number *
+                          Street Address *
                         </label>
                         <input
                           type="text"
-                          id="cardNumber"
-                          name="cardNumber"
-                          value={formData.cardNumber}
-                          onChange={handleCardNumberChange}
-                          className="input w-full"
-                          placeholder="1234 5678 9012 3456"
-                          maxLength={19}
-                          required
-                        />
-                      </div>
-
-                      <div className="mb-4">
-                        <label
-                          htmlFor="cardName"
-                          className="block text-sm font-medium mb-1"
-                        >
-                          Name on Card *
-                        </label>
-                        <input
-                          type="text"
-                          id="cardName"
-                          name="cardName"
-                          value={formData.cardName}
+                          id="address"
+                          name="address"
+                          value={formData.address}
                           onChange={handleChange}
                           className="input w-full"
                           required
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="mt-4">
+                        <label
+                          htmlFor="apartment"
+                          className="block text-sm font-medium mb-1"
+                        >
+                          Apartment, Suite, etc. (optional)
+                        </label>
+                        <input
+                          type="text"
+                          id="apartment"
+                          name="apartment"
+                          value={formData.apartment}
+                          onChange={handleChange}
+                          className="input w-full"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                         <div>
                           <label
-                            htmlFor="expiryDate"
+                            htmlFor="city"
                             className="block text-sm font-medium mb-1"
                           >
-                            Expiry Date *
+                            City *
                           </label>
                           <input
                             type="text"
-                            id="expiryDate"
-                            name="expiryDate"
-                            value={formData.expiryDate}
-                            onChange={handleExpiryDateChange}
+                            id="city"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleChange}
                             className="input w-full"
-                            placeholder="MM/YY"
-                            maxLength={5}
                             required
                           />
                         </div>
                         <div>
                           <label
-                            htmlFor="cvv"
+                            htmlFor="state"
                             className="block text-sm font-medium mb-1"
                           >
-                            CVV *
+                            State *
                           </label>
                           <input
                             type="text"
-                            id="cvv"
-                            name="cvv"
-                            value={formData.cvv}
+                            id="state"
+                            name="state"
+                            value={formData.state}
                             onChange={handleChange}
                             className="input w-full"
-                            placeholder="123"
-                            maxLength={4}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="zipCode"
+                            className="block text-sm font-medium mb-1"
+                          >
+                            ZIP Code *
+                          </label>
+                          <input
+                            type="text"
+                            id="zipCode"
+                            name="zipCode"
+                            value={formData.zipCode}
+                            onChange={handleChange}
+                            className="input w-full"
                             required
                           />
                         </div>
                       </div>
+
+                      <div className="mt-4">
+                        <label
+                          htmlFor="deliveryInstructions"
+                          className="block text-sm font-medium mb-1"
+                        >
+                          Delivery Instructions (optional)
+                        </label>
+                        <textarea
+                          id="deliveryInstructions"
+                          name="deliveryInstructions"
+                          value={formData.deliveryInstructions}
+                          onChange={handleChange}
+                          className="input w-full h-20"
+                          placeholder="Apartment access code, delivery preferences, etc."
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <h2 className="text-xl font-bold mb-4">
+                        Pickup Location
+                      </h2>
+                      <div>
+                        <label
+                          htmlFor="pickupLocation"
+                          className="block text-sm font-medium mb-1"
+                        >
+                          Select Location *
+                        </label>
+                        <select
+                          id="pickupLocation"
+                          name="pickupLocation"
+                          value={formData.pickupLocation}
+                          onChange={handleChange}
+                          className="input w-full"
+                          required
+                        >
+                          <option value="">Select a location</option>
+                          <option value="Downtown LA">
+                            Downtown LA - 420 S Grand Ave
+                          </option>
+                          <option value="Hollywood">
+                            Hollywood - 6801 Hollywood Blvd
+                          </option>
+                          <option value="SF Mission">
+                            SF Mission District - 2534 Mission St
+                          </option>
+                          <option value="SF Marina">
+                            SF Marina District - 2108 Chestnut St
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Delivery Time Options */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        className={`p-4 rounded-lg border ${
+                          formData.deliveryTime === "asap"
+                            ? "border-gold-foil bg-gold-foil bg-opacity-10"
+                            : "border-[#333333] hover:border-[#555555]"
+                        } flex flex-col items-center cursor-pointer`}
+                      >
+                        <input
+                          type="radio"
+                          name="deliveryTime"
+                          value="asap"
+                          checked={formData.deliveryTime === "asap"}
+                          onChange={handleChange}
+                          className="hidden"
+                        />
+                        <div className="text-center">
+                          <span className="text-xl mb-2">⚡</span>
+                          <span className="font-medium block">ASAP Delivery</span>
+                          <span className="text-xs text-gray-400 mt-1">
+                            Delivery in 30-45 mins
+                          </span>
                         </div>
-                      )}
+                      </label>
+                    </div>
+                    
+                    <div>
+                      <label
+                        className={`p-4 rounded-lg border ${
+                          formData.deliveryTime === "scheduled"
+                            ? "border-gold-foil bg-gold-foil bg-opacity-10"
+                            : "border-[#333333] hover:border-[#555555]"
+                        } flex flex-col items-center cursor-pointer`}
+                      >
+                        <input
+                          type="radio"
+                          name="deliveryTime"
+                          value="scheduled"
+                          checked={formData.deliveryTime === "scheduled"}
+                          onChange={handleChange}
+                          className="hidden"
+                        />
+                        <div className="text-center">
+                          <span className="text-xl mb-2">📅</span>
+                          <span className="font-medium block">
+                            Schedule for Later
+                          </span>
+                          <span className="text-xs text-gray-400 mt-1">
+                            Select a time
+                          </span>
+                        </div>
+                      </label>
+                    </div>
+
+                    {formData.deliveryTime === "scheduled" && (
+                      <div className="col-span-2 mt-4">
+                        <label
+                          htmlFor="scheduledTime"
+                          className="block text-sm font-medium mb-1"
+                        >
+                          Select Time *
+                        </label>
+                        <select
+                          id="scheduledTime"
+                          name="scheduledTime"
+                          value={formData.scheduledTime}
+                          onChange={handleChange}
+                          className="input w-full"
+                          required
+                        >
+                          <option value="">Select a time</option>
+                          <option value="Today, 12:00 PM">Today, 12:00 PM</option>
+                          <option value="Today, 1:00 PM">Today, 1:00 PM</option>
+                          <option value="Today, 2:00 PM">Today, 2:00 PM</option>
+                          <option value="Today, 3:00 PM">Today, 3:00 PM</option>
+                          <option value="Today, 4:00 PM">Today, 4:00 PM</option>
+                          <option value="Today, 5:00 PM">Today, 5:00 PM</option>
+                          <option value="Today, 6:00 PM">Today, 6:00 PM</option>
+                          <option value="Today, 7:00 PM">Today, 7:00 PM</option>
+                          <option value="Today, 8:00 PM">Today, 8:00 PM</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Payment Information */}
+              {step === 2 && (
+                <div className="space-y-6 animate-fade-in">
+                  <div>
+                    <h2 className="text-xl font-bold mb-4">
+                      Payment Information
+                    </h2>
+                    <div className="bg-[#111111] p-4 rounded-lg mb-6 flex items-center">
+                      <FaLock className="text-gold-foil mr-2" />
+                      <span className="text-sm">
+                        Your payment information is encrypted and secure.
+                      </span>
+                    </div>
+
+                    <div className="mb-6">
+                      <h3 className="text-lg font-medium mb-4">Payment Method</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          className={`p-4 rounded-lg border ${
+                            formData.paymentMethod === "card"
+                              ? "border-gold-foil bg-gold-foil bg-opacity-10"
+                              : "border-[#333333] hover:border-[#555555]"
+                          } flex flex-col items-center`}
+                          onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "card" }))}
+                        >
+                          <span className="text-xl mb-2">💳</span>
+                          <span className="font-medium">Credit/Debit Card</span>
+                          <span className="text-xs text-gray-400 mt-1">Pay online with Stripe</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`p-4 rounded-lg border ${
+                            formData.paymentMethod === "cash"
+                              ? "border-gold-foil bg-gold-foil bg-opacity-10"
+                              : "border-[#333333] hover:border-[#555555]"
+                          } flex flex-col items-center`}
+                          onClick={() => setFormData(prev => ({ ...prev, paymentMethod: "cash" }))}
+                        >
+                          <span className="text-xl mb-2">💵</span>
+                          <span className="font-medium">Cash on Arrival</span>
+                          <span className="text-xs text-gray-400 mt-1">Pay when delivered/picked up</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {formData.paymentMethod === "card" && (
+                      <div className="space-y-4">
+                        <div className="mb-4">
+                          <label
+                            htmlFor="cardNumber"
+                            className="block text-sm font-medium mb-1"
+                          >
+                            Card Number *
+                          </label>
+                          <input
+                            type="text"
+                            id="cardNumber"
+                            name="cardNumber"
+                            value={formData.cardNumber}
+                            onChange={handleCardNumberChange}
+                            className="input w-full"
+                            placeholder="1234 5678 9012 3456"
+                            maxLength={19}
+                            required
+                          />
+                        </div>
+
+                        <div className="mb-4">
+                          <label
+                            htmlFor="cardName"
+                            className="block text-sm font-medium mb-1"
+                          >
+                            Name on Card *
+                          </label>
+                          <input
+                            type="text"
+                            id="cardName"
+                            name="cardName"
+                            value={formData.cardName}
+                            onChange={handleChange}
+                            className="input w-full"
+                            required
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label
+                              htmlFor="expiryDate"
+                              className="block text-sm font-medium mb-1"
+                            >
+                              Expiry Date *
+                            </label>
+                            <input
+                              type="text"
+                              id="expiryDate"
+                              name="expiryDate"
+                              value={formData.expiryDate}
+                              onChange={handleExpiryDateChange}
+                              className="input w-full"
+                              placeholder="MM/YY"
+                              maxLength={5}
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label
+                              htmlFor="cvv"
+                              className="block text-sm font-medium mb-1"
+                            >
+                              CVV *
+                            </label>
+                            <input
+                              type="text"
+                              id="cvv"
+                              name="cvv"
+                              value={formData.cvv}
+                              onChange={handleChange}
+                              className="input w-full"
+                              placeholder="123"
+                              maxLength={4}
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div>
                       <h2 className="text-xl font-bold mb-4">
@@ -1037,7 +989,7 @@ export default function CheckoutPage() {
                       </label>
                     </div>
                   </div>
-                )
+                )}
 
                 {/* Step 3: Review Order */}
                 {step === 3 && (
@@ -1155,6 +1107,11 @@ export default function CheckoutPage() {
                                     ${(item.price * item.quantity).toFixed(2)}
                                   </span>
                                 </div>
+                                {item.customizations && item.customizations.length > 0 && (
+                                  <div className="text-xs text-gray-400 mt-1">
+                                    {formatCustomizations(item)}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           ))}
@@ -1164,84 +1121,77 @@ export default function CheckoutPage() {
                 </div>
                 )}
 
-                {/* Form Navigation Buttons */}
-                <div className="flex justify-between mt-8">
+                {/* Navigation Buttons */}
+                <div className="mt-8 flex justify-between">
                   {step > 1 && (
                     <button
                       type="button"
                       onClick={() => setStep(step - 1)}
-                      className="btn btn-secondary"
+                      className="btn-secondary"
                     >
                       Back
                     </button>
                   )}
                   <button
                     type="submit"
+                    className="btn-primary"
                     disabled={isProcessing}
-                    className="btn btn-primary ml-auto"
                   >
-                    {isProcessing ? (
-                      "Processing..."
-                    ) : step === 3 ? (
-                      "Place Order"
-                    ) : (
-                      "Continue"
-                    )}
+                    {isProcessing
+                      ? "Processing..."
+                      : step === 1
+                      ? "Continue to Payment"
+                      : "Place Order"}
                   </button>
                 </div>
-                  </div>
-                )}
               </form>
-            </div>
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333] sticky top-24">
-              <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+          <div className="bg-[#111111] rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
 
-              <div className="space-y-4 mb-6">
-                {items.map((item) => (
-                  <div key={item.id} className="flex justify-between">
-                    <span>
-                      {item.quantity} × {item.name}
-                    </span>
-                    <span>${(item.price * item.quantity).toFixed(2)}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="border-t border-[#333333] pt-4 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Tax (8.25%)</span>
-                  <span>${tax.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Delivery Fee</span>
-                  <span>$4.99</span>
-                </div>
-
-                <div className="flex justify-between pt-4 border-t border-[#333333] font-bold">
-                  <span>Total</span>
-                  <span className="text-gold-foil">
-                    ${(total + 4.99).toFixed(2)}
+            <div className="space-y-4 mb-6">
+              {items.map((item) => (
+                <div key={item.id} className="flex justify-between">
+                  <span>
+                    {item.quantity} × {item.name}
                   </span>
+                  <span>${(item.price * item.quantity).toFixed(2)}</span>
                 </div>
+              ))}
+            </div>
+
+            <div className="border-t border-[#333333] pt-4 space-y-2">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Tax (8.25%)</span>
+                <span>${tax.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Delivery Fee</span>
+                <span>$4.99</span>
               </div>
 
-              <div className="mt-6 p-4 bg-[#111111] rounded-lg">
-                <h3 className="font-bold mb-2 flex items-center">
-                  <FaLock className="text-gold-foil mr-2" /> Secure Checkout
-                </h3>
-                <p className="text-sm text-gray-400">
-                  Your payment information is encrypted and secure. We never
-                  store your full credit card details.
-                </p>
+              <div className="flex justify-between pt-4 border-t border-[#333333] font-bold">
+                <span>Total</span>
+                <span className="text-gold-foil">
+                  ${(total + 4.99).toFixed(2)}
+                </span>
               </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-[#111111] rounded-lg">
+              <h3 className="font-bold mb-2 flex items-center">
+                <FaLock className="text-gold-foil mr-2" /> Secure Checkout
+              </h3>
+              <p className="text-sm text-gray-400">
+                Your payment information is encrypted and secure. We never
+                store your full credit card details.
+              </p>
             </div>
           </div>
         </div>
