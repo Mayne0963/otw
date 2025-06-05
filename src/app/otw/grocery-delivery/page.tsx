@@ -8,20 +8,15 @@ import { Textarea } from '@/components/ui/textarea';
 import AddressAutocomplete from '../../../components/maps/AddressAutocomplete';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { 
   ShoppingCart, 
   Camera, 
   Upload, 
-  MapPin, 
   Clock, 
   DollarSign,
   Plus,
-  Minus,
   X,
   CheckCircle,
-  AlertCircle,
-  Phone,
   User,
   CreditCard,
   Package

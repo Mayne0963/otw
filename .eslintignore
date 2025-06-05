@@ -14,3 +14,14 @@ coverage/
 src/types/**
 **/*.d.ts
 src/lib/analytics.ts
+
+# Ignore firebase-mcp directory
+firebase-mcp/
+
+# Ignore dist and build files
+dist/
+**/*.js
+!src/**/*.js
+
+# Ignore specific files
+disable-firebase-routes.js

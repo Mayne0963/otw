@@ -408,11 +408,10 @@ export default function CheckoutPage() {
                 Order Again
               </Link>
             </div>
+          </div>
         </div>
-
       </div>
-    </div>
-  );
+    );
   }
 
   return (
@@ -432,7 +431,7 @@ export default function CheckoutPage() {
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] mb-6">
-              {/* Checkout Steps */}
+              {/* Progress Steps */}
               <div className="bg-[#111111] p-4 border-b border-[#333333]">
                 <div className="flex items-center">
                   <div
@@ -969,11 +968,10 @@ export default function CheckoutPage() {
                         </div>
                       )}
 
-                    {formData.paymentMethod === "card" && (
-                      <div>
-                        <h2 className="text-xl font-bold mb-4">
-                          Billing Address
-                        </h2>
+                    <div>
+                      <h2 className="text-xl font-bold mb-4">
+                        Billing Address
+                      </h2>
                       <div className="mb-4">
                         <label className="flex items-center">
                           <input
@@ -985,8 +983,7 @@ export default function CheckoutPage() {
                           <span>Same as delivery address</span>
                         </label>
                       </div>
-                      </div>
-                    )}
+                    </div>
 
                     <div>
                       <h2 className="text-xl font-bold mb-4">Promo Code</h2>
@@ -1038,7 +1035,7 @@ export default function CheckoutPage() {
                       </label>
                     </div>
                   </div>
-                )}
+                )
 
                 {/* Step 3: Review Order */}
                 {step === 3 && (
@@ -1165,68 +1162,41 @@ export default function CheckoutPage() {
                 </div>
                 )}
 
+                {/* Form Navigation Buttons */}
                 <div className="flex justify-between mt-8">
-                  {step > 1 ? (
+                  {step > 1 && (
                     <button
                       type="button"
-                      className="btn-outline"
                       onClick={() => setStep(step - 1)}
+                      className="btn btn-secondary"
                     >
                       Back
                     </button>
-                  ) : (
-                    <Link href="/cart" className="btn-outline">
-                      Back to Cart
-                    </Link>
                   )}
-
                   <button
                     type="submit"
-                    className="btn-primary flex items-center gap-2"
                     disabled={isProcessing}
+                    className="btn btn-primary ml-auto"
                   >
                     {isProcessing ? (
-                      <>
-                        <svg
-                          className="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        Processing...
-                      </>
-                    ) : step < 3 ? (
-                      "Continue"
+                      "Processing..."
+                    ) : step === 3 ? (
+                      "Place Order"
                     ) : (
-                      <>
-                        <FaCreditCard /> Place Order
-                      </>
+                      "Continue"
                     )}
                   </button>
                 </div>
+                  </div>
+                )}
               </form>
             </div>
           </div>
-        </div>
 
-        {/* Order Summary */}
-        <div className="lg:col-span-1">
-            <div className="bg-[#1A1A1A] rounded-lg border border-[#333333] p-6 sticky top-32">
-              <h2 className="text-xl font-bold mb-6">Order Summary</h2>
+          {/* Order Summary */}
+          <div className="lg:col-span-1">
+            <div className="bg-[#1A1A1A] rounded-lg p-6 border border-[#333333] sticky top-24">
+              <h2 className="text-xl font-bold mb-4">Order Summary</h2>
 
               <div className="space-y-4 mb-6">
                 {items.map((item) => (
@@ -1273,7 +1243,6 @@ export default function CheckoutPage() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

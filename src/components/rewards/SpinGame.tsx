@@ -661,7 +661,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
       )}
 
       {/* Custom CSS for animations */}
-      <style jsx>{`
+      <style>{`
         @keyframes bounce-in {
           0% {
             transform: scale(0.3);

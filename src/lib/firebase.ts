@@ -16,7 +16,7 @@ const requiredEnvVars = {
 
 // Check for missing required environment variables
 const missingVars = Object.entries(requiredEnvVars)
-  .filter(([key, value]) => !value || value.includes('your-'))
+  .filter(([, value]) => !value || value.includes('your-'))
   .map(([key]) => `NEXT_PUBLIC_FIREBASE_${key.toUpperCase()}`);
 
 if (missingVars.length > 0) {

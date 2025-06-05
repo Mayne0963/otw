@@ -1,4 +1,3 @@
-import { adminDb } from '../firebaseAdmin';
 import { 
   collection, 
   doc, 
@@ -10,9 +9,7 @@ import {
   query, 
   where, 
   orderBy, 
-  limit,
-  DocumentData,
-  QuerySnapshot
+  limit
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
