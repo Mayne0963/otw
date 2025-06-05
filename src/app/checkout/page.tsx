@@ -431,9 +431,9 @@ export default function CheckoutPage() {
               </Link>
             </div>
           </div>
-          </div>
         </div>
-    );  
+      </div>
+    );
   }
 
   return (
@@ -988,11 +988,11 @@ export default function CheckoutPage() {
                         </span>
                       </label>
                     </div>
-                 )}
+                  )}
 
                   {/* Step 3: Review Order */}
-                {step === 3 && (
-                  <div className="space-y-6 animate-fade-in">
+                  {step === 3 && (
+                    <div className="space-y-6 animate-fade-in">
                     <div>
                       <h2 className="text-xl font-bold mb-4">
                         Review Your Order
@@ -1194,7 +1194,7 @@ export default function CheckoutPage() {
             </div>
           </div>
         </div>
-        </div>
+      </div>
       </div>
     </div>
   );
