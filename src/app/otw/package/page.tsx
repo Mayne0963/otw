@@ -92,7 +92,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import AddressAutocomplete from "../../../components/maps/AddressAutocomplete";
+import AddressSearch from "../../../components/AddressSearch";
 
 interface DeliveryService {
   id: string;
@@ -252,18 +252,32 @@ export default function PackagePage() {
               <h3 className="text-2xl font-bold text-white mb-6">Get instant quote</h3>
               
               <div className="space-y-4">
-                <AddressAutocomplete
-                  value={pickupAddress}
-                  onChange={setPickupAddress}
+                <AddressSearch
+                  onAddressSelect={(place) => {
+                    setPickupAddress(place.formatted_address || '');
+                    console.log('Selected pickup address:', place);
+                  }}
                   placeholder="Pickup address in Fort Wayne, IN..."
-                  className="h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
+                  theme="default"
+                  size="md"
+                  showIcon={true}
+                  borderRadius="md"
+                  focusColor="#FFD700"
+                  customStyles="h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                 />
                 
-                <AddressAutocomplete
-                  value={deliveryAddress}
-                  onChange={setDeliveryAddress}
+                <AddressSearch
+                  onAddressSelect={(place) => {
+                    setDeliveryAddress(place.formatted_address || '');
+                    console.log('Selected delivery address:', place);
+                  }}
                   placeholder="Delivery address in Fort Wayne, IN..."
-                  className="h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
+                  theme="default"
+                  size="md"
+                  showIcon={true}
+                  borderRadius="md"
+                  focusColor="#FFD700"
+                  customStyles="h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                 />
                 
                 <Select value={packageType} onValueChange={setPackageType}>

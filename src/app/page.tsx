@@ -6,10 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import Button from "../components/Button.jsx";
+import AddressSearch, { PlaceDetails } from "../components/AddressSearch";
 import { useState } from "react";
 
 const MapSearch = dynamic(() => import("../components/maps/MapSearch"), { ssr: false });
-const AddressAutocomplete = dynamic(() => import("../components/maps/AddressAutocomplete"), { ssr: false });
 
 interface ServiceCardProps {
   icon: string;
@@ -47,59 +47,49 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [userAddress, setUserAddress] = useState("");
+  const [selectedAddress, setSelectedAddress] = useState<PlaceDetails | null>(null);
+  
+  const handleAddressSelect = (place: PlaceDetails) => {
+    setSelectedAddress(place);
+    console.log('Selected address:', place.formatted_address);
+    console.log('Coordinates:', place.geometry.location.lat(), place.geometry.location.lng());
+  };
 
   return (
     <main className="min-h-screen overflow-hidden">
         {/* Hero Section */}
-        <section className="relative min-h-screen flex flex-col justify-start pt-32 px-4">
+        <section className="relative min-h-screen flex flex-col justify-center items-center px-4">
           {/* Animated Background */}
           <div className="absolute inset-0">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-otw-gold/10 rounded-full blur-3xl animate-pulse" />
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-otw-red/10 rounded-full blur-3xl animate-pulse" />
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-        </div>
-        
-        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8">
-            <span className="bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent animate-gradient-text">
-                OTW
-              </span>
-            </h1>
-          
-          <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-8 leading-relaxed">
-            Experience lightning-fast delivery from Fort Wayne's
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-6 justify-center mb-24 mt-8">
-            <Button href="/restaurants" variant="primary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
-              Order From Broskis = Free Delivery
-            </Button>
-            <Button href="/otw/grocery-delivery" variant="secondary" className="text-lg px-8 py-4 transform hover:scale-105 transition-all duration-300">
-              Order Groceries
-            </Button>
           </div>
           
-          {/* Live Stats Counter */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-otw-gold animate-pulse">2,847</div>
-              <div className="text-white/70 text-sm">Orders Today</div>
+          <div className="relative z-10 max-w-6xl mx-auto text-center">
+            {/* Top Text */}
+            <div className="mb-8">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
+                <span className="bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent animate-gradient-text">
+                  OTW
+                </span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl lg:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+                Experience lightning-fast delivery from Fort Wayne's
+              </p>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-otw-red animate-pulse">47</div>
-              <div className="text-white/70 text-sm">Active Drivers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-green-400 animate-pulse">156</div>
-              <div className="text-white/70 text-sm">Partner Restaurants</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-otw-gold animate-pulse">22 min</div>
-              <div className="text-white/70 text-sm">Avg. Delivery Time</div>
+            
+            {/* Service Buttons */}
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+              <Button href="/restaurants" variant="primary" className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300 bg-otw-red hover:bg-otw-red/80">
+                Order Broskis = Free Delivery
+              </Button>
+              <Button href="/otw/grocery-delivery" variant="secondary" className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300">
+                Order Groceries
+              </Button>
             </div>
           </div>
-        </div>
         
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
@@ -182,9 +172,9 @@ export default function Home() {
                 className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
               />
               <div className="md:w-64">
-                <AddressAutocomplete
-                  value={userAddress}
-                  onChange={setUserAddress}
+                <AddressSearch
+                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
+                  onPlaceSelect={handleAddressSelect}
                   placeholder="Enter your address in Fort Wayne, IN..."
                   className="px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
                 />
