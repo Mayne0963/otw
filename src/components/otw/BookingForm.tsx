@@ -9,6 +9,7 @@ import { Textarea } from "../ui/textarea";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { Card } from "../ui/card";
+import PlaceAutocomplete from "../maps/PlaceAutocomplete";
 
 const services = [
   {
@@ -81,17 +82,21 @@ export default function BookingForm() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="pickup">Pickup Location</Label>
-            <Input
-              id="pickup"
+            <PlaceAutocomplete
               placeholder="Enter pickup address"
+              onPlaceSelect={(place) => {
+                console.log('Pickup location selected:', place);
+              }}
               className="mt-1"
             />
           </div>
           <div>
             <Label htmlFor="dropoff">Dropoff Location</Label>
-            <Input
-              id="dropoff"
+            <PlaceAutocomplete
               placeholder="Enter dropoff address"
+              onPlaceSelect={(place) => {
+                console.log('Dropoff location selected:', place);
+              }}
               className="mt-1"
             />
           </div>

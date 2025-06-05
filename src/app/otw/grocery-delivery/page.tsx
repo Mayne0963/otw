@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import AddressSearch from '../../../components/AddressSearch';
+import PlaceAutocomplete from '../../../components/maps/PlaceAutocomplete';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -298,18 +298,13 @@ export default function GroceryDeliveryPage() {
                 </div>
                 <div>
                   <Label htmlFor="delivery-address" className="text-gray-300">Delivery Address</Label>
-                  <AddressSearch
-                    onAddressSelect={(place) => {
+                  <PlaceAutocomplete
+                    onPlaceSelect={(place) => {
                       setCustomerInfo({...customerInfo, address: place.formatted_address || ''});
                       console.log('Selected delivery address:', place);
                     }}
                     placeholder="Enter delivery address in Fort Wayne, IN..."
-                    theme="dark"
-                    size="md"
-                    showIcon={true}
-                    borderRadius="md"
-                    focusColor="#FFD700"
-                    customStyles="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
+                    className="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
                   />
                 </div>
                 <div>

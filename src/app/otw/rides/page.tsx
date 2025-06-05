@@ -79,7 +79,7 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import AddressSearch from "../../../components/AddressSearch";
+import PlaceAutocomplete from "../../../components/maps/PlaceAutocomplete";
 
 export default function RidesPage() {
   const [pickupLocation, setPickupLocation] = useState('');
@@ -255,35 +255,25 @@ export default function RidesPage() {
               <div className="space-y-4">
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full z-20"></div>
-                  <AddressSearch
-                    onAddressSelect={(place) => {
+                  <PlaceAutocomplete
+                    onPlaceSelect={(place) => {
                       setPickupLocation(place.formatted_address || '');
                       console.log('Selected pickup location:', place);
                     }}
                     placeholder="Pickup location in Fort Wayne, IN..."
-                    theme="default"
-                    size="md"
-                    showIcon={false}
-                    borderRadius="md"
-                    focusColor="#FFD700"
-                    customStyles="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
+                    className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
                 
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full z-20"></div>
-                  <AddressSearch
-                    onAddressSelect={(place) => {
+                  <PlaceAutocomplete
+                    onPlaceSelect={(place) => {
                       setDestination(place.formatted_address || '');
                       console.log('Selected destination:', place);
                     }}
                     placeholder="Destination in Fort Wayne, IN..."
-                    theme="default"
-                    size="md"
-                    showIcon={false}
-                    borderRadius="md"
-                    focusColor="#FFD700"
-                    customStyles="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
+                    className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
                 
