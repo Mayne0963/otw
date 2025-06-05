@@ -30,7 +30,6 @@ interface PlaceAutocompleteProps {
   componentRestrictions?: { country?: string | string[] };
   bounds?: google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral;
   strictBounds?: boolean;
-  fields?: string[];
   value?: string;
   onChange?: (value: string) => void;
 }
@@ -45,13 +44,6 @@ export default function PlaceAutocomplete({
   componentRestrictions,
   bounds,
   strictBounds = false,
-  fields = [
-    'formattedAddress',
-    'id',
-    'location',
-    'addressComponents',
-    'displayName'
-  ],
   value,
   onChange
 }: PlaceAutocompleteProps) {
@@ -63,8 +55,17 @@ export default function PlaceAutocomplete({
   // Load Google Maps API if not already loaded
   useEffect(() => {
     const loadGoogleMapsAPI = async () => {
+      // Check if Google Maps API is already loaded
       if (window.google && window.google.maps && window.google.maps.places) {
         setIsLoaded(true);
+        return;
+      }
+
+      // Check if script is already being loaded
+      const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+      if (existingScript) {
+        existingScript.addEventListener('load', () => setIsLoaded(true));
+        existingScript.addEventListener('error', () => setLoadError('Failed to load Google Maps API'));
         return;
       }
 
@@ -109,8 +110,7 @@ export default function PlaceAutocomplete({
         types,
         componentRestrictions,
         bounds,
-        strictBounds,
-        fields
+        strictBounds
       });
 
       // Configure the element
