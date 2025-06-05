@@ -1,6 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { databaseService } from '../../../lib/services/database';
-import { events } from '../../../data/event-data';
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,27 +20,11 @@ export default async function handler(
           limit: limit ? parseInt(limit as string) : undefined
         });
 
-        // If no data in database, use static data as fallback
-        if (eventData.length === 0) {
-          eventData = events.filter(event => {
-            if (category && event.category !== category) {
-              return false;
-            }
-            if (featured !== undefined && event.featured !== (featured === 'true')) {
-              return false;
-            }
-            if (upcoming === 'true') {
-              const today = new Date().toISOString().split('T')[0];
-              if (event.date < today) {
-                return false;
-              }
-            }
-            return true;
-          });
+        // TODO: Remove static data fallback - all data should come from database
+        // If no data in database, eventData will remain empty
 
-          if (limit) {
-            eventData = eventData.slice(0, parseInt(limit as string));
-          }
+        if (limit && eventData.length > 0) {
+          eventData = eventData.slice(0, parseInt(limit as string));
         }
 
         res.status(200).json({

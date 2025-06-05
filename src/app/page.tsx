@@ -6,8 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import Button from "../components/Button.jsx";
+import { useState } from "react";
 
 const MapSearch = dynamic(() => import("../components/maps/MapSearch"), { ssr: false });
+const AddressAutocomplete = dynamic(() => import("../components/maps/AddressAutocomplete"), { ssr: false });
 
 interface ServiceCardProps {
   icon: string;
@@ -44,6 +46,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 );
 
 export default function Home() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [userAddress, setUserAddress] = useState("");
+
   return (
     <main className="min-h-screen overflow-hidden">
         {/* Hero Section */}
@@ -172,13 +177,18 @@ export default function Home() {
               <input
                 type="text"
                 placeholder="Search restaurants, cuisines, or dishes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
               />
-              <input
-                type="text"
-                placeholder="Enter your address"
-                className="md:w-64 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
-              />
+              <div className="md:w-64">
+                <AddressAutocomplete
+                  value={userAddress}
+                  onChange={setUserAddress}
+                  placeholder="Enter your address in Fort Wayne, IN..."
+                  className="px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
+                />
+              </div>
               <Link href="/restaurants">
                 <Button variant="primary" className="px-8 py-4">
                   Search

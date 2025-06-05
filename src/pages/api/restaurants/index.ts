@@ -1,6 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { databaseService } from '../../../lib/services/database';
-import { restaurants } from '../../../data/restaurants-data';
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,24 +20,11 @@ export default async function handler(
           limit: limit ? parseInt(limit as string) : undefined
         });
 
-        // If no data in database, use static data as fallback
-        if (restaurantData.length === 0) {
-          restaurantData = restaurants.filter(restaurant => {
-            if (category && category !== 'all' && !restaurant.categories.includes(category as string)) {
-              return false;
-            }
-            if (featured !== undefined && restaurant.featured !== (featured === 'true')) {
-              return false;
-            }
-            if (isPartner !== undefined && restaurant.isPartner !== (isPartner === 'true')) {
-              return false;
-            }
-            return true;
-          });
-
-          if (limit) {
-            restaurantData = restaurantData.slice(0, parseInt(limit as string));
-          }
+        // TODO: Remove static data fallback - all data should come from database
+        // If no data in database, return empty array (restaurantData already empty)
+        
+        if (limit && restaurantData.length > 0) {
+          restaurantData = restaurantData.slice(0, parseInt(limit as string));
         }
 
         res.status(200).json({

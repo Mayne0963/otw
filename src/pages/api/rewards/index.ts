@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { databaseService } from '../../../lib/services/database';
-import { rewards } from '../../../data/rewards-data';
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,21 +19,11 @@ export default async function handler(
           limit: limit ? parseInt(limit as string) : undefined
         });
 
-        // If no data in database, use static data as fallback
-        if (rewardData.length === 0) {
-          rewardData = rewards.filter(reward => {
-            if (category && reward.category !== category) {
-              return false;
-            }
-            if (available !== undefined && reward.available !== (available === 'true')) {
-              return false;
-            }
-            return true;
-          });
-
-          if (limit) {
-            rewardData = rewardData.slice(0, parseInt(limit as string));
-          }
+        // TODO: Remove static data fallback - all data should come from database
+        // If no data in database, return empty array (rewardData already empty)
+        
+        if (limit && rewardData.length > 0) {
+          rewardData = rewardData.slice(0, parseInt(limit as string));
         }
 
         res.status(200).json({

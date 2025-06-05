@@ -86,54 +86,112 @@ import {
   AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddressAutocomplete from "../../../components/maps/AddressAutocomplete";
+
+interface DeliveryService {
+  id: string;
+  name: string;
+  description: string;
+  basePrice: number;
+  pricePerMile: number;
+  maxWeight: number;
+  maxDimensions: string;
+  estimatedDelivery: string;
+  features: string[];
+  available?: boolean;
+}
+
+interface PackageType {
+  id: string;
+  name: string;
+  description: string;
+  maxWeight: number;
+  maxDimensions: string;
+  handling: string;
+  available?: boolean;
+}
 
 export default function PackagePage() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [pickupAddress, setPickupAddress] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [packageType, setPackageType] = useState("");
+  const [packageWeight, setPackageWeight] = useState("");
+  const [packageDimensions, setPackageDimensions] = useState("");
+  const [specialInstructions, setSpecialInstructions] = useState("");
+  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
+  const [deliveryServices, setDeliveryServices] = useState<DeliveryService[]>([]);
+  const [packageTypes, setPackageTypes] = useState<PackageType[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const deliveryServices = [
-    {
-      id: "express",
-      name: "Express Delivery",
-      description: "Same-day delivery for urgent packages",
-      deliveryTime: "2-4 hours",
-      price: "$15.99",
-      icon: Zap,
-      color: "from-otw-red to-otw-red-600",
-      features: ["Real-time tracking", "Photo confirmation", "Priority handling"],
-    },
-    {
-      id: "standard",
-      name: "Standard Delivery",
-      description: "Reliable next-day delivery service",
-      deliveryTime: "Next day",
-      price: "$8.99",
-      icon: Truck,
-      color: "from-otw-gold to-otw-gold-600",
-      features: ["Tracking updates", "Delivery confirmation", "Secure handling"],
-    },
-    {
-      id: "scheduled",
-      name: "Scheduled Delivery",
-      description: "Choose your preferred delivery time",
-      deliveryTime: "1-3 days",
-      price: "$6.99",
-      icon: Clock,
-      color: "from-otw-red-400 to-otw-red-500",
-      features: ["Flexible scheduling", "SMS notifications", "Safe delivery"],
-    },
-  ];
+  // Fetch delivery services and package types from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [servicesResponse, typesResponse] = await Promise.all([
+          fetch('/api/packages?type=services'),
+          fetch('/api/packages?type=package-types')
+        ]);
+        
+        const servicesData = await servicesResponse.json();
+        const typesData = await typesResponse.json();
+        
+        if (servicesData.success) {
+          setDeliveryServices(servicesData.data);
+        }
+        if (typesData.success) {
+          setPackageTypes(typesData.data);
+        }
+      } catch (error) {
+        console.error('Error fetching package data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const packageTypes = [
-    { name: "Documents", icon: FileText, maxWeight: "2 lbs", examples: "Letters, contracts, certificates" },
-    { name: "Small Package", icon: Box, maxWeight: "10 lbs", examples: "Books, electronics, gifts" },
-    { name: "Medium Package", icon: Package, maxWeight: "25 lbs", examples: "Clothing, household items" },
-    { name: "Large Package", icon: Package, maxWeight: "50 lbs", examples: "Appliances, furniture parts" },
-  ];
+    fetchData();
+  }, []);
+
+  // Calculate estimated price based on distance and selected service
+  const calculateEstimatedPrice = (service: DeliveryService, distance: number = 5) => {
+    return service.basePrice + (service.pricePerMile * distance);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-otw-gold mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading delivery options...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle service selection
+  const handleServiceSelect = (serviceId: string) => {
+    setSelectedService(serviceId);
+    const service = deliveryServices.find(s => s.id === serviceId);
+    if (service) {
+      setEstimatedPrice(calculateEstimatedPrice(service));
+    }
+  };
+
+  // Get icon for service type
+  const getServiceIcon = (serviceName: string) => {
+    if (serviceName.toLowerCase().includes('express') || serviceName.toLowerCase().includes('same')) return Zap;
+    if (serviceName.toLowerCase().includes('standard')) return Truck;
+    if (serviceName.toLowerCase().includes('fragile')) return Shield;
+    return Clock;
+  };
+
+  // Get icon for package type
+  const getPackageIcon = (typeName: string) => {
+    if (typeName.toLowerCase().includes('small') || typeName.toLowerCase().includes('document')) return FileText;
+    if (typeName.toLowerCase().includes('medium')) return Box;
+    return Package;
+  };
 
   return (
     <div className="min-h-screen pb-20 pt-16">
@@ -211,14 +269,17 @@ export default function PackagePage() {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    {packageTypes.map((type) => (
-                      <SelectItem key={type.name} value={type.name.toLowerCase()}>
-                        <div className="flex items-center">
-                          <type.icon className="w-4 h-4 mr-2" />
-                          <span>{type.name} (up to {type.maxWeight})</span>
-                        </div>
-                      </SelectItem>
-                    ))}
+                    {packageTypes.map((type) => {
+                      const IconComponent = getPackageIcon(type.name);
+                      return (
+                        <SelectItem key={type.id} value={type.name.toLowerCase()}>
+                          <div className="flex items-center">
+                            <IconComponent className="w-4 h-4 mr-2" />
+                            <span>{type.name} (up to {type.maxWeight})</span>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
                 
@@ -248,7 +309,8 @@ export default function PackagePage() {
 
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             {deliveryServices.map((service) => {
-              const IconComponent = service.icon;
+              const IconComponent = getServiceIcon(service.name);
+              const estimatedPrice = calculateEstimatedPrice(service);
               return (
                 <div
                   key={service.id}
@@ -257,7 +319,7 @@ export default function PackagePage() {
                       ? "border-otw-gold shadow-lg scale-105"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
-                  onClick={() => setSelectedService(service.id)}
+                  onClick={() => handleServiceSelect(service.id)}
                 >
                   {selectedService === service.id && (
                     <div className="absolute top-4 right-4 w-8 h-8 bg-otw-gold rounded-full flex items-center justify-center z-10">
@@ -265,7 +327,7 @@ export default function PackagePage() {
                     </div>
                   )}
                   
-                  <div className={`h-32 bg-gradient-to-br ${service.color} flex items-center justify-center`}>
+                  <div className={`h-32 bg-gradient-to-br ${service.color || 'from-otw-gold to-otw-gold-600'} flex items-center justify-center`}>
                     <IconComponent className="w-16 h-16 text-white" />
                   </div>
                   
@@ -273,15 +335,15 @@ export default function PackagePage() {
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-xl font-bold text-gray-900">{service.name}</h3>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-otw-red">{service.price}</div>
-                        <div className="text-sm text-gray-500">{service.deliveryTime}</div>
+                        <div className="text-2xl font-bold text-otw-red">${estimatedPrice.toFixed(2)}</div>
+                        <div className="text-sm text-gray-500">{service.estimatedTime}</div>
                       </div>
                     </div>
                     
                     <p className="text-gray-600 mb-4">{service.description}</p>
                     
                     <div className="space-y-2">
-                      {service.features.map((feature, index) => (
+                      {service.features && service.features.map((feature, index) => (
                         <div key={index} className="flex items-center text-sm text-gray-700">
                           <CheckCircle className="w-4 h-4 text-otw-gold mr-2" />
                           <span>{feature}</span>

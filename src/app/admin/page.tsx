@@ -70,56 +70,13 @@ export default function AdminDashboard() {
   const fetchOrders = async () => {
     try {
       setIsLoadingOrders(true);
-      // Mock data for demonstration - replace with actual API call
-      const mockOrders: Order[] = [
-        {
-          id: '1',
-          orderId: 'OTW-2024-001',
-          customerName: 'John Doe',
-          customerPhone: '(260) 555-0123',
-          customerEmail: 'john@example.com',
-          orderType: 'food',
-          status: 'preparing',
-          items: ['2x Pepperoni Pizza', '1x Garlic Bread', '2x Coke'],
-          total: 28.99,
-          address: '123 Main St, Fort Wayne, IN',
-          estimatedDeliveryTime: '7:30 PM',
-          createdAt: '2024-01-15T18:45:00Z',
-          assignedDriver: 'Mike Johnson',
-          specialInstructions: 'Ring doorbell twice'
-        },
-        {
-          id: '2',
-          orderId: 'OTW-2024-002',
-          customerName: 'Sarah Smith',
-          customerPhone: '(260) 555-0456',
-          customerEmail: 'sarah@example.com',
-          orderType: 'grocery',
-          status: 'pending',
-          items: ['Milk', 'Bread', 'Eggs', 'Bananas'],
-          total: 15.47,
-          address: '456 Oak Ave, Fort Wayne, IN',
-          estimatedDeliveryTime: '8:00 PM',
-          createdAt: '2024-01-15T19:15:00Z',
-          specialInstructions: 'Leave at front door'
-        },
-        {
-          id: '3',
-          orderId: 'OTW-2024-003',
-          customerName: 'Mike Wilson',
-          customerPhone: '(260) 555-0789',
-          customerEmail: 'mike@example.com',
-          orderType: 'package',
-          status: 'out_for_delivery',
-          items: ['Package from Amazon'],
-          total: 5.99,
-          address: '789 Pine St, Fort Wayne, IN',
-          estimatedDeliveryTime: '7:45 PM',
-          createdAt: '2024-01-15T17:30:00Z',
-          assignedDriver: 'Sarah Chen'
-        }
-      ];
-      setOrders(mockOrders);
+      // TODO: Replace with actual API call to fetch orders from backend
+      // const response = await fetch('/api/orders');
+      // const orders = await response.json();
+      // setOrders(orders);
+      
+      // For now, set empty array until backend is implemented
+      setOrders([]);
     } catch (error) {
       console.error('Error fetching orders:', error);
     } finally {

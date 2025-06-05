@@ -18,7 +18,7 @@ import {
 } from "react-icons/fa";
 import ContactForm from "../../components/contact/ContactForm";
 import ContactMap from "../../components/contact/ContactMap";
-import { locationData } from "../../data/location-data";
+// TODO: Remove static data import - get location data from API
 
 export default function ContactPage() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
@@ -234,7 +234,8 @@ export default function ContactPage() {
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-8 text-center">Our Locations</h2>
           <div className="h-[500px] rounded-lg overflow-hidden">
-            <ContactMap locations={locationData} />
+            {/* TODO: Replace with API call to get location data */}
+                <ContactMap locations={[]} />
           </div>
           <div className="mt-8 text-center">
             <Link

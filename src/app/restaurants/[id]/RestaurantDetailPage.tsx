@@ -7,11 +7,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { useCart } from "../../../lib/context/CartContext"
 import { Star, ChevronLeft, Search, ShoppingBag } from "lucide-react"
-import { categories } from "../../../data/menu-data"
 import MenuItemCard from "../../../components/menu/MenuItemCard"
 import CategoryFilter from "../../../components/menu/CategoryFilter"
 import type { Restaurant } from "../../../types/restaurant"
-import { restaurantImages, restaurantLogos } from "../../../data/restaurants-data"
+// TODO: Remove static data import - fetch restaurant images and logos from API instead
 import type { CustomizationOption } from "../../../types"
 
 interface RestaurantDetailPageProps {
@@ -28,6 +27,15 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
   const [filteredItems, setFilteredItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [categories, setCategories] = useState<string[]>([])
+
+  // Fetch menu categories from the menu items
+  useEffect(() => {
+    if (menuItems.length > 0) {
+      const uniqueCategories = [...new Set(menuItems.map(item => item.category).filter(Boolean))];
+      setCategories(uniqueCategories as string[]);
+    }
+  }, [menuItems]);
 
   // Fetch menu items for this restaurant
   useEffect(() => {
@@ -55,17 +63,15 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
     }
   }, [restaurant?.id])
 
-  // Get the correct image and logo based on restaurant id
+  // TODO: Fetch restaurant images and logos from API instead of static data
   const getRestaurantImage = () => {
     if (!restaurant || !restaurant.id) return "/placeholder.svg";
-    const id = restaurant.id.split("-")[0];
-    return restaurantImages[id as keyof typeof restaurantImages] || restaurant.image || "/placeholder.svg";
+    return restaurant.image || "/placeholder.svg";
   }
 
   const getRestaurantLogo = () => {
     if (!restaurant || !restaurant.id) return "/placeholder.svg";
-    const id = restaurant.id.split("-")[0];
-    return restaurantLogos[id as keyof typeof restaurantLogos] || restaurant.logo || "/placeholder.svg";
+    return restaurant.logo || "/placeholder.svg";
   }
 
   // Filter menu items based on selected category and search query

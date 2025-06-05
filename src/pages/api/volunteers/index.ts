@@ -1,6 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { databaseService } from '../../../lib/services/database';
-import { volunteerOpportunities } from '../../../data/volunteer-data';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,13 +13,8 @@ export default async function handler(
         // Try to get from database first
         let volunteerData = await databaseService.getVolunteers();
 
-        // If no data in database, use static data as fallback
-        if (volunteerData.length === 0) {
-          volunteerData = volunteerOpportunities.map((opportunity, index) => ({
-            id: `volunteer-${index + 1}`,
-            ...opportunity
-          }));
-        }
+        // TODO: Remove static data fallback - all data should come from database
+        // If no data in database, volunteerData will remain empty
 
         res.status(200).json({
           success: true,

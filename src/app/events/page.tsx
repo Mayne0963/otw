@@ -15,7 +15,7 @@ import EventCard from "../../components/events/EventCard";
 import EventFilter from "../../components/events/EventFilter";
 import EventDetailModal from "../../components/events/EventDetailModal";
 import RegistrationModal from "../../components/events/RegistrationModal";
-import { categories, locations } from "../../data/event-data";
+// TODO: Remove static data import - fetch event categories and locations from API instead
 import type { Event } from "../../types/event";
 
 export default function EventsPage() {
@@ -29,6 +29,8 @@ export default function EventsPage() {
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [locations, setLocations] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,7 +44,15 @@ export default function EventsPage() {
           throw new Error('Failed to fetch events');
         }
         const data = await response.json();
-        setEvents(data.data || []);
+        const eventsData = data.data || [];
+        setEvents(eventsData);
+        
+        // Extract unique categories and locations from events
+        const uniqueCategories = [...new Set(eventsData.map((event: Event) => event.category).filter(Boolean))];
+        const uniqueLocations = [...new Set(eventsData.map((event: Event) => event.location.name).filter(Boolean))];
+        
+        setCategories(uniqueCategories as string[]);
+        setLocations(uniqueLocations as string[]);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -255,10 +265,7 @@ export default function EventsPage() {
                               FEATURED
                             </span>
                             <span className="bg-otw-black-700 text-white text-xs px-3 py-1 rounded-full">
-                              {
-                                categories.find((c) => c.id === event.category)
-                                  ?.name
-                              }
+                              {event.category || "Event"}
                             </span>
                           </div>
                           <h3 className="text-2xl font-bold mb-2">
@@ -347,9 +354,7 @@ export default function EventsPage() {
                   event={event}
                   onSelect={handleEventSelect}
                   onRegister={handleRegister}
-                  categoryName={
-                    categories.find((c) => c.id === event.category)?.name || ""
-                  }
+                  categoryName={event.category || ""}
                   isPast={timeFrame === "past"}
                 />
               ))}
@@ -430,9 +435,7 @@ export default function EventsPage() {
       {selectedEvent && showDetailModal && (
         <EventDetailModal
           event={selectedEvent}
-          categoryName={
-            categories.find((c) => c.id === selectedEvent.category)?.name || ""
-          }
+          categoryName={selectedEvent.category || ""}
           onClose={() => setShowDetailModal(false)}
           onRegister={() => {
             setShowDetailModal(false);

@@ -4,7 +4,7 @@ import React, { useState } from "react"
 import Image from "next/image"
 import { FaStar, FaFire, FaLeaf, FaShoppingCart, FaPlus, FaMinus, FaCog } from "react-icons/fa"
 import CustomizationModal from "./CustomizationModal"
-import { getItemCustomizationOptions } from "../../data/menu-data"
+// TODO: Remove static data import - get customization options from API
 import type { CustomizationOption } from "../../types"
 
 interface MenuItem {
@@ -35,7 +35,8 @@ const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showCustomizationModal, setShowCustomizationModal] = useState(false)
 
-  const customizationOptions = getItemCustomizationOptions(item)
+  // TODO: Replace with API call to get customization options
+  const customizationOptions: any[] = []
   const hasCustomizationOptions = customizationOptions.length > 0
 
   const handleQuantityChange = (change: number) => {

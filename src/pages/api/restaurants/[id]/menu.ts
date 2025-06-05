@@ -1,6 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from 'next';
 import { databaseService } from '../../../../lib/services/database';
-import { menuItems } from '../../../../data/menu-data';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
@@ -13,17 +12,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const restaurant = await databaseService.getRestaurant(id as string);
         let menuData = await databaseService.getMenuItems(id as string);
 
-        // If no menu data in database, use static data as fallback
-        if (menuData.length === 0) {
-          // Filter static menu items for this restaurant (if any match)
-          // For static data, we'll assume all items belong to the first restaurant
-          if (id === 'broskis-kitchen' || id === '1') {
-            menuData = menuItems.map(item => ({
-              ...item,
-              restaurantId: id as string
-            }));
-          }
-        }
+        // TODO: Remove static data fallback - all data should come from database
+        // If no menu data in database, menuData will remain empty
 
         if (restaurant || menuData.length > 0) {
           res.status(200).json({

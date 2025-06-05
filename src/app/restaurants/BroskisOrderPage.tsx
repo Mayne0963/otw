@@ -20,7 +20,7 @@ import {
   Users,
   Utensils,
 } from "lucide-react";
-import { menuItems, categories } from "../../data/menu-data";
+// TODO: Remove static data import - get menu data from API
 
 interface CartItem {
   id: string;
@@ -51,7 +51,37 @@ export default function BroskisOrderPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [filteredItems, setFilteredItems] = useState<MenuItem[]>(menuItems);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filteredItems, setFilteredItems] = useState<MenuItem[]>([]);
+
+  // Fetch menu items from API
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/restaurants/broskis/menu');
+        if (!response.ok) {
+          throw new Error('Failed to fetch menu items');
+        }
+        const data = await response.json();
+        const items = data.data || [];
+        setMenuItems(items);
+        
+        // Extract unique categories
+        const uniqueCategories = [...new Set(items.map((item: MenuItem) => item.category).filter(Boolean))];
+        setCategories(uniqueCategories as string[]);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
 
   // Filter menu items based on category and search
   useEffect(() => {
@@ -198,18 +228,18 @@ export default function BroskisOrderPage() {
             >
               🍽️ All Items
             </Button>
-            {categories.map((category) => (
+            {categories.map((category: string) => (
               <Button
-                key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
-                onClick={() => setSelectedCategory(category.id)}
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                onClick={() => setSelectedCategory(category)}
                 className={`${
-                  selectedCategory === category.id
+                  selectedCategory === category
                     ? "bg-gradient-to-r from-otw-red to-red-600 text-white shadow-lg transform scale-105 border-otw-gold"
                     : "border-2 border-gray-600 text-gray-300 hover:border-otw-gold hover:text-otw-gold hover:bg-otw-gold/10 hover:scale-105"
                 } px-6 py-3 rounded-full font-semibold transition-all duration-300`}
               >
-                {category.name}
+                {category}
               </Button>
             ))}
           </div>
@@ -221,7 +251,7 @@ export default function BroskisOrderPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-5xl font-black text-transparent bg-gradient-to-r from-otw-gold via-yellow-300 to-otw-gold bg-clip-text mb-4">
-              {selectedCategory === "all" ? "🍽️ FULL MENU" : `🔥 ${categories.find(c => c.id === selectedCategory)?.name?.toUpperCase()}`}
+              {selectedCategory === "all" ? "🍽️ FULL MENU" : `🔥 ${selectedCategory.toUpperCase()}`}
             </h2>
             <p className="text-gray-300 text-xl font-medium">
               {filteredItems.length} premium {filteredItems.length === 1 ? "creation" : "creations"} available

@@ -105,6 +105,33 @@ export interface Reward {
   updatedAt?: Date;
 }
 
+export interface Location {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  phone: string;
+  hours: {
+    monday: string;
+    tuesday: string;
+    wednesday: string;
+    thursday: string;
+    friday: string;
+    saturday: string;
+    sunday: string;
+  };
+  features: string[];
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  featured: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 class DatabaseService {
   // Restaurant methods
   async getRestaurants(filters?: {
@@ -501,6 +528,95 @@ class DatabaseService {
       return true;
     } catch (error) {
       console.error('Error deleting reward:', error);
+      return false;
+    }
+  }
+
+  // Location methods
+  async getLocations(filters?: {
+    city?: string;
+    state?: string;
+    featured?: boolean;
+    limit?: number;
+  }): Promise<Location[]> {
+    try {
+      let q = collection(db, 'locations');
+      
+      if (filters?.city) {
+        q = query(q, where('city', '==', filters.city));
+      }
+      
+      if (filters?.state) {
+        q = query(q, where('state', '==', filters.state));
+      }
+      
+      if (filters?.featured !== undefined) {
+        q = query(q, where('featured', '==', filters.featured));
+      }
+      
+      q = query(q, orderBy('name', 'asc'));
+      
+      if (filters?.limit) {
+        q = query(q, limit(filters.limit));
+      }
+      
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Location));
+    } catch (error) {
+      console.error('Error fetching locations:', error);
+      return [];
+    }
+  }
+
+  async getLocation(id: string): Promise<Location | null> {
+    try {
+      const docRef = doc(db, 'locations', id);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        return { id: docSnap.id, ...docSnap.data() } as Location;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching location:', error);
+      return null;
+    }
+  }
+
+  async createLocation(location: Omit<Location, 'id' | 'createdAt' | 'updatedAt'>): Promise<string | null> {
+    try {
+      const docRef = await addDoc(collection(db, 'locations'), {
+        ...location,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      return docRef.id;
+    } catch (error) {
+      console.error('Error creating location:', error);
+      return null;
+    }
+  }
+
+  async updateLocation(id: string, updates: Partial<Location>): Promise<boolean> {
+    try {
+      const docRef = doc(db, 'locations', id);
+      await updateDoc(docRef, {
+        ...updates,
+        updatedAt: new Date()
+      });
+      return true;
+    } catch (error) {
+      console.error('Error updating location:', error);
+      return false;
+    }
+  }
+
+  async deleteLocation(id: string): Promise<boolean> {
+    try {
+      await deleteDoc(doc(db, 'locations', id));
+      return true;
+    } catch (error) {
+      console.error('Error deleting location:', error);
       return false;
     }
   }

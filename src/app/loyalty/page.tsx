@@ -2,7 +2,7 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRewards } from "../../lib/context/RewardsContext";
@@ -28,87 +28,94 @@ import {
 import MembershipCard from "../../components/loyalty/MembershipCard";
 import TierBenefitsTable from "../../components/loyalty/TierBenefitsTable";
 import TestimonialCard from "../../components/loyalty/TestimonialCard";
-import { testimonials } from "../../data/loyalty-data";
+// Dynamic testimonials loaded from API
 
 export default function LoyaltyPage() {
   const { user } = useAuth();
   const { points } = useRewards();
   const [activeTab, setActiveTab] = useState("overview");
   const [showMembershipCard, setShowMembershipCard] = useState(false);
+  const [membershipTiersData, setMembershipTiersData] = useState<any[]>([]);
+  const [testimonialsData, setTestimonialsData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Membership tiers with pricing and benefits
-  const membershipTiers = [
-    {
-      name: "Bronze",
-      color: "text-otw-gold-400",
-      bgColor: "bg-otw-gold-400",
-      borderColor: "border-otw-gold-400",
-      pointsRequired: 0,
-      price: "Free",
-      monthlyPrice: undefined,
-      pointsPerDollar: 1,
-      benefits: [
-        "Earn 1 point per $1 spent",
-        "Access to basic rewards",
-        "Birthday reward",
-        "Digital membership card",
-        "Member-only promotions"
-      ]
-    },
-    {
-      name: "Silver",
-      color: "text-otw-red-400",
-      bgColor: "bg-otw-red-400",
-      borderColor: "border-otw-red-400",
-      pointsRequired: 500,
-      price: "$9.99/month",
-      monthlyPrice: "$9.99",
-      pointsPerDollar: 1.5,
-      benefits: [
-        "Earn 1.5 points per $1 spent",
-        "Priority pickup",
-        "Exclusive menu items",
-        "10% discount on all orders",
-        "All Bronze benefits"
-      ]
-    },
-    {
-      name: "Gold",
-      color: "text-otw-gold",
-      bgColor: "bg-otw-gold",
-      borderColor: "border-otw-gold",
-      pointsRequired: 1000,
-      price: "$19.99/month",
-      monthlyPrice: "$19.99",
-      pointsPerDollar: 2,
-      benefits: [
-        "Earn 2 points per $1 spent",
-        "Free delivery on all orders",
-        "VIP event invitations",
-        "20% discount on all orders",
-        "Priority customer support",
-        "All Silver benefits"
-      ]
-    }
-  ];
+  // Fetch membership tiers and testimonials from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [tiersResponse, testimonialsResponse] = await Promise.all([
+          fetch('/api/loyalty?type=tiers'),
+          fetch('/api/loyalty?type=testimonials')
+        ]);
+        
+        const tiersData = await tiersResponse.json();
+        const testimonialsData = await testimonialsResponse.json();
+        
+        if (tiersData.success) {
+          setMembershipTiersData(tiersData.data);
+        }
+        if (testimonialsData.success) {
+          setTestimonialsData(testimonialsData.data);
+        }
+      } catch (error) {
+        console.error('Error fetching loyalty data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-otw-gold mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading loyalty program...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Use dynamic membership tiers data
+  const membershipTiers = membershipTiersData.length > 0 ? membershipTiersData : [];
 
   // Determine user tier based on points
   const getUserTier = () => {
-    if (points >= 1000)
-      return { ...membershipTiers[2], next: null };
-    if (points >= 500)
-      return { ...membershipTiers[1], next: { name: "Gold", points: 1000 } };
-    return { ...membershipTiers[0], next: { name: "Silver", points: 500 } };
+    if (membershipTiers.length === 0) return null;
+    
+    // Sort tiers by points required (ascending)
+    const sortedTiers = [...membershipTiers].sort((a, b) => a.pointsRequired - b.pointsRequired);
+    
+    // Find the highest tier the user qualifies for
+    let currentTier = sortedTiers[0];
+    let nextTier = null;
+    
+    for (let i = 0; i < sortedTiers.length; i++) {
+      if (points >= sortedTiers[i].pointsRequired) {
+        currentTier = sortedTiers[i];
+        nextTier = i < sortedTiers.length - 1 ? sortedTiers[i + 1] : null;
+      } else {
+        break;
+      }
+    }
+    
+    return { 
+      ...currentTier, 
+      next: nextTier ? { name: nextTier.name, points: nextTier.pointsRequired } : null 
+    };
   };
 
   const userTier = getUserTier();
 
   // Calculate progress percentage to next tier
   const getProgressPercentage = () => {
-    if (!userTier.next) return 100;
-    if (points < 500) return (points / 500) * 100;
-    if (points < 1000) return ((points - 500) / 500) * 100;
-    return 100;
+    if (!userTier || !userTier.next) return 100;
+    const currentPoints = userTier.pointsRequired;
+    const nextPoints = userTier.next.points;
+    const progress = ((points - currentPoints) / (nextPoints - currentPoints)) * 100;
+    return Math.min(Math.max(progress, 0), 100);
   };
 
   const progressPercentage = getProgressPercentage();
@@ -150,7 +157,7 @@ export default function LoyaltyPage() {
       </section>
 
       {/* Membership Status Section (for logged in users) */}
-      {user && (
+      {user && userTier && (
         <section className="py-12 md:py-16 bg-gradient-to-br from-gray-900 via-black to-gray-900">
           <div className="container mx-auto px-6">
             <div className="max-w-6xl mx-auto">
@@ -164,20 +171,20 @@ export default function LoyaltyPage() {
                       <div className="flex items-center gap-3 mb-4 justify-center lg:justify-start flex-wrap">
                         <div
                           className={`w-5 h-5 rounded-full ${
-                            userTier.name === "Gold"
+                            userTier?.name === "Gold"
                               ? "bg-gradient-to-r from-otw-gold to-otw-gold-600"
-                              : userTier.name === "Silver"
+                              : userTier?.name === "Silver"
                               ? "bg-gradient-to-r from-otw-red-400 to-otw-red-500"
                               : "bg-gradient-to-r from-otw-gold-400 to-otw-gold-500"
                           }`}
                         ></div>
                         <span className="text-xl font-bold text-white">
-                          {userTier.name} Member
+                          {userTier?.name} Member
                         </span>
                         <div className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          userTier.name === "Gold"
+                          userTier?.name === "Gold"
                             ? "bg-otw-gold/20 text-otw-gold border border-otw-gold/30"
-                            : userTier.name === "Silver"
+                            : userTier?.name === "Silver"
                             ? "bg-otw-red-400/20 text-otw-red-400 border border-otw-red-400/30"
                             : "bg-otw-gold-400/20 text-otw-gold-400 border border-otw-gold-400/30"
                         }`}>
@@ -199,7 +206,7 @@ export default function LoyaltyPage() {
                     </div>
 
                     {/* Progress to Next Tier */}
-                    {userTier.next && (
+                    {userTier?.next && (
                       <div className="mb-6">
                         <div className="flex justify-between items-center mb-3">
                           <span className="text-base font-semibold text-white">
@@ -247,9 +254,9 @@ export default function LoyaltyPage() {
                     >
                       <div
                         className={`w-80 h-48 rounded-xl p-6 text-white relative overflow-hidden ${
-                          userTier.name === "Gold"
+                          userTier?.name === "Gold"
                             ? "bg-gradient-to-br from-otw-gold via-otw-gold-500 to-otw-gold-600"
-                            : userTier.name === "Silver"
+                            : userTier?.name === "Silver"
                             ? "bg-gradient-to-br from-otw-red-400 via-otw-red-500 to-otw-red-600"
                             : "bg-gradient-to-br from-otw-gold-400 via-otw-gold-500 to-otw-gold-600"
                         }`}
@@ -264,7 +271,7 @@ export default function LoyaltyPage() {
                                 ON THE WAY
                               </h3>
                               <p className="text-sm text-black/80 font-semibold">
-                                {userTier.name} Member
+                                {userTier?.name} Member
                               </p>
                             </div>
                             <FaCrown className="text-2xl text-black drop-shadow-lg" />
@@ -464,8 +471,8 @@ export default function LoyaltyPage() {
                   What Our Members Say
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {testimonials.map((testimonial, index) => (
-                    <TestimonialCard key={index} testimonial={testimonial} />
+                  {testimonialsData.map((testimonial, index) => (
+                    <TestimonialCard key={testimonial.id || index} testimonial={testimonial} />
                   ))}
                 </div>
               </div>
@@ -504,13 +511,13 @@ export default function LoyaltyPage() {
                   <div
                     key={tier.name}
                     className={`bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border ${
-                      userTier.name === tier.name
+                      userTier?.name === tier.name
                         ? tier.borderColor
                         : "border-[#333333]"
-                    } ${userTier.name === tier.name ? 'ring-2 ring-opacity-50 ' + tier.borderColor.replace('border-', 'ring-') : ''}`}
+                    } ${userTier?.name === tier.name ? 'ring-2 ring-opacity-50 ' + tier.borderColor.replace('border-', 'ring-') : ''}`}
                   >
                     <div className={`${tier.bgColor} bg-opacity-20 p-6 text-center relative`}>
-                      {userTier.name === tier.name && (
+                      {userTier?.name === tier.name && (
                         <div className="absolute top-2 right-2 bg-otw-gold text-white text-xs px-2 py-1 rounded-full">
                           Current
                         </div>
@@ -555,7 +562,7 @@ export default function LoyaltyPage() {
                         <Link href="/signup" className="btn-primary w-full text-sm">
                           Join Now
                         </Link>
-                      ) : userTier.name === tier.name ? (
+                      ) : userTier?.name === tier.name ? (
                         <div className={`${tier.bgColor} bg-opacity-20 ${tier.color} text-center py-3 rounded-md font-semibold`}>
                           Your Current Tier
                         </div>
@@ -1077,7 +1084,7 @@ export default function LoyaltyPage() {
                   role: 'user'
                 }}
                 points={points}
-                tier={userTier.name}
+                tier={userTier?.name || 'Bronze'}
               />
               <div className="mt-8 flex justify-center">
                 <button className="btn-outline flex items-center gap-3 px-6 py-3 text-lg">

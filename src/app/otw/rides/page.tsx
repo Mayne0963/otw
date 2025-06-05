@@ -17,6 +17,18 @@ import {
 } from "../../../components/ui/select";
 import { Badge } from "../../../components/ui/badge";
 import { Separator } from "../../../components/ui/separator";
+
+interface VehicleType {
+  id: string;
+  name: string;
+  description: string;
+  basePrice: number;
+  pricePerMile: number;
+  capacity: number;
+  features: string[];
+  estimatedArrival: string;
+  available?: boolean;
+}
 import { Calendar } from "../../../components/ui/calendar";
 import {
   Popover,
@@ -67,42 +79,58 @@ import {
 } from "react-icons/fa";
 import Link from "next/link";
 import { useState } from "react";
+import AddressAutocomplete from "../../../components/maps/AddressAutocomplete";
 
 export default function RidesPage() {
-  const [pickup, setPickup] = useState("");
-  const [destination, setDestination] = useState("");
-  const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
-  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+  const [pickupLocation, setPickupLocation] = useState('');
+  const [destination, setDestination] = useState('');
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleType | null>(null);
+  const [passengers, setPassengers] = useState(1);
+  const [scheduledTime, setScheduledTime] = useState<Date | undefined>(new Date());
+  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
+  const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const vehicleTypes = [
-    {
-      id: "standard",
-      name: "OTW Standard",
-      description: "Affordable rides for up to 4 passengers",
-      capacity: "4 passengers",
-      eta: "3-5 min",
-      price: "$12.50",
-      icon: Car,
-    },
-    {
-      id: "suv",
-      name: "OTW SUV",
-      description: "Extra space for groups and luggage",
-      capacity: "6 passengers",
-      eta: "5-8 min",
-      price: "$18.75",
-      icon: Car,
-    },
-    {
-      id: "luxury",
-      name: "OTW Luxury",
-      description: "Premium vehicles for special occasions",
-      capacity: "4 passengers",
-      eta: "8-12 min",
-      price: "$24.99",
-      icon: Car,
-    },
-  ];
+  // Fetch vehicle types from API
+  useEffect(() => {
+    const fetchVehicleTypes = async () => {
+      try {
+        const response = await fetch('/api/rides?type=vehicles');
+        const data = await response.json();
+        if (data.success) {
+          setVehicleTypes(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching vehicle types:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicleTypes();
+  }, []);
+
+  // Calculate estimated price based on distance and selected vehicle
+  const calculateEstimatedPrice = (vehicle: VehicleType, distance: number = 5) => {
+    return vehicle.basePrice + (vehicle.pricePerMile * distance);
+  };
+
+  // Handle vehicle selection
+  const handleVehicleSelect = (vehicle: VehicleType) => {
+    setSelectedVehicle(vehicle);
+    setEstimatedPrice(calculateEstimatedPrice(vehicle));
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-otw-gold mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading vehicle options...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-20 pt-16">
@@ -160,21 +188,21 @@ export default function RidesPage() {
               
               <div className="space-y-4">
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full"></div>
-                  <Input
-                    placeholder="Pickup location"
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full z-20"></div>
+                  <AddressAutocomplete
                     value={pickup}
-                    onChange={(e) => setPickup(e.target.value)}
+                    onChange={setPickup}
+                    placeholder="Pickup location in Fort Wayne, IN..."
                     className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
                 
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full"></div>
-                  <Input
-                    placeholder="Where to?"
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full z-20"></div>
+                  <AddressAutocomplete
                     value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
+                    onChange={setDestination}
+                    placeholder="Destination in Fort Wayne, IN..."
                     className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
@@ -211,18 +239,18 @@ export default function RidesPage() {
 
           <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             {vehicleTypes.map((vehicle) => {
-              const IconComponent = vehicle.icon;
+              const estimatedPrice = calculateEstimatedPrice(vehicle);
               return (
                 <div
                   key={vehicle.id}
                   className={`relative bg-white rounded-2xl p-6 border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
-                    selectedVehicle === vehicle.id
+                    selectedVehicle?.id === vehicle.id
                       ? "border-otw-gold shadow-lg scale-105"
                       : "border-gray-200 hover:border-gray-300"
                   }`}
-                  onClick={() => setSelectedVehicle(vehicle.id)}
+                  onClick={() => handleVehicleSelect(vehicle)}
                 >
-                  {selectedVehicle === vehicle.id && (
+                  {selectedVehicle?.id === vehicle.id && (
                     <div className="absolute -top-3 -right-3 w-8 h-8 bg-otw-gold rounded-full flex items-center justify-center">
                       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -231,18 +259,25 @@ export default function RidesPage() {
                   )}
                   
                   <div className="flex items-center justify-between mb-4">
-                    <IconComponent className="w-12 h-12 text-gray-700" />
+                    <Car className="w-12 h-12 text-gray-700" />
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900">{vehicle.price}</div>
-                      <div className="text-sm text-gray-500">{vehicle.eta}</div>
+                      <div className="text-2xl font-bold text-gray-900">${estimatedPrice.toFixed(2)}</div>
+                      <div className="text-sm text-gray-500">{vehicle.estimatedArrival}</div>
                     </div>
                   </div>
                   
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{vehicle.name}</h3>
                   <p className="text-gray-600 mb-3">{vehicle.description}</p>
-                  <div className="flex items-center text-sm text-gray-500">
+                  <div className="flex items-center text-sm text-gray-500 mb-2">
                     <Users className="w-4 h-4 mr-1" />
-                    {vehicle.capacity}
+                    {vehicle.capacity} passengers
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {vehicle.features.map((feature, index) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               );

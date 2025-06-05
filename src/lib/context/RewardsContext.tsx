@@ -47,11 +47,22 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({
       if (savedTier) setTier(savedTier);
       if (savedHistory) setHistory(JSON.parse(savedHistory));
 
-      // Fetch rewards from API or use static data
-      // For now, we'll use static data
-      import("../../data/rewards-data").then((data) => {
-        setRewards(data.rewards);
-      });
+      // Fetch rewards from API
+      const fetchRewards = async () => {
+        try {
+          const response = await fetch('/api/rewards');
+          if (response.ok) {
+            const data = await response.json();
+            setRewards(data.data || []);
+          } else {
+            console.error('Failed to fetch rewards');
+          }
+        } catch (error) {
+          console.error('Error fetching rewards:', error);
+        }
+      };
+
+      fetchRewards();
     }
   }, []);
 
