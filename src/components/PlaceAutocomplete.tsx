@@ -1,8 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { useJsApiLoader } from '@react-google-maps/api';
-
-const libraries: 'places'[] = ['places'];
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 
 export type PlaceSuggestion = {
   formatted_address: string;
@@ -26,14 +24,9 @@ export default function PlaceAutocomplete({
 }: PlaceAutocompleteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteElementRef = useRef<any>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Use the Google Maps API loader hook
-  const { isLoaded, loadError: apiLoadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: libraries,
-  });
+  // Use the centralized Google Maps context
+  const { isLoaded, loadError } = useGoogleMaps();
 
   // Initialize PlaceAutocompleteElement when API is loaded
   useEffect(() => {
@@ -92,7 +85,6 @@ export default function PlaceAutocomplete({
       };
     } catch (error) {
       console.error('Error initializing PlaceAutocompleteElement:', error);
-      setLoadError('Failed to initialize address autocomplete');
     }
   }, [isLoaded, placeholder, disabled, onSelectAddress]);
 

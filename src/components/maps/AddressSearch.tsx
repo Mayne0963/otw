@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, MapPin, Navigation, Calculator } from 'lucide-react';
 import {
-  useLoadScript,
   GoogleMap,
   Marker,
 } from '@react-google-maps/api';
@@ -11,9 +10,8 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Label } from '../ui/label';
 import { Separator } from '../ui/separator';
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import PlaceAutocomplete from './PlaceAutocomplete';
-
-const libraries: 'places'[] = ['places'];
 
 interface AddressSearchProps {
   onAddressSelect?: (address: {
@@ -69,10 +67,7 @@ export default function AddressSearch({
 
 
 
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries,
-  });
+  const { isLoaded, loadError } = useGoogleMaps();
 
   // Get user's current location
   useEffect(() => {

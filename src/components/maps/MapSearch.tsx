@@ -4,14 +4,12 @@ import React, { useState, useCallback, useEffect } from 'react';
 import {
   GoogleMap,
   Marker,
-  useLoadScript,
 } from '@react-google-maps/api';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Search, Navigation } from 'lucide-react';
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 import PlaceAutocomplete from './PlaceAutocomplete';
-
-const libraries: 'places'[] = ['places'];
 
 interface MapSearchProps {
   onLocationSelect?: (location: {
@@ -37,10 +35,7 @@ export default function MapSearch({
     useState<google.maps.LatLng | null>(null);
 
 
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries,
-  });
+  const { isLoaded, loadError } = useGoogleMaps();
 
   useEffect(() => {
     // Set Fort Wayne as the initial center when map loads

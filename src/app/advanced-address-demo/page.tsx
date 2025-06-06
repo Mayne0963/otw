@@ -50,7 +50,7 @@ export default function AdvancedAddressDemoPage() {
         {/* Introduction */}
         <div className="text-center mb-8">
           <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-            Experience our advanced address autocomplete component with real-time suggestions, 
+            Experience our advanced address autocomplete component with real-time suggestions,
             keyboard navigation, accessibility features, and seamless integration with OTW services.
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function AdvancedAddressDemoPage() {
                 <p className="text-gray-400 text-sm mb-6">
                   Type an address to see real-time suggestions with keyboard navigation support.
                 </p>
-                
+
                 <AdvancedAddressAutocomplete
                   label="Address"
                   onPlaceSelect={handlePlaceSelect}
@@ -139,7 +139,7 @@ export default function AdvancedAddressDemoPage() {
                   <span className="text-2xl mr-2">📍</span>
                   Selected Address Details
                 </h2>
-                
+
                 {selectedPlace ? (
                   <div className="space-y-4">
                     <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
@@ -242,7 +242,7 @@ export default function AdvancedAddressDemoPage() {
             <span className="text-2xl mr-2">⚙️</span>
             Technical Implementation
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
               <h3 className="text-sm font-semibold text-yellow-400 mb-2">🚀 Performance</h3>
@@ -253,7 +253,7 @@ export default function AdvancedAddressDemoPage() {
                 <li>• Lazy loading of Google Maps</li>
               </ul>
             </div>
-            
+
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
               <h3 className="text-sm font-semibold text-yellow-400 mb-2">♿ Accessibility</h3>
               <ul className="text-xs text-gray-300 space-y-1">
@@ -263,7 +263,7 @@ export default function AdvancedAddressDemoPage() {
                 <li>• Focus management</li>
               </ul>
             </div>
-            
+
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-600">
               <h3 className="text-sm font-semibold text-yellow-400 mb-2">🛡️ Error Handling</h3>
               <ul className="text-xs text-gray-300 space-y-1">
@@ -282,7 +282,7 @@ export default function AdvancedAddressDemoPage() {
             <span className="text-2xl mr-2">📖</span>
             How to Use
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <h3 className="text-sm font-semibold text-yellow-400 mb-3">Keyboard Navigation</h3>
@@ -305,7 +305,7 @@ export default function AdvancedAddressDemoPage() {
                 </div>
               </div>
             </div>
-            
+
             <div>
               <h3 className="text-sm font-semibold text-yellow-400 mb-3">Features</h3>
               <div className="space-y-2 text-sm text-gray-300">

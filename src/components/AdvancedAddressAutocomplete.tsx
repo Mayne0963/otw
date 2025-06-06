@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 
 interface PlaceDetails {
   placeId: string;
@@ -68,58 +68,44 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
   const [autocompleteService, setAutocompleteService] = useState<google.maps.places.AutocompleteService | null>(null);
   const [placesService, setPlacesService] = useState<google.maps.places.PlacesService | null>(null);
   const [isFocused, setIsFocused] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentId = id || `address-autocomplete-${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Use centralized Google Maps context
+  const { isLoaded: isGoogleMapsLoaded, loadError: googleMapsError } = useGoogleMaps();
   const dropdownId = `${componentId}-dropdown`;
   const errorId = `${componentId}-error`;
 
-  // Initialize Google Maps API
+  // Initialize Google Maps services when API is loaded
   useEffect(() => {
-    const initializeGoogleMaps = async () => {
+    if (isGoogleMapsLoaded && !autocompleteService && !placesService) {
       try {
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
-        if (!apiKey) {
-          throw new Error('Google Maps API key is not configured. Please add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your environment variables.');
-        }
-
-        const loader = new Loader({
-          apiKey: apiKey,
-          version: 'weekly',
-          libraries: ['places'],
-        });
-
-        await loader.load();
-        
         // Initialize services
         const autoService = new google.maps.places.AutocompleteService();
         const placesServiceDiv = document.createElement('div');
         const placesServiceInstance = new google.maps.places.PlacesService(placesServiceDiv);
-        
+
         setAutocompleteService(autoService);
         setPlacesService(placesServiceInstance);
-        setIsGoogleMapsLoaded(true);
-        setIsLoading(false);
         setError(null);
-
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load Google Maps. Please check your internet connection and try again.';
+        const errorMessage = err instanceof Error ? err.message : 'Failed to initialize Google Maps services.';
         setError(errorMessage);
-        setIsLoading(false);
-        console.error('Google Maps initialization error:', err);
+        console.error('Google Maps services initialization error:', err);
       }
-    };
-
-    initializeGoogleMaps();
-  }, []);
+    }
+    
+    // Handle Google Maps loading errors
+    if (googleMapsError) {
+      setError(googleMapsError);
+    }
+  }, [isGoogleMapsLoaded, googleMapsError, autocompleteService, placesService]);
 
   // Debounced search function
   const debouncedSearch = useCallback(
@@ -146,7 +132,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
                   mainText: prediction.structured_formatting.main_text,
                   secondaryText: prediction.structured_formatting.secondary_text || '',
                 }));
-              
+
               setSuggestions(formattedSuggestions);
               setShowDropdown(true);
               setSelectedIndex(-1);
@@ -165,14 +151,14 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
         }
       }, debounceMs);
     },
-    [autocompleteService, isGoogleMapsLoaded, maxSuggestions, debounceMs, types, restrictToCountry]
+    [autocompleteService, isGoogleMapsLoaded, maxSuggestions, debounceMs, types, restrictToCountry],
   );
 
   // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
-    
+
     if (onChange) {
       onChange(newValue);
     }
@@ -188,7 +174,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   // Handle place selection
   const handlePlaceSelect = useCallback(
     (suggestion: Suggestion) => {
-      if (!placesService) return;
+      if (!placesService) {return;}
 
       const request: google.maps.places.PlaceDetailsRequest = {
         placeId: suggestion.placeId,
@@ -261,12 +247,12 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
         }
       });
     },
-    [placesService, onChange, onPlaceSelect]
+    [placesService, onChange, onPlaceSelect],
   );
 
   // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showDropdown || suggestions.length === 0) return;
+    if (!showDropdown || suggestions.length === 0) {return;}
 
     switch (e.key) {
       case 'ArrowDown':
@@ -342,7 +328,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
     setInputValue(value);
   }, [value]);
 
-  if (isLoading) {
+  if (!isGoogleMapsLoaded && !googleMapsError) {
     return (
       <div className={`relative ${className}`}>
         <label htmlFor={componentId} className="text-sm font-semibold text-gray-300 mb-1 block">
@@ -388,7 +374,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
         {label}
         {required && <span className="text-red-400 ml-1" aria-label="required">*</span>}
       </label>
-      
+
       <div className="relative">
         <input
           ref={inputRef}
@@ -415,7 +401,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
           autoComplete="off"
           role="combobox"
         />
-        
+
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" aria-hidden="true">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>

@@ -24,13 +24,13 @@ export const AdvancedRideBookingExample: React.FC = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('Booking ride:', { 
-        pickup: pickupAddress, 
+
+      console.log('Booking ride:', {
+        pickup: pickupAddress,
         dropoff: dropoffAddress,
-        distance: calculateDistance(pickupAddress, dropoffAddress)
+        distance: calculateDistance(pickupAddress, dropoffAddress),
       });
-      
+
       // Reset form after successful booking
       setPickupAddress(null);
       setDropoffAddress(null);
@@ -146,14 +146,14 @@ export const AdvancedPackageDeliveryExample: React.FC = () => {
     weight: '',
     dimensions: '',
     description: '',
-    urgency: 'standard'
+    urgency: 'standard',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [senderValue, setSenderValue] = useState('');
   const [recipientValue, setRecipientValue] = useState('');
 
   const handleSubmitDelivery = useCallback(async () => {
-    if (!senderAddress || !recipientAddress) return;
+    if (!senderAddress || !recipientAddress) {return;}
 
     setIsSubmitting(true);
     try {
@@ -161,10 +161,10 @@ export const AdvancedPackageDeliveryExample: React.FC = () => {
       console.log('Package delivery scheduled:', {
         sender: senderAddress,
         recipient: recipientAddress,
-        package: packageDetails
+        package: packageDetails,
       });
       alert('Package delivery scheduled successfully!');
-      
+
       // Reset form
       setSenderAddress(null);
       setRecipientAddress(null);
@@ -296,11 +296,11 @@ export const AdvancedGroceryDeliveryExample: React.FC = () => {
     try {
       // Simulate service area validation
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock validation logic - check if address is within service area
       const serviceableStates = ['IN', 'IL', 'OH', 'MI'];
       const isServiceable = serviceableStates.includes(address.addressComponents?.administrativeAreaLevel1 || '');
-      
+
       if (!isServiceable) {
         alert('Sorry, we don\'t currently deliver to this area. We\'re expanding soon!');
         setDeliveryAddress(null);
@@ -355,7 +355,7 @@ export const AdvancedGroceryDeliveryExample: React.FC = () => {
           restrictToCountry={['US']}
           disabled={isValidating}
         />
-        
+
         {isValidating && (
           <div className="flex items-center text-yellow-400 text-sm">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-400 mr-2"></div>

@@ -1,12 +1,10 @@
 'use client';
 
 import React, { useRef, useEffect } from 'react';
-import { useJsApiLoader } from '@react-google-maps/api';
 import { MapPin } from 'lucide-react';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
-
-const libraries: 'places'[] = ['places'];
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 
 interface PlaceDetails {
   formatted_address: string;
@@ -51,12 +49,8 @@ export default function PlaceAutocomplete({
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteElementRef = useRef<any>(null);
 
-  // Use the Google Maps API loader hook
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: libraries,
-  });
+  // Use the centralized Google Maps context
+  const { isLoaded, loadError } = useGoogleMaps();
 
   // Initialize PlaceAutocompleteElement when API is loaded
   useEffect(() => {

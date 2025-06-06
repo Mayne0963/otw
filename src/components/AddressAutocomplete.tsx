@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
+import React, { useRef, useEffect, useState } from 'react';
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 
 interface PlaceDetails {
   placeId: string;
@@ -25,29 +25,15 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [placeDetails, setPlaceDetails] = useState<PlaceDetails | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Use centralized Google Maps context
+  const { isLoaded: isGoogleMapsLoaded, loadError: googleMapsError } = useGoogleMaps();
 
   useEffect(() => {
-    const initializeGoogleMaps = async () => {
+    // Initialize autocomplete when Google Maps is loaded
+    if (isGoogleMapsLoaded && inputRef.current) {
       try {
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
-        if (!apiKey) {
-          throw new Error('Google Maps API key is not configured');
-        }
-
-        const loader = new Loader({
-          apiKey: apiKey,
-          version: 'weekly',
-          libraries: ['places'],
-        });
-
-        await loader.load();
-        setIsLoading(false);
-
-        if (!inputRef.current) {return;}
-
         const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
           types: ['address'],
           fields: ['place_id', 'formatted_address', 'geometry'],
@@ -77,15 +63,18 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
         });
 
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load Google Maps');
-        setIsLoading(false);
+        console.error('Error initializing Google Maps autocomplete:', err);
+        setError('Failed to initialize address autocomplete. Please try again.');
       }
-    };
+    }
+    
+    // Handle Google Maps loading errors
+    if (googleMapsError) {
+      setError(googleMapsError);
+    }
+  }, [isGoogleMapsLoaded, googleMapsError, onPlaceSelect]);
 
-    initializeGoogleMaps();
-  }, [onPlaceSelect]);
-
-  if (isLoading) {
+  if (!isGoogleMapsLoaded && !googleMapsError) {
     return (
       <div className={`relative rounded-xl shadow-lg overflow-hidden ${className}`}>
         <label className="text-sm font-semibold text-gray-300 mb-1 block">{label}</label>
