@@ -99,23 +99,28 @@ const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
   const autocompleteRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!containerRef.current || !window.google) {return;}
+    if (!containerRef.current || !window.google) {
+      return;
+    }
 
     // Initialize the new PlaceAutocompleteElement
     const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
       types: ['address'],
     });
 
-    //
-    autocompleteElement.setFields(['place_id', 'geometry', 'name'])
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
 
-    // Configure the autocomplete element
+    // Configure placeholder + disabled state
     autocompleteElement.placeholder = placeholder;
     if (disabled) {
       autocompleteElement.setAttribute('disabled', 'true');
     }
 
-    // Apply custom styling to the autocomplete element
+    // Apply Tailwind/custom styles
     const inputStyles = [
       'w-full',
       'outline-none',
@@ -128,7 +133,2394 @@ const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
       customStyles?.input || '',
       className,
       showIcon ? 'pl-10' : '',
-    ].filter(Boolean).join(' ');
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+  onPlaceSelect,
+  placeholder = 'Enter an address...',
+  className = '',
+  theme = 'default',
+  size = 'md',
+  disabled = false,
+  showIcon = true,
+  customStyles,
+  borderRadius = 'md',
+  focusColor,
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const autocompleteRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !window.google) {
+      return;
+    }
+
+    // Initialize the new PlaceAutocompleteElement
+    const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+      types: ['address'],
+    });
+
+    // ─── FIX: Set the "fields" via an attribute instead of calling a nonexistent method ───
+    autocompleteElement.setAttribute(
+      'fields',
+      ['place_id', 'geometry', 'name'].join(',')
+    );
+
+    // Configure placeholder + disabled state
+    autocompleteElement.placeholder = placeholder;
+    if (disabled) {
+      autocompleteElement.setAttribute('disabled', 'true');
+    }
+
+    // Apply Tailwind/custom styles
+    const inputStyles = [
+      'w-full',
+      'outline-none',
+      'transition-all duration-200',
+      'focus:ring-2',
+      getSizeStyles(size),
+      getThemeStyles(theme, focusColor),
+      getBorderRadiusStyles(borderRadius),
+      disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-text',
+      customStyles?.input || '',
+      className,
+      showIcon ? 'pl-10' : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     autocompleteElement.className = inputStyles;
 
