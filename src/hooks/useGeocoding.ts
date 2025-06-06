@@ -4,12 +4,12 @@ import {
   reverseGeocodeCoordinates,
   validateAddress,
   GeocodingError,
-  GeocodingErrorType
+  GeocodingErrorType,
 } from '../lib/utils/geocoding-utils';
 import type {
   GeocodeResult,
   ReverseGeocodeResult,
-  AddressValidationResult
+  AddressValidationResult,
 } from '../lib/services/geocoding-service';
 
 /**
@@ -38,13 +38,13 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
   const {
     debounceMs = 300,
     retries = 3,
-    timeout = 10000
+    timeout = 10000,
   } = options;
 
   const [state, setState] = useState<GeocodingState>({
     loading: false,
     error: null,
-    result: null
+    result: null,
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -140,7 +140,7 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
    */
   const reverseGeocode = useCallback(async (
     lat: number,
-    lng: number
+    lng: number,
   ): Promise<ReverseGeocodeResult | null> => {
     if (typeof lat !== 'number' || typeof lng !== 'number') {
       setError('Valid coordinates are required');
@@ -243,7 +243,7 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
       }, debounceMs);
       return () => clearTimeout(timeoutId);
     },
-    [geocode, debounceMs]
+    [geocode, debounceMs],
   );
 
   /**
@@ -258,7 +258,7 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
       }, debounceMs);
       return () => clearTimeout(timeoutId);
     },
-    [validate, debounceMs]
+    [validate, debounceMs],
   );
 
   return {
@@ -266,17 +266,17 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
     loading: state.loading,
     error: state.error,
     result: state.result,
-    
+
     // Actions
     geocode,
     reverseGeocode,
     validate,
     clearState,
-    
+
     // Debounced actions
     debouncedGeocode,
     debouncedValidate,
-    
+
     // Utilities
     isGeocodeResult: (result: any): result is GeocodeResult => {
       return result && 'formatted_address' in result && 'geometry' in result;
@@ -286,7 +286,7 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
     },
     isValidationResult: (result: any): result is AddressValidationResult => {
       return result && 'isValid' in result && 'confidence' in result;
-    }
+    },
   };
 }
 
@@ -318,7 +318,7 @@ export function useAddressInput(options: UseGeocodingOptions & {
     debouncedValidate,
     clearState,
     isGeocodeResult,
-    isValidationResult
+    isValidationResult,
   } = useGeocoding(geocodingOptions);
 
   /**
@@ -328,7 +328,7 @@ export function useAddressInput(options: UseGeocodingOptions & {
     setInputValue(value);
     setSelectedAddress(null);
     setValidation(null);
-    
+
     if (value.trim()) {
       if (autoValidate) {
         debouncedValidate(value);
@@ -349,7 +349,7 @@ export function useAddressInput(options: UseGeocodingOptions & {
       setSelectedAddress(result);
       setInputValue(result.formatted_address);
       onAddressSelect?.(result);
-      
+
       // Also validate if auto-validation is enabled
       if (autoValidate) {
         const validationResult = await validate(address);
@@ -384,26 +384,26 @@ export function useAddressInput(options: UseGeocodingOptions & {
     inputValue,
     selectedAddress,
     validation,
-    
+
     // Geocoding state
     loading,
     error,
     suggestions: isGeocodeResult(result) ? [result] : [],
-    
+
     // Actions
     handleInputChange,
     handleAddressSelect,
     clearInput,
-    
+
     // Manual actions
     geocode,
     validate,
-    
+
     // Validation helpers
     isValid: validation?.isValid ?? null,
     isDeliverable: validation?.isDeliverable ?? null,
     confidence: validation?.confidence ?? null,
-    issues: validation?.issues ?? []
+    issues: validation?.issues ?? [],
   };
 }
 
@@ -420,7 +420,7 @@ export function useCurrentLocation() {
     coords: null,
     address: null,
     loading: false,
-    error: null
+    error: null,
   });
 
   const { reverseGeocode } = useGeocoding();
@@ -432,7 +432,7 @@ export function useCurrentLocation() {
     if (!navigator.geolocation) {
       setLocation(prev => ({
         ...prev,
-        error: 'Geolocation is not supported by this browser'
+        error: 'Geolocation is not supported by this browser',
       }));
       return;
     }
@@ -444,13 +444,13 @@ export function useCurrentLocation() {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
           timeout: 10000,
-          maximumAge: 300000 // 5 minutes
+          maximumAge: 300000, // 5 minutes
         });
       });
 
       const coords = {
         latitude: position.coords.latitude,
-        longitude: position.coords.longitude
+        longitude: position.coords.longitude,
       };
 
       setLocation(prev => ({ ...prev, coords, loading: false }));
@@ -461,7 +461,7 @@ export function useCurrentLocation() {
 
     } catch (error) {
       let errorMessage = 'Failed to get current location';
-      
+
       if (error instanceof GeolocationPositionError) {
         switch (error.code) {
           case error.PERMISSION_DENIED:
@@ -475,7 +475,7 @@ export function useCurrentLocation() {
             break;
         }
       }
-      
+
       setLocation(prev => ({ ...prev, loading: false, error: errorMessage }));
     }
   }, [reverseGeocode]);
@@ -488,7 +488,7 @@ export function useCurrentLocation() {
       coords: null,
       address: null,
       loading: false,
-      error: null
+      error: null,
     });
   }, []);
 
@@ -496,6 +496,6 @@ export function useCurrentLocation() {
     ...location,
     getCurrentLocation,
     clearLocation,
-    hasLocation: location.coords !== null
+    hasLocation: location.coords !== null,
   };
 }

@@ -104,14 +104,10 @@ const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
     // Initialize the new PlaceAutocompleteElement
     const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
       types: ['address'],
-      fields: [
-        'formattedAddress',
-        'id',
-        'location',
-        'addressComponents',
-        'displayName',
-      ],
     });
+
+    //
+    autocompleteElement.setFields(['place_id', 'geometry', 'name'])
 
     // Configure the autocomplete element
     autocompleteElement.placeholder = placeholder;

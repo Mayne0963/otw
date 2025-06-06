@@ -621,7 +621,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
               <p className="text-gray-300 text-lg">
                 {canSpin
                   ? '🎯 Ready to test your luck? Click the wheel to spin! 🎯'
-                  : "⏰ You&apos;ve used your daily spin. Come back tomorrow for another chance! ⏰"}
+                  : '⏰ You&apos;ve used your daily spin. Come back tomorrow for another chance! ⏰'}
               </p>
               {canSpin && (
                 <div className="mt-3 space-y-2">

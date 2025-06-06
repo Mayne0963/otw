@@ -6,7 +6,7 @@ import { MapPin } from 'lucide-react';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
 
-const libraries: "places"[] = ["places"];
+const libraries: 'places'[] = ['places'];
 
 interface PlaceDetails {
   formatted_address: string;
@@ -37,8 +37,8 @@ interface PlaceAutocompleteProps {
 
 export default function PlaceAutocomplete({
   onPlaceSelect,
-  placeholder = "Enter an address...",
-  className = "",
+  placeholder = 'Enter an address...',
+  className = '',
   disabled = false,
   showIcon = true,
   types = ['address'],
@@ -46,7 +46,7 @@ export default function PlaceAutocomplete({
   bounds,
   strictBounds = false,
   value,
-  onChange
+  onChange,
 }: PlaceAutocompleteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteElementRef = useRef<any>(null);
@@ -70,7 +70,7 @@ export default function PlaceAutocomplete({
         types,
         componentRestrictions,
         bounds,
-        strictBounds
+        strictBounds,
       });
 
       // Configure the element
@@ -86,13 +86,13 @@ export default function PlaceAutocomplete({
       autocompleteElement.className = cn(
         'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
         showIcon ? 'pl-10' : '',
-        className
+        className,
       );
 
       // Add event listeners
       const handlePlaceSelect = (event: any) => {
         const place = event.place;
-        
+
         if (place && place.location) {
           const placeDetails: PlaceDetails = {
             formatted_address: place.formattedAddress || '',
@@ -100,15 +100,15 @@ export default function PlaceAutocomplete({
             geometry: {
               location: {
                 lat: () => place.location.lat(),
-                lng: () => place.location.lng()
-              }
+                lng: () => place.location.lng(),
+              },
             },
             address_components: place.addressComponents || [],
-            name: place.displayName
+            name: place.displayName,
           };
-          
+
           onPlaceSelect(placeDetails);
-          
+
           // Update external value if onChange is provided
           if (onChange) {
             onChange(place.formattedAddress || '');
