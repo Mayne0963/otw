@@ -256,65 +256,7 @@ export default function Home() {
         </div>
       </section>
 
-
-
-      {/* Interactive Map */}
-      <section className="py-24">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Fort Wayne Delivery Coverage
-            </h2>
-            <p className="text-xl text-white/80">
-              We deliver everywhere in Fort Wayne and surrounding areas
-            </p>
-          </div>
-
-          <div className="otw-card p-8">
-            <div className="relative h-96 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🗺️</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Interactive Map</h3>
-                  <p className="text-white/70">Real-time delivery zones and driver locations</p>
-                </div>
-              </div>
-
-              {/* Animated delivery zones */}
-              {Array.from({ length: 48 }).map((_, i) => {
-                // Use deterministic values based on index to avoid hydration mismatch
-                const left = ((i * 17 + 23) % 100);
-                const top = ((i * 31 + 47) % 100);
-                const delay = ((i * 0.13) % 3);
-                return (
-                  <div
-                    key={i}
-                    className="absolute w-2 h-2 bg-otw-gold/30 rounded-full animate-pulse"
-                    style={{
-                      left: `${left}%`,
-                      top: `${top}%`,
-                      animationDelay: `${delay}s`,
-                    }}
-                  />
-                );
-              })}
-
-              {/* Delivery trucks */}
-              <div className="absolute top-1/4 left-1/4 text-2xl animate-bounce">
-                🚚
-              </div>
-              <div className="absolute bottom-1/3 right-1/3 text-2xl animate-bounce" style={{ animationDelay: '1s' }}>
-                🚚
-              </div>
-              <div className="absolute top-1/2 right-1/4 text-2xl animate-bounce" style={{ animationDelay: '2s' }}>
-                🚚
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Customer Testimonials */}
+       {/* Customer Testimonials */}
       <section className="py-24 bg-gradient-to-r from-gray-900/50 to-black/50">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
