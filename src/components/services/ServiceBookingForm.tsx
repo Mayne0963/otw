@@ -24,7 +24,7 @@ const SERVICE_TYPES = {
   },
   grocery: {
     label: 'Grocery Shop & Drop',
-    suggestion: 'We&apos;ll shop your list and deliver to your door',
+    suggestion: "We&apos;ll shop your list and deliver to your door",
     fields: ['details'],
   },
   ride: {
@@ -34,7 +34,7 @@ const SERVICE_TYPES = {
   },
   moving: {
     label: 'Furniture/Appliance Moving',
-    suggestion: 'Need a fridge moved? We&apos;ll match you with Malik + truck',
+    suggestion: "Need a fridge moved? We&apos;ll match you with Malik + truck",
     fields: ['pickup', 'dropoff', 'media'],
   },
 };
