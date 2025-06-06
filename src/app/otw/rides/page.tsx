@@ -35,6 +35,8 @@ import {
   ArrowRight,
   Navigation,
 } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
+import { cn } from '../../../lib/utils';
 import {
   FaCar,
   FaMapMarkerAlt,
@@ -76,6 +78,22 @@ export default function RidesPage() {
   const [destinationAddress, setDestinationAddress] = useState('');
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<PlaceDetails | null>(null);
   const [selectedDestinationPlace, setSelectedDestinationPlace] = useState<PlaceDetails | null>(null);
+  const [selectedService, setSelectedService] = useState<string>('');
+
+  const services = [
+    {
+      id: 'ride',
+      name: 'Ride Service',
+      description: 'Professional transportation service',
+      price: '$15.00'
+    },
+    {
+      id: 'delivery',
+      name: 'Delivery Service', 
+      description: 'Package and item delivery',
+      price: '$10.00'
+    }
+  ];
 
   const vehicleTypes = [
     {
@@ -345,6 +363,8 @@ export default function RidesPage() {
                   </div>
                 </div>
               </div>
+
+
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button variant="outline" className="flex-1 h-12">
