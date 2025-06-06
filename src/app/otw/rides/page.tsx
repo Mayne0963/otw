@@ -1,7 +1,5 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import type { Metadata } from 'next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
@@ -17,18 +15,6 @@ import {
 } from '../../../components/ui/select';
 import { Badge } from '../../../components/ui/badge';
 import { Separator } from '../../../components/ui/separator';
-
-interface VehicleType {
-  id: string;
-  name: string;
-  description: string;
-  basePrice: number;
-  pricePerMile: number;
-  capacity: number;
-  features: string[];
-  estimatedArrival: string;
-  available?: boolean;
-}
 import { Calendar } from '../../../components/ui/calendar';
 import {
   Popover,
@@ -78,125 +64,43 @@ import {
   FaPrint,
 } from 'react-icons/fa';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import PlaceAutocomplete from '../../../components/maps/PlaceAutocomplete';
+import { useState } from 'react';
 
 export default function RidesPage() {
-  const [pickupLocation, setPickupLocation] = useState('');
+  const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleType | null>(null);
-  const [passengers, setPassengers] = useState(1);
-  const [scheduledTime, setScheduledTime] = useState<Date | undefined>(new Date());
-  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
-  const [vehicleTypes, setVehicleTypes] = useState<VehicleType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [distance, setDistance] = useState<number>(0);
-  const [stats, setStats] = useState({
-    rating: 4.9,
-    totalRides: 10000,
-    averagePickupTime: 5,
-  });
-  const [fareBreakdown, setFareBreakdown] = useState({
-    baseFare: 0,
-    distanceFare: 0,
-    total: 0,
-  });
+  const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
 
-  // Fetch vehicle types and stats from API
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch vehicle types
-        const vehiclesResponse = await fetch('/api/rides?type=vehicles');
-        const vehiclesData = await vehiclesResponse.json();
-        if (vehiclesData.success) {
-          setVehicleTypes(vehiclesData.data);
-        }
-
-        // Fetch ride stats
-        const statsResponse = await fetch('/api/rides?type=stats');
-        const statsData = await statsResponse.json();
-        if (statsData.success) {
-          setStats(statsData.data);
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // Calculate estimated price based on distance and selected vehicle
-  const calculateEstimatedPrice = (vehicle: VehicleType, calculatedDistance: number = 5) => {
-    const baseFare = vehicle.basePrice;
-    const distanceFare = vehicle.pricePerMile * calculatedDistance;
-    const total = baseFare + distanceFare;
-
-    setFareBreakdown({
-      baseFare,
-      distanceFare,
-      total,
-    });
-
-    return total;
-  };
-
-  // Calculate distance between pickup and destination
-  const calculateDistance = async (pickup: string, dest: string) => {
-    if (!pickup || !dest) {return;}
-
-    try {
-      const response = await fetch('/api/maps/distance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          origin: pickup,
-          destination: dest,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success && data.distance) {
-        setDistance(data.distance);
-        if (selectedVehicle) {
-          const price = calculateEstimatedPrice(selectedVehicle, data.distance);
-          setEstimatedPrice(price);
-        }
-      }
-    } catch (error) {
-      console.error('Error calculating distance:', error);
-    }
-  };
-
-  // Handle vehicle selection
-  const handleVehicleSelect = (vehicle: VehicleType) => {
-    setSelectedVehicle(vehicle);
-    const currentDistance = distance || 5; // Default to 5 miles if no distance calculated
-    setEstimatedPrice(calculateEstimatedPrice(vehicle, currentDistance));
-  };
-
-  // Effect to recalculate distance when locations change
-  useEffect(() => {
-    if (pickupLocation && destination) {
-      calculateDistance(pickupLocation, destination);
-    }
-  }, [pickupLocation, destination]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-otw-gold mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading vehicle options...</p>
-        </div>
-      </div>
-    );
-  }
+  const vehicleTypes = [
+    {
+      id: 'standard',
+      name: 'OTW Standard',
+      description: 'Affordable rides for up to 4 passengers',
+      capacity: '4 passengers',
+      eta: '3-5 min',
+      price: '$12.50',
+      icon: Car,
+    },
+    {
+      id: 'suv',
+      name: 'OTW SUV',
+      description: 'Extra space for groups and luggage',
+      capacity: '6 passengers',
+      eta: '5-8 min',
+      price: '$18.75',
+      icon: Car,
+    },
+    {
+      id: 'luxury',
+      name: 'OTW Luxury',
+      description: 'Premium vehicles for special occasions',
+      capacity: '4 passengers',
+      eta: '8-12 min',
+      price: '$24.99',
+      icon: Car,
+    },
+  ];
 
   return (
     <div className="min-h-screen pb-20 pt-16">
@@ -234,7 +138,7 @@ export default function RidesPage() {
               <div className="flex flex-wrap gap-6 mb-8">
                 <div className="flex items-center text-gray-300">
                   <Star className="w-5 h-5 text-otw-gold mr-2" />
-                  <span className="font-semibold">{stats.rating}</span>
+                  <span className="font-semibold">4.9</span>
                   <span className="ml-1">rating</span>
                 </div>
                 <div className="flex items-center text-gray-300">
@@ -243,7 +147,7 @@ export default function RidesPage() {
                 </div>
                 <div className="flex items-center text-gray-300">
                   <Users className="w-5 h-5 text-otw-gold mr-2" />
-                  <span>{stats.totalRides.toLocaleString()}+ rides</span>
+                  <span>10,000+ rides</span>
                 </div>
               </div>
             </div>
@@ -254,25 +158,21 @@ export default function RidesPage() {
 
               <div className="space-y-4">
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full z-20"></div>
-                  <PlaceAutocomplete
-                    onPlaceSelect={(place) => {
-                      setPickupLocation(place.formatted_address || '');
-                      console.log('Selected pickup location:', place);
-                    }}
-                    placeholder="Pickup location in Fort Wayne, IN..."
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full"></div>
+                  <Input
+                    placeholder="Pickup location"
+                    value={pickup}
+                    onChange={(e) => setPickup(e.target.value)}
                     className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
 
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full z-20"></div>
-                  <PlaceAutocomplete
-                    onPlaceSelect={(place) => {
-                      setDestination(place.formatted_address || '');
-                      console.log('Selected destination:', place);
-                    }}
-                    placeholder="Destination in Fort Wayne, IN..."
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full"></div>
+                  <Input
+                    placeholder="Where to?"
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
                     className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
@@ -280,19 +180,16 @@ export default function RidesPage() {
                 <Button
                   size="lg"
                   className="w-full h-14 text-lg font-semibold bg-otw-gold hover:bg-otw-gold/90 text-black"
-                  disabled={!pickupLocation || !destination}
+                  disabled={!pickup || !destination}
                 >
                   Get fare estimate
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
 
-              {estimatedPrice && (
-                <div className="mt-4 p-4 bg-white/10 rounded-lg border border-white/20">
-                  <p className="text-otw-gold font-semibold">Estimated fare: ${estimatedPrice.toFixed(2)}</p>
-                  {distance > 0 && (
-                    <p className="text-gray-300 text-sm mt-1">Distance: {distance.toFixed(1)} miles</p>
-                  )}
+              {estimatedFare && (
+                <div className="mt-6 p-4 bg-otw-gold/10 rounded-lg border border-otw-gold/20">
+                  <p className="text-otw-gold font-semibold">Estimated fare: {estimatedFare}</p>
                 </div>
               )}
             </div>
@@ -312,18 +209,18 @@ export default function RidesPage() {
 
           <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
             {vehicleTypes.map((vehicle) => {
-              const estimatedPrice = calculateEstimatedPrice(vehicle);
+              const IconComponent = vehicle.icon;
               return (
                 <div
                   key={vehicle.id}
                   className={`relative bg-white rounded-2xl p-6 border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
-                    selectedVehicle?.id === vehicle.id
+                    selectedVehicle === vehicle.id
                       ? 'border-otw-gold shadow-lg scale-105'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
-                  onClick={() => handleVehicleSelect(vehicle)}
+                  onClick={() => setSelectedVehicle(vehicle.id)}
                 >
-                  {selectedVehicle?.id === vehicle.id && (
+                  {selectedVehicle === vehicle.id && (
                     <div className="absolute -top-3 -right-3 w-8 h-8 bg-otw-gold rounded-full flex items-center justify-center">
                       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -332,25 +229,18 @@ export default function RidesPage() {
                   )}
 
                   <div className="flex items-center justify-between mb-4">
-                    <Car className="w-12 h-12 text-gray-700" />
+                    <IconComponent className="w-12 h-12 text-gray-700" />
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900">${estimatedPrice.toFixed(2)}</div>
-                      <div className="text-sm text-gray-500">{vehicle.estimatedArrival}</div>
+                      <div className="text-2xl font-bold text-gray-900">{vehicle.price}</div>
+                      <div className="text-sm text-gray-500">{vehicle.eta}</div>
                     </div>
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{vehicle.name}</h3>
                   <p className="text-gray-600 mb-3">{vehicle.description}</p>
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
+                  <div className="flex items-center text-sm text-gray-500">
                     <Users className="w-4 h-4 mr-1" />
-                    {vehicle.capacity} passengers
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {vehicle.features.map((feature, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        {feature}
-                      </Badge>
-                    ))}
+                    {vehicle.capacity}
                   </div>
                 </div>
               );
@@ -406,89 +296,39 @@ export default function RidesPage() {
                 />
               </div>
 
-              {selectedVehicle && fareBreakdown.total > 0 && (
-                <div className="bg-gradient-to-r from-otw-gold/10 to-otw-red/10 p-6 rounded-xl mb-8 border border-otw-gold/20">
-                  <div className="flex items-start">
-                    <Info className="w-6 h-6 text-otw-gold mr-3 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Fare breakdown</h4>
-                      <div className="space-y-1 text-sm text-gray-700">
-                        <div className="flex justify-between">
-                          <span>Base fare</span>
-                          <span>${fareBreakdown.baseFare.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Distance ({distance.toFixed(1)} miles)</span>
-                          <span>${fareBreakdown.distanceFare.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between font-semibold border-t pt-1 mt-2">
-                          <span>Total</span>
-                          <span>${fareBreakdown.total.toFixed(2)}</span>
-                        </div>
+              <div className="bg-gradient-to-r from-otw-gold/10 to-otw-red/10 p-6 rounded-xl mb-8 border border-otw-gold/20">
+                <div className="flex items-start">
+                  <Info className="w-6 h-6 text-otw-gold mr-3 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-2">Fare breakdown</h4>
+                    <div className="space-y-1 text-sm text-gray-700">
+                      <div className="flex justify-between">
+                        <span>Base fare</span>
+                        <span>$8.50</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Distance (4.2 miles)</span>
+                        <span>$4.00</span>
+                      </div>
+                      <div className="flex justify-between font-semibold border-t pt-1 mt-2">
+                        <span>Total</span>
+                        <span>$12.50</span>
                       </div>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button variant="outline" className="flex-1 h-12">
                   Save for later
                 </Button>
-                <Button
-                  onClick={() => {
-                    if (!selectedVehicle) {
-                      alert('Please select a vehicle type first');
-                      return;
-                    }
-
-                    if (!pickupLocation || !destination) {
-                      alert('Please enter pickup and destination locations');
-                      return;
-                    }
-
-                    // Store service details in localStorage for checkout
-                    const serviceDetails = {
-                      type: 'rides' as const,
-                      title: `${selectedVehicle.name} Ride`,
-                      description: selectedVehicle.description,
-                      estimatedPrice: fareBreakdown.total || estimatedPrice || selectedVehicle.basePrice,
-                      serviceDetails: {
-                        pickupLocation,
-                        destination,
-                        vehicleType: selectedVehicle.name,
-                        passengers,
-                        scheduledTime: scheduledTime?.toISOString(),
-                        distance,
-                        fareBreakdown,
-                        estimatedArrival: selectedVehicle.estimatedArrival,
-                      },
-                    };
-
-                    // Store basic customer info (will be completed in checkout)
-                    const customerDetails = {
-                      name: '',
-                      phone: '',
-                      email: '',
-                      address: pickupLocation,
-                      specialInstructions: `Pickup: ${pickupLocation}, Destination: ${destination}. Vehicle: ${selectedVehicle.name}, Passengers: ${passengers}. ${scheduledTime ? 'Scheduled for: ' + scheduledTime.toLocaleString() : 'ASAP'}`,
-                    };
-
-                    localStorage.setItem('otwServiceDetails', JSON.stringify(serviceDetails));
-                    localStorage.setItem('otwCustomerInfo', JSON.stringify(customerDetails));
-
-                    // Navigate to checkout
-                    window.location.href = '/otw/checkout?service=rides';
-                  }}
-                  disabled={!selectedVehicle || !pickupLocation || !destination}
-                  className="flex-1 h-12 bg-otw-gold hover:bg-otw-gold/90 text-black font-semibold"
-                >
-                  <div className="flex items-center justify-center w-full">
-                    <CreditCard className="mr-2 w-5 h-5" />
-                    Proceed to Checkout
+                <Link href="/checkout" className="flex-1">
+                  <Button className="w-full h-12 bg-otw-gold hover:bg-otw-gold/90 text-black font-semibold">
+                    Confirm booking
                     <ArrowRight className="ml-2 w-5 h-5" />
-                  </div>
-                </Button>
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -514,7 +354,7 @@ export default function RidesPage() {
               </div>
               <h3 className="text-xl font-bold mb-3 text-white">Always on time</h3>
               <p className="text-gray-400">
-                Average pickup time under {stats.averagePickupTime} minutes. We respect your schedule.
+                Average pickup time under 5 minutes. We respect your schedule.
               </p>
             </div>
 
@@ -544,7 +384,7 @@ export default function RidesPage() {
               </div>
               <h3 className="text-xl font-bold mb-3 text-white">Top rated</h3>
               <p className="text-gray-400">
-                {stats.rating}/5 average rating from thousands of satisfied customers.
+                4.9/5 average rating from thousands of satisfied customers.
               </p>
             </div>
           </div>
@@ -558,7 +398,7 @@ export default function RidesPage() {
                 <div className="w-8 h-8 bg-gray-400 rounded-full border-2 border-white"></div>
                 <div className="w-8 h-8 bg-otw-gold rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-black">+</div>
               </div>
-              <span className="text-white font-medium">Join {stats.totalRides.toLocaleString()}+ happy riders in Fort Wayne</span>
+              <span className="text-white font-medium">Join 10,000+ happy riders in Fort Wayne</span>
             </div>
           </div>
         </div>

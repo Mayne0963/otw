@@ -5,18 +5,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import PlaceAutocomplete from '../../../components/maps/PlaceAutocomplete';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   ShoppingCart,
   Camera,
   Upload,
+  MapPin,
   Clock,
   DollarSign,
   Plus,
+  Minus,
   X,
   CheckCircle,
+  AlertCircle,
+  Phone,
   User,
   CreditCard,
   Package,
@@ -90,13 +94,13 @@ export default function GroceryDeliveryPage() {
 
   if (orderSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-otw-gold/10 via-white to-otw-red/10 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center">
         <Card className="w-full max-w-md mx-4">
           <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-otw-gold/20 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="w-8 h-8 text-otw-gold" />
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <CardTitle className="text-2xl text-otw-red">Order Submitted!</CardTitle>
+            <CardTitle className="text-2xl text-white">Order Submitted!</CardTitle>
             <CardDescription className="text-gray-300">
               Your grocery delivery order has been received and will be processed shortly.
             </CardDescription>
@@ -298,12 +302,12 @@ export default function GroceryDeliveryPage() {
                 </div>
                 <div>
                   <Label htmlFor="delivery-address" className="text-gray-300">Delivery Address</Label>
-                  <PlaceAutocomplete
-                    onPlaceSelect={(place) => {
-                      setCustomerInfo({ ...customerInfo, address: place.formatted_address || '' });
-                      console.log('Selected delivery address:', place);
-                    }}
-                    placeholder="Enter delivery address in Fort Wayne, IN..."
+                  <Textarea
+                    id="delivery-address"
+                    placeholder="123 Main St, Apt 4B, City, State 12345"
+                    value={customerInfo.address}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
+                    rows={3}
                     className="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
                   />
                 </div>
@@ -409,41 +413,20 @@ export default function GroceryDeliveryPage() {
             {/* Submit Button */}
             <Button
               className="w-full h-12 text-lg bg-otw-red hover:bg-otw-red/80 text-white disabled:bg-gray-600 disabled:text-gray-400"
-              onClick={() => {
-                // Store service details in localStorage for checkout
-                const serviceDetails = {
-                  type: 'grocery' as const,
-                  title: 'Grocery Shop & Drop',
-                  description: 'Personal grocery shopping and delivery service',
-                  estimatedPrice: 15.99,
-                  serviceDetails: {
-                    selectedStore,
-                    deliveryTime,
-                    receipt: receipt ? 'uploaded' : null,
-                    groceryList: groceryList || null,
-                  },
-                };
-
-                const customerDetails = {
-                  name: customerInfo.name,
-                  phone: customerInfo.phone,
-                  email: customerInfo.email,
-                  address: customerInfo.address,
-                  specialInstructions: `Store: ${selectedStore}, Delivery: ${deliveryTime}. ${receipt ? 'Receipt uploaded.' : ''} ${groceryList ? 'Grocery list provided.' : ''}`,
-                };
-
-                localStorage.setItem('otwServiceDetails', JSON.stringify(serviceDetails));
-                localStorage.setItem('otwCustomerInfo', JSON.stringify(customerDetails));
-
-                // Navigate to checkout
-                window.location.href = '/otw/checkout?service=grocery';
-              }}
-              disabled={!selectedStore || !customerInfo.name || !customerInfo.phone || !customerInfo.address || (!receiptPreview && !groceryList) || !deliveryTime}
+              onClick={handleSubmitOrder}
+              disabled={isSubmitting || !selectedStore || !customerInfo.name || !customerInfo.phone || !customerInfo.address || (!receiptPreview && !groceryList) || !deliveryTime}
             >
-              <div className="flex items-center gap-2">
-                <CreditCard className="w-5 h-5" />
-                Proceed to Checkout
-              </div>
+              {isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Submitting Order...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-5 h-5" />
+                  Submit Order
+                </div>
+              )}
             </Button>
 
             <div className="text-xs text-gray-400 text-center">
