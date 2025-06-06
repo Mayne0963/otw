@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { createContext, useContext, useState, type ReactNode } from "react";
+import type React from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 
 interface User {
   id: string;
@@ -21,7 +21,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useUser must be used within a UserProvider");
+    throw new Error('useUser must be used within a UserProvider');
   }
   return context;
 };

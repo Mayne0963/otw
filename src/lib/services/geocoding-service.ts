@@ -1,6 +1,6 @@
-import { Client } from "@googlemaps/google-maps-services-js";
-import type { LatLngLiteral } from "@googlemaps/google-maps-services-js";
-import { geocodeAddress, reverseGeocode, validateAddress } from "../maps";
+import { Client } from '@googlemaps/google-maps-services-js';
+import type { LatLngLiteral } from '@googlemaps/google-maps-services-js';
+import { geocodeAddress, reverseGeocode, validateAddress } from '../maps';
 
 // Enhanced interfaces for geocoding service
 export interface GeocodingResult {
@@ -90,7 +90,7 @@ class GeocodingCache {
 
   get(key: string): any | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) {return null;}
 
     if (Date.now() - entry.timestamp > entry.ttl) {
       this.cache.delete(key);
@@ -123,11 +123,11 @@ class RateLimiter {
     const now = Date.now();
     // Remove requests older than 1 minute
     this.requests = this.requests.filter(time => now - time < this.windowMs);
-    
+
     if (this.requests.length >= this.limit) {
       return false;
     }
-    
+
     this.requests.push(now);
     return true;
   }
@@ -181,7 +181,7 @@ export class GeocodingService {
         postalCode?: string;
         locality?: string;
       };
-    } = {}
+    } = {},
   ): Promise<GeocodingResult | null> {
     if (!this.options.apiKey) {
       throw new Error('Google Maps API key is required for geocoding');
@@ -189,7 +189,7 @@ export class GeocodingService {
 
     // Create cache key
     const cacheKey = `geocode:${address}:${JSON.stringify(options)}`;
-    
+
     // Check cache first
     if (this.options.enableCaching) {
       const cached = this.cache.get(cacheKey);
@@ -285,14 +285,14 @@ export class GeocodingService {
       language?: string;
       resultTypes?: string[];
       locationTypes?: string[];
-    } = {}
+    } = {},
   ): Promise<GeocodingResult | null> {
     if (!this.options.apiKey) {
       throw new Error('Google Maps API key is required for reverse geocoding');
     }
 
     const cacheKey = `reverse:${lat}:${lng}:${JSON.stringify(options)}`;
-    
+
     if (this.options.enableCaching) {
       const cached = this.cache.get(cacheKey);
       if (cached) {
@@ -356,7 +356,7 @@ export class GeocodingService {
    */
   async validateAddress(
     address: string,
-    options: AddressValidationOptions = {}
+    options: AddressValidationOptions = {},
   ): Promise<{
     isValid: boolean;
     isDeliverable: boolean;
@@ -366,7 +366,7 @@ export class GeocodingService {
   }> {
     try {
       const geocodeResult = await this.geocode(address);
-      
+
       if (!geocodeResult) {
         return {
           isValid: false,
@@ -400,12 +400,12 @@ export class GeocodingService {
 
       // Check required components
       if (options.requiredComponents && options.requiredComponents.length > 0) {
-        const missingComponents = options.requiredComponents.filter(required => 
-          !geocodeResult.address_components.some(component => 
-            component.types.includes(required)
-          )
+        const missingComponents = options.requiredComponents.filter(required =>
+          !geocodeResult.address_components.some(component =>
+            component.types.includes(required),
+          ),
         );
-        
+
         if (missingComponents.length > 0) {
           issues.push(`Missing required address components: ${missingComponents.join(', ')}`);
           isDeliverable = false;
@@ -415,9 +415,9 @@ export class GeocodingService {
       // Check for street number if deliverability is required
       if (options.checkDeliverability) {
         const hasStreetNumber = geocodeResult.address_components.some(
-          component => component.types.includes('street_number')
+          component => component.types.includes('street_number'),
         );
-        
+
         if (!hasStreetNumber) {
           issues.push('No street number found - please provide a complete address');
           isDeliverable = false;
@@ -543,13 +543,13 @@ export class GeocodingService {
     lastError?: string;
   }> {
     const stats = this.getStats();
-    
+
     try {
       // Test with a simple geocoding request
       if (this.options.apiKey) {
         await this.geocode('1600 Amphitheatre Parkway, Mountain View, CA');
       }
-      
+
       return {
         status: 'healthy',
         apiKeyConfigured: !!this.options.apiKey,

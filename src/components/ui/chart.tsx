@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,10 +7,10 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
-import { cn } from "../../lib/utils";
+import { cn } from '../../lib/utils';
 
 ChartJS.register(
   CategoryScale,
@@ -39,11 +39,11 @@ const Chart: React.FC<ChartProps> = ({ data, options, className }) => {
     responsive: true,
     plugins: {
       legend: {
-        position: "top" as const,
+        position: 'top' as const,
       },
       title: {
         display: true,
-        text: "Chart",
+        text: 'Chart',
       },
     },
   };
@@ -51,7 +51,7 @@ const Chart: React.FC<ChartProps> = ({ data, options, className }) => {
   const mergedOptions = { ...defaultOptions, ...options };
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn('w-full', className)}>
       <Bar options={mergedOptions} data={data} />
     </div>
   );

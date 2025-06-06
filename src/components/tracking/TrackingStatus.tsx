@@ -1,7 +1,7 @@
-import React from "react";
-import { Card } from "../ui/card";
-import { Phone, MessageSquare, Clock, CheckCircle2 } from "lucide-react";
-import Image from "next/image";
+import React from 'react';
+import { Card } from '../ui/card';
+import { Phone, MessageSquare, Clock, CheckCircle2 } from 'lucide-react';
+import Image from 'next/image';
 
 interface Rep {
   name: string;
@@ -11,16 +11,16 @@ interface Rep {
 }
 
 interface TrackingStatusProps {
-  status: "received" | "assigned" | "inMotion" | "completed";
+  status: 'received' | 'assigned' | 'inMotion' | 'completed';
   rep?: Rep;
   estimatedTime?: string;
 }
 
 const STATUS_STEPS = [
-  { key: "received", label: "Request Received", icon: Clock },
-  { key: "assigned", label: "Rep Assigned", icon: CheckCircle2 },
-  { key: "inMotion", label: "In Motion", icon: Clock },
-  { key: "completed", label: "Delivered", icon: CheckCircle2 },
+  { key: 'received', label: 'Request Received', icon: Clock },
+  { key: 'assigned', label: 'Rep Assigned', icon: CheckCircle2 },
+  { key: 'inMotion', label: 'In Motion', icon: Clock },
+  { key: 'completed', label: 'Delivered', icon: CheckCircle2 },
 ];
 
 export default function TrackingStatus({
@@ -51,15 +51,15 @@ export default function TrackingStatus({
               <div key={step.key} className="flex flex-col items-center">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
-                    isActive ? "bg-otw-gold" : "bg-gray-200"
+                    isActive ? 'bg-otw-gold' : 'bg-gray-200'
                   }`}
                 >
                   <Icon
-                    className={`w-5 h-5 ${isActive ? "text-white" : "text-gray-400"}`}
+                    className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400'}`}
                   />
                 </div>
                 <span
-                  className={`mt-2 text-sm ${isActive ? "text-otw-gold" : "text-gray-400"}`}
+                  className={`mt-2 text-sm ${isActive ? 'text-otw-gold' : 'text-gray-400'}`}
                 >
                   {step.label}
                 </span>
@@ -69,7 +69,7 @@ export default function TrackingStatus({
         </div>
       </div>
 
-      {rep && status !== "received" && (
+      {rep && status !== 'received' && (
         <div className="mt-6 flex items-center gap-4 p-4 bg-gray-50 rounded-lg animate-fadeIn">
           <Image
             src={rep.photo}

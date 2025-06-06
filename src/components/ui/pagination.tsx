@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import type * as React from "react";
+import type * as React from 'react';
 import {
   ChevronLeft,
   ChevronRight,
   ArrowLeftIcon as DoubleArrowLeft,
   ArrowRightIcon as DoubleArrowRight,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { cn } from "../../lib/utils";
-import { Button } from "./button";
+import { cn } from '../../lib/utils';
+import { Button } from './button';
 
 export interface PaginationProps extends React.HTMLAttributes<HTMLDivElement> {
   pageCount: number;
@@ -26,7 +26,7 @@ export const Pagination = ({
 }: PaginationProps) => {
   return (
     <div
-      className={cn("flex items-center justify-between", className)}
+      className={cn('flex items-center justify-between', className)}
       {...props}
     >
       <div className="flex-1 text-sm text-muted-foreground">

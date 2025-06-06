@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { MenuItem } from "../../lib/firestoreModels";
+import React, { useEffect, useState } from 'react';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { MenuItem } from '../../lib/firestoreModels';
 
 export default function MenuAdmin() {
   const [menu, setMenu] = useState<MenuItem[]>([]);
@@ -12,11 +12,11 @@ export default function MenuAdmin() {
   const [error, setError] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [newItem, setNewItem] = useState<any>({
-    name: "",
-    price: "",
-    description: "",
-    type: "classic",
-    source: "broskis",
+    name: '',
+    price: '',
+    description: '',
+    type: 'classic',
+    source: 'broskis',
   });
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -34,7 +34,7 @@ export default function MenuAdmin() {
       const token = await (window as any).firebase
         ?.auth()
         .currentUser?.getIdToken();
-      const res = await fetch("/api/admin/menu", {
+      const res = await fetch('/api/admin/menu', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -53,10 +53,10 @@ export default function MenuAdmin() {
       const token = await (window as any).firebase
         ?.auth()
         .currentUser?.getIdToken();
-      const res = await fetch("/api/admin/menu", {
-        method: "POST",
+      const res = await fetch('/api/admin/menu', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -65,15 +65,15 @@ export default function MenuAdmin() {
         }),
       });
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      if (data.error) {throw new Error(data.error);}
       setMenu((m) => [...m, data]);
       setShowAdd(false);
       setNewItem({
-        name: "",
-        price: "",
-        description: "",
-        type: "classic",
-        source: "broskis",
+        name: '',
+        price: '',
+        description: '',
+        type: 'classic',
+        source: 'broskis',
       });
     } catch (e: any) {
       setError(e.message);
@@ -88,7 +88,7 @@ export default function MenuAdmin() {
   }
 
   async function handleEditSave() {
-    if (!editItem) return;
+    if (!editItem) {return;}
     setSaving(true);
     setError(null);
     try {
@@ -96,9 +96,9 @@ export default function MenuAdmin() {
         ?.auth()
         .currentUser?.getIdToken();
       const res = await fetch(`/api/admin/menu/${editingId}`, {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -107,7 +107,7 @@ export default function MenuAdmin() {
         }),
       });
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      if (data.error) {throw new Error(data.error);}
       setMenu((m) =>
         m.map((item) =>
           item.id === editingId ? { ...item, ...editItem } : item,
@@ -123,8 +123,8 @@ export default function MenuAdmin() {
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Are you sure you want to delete this menu item?"))
-      return;
+    if (!window.confirm('Are you sure you want to delete this menu item?'))
+      {return;}
     setDeletingId(id);
     setError(null);
     try {
@@ -132,11 +132,11 @@ export default function MenuAdmin() {
         ?.auth()
         .currentUser?.getIdToken();
       const res = await fetch(`/api/admin/menu/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.error) throw new Error(data.error);
+      if (data.error) {throw new Error(data.error);}
       setMenu((m) => m.filter((item) => item.id !== id));
     } catch (e: any) {
       setError(e.message);
@@ -150,7 +150,7 @@ export default function MenuAdmin() {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold">Menu Management</h3>
         <Button onClick={() => setShowAdd((v) => !v)}>
-          {showAdd ? "Cancel" : "Add New Item"}
+          {showAdd ? 'Cancel' : 'Add New Item'}
         </Button>
       </div>
       {showAdd && (
@@ -195,7 +195,7 @@ export default function MenuAdmin() {
               <option value="partner">Partner</option>
             </select>
             <Button onClick={handleAdd} disabled={saving}>
-              {saving ? "Saving..." : "Save"}
+              {saving ? 'Saving...' : 'Save'}
             </Button>
           </div>
         </Card>
@@ -251,7 +251,7 @@ export default function MenuAdmin() {
                   </select>
                   <div className="flex gap-2">
                     <Button onClick={handleEditSave} disabled={saving}>
-                      {saving ? "Saving..." : "Save"}
+                      {saving ? 'Saving...' : 'Save'}
                     </Button>
                     <Button
                       variant="ghost"
@@ -294,7 +294,7 @@ export default function MenuAdmin() {
                       onClick={() => handleDelete(item.id!)}
                       disabled={deletingId === item.id}
                     >
-                      {deletingId === item.id ? "Deleting..." : "Delete"}
+                      {deletingId === item.id ? 'Deleting...' : 'Delete'}
                     </Button>
                   </div>
                 </>

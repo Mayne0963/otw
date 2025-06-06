@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   FaUser,
   FaEnvelope,
   FaPhone,
   FaComment,
   FaCheck,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -39,7 +39,7 @@ const ContactForm = () => {
     if (errors[name]) {
       setErrors({
         ...errors,
-        [name]: "",
+        [name]: '',
       });
     }
   };
@@ -48,17 +48,17 @@ const ContactForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = 'Name is required';
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email = 'Email is invalid';
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = "Message is required";
+      newErrors.message = 'Message is required';
     }
 
     setErrors(newErrors);
@@ -83,17 +83,17 @@ const ContactForm = () => {
 
       // Reset form
       setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: '',
       });
     } catch (error) {
-      console.error("Form submission error:", error);
+      console.error('Form submission error:', error);
       setErrors({
         ...errors,
-        form: "An error occurred. Please try again later.",
+        form: 'An error occurred. Please try again later.',
       });
     } finally {
       setIsSubmitting(false);
@@ -101,13 +101,13 @@ const ContactForm = () => {
   };
 
   const subjectOptions = [
-    "General Inquiry",
-    "Catering",
-    "Events",
-    "Delivery",
-    "Feedback",
-    "Career",
-    "Other",
+    'General Inquiry',
+    'Catering',
+    'Events',
+    'Delivery',
+    'Feedback',
+    'Career',
+    'Other',
   ];
 
   return (
@@ -119,7 +119,7 @@ const ContactForm = () => {
           </div>
           <h3 className="text-xl font-bold mb-2">Message Sent!</h3>
           <p className="text-gray-300 mb-6">
-            Thank you for reaching out. We'll get back to you as soon as
+            Thank you for reaching out. We&apos;ll get back to you as soon as
             possible.
           </p>
           <button className="btn-primary" onClick={() => setIsSubmitted(false)}>
@@ -148,7 +148,7 @@ const ContactForm = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={`input pl-10 w-full ${errors.name ? "border-blood-red" : ""}`}
+                className={`input pl-10 w-full ${errors.name ? 'border-blood-red' : ''}`}
                 placeholder="Your name"
               />
             </div>
@@ -171,7 +171,7 @@ const ContactForm = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`input pl-10 w-full ${errors.email ? "border-blood-red" : ""}`}
+                className={`input pl-10 w-full ${errors.email ? 'border-blood-red' : ''}`}
                 placeholder="your@email.com"
               />
             </div>
@@ -234,7 +234,7 @@ const ContactForm = () => {
                 value={formData.message}
                 onChange={handleChange}
                 rows={5}
-                className={`input pl-10 w-full ${errors.message ? "border-blood-red" : ""}`}
+                className={`input pl-10 w-full ${errors.message ? 'border-blood-red' : ''}`}
                 placeholder="How can we help you?"
               ></textarea>
             </div>
@@ -273,7 +273,7 @@ const ContactForm = () => {
                 Sending...
               </span>
             ) : (
-              "Send Message"
+              'Send Message'
             )}
           </button>
         </form>

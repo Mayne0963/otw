@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Separator } from "../../components/ui/separator";
-import { Input } from "../../components/ui/input";
-import type React from "react";
+import type { Metadata } from 'next';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Badge } from '../../components/ui/badge';
+import { Separator } from '../../components/ui/separator';
+import { Input } from '../../components/ui/input';
+import type React from 'react';
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useCart } from "../../lib/context/CartContext";
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useCart } from '../../lib/context/CartContext';
 import {
   FaShoppingCart,
   FaTrash,
@@ -22,12 +22,12 @@ import {
   FaArrowLeft,
   FaCreditCard,
   FaCog,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, subtotal, tax, total, clearCart } =
     useCart();
-  const [promoCode, setPromoCode] = useState("");
+  const [promoCode, setPromoCode] = useState('');
   const [promoError, setPromoError] = useState<string | null>(null);
 
   const handleQuantityChange = (
@@ -43,13 +43,13 @@ export default function CartPage() {
 
   const handlePromoCode = (e: React.FormEvent) => {
     e.preventDefault();
-    if (promoCode.trim() === "") {
-      setPromoError("Please enter a promo code");
+    if (promoCode.trim() === '') {
+      setPromoError('Please enter a promo code');
       return;
     }
 
     // In a real app, you would validate the promo code with an API
-    setPromoError("Invalid promo code");
+    setPromoError('Invalid promo code');
   };
 
   // Check if an item has customizations
@@ -109,7 +109,7 @@ export default function CartPage() {
                       <div className="w-20 h-20 bg-[#222222] rounded-lg overflow-hidden relative flex-shrink-0">
                         {item.image ? (
                           <Image
-                            src={item.image || "/placeholder.svg"}
+                            src={item.image || '/placeholder.svg'}
                             alt={item.name}
                             fill
                             className="object-cover"
@@ -124,7 +124,7 @@ export default function CartPage() {
                       <div className="flex-grow">
                         <div className="flex items-center gap-2">
                           <h3 className="font-bold">
-                            {item.name.split(" (")[0]}
+                            {item.name.split(' (')[0]}
                           </h3>
                           {hasCustomizations(item) && (
                             <span className="bg-gold-foil bg-opacity-20 text-gold-foil text-xs px-2 py-1 rounded-full flex items-center gap-1">

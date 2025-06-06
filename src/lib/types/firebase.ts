@@ -2,8 +2,8 @@
  * Type definitions for Firebase Auth and Firestore
  */
 
-import { DecodedIdToken } from "firebase-admin/auth";
-import { DocumentData, DocumentReference } from "firebase-admin/firestore";
+import { DecodedIdToken } from 'firebase-admin/auth';
+import { DocumentData, DocumentReference } from 'firebase-admin/firestore';
 
 /**
  * Extended DecodedIdToken with guaranteed uid property
@@ -19,8 +19,8 @@ export interface MenuItemData {
   name: string;
   description: string;
   price: number;
-  type: "classic" | "infused";
-  source: "broskis" | "partner";
+  type: 'classic' | 'infused';
+  source: 'broskis' | 'partner';
   image?: string;
   id?: string;
   createdAt?: Date;

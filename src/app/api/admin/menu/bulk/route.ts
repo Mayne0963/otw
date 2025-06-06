@@ -1,20 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 // import { firestore } from "../../../../../lib/firebaseAdmin";
 // import { auth } from "../../../../../lib/firebaseAdmin";
-import { menuItemSchema } from "../../../../../lib/firestoreModels";
-import { handleAPIError, apiErrors } from "../../../../../lib/utils/apiErrors";
-import { z } from "zod";
+import { menuItemSchema } from '../../../../../lib/firestoreModels';
+import { handleAPIError, apiErrors } from '../../../../../lib/utils/apiErrors';
+import { z } from 'zod';
 import {
   AuthUser,
   BulkOperationResult,
   VerifiedItem,
-} from "../../../../../lib/types/firebase";
+} from '../../../../../lib/types/firebase';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 // Bulk operation schema
 const bulkOperationSchema = z.object({
-  operation: z.enum(["update", "delete"]),
+  operation: z.enum(['update', 'delete']),
   items: z
     .array(
       z.object({
@@ -35,10 +35,10 @@ const bulkOperationSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     // Temporarily disabled admin functionality
-    return NextResponse.json({ 
-      error: 'Admin functionality is currently being set up. Please check back soon!' 
-    }, { status: 503 })
-    
+    return NextResponse.json({
+      error: 'Admin functionality is currently being set up. Please check back soon!',
+    }, { status: 503 });
+
     // const authHeader = req.headers.get("authorization");
     // if (!authHeader?.startsWith("Bearer ")) {
     //   throw apiErrors.unauthorized();
@@ -59,11 +59,11 @@ export async function POST(req: NextRequest) {
     const { operation, items } = bulkOperationSchema.parse(data);
 
     // Validate update data if operation is update
-    if (operation === "update") {
+    if (operation === 'update') {
       const invalidItems = items.filter((item) => !item.data);
       if (invalidItems.length > 0) {
         throw apiErrors.badRequest(
-          "Data field is required for update operations",
+          'Data field is required for update operations',
           { invalidItems: invalidItems.map((item) => item.id) },
         );
       }
@@ -82,14 +82,14 @@ export async function POST(req: NextRequest) {
       // First, verify all documents exist and validate update data
       const verificationPromises = batchItems.map(async (item) => {
         try {
-          const docRef = firestore.collection("menuItems").doc(item.id);
+          const docRef = firestore.collection('menuItems').doc(item.id);
           const docSnap = await docRef.get();
 
           if (!docSnap.exists) {
             throw apiErrors.notFound(`Menu item ${item.id} not found`);
           }
 
-          if (operation === "update" && item.data) {
+          if (operation === 'update' && item.data) {
             // Validate update data
             const validatedData = menuItemSchema.partial().parse(item.data);
             return {
@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
         } catch {
           results.failed.push({
             id: item.id,
-            error: "Unknown error",
+            error: 'Unknown error',
           });
           return null;
         }
@@ -120,19 +120,19 @@ export async function POST(req: NextRequest) {
 
       // Apply batch operations for verified items
       for (const item of verifiedItems) {
-        if (!item) continue;
+        if (!item) {continue;}
 
         try {
-          if (operation === "delete") {
+          if (operation === 'delete') {
             batch.delete(item.docRef);
-          } else if (operation === "update" && "validatedData" in item) {
+          } else if (operation === 'update' && 'validatedData' in item) {
             batch.update(item.docRef, {
               ...item.validatedData,
               updatedAt: new Date(),
               // updatedBy: userId,
             });
           }
-          if ("validatedData" in item) {
+          if ('validatedData' in item) {
             const successItem: any = { id: item.id };
             if (item.validatedData) {
               successItem.data = item.validatedData;
@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
         } catch {
           results.failed.push({
             id: item.id,
-            error: "Unknown error",
+            error: 'Unknown error',
           });
         }
       }
@@ -158,11 +158,11 @@ export async function POST(req: NextRequest) {
         } catch {
           // Move all items in this batch to failed
           verifiedItems.forEach((item: VerifiedItem) => {
-            if (!item) return;
+            if (!item) {return;}
             results.success = results.success.filter((s) => s.id !== item.id);
             results.failed.push({
               id: item.id,
-              error: "Batch commit failed",
+              error: 'Batch commit failed',
             });
           });
         }
@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
 
     // If all operations failed, return an error
     if (results.success.length === 0 && results.failed.length > 0) {
-      throw apiErrors.badRequest("All operations failed", {
+      throw apiErrors.badRequest('All operations failed', {
         failed: results.failed,
       });
     }

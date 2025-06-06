@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState, useRef, useEffect } from "react";
-import { FaRobot, FaTimes, FaPaperPlane, FaTrash } from "react-icons/fa";
-import { useChat } from "../../lib/context/ChatContext";
-import ChatMessage from "./ChatMessage";
-import WelcomeMessage from "./WelcomeMessage";
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { FaRobot, FaTimes, FaPaperPlane, FaTrash } from 'react-icons/fa';
+import { useChat } from '../../lib/context/ChatContext';
+import ChatMessage from './ChatMessage';
+import WelcomeMessage from './WelcomeMessage';
 
 const ChatBot: React.FC = () => {
   const { messages, sendMessage, isLoading, clearChat } = useChat();
   const [isOpen, setIsOpen] = useState(false);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showWelcome, setShowWelcome] = useState(true);
@@ -18,7 +18,7 @@ const ChatBot: React.FC = () => {
   // Scroll to bottom of messages when new messages are added
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
@@ -40,7 +40,7 @@ const ChatBot: React.FC = () => {
     e.preventDefault();
     if (input.trim() && !isLoading) {
       sendMessage(input);
-      setInput("");
+      setInput('');
     }
   };
 
@@ -60,10 +60,10 @@ const ChatBot: React.FC = () => {
         onClick={toggleChat}
         className={`fixed bottom-20 right-4 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 ${
           isOpen
-            ? "bg-blood-red rotate-90"
-            : "bg-gold-foil hover:bg-gold-foil/90"
+            ? 'bg-blood-red rotate-90'
+            : 'bg-gold-foil hover:bg-gold-foil/90'
         }`}
-        aria-label={isOpen ? "Close chat" : "Open chat"}
+        aria-label={isOpen ? 'Close chat' : 'Open chat'}
       >
         {isOpen ? (
           <FaTimes className="text-white text-xl" />
@@ -76,10 +76,10 @@ const ChatBot: React.FC = () => {
       <div
         className={`fixed bottom-36 right-4 z-50 w-80 sm:w-96 bg-[#1A1A1A] rounded-lg shadow-xl border border-[#333333] flex flex-col transition-all duration-300 ${
           isOpen
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-10 pointer-events-none"
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-10 pointer-events-none'
         }`}
-        style={{ maxHeight: "calc(100vh - 160px)" }}
+        style={{ maxHeight: 'calc(100vh - 160px)' }}
       >
         {/* Chat Header */}
         <div className="bg-gradient-to-r from-gold-foil to-blood-red p-4 rounded-t-lg flex justify-between items-center">
@@ -103,7 +103,7 @@ const ChatBot: React.FC = () => {
         {/* Chat Messages */}
         <div
           className="flex-1 overflow-y-auto p-4 space-y-4"
-          style={{ maxHeight: "400px" }}
+          style={{ maxHeight: '400px' }}
         >
           {showWelcome && messages.length === 0 ? (
             <WelcomeMessage onQuickActionClick={handleQuickAction} />
@@ -150,8 +150,8 @@ const ChatBot: React.FC = () => {
             type="submit"
             className={`bg-gold-foil text-black px-4 rounded-r-md flex items-center justify-center ${
               isLoading || !input.trim()
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-gold-foil/90"
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:bg-gold-foil/90'
             }`}
             disabled={isLoading || !input.trim()}
           >

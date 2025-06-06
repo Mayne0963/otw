@@ -1,7 +1,7 @@
 // import { firestore } from "../firebaseAdmin";
-import { calculateRoute, geocodeAddress, type Location } from "../maps";
-import { createCheckoutSession } from "../stripe";
-import { z } from "zod";
+import { calculateRoute, geocodeAddress, type Location } from '../maps';
+import { createCheckoutSession } from '../stripe';
+import { z } from 'zod';
 
 // Validation schemas
 export const deliveryAddressSchema = z.object({
@@ -23,7 +23,7 @@ export const deliveryRequestSchema = z.object({
     }),
   ),
   scheduledTime: z.string().datetime().optional(),
-  priority: z.enum(["standard", "express", "rush"]),
+  priority: z.enum(['standard', 'express', 'rush']),
   contactPhone: z.string().regex(/^\+?1?\d{10}$/),
 });
 
@@ -108,7 +108,7 @@ export async function createDeliveryRequest(
       },
     ],
     metadata: {
-      type: "delivery",
+      type: 'delivery',
       priority: validatedRequest.priority,
       pickupAddress: formatAddress(validatedRequest.pickupAddress),
       dropoffAddress: formatAddress(validatedRequest.dropoffAddress),
@@ -130,7 +130,7 @@ export async function createDeliveryRequest(
   // });
 
   return {
-    deliveryId: "temp-delivery-id",
+    deliveryId: 'temp-delivery-id',
     checkoutUrl: session.url,
     estimate,
     total,
@@ -144,25 +144,25 @@ export async function getDeliveryStatus(deliveryId: string) {
   //   throw new Error("Delivery not found");
   // }
   // return doc.data();
-  
+
   console.log('getDeliveryStatus called with:', deliveryId);
   return {
-    status: "pending",
+    status: 'pending',
     deliveryId,
-    message: "Delivery service temporarily unavailable"
+    message: 'Delivery service temporarily unavailable',
   };
 }
 
 export async function updateDeliveryStatus(
   deliveryId: string,
   status:
-    | "pending_payment"
-    | "paid"
-    | "assigned"
-    | "picked_up"
-    | "in_transit"
-    | "delivered"
-    | "cancelled",
+    | 'pending_payment'
+    | 'paid'
+    | 'assigned'
+    | 'picked_up'
+    | 'in_transit'
+    | 'delivered'
+    | 'cancelled',
   updates: Partial<{
     driverId: string;
     currentLocation: Location;
@@ -178,7 +178,7 @@ export async function updateDeliveryStatus(
   //   ...updates,
   //   updatedAt: new Date(),
   // });
-  
+
   console.log('updateDeliveryStatus called with:', { deliveryId, status, updates });
 }
 

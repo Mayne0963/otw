@@ -8,11 +8,11 @@ import { Textarea } from '../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
-import { 
-  Heart, 
-  Users, 
-  Clock, 
-  MapPin, 
+import {
+  Heart,
+  Users,
+  Clock,
+  MapPin,
   Star,
   CheckCircle,
   Phone,
@@ -21,7 +21,7 @@ import {
   Award,
   Truck,
   Package,
-  Coffee
+  Coffee,
 } from 'lucide-react';
 import { toast } from '../../components/ui/use-toast';
 
@@ -48,7 +48,7 @@ const VOLUNTEER_OPPORTUNITIES = [
     icon: Truck,
     timeCommitment: '4-8 hours/week',
     requirements: ['Valid driver\'s license', 'Reliable vehicle', 'Background check'],
-    benefits: ['Flexible schedule', 'Mileage reimbursement', 'Community impact']
+    benefits: ['Flexible schedule', 'Mileage reimbursement', 'Community impact'],
   },
   {
     id: 'packing',
@@ -57,7 +57,7 @@ const VOLUNTEER_OPPORTUNITIES = [
     icon: Package,
     timeCommitment: '3-6 hours/week',
     requirements: ['Ability to lift 25lbs', 'Attention to detail', 'Team player'],
-    benefits: ['Indoor work', 'Team environment', 'Skill development']
+    benefits: ['Indoor work', 'Team environment', 'Skill development'],
   },
   {
     id: 'events',
@@ -66,7 +66,7 @@ const VOLUNTEER_OPPORTUNITIES = [
     icon: Calendar,
     timeCommitment: '2-4 hours/event',
     requirements: ['Good communication skills', 'Enthusiasm', 'Reliability'],
-    benefits: ['Networking opportunities', 'Event planning experience', 'Fun environment']
+    benefits: ['Networking opportunities', 'Event planning experience', 'Fun environment'],
   },
   {
     id: 'customer-service',
@@ -75,8 +75,8 @@ const VOLUNTEER_OPPORTUNITIES = [
     icon: Coffee,
     timeCommitment: '4-6 hours/week',
     requirements: ['Excellent communication', 'Problem-solving skills', 'Patience'],
-    benefits: ['Customer service experience', 'Flexible remote options', 'Training provided']
-  }
+    benefits: ['Customer service experience', 'Flexible remote options', 'Training provided'],
+  },
 ];
 
 const AVAILABILITY_OPTIONS = [
@@ -100,7 +100,7 @@ const AVAILABILITY_OPTIONS = [
   'Saturday Evening',
   'Sunday Morning',
   'Sunday Afternoon',
-  'Sunday Evening'
+  'Sunday Evening',
 ];
 
 export default function VolunteersPage() {
@@ -116,7 +116,7 @@ export default function VolunteersPage() {
     experience: '',
     motivation: '',
     emergencyContact: '',
-    emergencyPhone: ''
+    emergencyPhone: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showApplication, setShowApplication] = useState(false);
@@ -124,16 +124,16 @@ export default function VolunteersPage() {
   const handleInputChange = (field: keyof VolunteerApplication, value: string) => {
     setApplication(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleArrayChange = (field: 'availability' | 'interests', value: string, checked: boolean) => {
     setApplication(prev => ({
       ...prev,
-      [field]: checked 
+      [field]: checked
         ? [...prev[field], value]
-        : prev[field].filter(item => item !== value)
+        : prev[field].filter(item => item !== value),
     }));
   };
 
@@ -144,12 +144,12 @@ export default function VolunteersPage() {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       toast({
-        title: "Application Submitted!",
+        title: 'Application Submitted!',
         description: "Thank you for your interest in volunteering. We'll be in touch soon!",
       });
-      
+
       // Reset form
       setApplication({
         firstName: '',
@@ -163,14 +163,14 @@ export default function VolunteersPage() {
         experience: '',
         motivation: '',
         emergencyContact: '',
-        emergencyPhone: ''
+        emergencyPhone: '',
       });
       setShowApplication(false);
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to submit application. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to submit application. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -192,7 +192,7 @@ export default function VolunteersPage() {
             Volunteer with <span className="text-otw-gold">OTW</span>
           </h1>
           <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Join our community of volunteers and make a real difference in Fort Wayne. 
+            Join our community of volunteers and make a real difference in Fort Wayne.
             Help us deliver food, support events, and build stronger communities together.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -325,7 +325,7 @@ export default function VolunteersPage() {
                   </div>
                 </div>
                 <p className="text-gray-300 italic">
-                  "Volunteering with OTW has been incredibly rewarding. I love being able to help 
+                  "Volunteering with OTW has been incredibly rewarding. I love being able to help
                   families in my community while meeting amazing people along the way."
                 </p>
               </CardContent>
@@ -343,7 +343,7 @@ export default function VolunteersPage() {
                   </div>
                 </div>
                 <p className="text-gray-300 italic">
-                  "The events team is like a family. We work together to create memorable experiences 
+                  "The events team is like a family. We work together to create memorable experiences
                   for the community, and I've gained valuable event planning skills."
                 </p>
               </CardContent>
@@ -361,7 +361,7 @@ export default function VolunteersPage() {
                   </div>
                 </div>
                 <p className="text-gray-300 italic">
-                  "Helping customers solve their problems and seeing their satisfaction makes every 
+                  "Helping customers solve their problems and seeing their satisfaction makes every
                   shift worthwhile. The flexible schedule works perfectly with my studies."
                 </p>
               </CardContent>

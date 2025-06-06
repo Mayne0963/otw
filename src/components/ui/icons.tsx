@@ -1,15 +1,11 @@
 import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsUpDown,
-  Check,
   Loader2,
   LucideProps,
   Moon,
   SunMedium,
   Twitter,
   type Icon as LucideIcon,
-} from "lucide-react";
+} from 'lucide-react';
 
 export type Icon = LucideIcon;
 

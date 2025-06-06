@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   if (!GOOGLE_MAPS_API_KEY) {
     return NextResponse.json(
       { error: 'Google Maps API key not configured' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
         if (!address) {
           return NextResponse.json(
             { error: 'Address parameter is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const geocodeResult = await geocodingService.geocode(address, {
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         if (!lat || !lng) {
           return NextResponse.json(
             { error: 'Latitude and longitude parameters are required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const reverseResult = await geocodingService.reverseGeocode(
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
           parseFloat(lng),
           {
             language: language || undefined,
-          }
+          },
         );
         return NextResponse.json(reverseResult);
 
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
         if (!address) {
           return NextResponse.json(
             { error: 'Address parameter is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const validationResult = await geocodingService.validateAddress(address, {
@@ -89,14 +89,14 @@ export async function GET(request: NextRequest) {
         if (!query) {
           return NextResponse.json(
             { error: 'Query parameter is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
-        
+
         const placesResponse = await fetch(
           `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
-            query
-          )}&key=${GOOGLE_MAPS_API_KEY}${language ? `&language=${language}` : ''}`
+            query,
+          )}&key=${GOOGLE_MAPS_API_KEY}${language ? `&language=${language}` : ''}`,
         );
         const placesData = await placesResponse.json();
         return NextResponse.json(placesData);
@@ -105,16 +105,16 @@ export async function GET(request: NextRequest) {
         if (!origin || !destination) {
           return NextResponse.json(
             { error: 'Origin and destination parameters are required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
-        
+
         const directionsResponse = await fetch(
           `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(
-            origin
+            origin,
           )}&destination=${encodeURIComponent(
-            destination
-          )}&key=${GOOGLE_MAPS_API_KEY}${language ? `&language=${language}` : ''}`
+            destination,
+          )}&key=${GOOGLE_MAPS_API_KEY}${language ? `&language=${language}` : ''}`,
         );
         const directionsData = await directionsResponse.json();
         return NextResponse.json(directionsData);
@@ -122,23 +122,23 @@ export async function GET(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action parameter. Supported actions: geocode, reverse, validate, health, stats, places, directions' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
     console.error('Maps API error:', error);
-    
+
     // Handle rate limiting errors
     if (error instanceof Error && error.message.includes('Rate limit exceeded')) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
-        { status: 429 }
+        { status: 429 },
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
   if (!GOOGLE_MAPS_API_KEY) {
     return NextResponse.json(
       { error: 'Google Maps API key not configured' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
         if (!address) {
           return NextResponse.json(
             { error: 'Address is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const result = await geocodingService.geocode(address, options);
@@ -172,13 +172,13 @@ export async function POST(request: NextRequest) {
         if (!batchRequest.addresses || !Array.isArray(batchRequest.addresses)) {
           return NextResponse.json(
             { error: 'Addresses array is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         if (batchRequest.addresses.length > 100) {
           return NextResponse.json(
             { error: 'Maximum 100 addresses allowed per batch request' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const batchResult = await geocodingService.batchGeocode(batchRequest);
@@ -189,12 +189,12 @@ export async function POST(request: NextRequest) {
         if (!validateAddress) {
           return NextResponse.json(
             { error: 'Address is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const validationResult = await geocodingService.validateAddress(
           validateAddress,
-          validationOptions
+          validationOptions,
         );
         return NextResponse.json(validationResult);
 
@@ -203,13 +203,13 @@ export async function POST(request: NextRequest) {
         if (lat === undefined || lng === undefined) {
           return NextResponse.json(
             { error: 'Latitude and longitude are required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
         const reverseResult = await geocodingService.reverseGeocode(
           parseFloat(lat),
           parseFloat(lng),
-          reverseOptions
+          reverseOptions,
         );
         return NextResponse.json(reverseResult);
 
@@ -222,26 +222,26 @@ export async function POST(request: NextRequest) {
         if (!query) {
           return NextResponse.json(
             { error: 'Query is required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
-        
+
         let placesUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
-          query
+          query,
         )}&key=${GOOGLE_MAPS_API_KEY}`;
-        
+
         if (location && location.lat && location.lng) {
           placesUrl += `&location=${location.lat},${location.lng}`;
         }
-        
+
         if (radius) {
           placesUrl += `&radius=${radius}`;
         }
-        
+
         if (language) {
           placesUrl += `&language=${language}`;
         }
-        
+
         const placesResponse = await fetch(placesUrl);
         const placesData = await placesResponse.json();
         return NextResponse.json(placesData);
@@ -251,20 +251,20 @@ export async function POST(request: NextRequest) {
         if (!origin || !destination) {
           return NextResponse.json(
             { error: 'Origin and destination are required' },
-            { status: 400 }
+            { status: 400 },
           );
         }
-        
+
         let directionsUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${encodeURIComponent(
-          origin
+          origin,
         )}&destination=${encodeURIComponent(
-          destination
+          destination,
         )}&mode=${mode}&key=${GOOGLE_MAPS_API_KEY}`;
-        
+
         if (directionsLanguage) {
           directionsUrl += `&language=${directionsLanguage}`;
         }
-        
+
         const directionsResponse = await fetch(directionsUrl);
         const directionsData = await directionsResponse.json();
         return NextResponse.json(directionsData);
@@ -272,23 +272,23 @@ export async function POST(request: NextRequest) {
       default:
         return NextResponse.json(
           { error: 'Invalid action. Supported actions: geocode, batch-geocode, validate, reverse-geocode, clear-cache, places, directions' },
-          { status: 400 }
+          { status: 400 },
         );
     }
   } catch (error) {
     console.error('Maps API POST error:', error);
-    
+
     // Handle rate limiting errors
     if (error instanceof Error && error.message.includes('Rate limit exceeded')) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please try again later.' },
-        { status: 429 }
+        { status: 429 },
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

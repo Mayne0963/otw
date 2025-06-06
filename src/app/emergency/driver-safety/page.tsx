@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import Link from "next/link";
+import Link from 'next/link';
 
 import {
   Box,
@@ -20,130 +20,130 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import SecurityIcon from "@mui/icons-material/Security";
-import WarningIcon from "@mui/icons-material/Warning";
-import SpeedIcon from "@mui/icons-material/Speed";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import SecurityIcon from '@mui/icons-material/Security';
+import WarningIcon from '@mui/icons-material/Warning';
+import SpeedIcon from '@mui/icons-material/Speed';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const safetyGuidelines = [
   {
-    title: "Vehicle Safety",
+    title: 'Vehicle Safety',
     icon: <DirectionsCarIcon />,
     items: [
-      "Perform daily vehicle inspections before starting your shift",
-      "Check tire pressure, brakes, and fluid levels regularly",
-      "Keep your vehicle clean and well-maintained",
-      "Ensure all lights and signals are working properly",
-      "Keep emergency equipment (first aid kit, fire extinguisher) in your vehicle",
+      'Perform daily vehicle inspections before starting your shift',
+      'Check tire pressure, brakes, and fluid levels regularly',
+      'Keep your vehicle clean and well-maintained',
+      'Ensure all lights and signals are working properly',
+      'Keep emergency equipment (first aid kit, fire extinguisher) in your vehicle',
     ],
   },
   {
-    title: "Personal Safety",
+    title: 'Personal Safety',
     icon: <SecurityIcon />,
     items: [
-      "Always wear your seatbelt",
-      "Keep your phone mounted and use hands-free devices",
-      "Take regular breaks to prevent fatigue",
-      "Stay hydrated and maintain a healthy diet",
-      "Keep emergency contacts readily accessible",
+      'Always wear your seatbelt',
+      'Keep your phone mounted and use hands-free devices',
+      'Take regular breaks to prevent fatigue',
+      'Stay hydrated and maintain a healthy diet',
+      'Keep emergency contacts readily accessible',
     ],
   },
   {
-    title: "Road Safety",
+    title: 'Road Safety',
     icon: <SpeedIcon />,
     items: [
-      "Obey all traffic laws and speed limits",
-      "Maintain safe following distances",
-      "Be extra cautious in adverse weather conditions",
-      "Use turn signals and check blind spots",
-      "Avoid distracted driving at all times",
+      'Obey all traffic laws and speed limits',
+      'Maintain safe following distances',
+      'Be extra cautious in adverse weather conditions',
+      'Use turn signals and check blind spots',
+      'Avoid distracted driving at all times',
     ],
   },
 ];
 
 const emergencyProcedures = [
   {
-    title: "Accident Response",
+    title: 'Accident Response',
     steps: [
-      "Ensure your safety and the safety of others",
-      "Call 911 if there are injuries or significant damage",
-      "Contact OTW Emergency Line (1-800-OTW-HELP)",
-      "Document the scene with photos if safe to do so",
-      "Exchange information with other parties involved",
-      "File an incident report in the OTW app",
+      'Ensure your safety and the safety of others',
+      'Call 911 if there are injuries or significant damage',
+      'Contact OTW Emergency Line (1-800-OTW-HELP)',
+      'Document the scene with photos if safe to do so',
+      'Exchange information with other parties involved',
+      'File an incident report in the OTW app',
     ],
   },
   {
-    title: "Medical Emergency",
+    title: 'Medical Emergency',
     steps: [
-      "Pull over safely if you feel unwell",
-      "Call 911 for immediate medical assistance",
-      "Contact OTW Emergency Line",
-      "Use your first aid kit if necessary",
-      "Follow emergency responder instructions",
-      "Update OTW support with your status",
+      'Pull over safely if you feel unwell',
+      'Call 911 for immediate medical assistance',
+      'Contact OTW Emergency Line',
+      'Use your first aid kit if necessary',
+      'Follow emergency responder instructions',
+      'Update OTW support with your status',
     ],
   },
   {
-    title: "Vehicle Breakdown",
+    title: 'Vehicle Breakdown',
     steps: [
-      "Pull over to a safe location",
-      "Turn on hazard lights",
-      "Call Roadside Assistance (1-800-ROAD-HELP)",
-      "Contact OTW support to update delivery status",
-      "Stay with your vehicle if in a safe location",
-      "Follow roadside assistance instructions",
+      'Pull over to a safe location',
+      'Turn on hazard lights',
+      'Call Roadside Assistance (1-800-ROAD-HELP)',
+      'Contact OTW support to update delivery status',
+      'Stay with your vehicle if in a safe location',
+      'Follow roadside assistance instructions',
     ],
   },
 ];
 
 const safetyChecklist = [
   {
-    title: "Pre-Shift Checklist",
+    title: 'Pre-Shift Checklist',
     items: [
-      "Vehicle inspection completed",
-      "Phone fully charged",
-      "OTW app updated and working",
-      "Emergency contacts saved",
-      "First aid kit stocked",
-      "Weather conditions checked",
+      'Vehicle inspection completed',
+      'Phone fully charged',
+      'OTW app updated and working',
+      'Emergency contacts saved',
+      'First aid kit stocked',
+      'Weather conditions checked',
     ],
   },
   {
-    title: "During Shift Checklist",
+    title: 'During Shift Checklist',
     items: [
-      "Regular breaks taken",
-      "Vehicle condition monitored",
-      "Weather conditions monitored",
-      "Route safety assessed",
-      "Customer interactions documented",
-      "Incidents reported immediately",
+      'Regular breaks taken',
+      'Vehicle condition monitored',
+      'Weather conditions monitored',
+      'Route safety assessed',
+      'Customer interactions documented',
+      'Incidents reported immediately',
     ],
   },
   {
-    title: "Post-Shift Checklist",
+    title: 'Post-Shift Checklist',
     items: [
-      "Vehicle condition checked",
-      "Incidents reported",
-      "Fuel level adequate for next shift",
-      "Maintenance needs noted",
-      "Safety concerns reported",
-      "Rest period planned",
+      'Vehicle condition checked',
+      'Incidents reported',
+      'Fuel level adequate for next shift',
+      'Maintenance needs noted',
+      'Safety concerns reported',
+      'Rest period planned',
     ],
   },
 ];
 
 export default function DriverSafetyPage() {
   return (
-    <Box sx={{ bgcolor: "background.default", color: "text.primary", py: 8 }}>
+    <Box sx={{ bgcolor: 'background.default', color: 'text.primary', py: 8 }}>
       <Container maxWidth="lg">
         {/* Hero Section */}
         <Box
           sx={{
-            textAlign: "center",
+            textAlign: 'center',
             mb: 8,
           }}
         >
@@ -151,7 +151,7 @@ export default function DriverSafetyPage() {
             variant="h1"
             sx={{
               mb: 2,
-              fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4rem" },
+              fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
               fontWeight: 700,
             }}
           >
@@ -160,7 +160,7 @@ export default function DriverSafetyPage() {
           <Typography
             variant="h5"
             color="text.secondary"
-            sx={{ mb: 4, maxWidth: "800px", mx: "auto" }}
+            sx={{ mb: 4, maxWidth: '800px', mx: 'auto' }}
           >
             Essential safety information and procedures for OTW drivers
           </Typography>
@@ -171,8 +171,8 @@ export default function DriverSafetyPage() {
           severity="warning"
           sx={{
             mb: 6,
-            fontSize: "1.1rem",
-            "& .MuiAlert-icon": { fontSize: "2rem" },
+            fontSize: '1.1rem',
+            '& .MuiAlert-icon': { fontSize: '2rem' },
           }}
         >
           <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
@@ -187,7 +187,7 @@ export default function DriverSafetyPage() {
             variant="h2"
             sx={{
               mb: 4,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
             }}
           >
             Safety Guidelines
@@ -197,13 +197,13 @@ export default function DriverSafetyPage() {
               <Grid item xs={12} md={4} key={guideline.title}>
                 <Card
                   sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
                 >
                   <CardContent sx={{ flexGrow: 1, p: 4 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                       {guideline.icon}
                       <Typography variant="h5" sx={{ ml: 2, fontWeight: 600 }}>
                         {guideline.title}
@@ -232,7 +232,7 @@ export default function DriverSafetyPage() {
             variant="h2"
             sx={{
               mb: 4,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
             }}
           >
             Emergency Procedures
@@ -244,9 +244,9 @@ export default function DriverSafetyPage() {
                   elevation={2}
                   sx={{
                     p: 3,
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
                 >
                   <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
@@ -280,7 +280,7 @@ export default function DriverSafetyPage() {
             variant="h2"
             sx={{
               mb: 4,
-              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
             }}
           >
             Safety Checklists
@@ -309,11 +309,11 @@ export default function DriverSafetyPage() {
         </Box>
 
         {/* Additional Resources */}
-        <Box sx={{ mt: 8, textAlign: "center" }}>
+        <Box sx={{ mt: 8, textAlign: 'center' }}>
           <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
             For additional safety resources or to report a safety concern,
-            please visit our{" "}
-            <Link href="/help" style={{ color: "inherit" }}>
+            please visit our{' '}
+            <Link href="/help" style={{ color: 'inherit' }}>
               Help Center
             </Link>
           </Typography>

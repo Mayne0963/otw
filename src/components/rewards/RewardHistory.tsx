@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   FaPlus,
   FaMinus,
@@ -10,8 +10,8 @@ import {
   FaSort,
   FaSortAmountDown,
   FaSortAmountUp,
-} from "react-icons/fa";
-import type { RewardHistory as RewardHistoryType } from "../../types";
+} from 'react-icons/fa';
+import type { RewardHistory as RewardHistoryType } from '../../types';
 
 interface RewardHistoryProps {
   history: RewardHistoryType[];
@@ -19,17 +19,17 @@ interface RewardHistoryProps {
 
 const RewardHistory: React.FC<RewardHistoryProps> = ({ history }) => {
   const [sortOrder, setSortOrder] = useState<
-    "newest" | "oldest" | "highest" | "lowest"
-  >("newest");
-  const [filter, setFilter] = useState<"all" | "earned" | "redeemed">("all");
+    'newest' | 'oldest' | 'highest' | 'lowest'
+  >('newest');
+  const [filter, setFilter] = useState<'all' | 'earned' | 'redeemed'>('all');
 
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
     });
   };
 
@@ -38,25 +38,25 @@ const RewardHistory: React.FC<RewardHistoryProps> = ({ history }) => {
     let filtered = [...history];
 
     // Apply filter
-    if (filter === "earned") {
+    if (filter === 'earned') {
       filtered = filtered.filter((item) => item.points > 0);
-    } else if (filter === "redeemed") {
+    } else if (filter === 'redeemed') {
       filtered = filtered.filter((item) => item.points < 0);
     }
 
     // Apply sort
     switch (sortOrder) {
-      case "newest":
+      case 'newest':
         return filtered.sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         );
-      case "oldest":
+      case 'oldest':
         return filtered.sort(
           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
         );
-      case "highest":
+      case 'highest':
         return filtered.sort((a, b) => Math.abs(b.points) - Math.abs(a.points));
-      case "lowest":
+      case 'lowest':
         return filtered.sort((a, b) => Math.abs(a.points) - Math.abs(b.points));
       default:
         return filtered;
@@ -72,31 +72,31 @@ const RewardHistory: React.FC<RewardHistoryProps> = ({ history }) => {
         <div className="flex rounded-full bg-[#1A1A1A] p-1">
           <button
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              filter === "all"
-                ? "bg-gold-foil text-black"
-                : "text-white hover:bg-[#333333]"
+              filter === 'all'
+                ? 'bg-gold-foil text-black'
+                : 'text-white hover:bg-[#333333]'
             }`}
-            onClick={() => setFilter("all")}
+            onClick={() => setFilter('all')}
           >
             All
           </button>
           <button
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              filter === "earned"
-                ? "bg-gold-foil text-black"
-                : "text-white hover:bg-[#333333]"
+              filter === 'earned'
+                ? 'bg-gold-foil text-black'
+                : 'text-white hover:bg-[#333333]'
             }`}
-            onClick={() => setFilter("earned")}
+            onClick={() => setFilter('earned')}
           >
             Earned
           </button>
           <button
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              filter === "redeemed"
-                ? "bg-gold-foil text-black"
-                : "text-white hover:bg-[#333333]"
+              filter === 'redeemed'
+                ? 'bg-gold-foil text-black'
+                : 'text-white hover:bg-[#333333]'
             }`}
-            onClick={() => setFilter("redeemed")}
+            onClick={() => setFilter('redeemed')}
           >
             Redeemed
           </button>
@@ -107,13 +107,13 @@ const RewardHistory: React.FC<RewardHistoryProps> = ({ history }) => {
           <button
             className="btn-outline flex items-center gap-2"
             onClick={() => {
-              const dropdown = document.getElementById("sort-dropdown");
+              const dropdown = document.getElementById('sort-dropdown');
               if (dropdown) {
-                dropdown.classList.toggle("hidden");
+                dropdown.classList.toggle('hidden');
               }
             }}
           >
-            <FaSort /> Sort by:{" "}
+            <FaSort /> Sort by:{' '}
             {sortOrder.charAt(0).toUpperCase() + sortOrder.slice(1)}
           </button>
           <div
@@ -123,60 +123,60 @@ const RewardHistory: React.FC<RewardHistoryProps> = ({ history }) => {
             <div className="py-1">
               <button
                 className={`block px-4 py-2 text-sm w-full text-left ${
-                  sortOrder === "newest"
-                    ? "text-gold-foil"
-                    : "text-white hover:bg-[#333333]"
+                  sortOrder === 'newest'
+                    ? 'text-gold-foil'
+                    : 'text-white hover:bg-[#333333]'
                 }`}
                 onClick={() => {
-                  setSortOrder("newest");
+                  setSortOrder('newest');
                   document
-                    .getElementById("sort-dropdown")
-                    ?.classList.add("hidden");
+                    .getElementById('sort-dropdown')
+                    ?.classList.add('hidden');
                 }}
               >
                 <FaSortAmountDown className="inline mr-2" /> Newest First
               </button>
               <button
                 className={`block px-4 py-2 text-sm w-full text-left ${
-                  sortOrder === "oldest"
-                    ? "text-gold-foil"
-                    : "text-white hover:bg-[#333333]"
+                  sortOrder === 'oldest'
+                    ? 'text-gold-foil'
+                    : 'text-white hover:bg-[#333333]'
                 }`}
                 onClick={() => {
-                  setSortOrder("oldest");
+                  setSortOrder('oldest');
                   document
-                    .getElementById("sort-dropdown")
-                    ?.classList.add("hidden");
+                    .getElementById('sort-dropdown')
+                    ?.classList.add('hidden');
                 }}
               >
                 <FaSortAmountUp className="inline mr-2" /> Oldest First
               </button>
               <button
                 className={`block px-4 py-2 text-sm w-full text-left ${
-                  sortOrder === "highest"
-                    ? "text-gold-foil"
-                    : "text-white hover:bg-[#333333]"
+                  sortOrder === 'highest'
+                    ? 'text-gold-foil'
+                    : 'text-white hover:bg-[#333333]'
                 }`}
                 onClick={() => {
-                  setSortOrder("highest");
+                  setSortOrder('highest');
                   document
-                    .getElementById("sort-dropdown")
-                    ?.classList.add("hidden");
+                    .getElementById('sort-dropdown')
+                    ?.classList.add('hidden');
                 }}
               >
                 <FaSortAmountDown className="inline mr-2" /> Highest Points
               </button>
               <button
                 className={`block px-4 py-2 text-sm w-full text-left ${
-                  sortOrder === "lowest"
-                    ? "text-gold-foil"
-                    : "text-white hover:bg-[#333333]"
+                  sortOrder === 'lowest'
+                    ? 'text-gold-foil'
+                    : 'text-white hover:bg-[#333333]'
                 }`}
                 onClick={() => {
-                  setSortOrder("lowest");
+                  setSortOrder('lowest');
                   document
-                    .getElementById("sort-dropdown")
-                    ?.classList.add("hidden");
+                    .getElementById('sort-dropdown')
+                    ?.classList.add('hidden');
                 }}
               >
                 <FaSortAmountUp className="inline mr-2" /> Lowest Points
@@ -215,8 +215,8 @@ const RewardHistory: React.FC<RewardHistoryProps> = ({ history }) => {
                     <td
                       className={`px-6 py-4 whitespace-nowrap text-sm text-right font-medium ${
                         item.points > 0
-                          ? "text-emerald-green"
-                          : "text-blood-red"
+                          ? 'text-emerald-green'
+                          : 'text-blood-red'
                       }`}
                     >
                       <span className="flex items-center justify-end">
@@ -242,9 +242,9 @@ const RewardHistory: React.FC<RewardHistoryProps> = ({ history }) => {
           <FaExchangeAlt className="text-4xl text-gold-foil mx-auto mb-4" />
           <h3 className="text-xl font-bold mb-2">No History Found</h3>
           <p className="text-gray-400">
-            {filter === "all"
+            {filter === 'all'
               ? "You don't have any points history yet."
-              : filter === "earned"
+              : filter === 'earned'
                 ? "You haven't earned any points yet."
                 : "You haven't redeemed any rewards yet."}
           </p>

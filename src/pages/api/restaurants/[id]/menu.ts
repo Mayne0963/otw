@@ -20,20 +20,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             success: true,
             data: {
               restaurant: restaurant || { id, name: 'Restaurant' },
-              menu: menuData
-            }
+              menu: menuData,
+            },
           });
         } else {
           res.status(404).json({
             success: false,
-            error: 'Restaurant or menu not found'
+            error: 'Restaurant or menu not found',
           });
         }
       } catch (error) {
         console.error('Error fetching menu:', error);
         res.status(500).json({
           success: false,
-          error: 'Failed to fetch menu'
+          error: 'Failed to fetch menu',
         });
       }
       break;

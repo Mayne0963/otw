@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "../../lib/utils";
-import { Menu } from "lucide-react";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { cn } from '../../lib/utils';
+import { Menu } from 'lucide-react';
 
 export default function DashboardNavbar({
   onMenuToggle,
@@ -14,16 +14,16 @@ export default function DashboardNavbar({
 
   const navItems = [
     {
-      name: "Overview",
-      href: "/dashboard",
+      name: 'Overview',
+      href: '/dashboard',
     },
     {
-      name: "Orders",
-      href: "/dashboard/orders",
+      name: 'Orders',
+      href: '/dashboard/orders',
     },
     {
-      name: "Settings",
-      href: "/dashboard/settings",
+      name: 'Settings',
+      href: '/dashboard/settings',
     },
   ];
 
@@ -39,10 +39,10 @@ export default function DashboardNavbar({
               key={item.href}
               href={item.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
+                'text-sm font-medium transition-colors hover:text-primary',
                 pathname === item.href
-                  ? "text-primary"
-                  : "text-muted-foreground",
+                  ? 'text-primary'
+                  : 'text-muted-foreground',
               )}
             >
               {item.name}

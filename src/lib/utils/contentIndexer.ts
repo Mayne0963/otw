@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { createHash } from 'crypto';
 
 // Define the structure for indexed content
 export interface IndexedContent {
@@ -23,16 +23,16 @@ let contentDatabase: ContentDatabase = {
 
 // URLs to scan - these would be your website pages
 const urlsToScan = [
-  "/menu",
-  "/infused-menu",
-  "/locations",
-  "/events",
-  "/rewards",
-  "/shop",
-  "/contact",
-  "/volunteer",
-  "/about",
-  "/loyalty",
+  '/menu',
+  '/infused-menu',
+  '/locations',
+  '/events',
+  '/rewards',
+  '/shop',
+  '/contact',
+  '/volunteer',
+  '/about',
+  '/loyalty',
 ];
 
 // Function to scan a single page and extract content
@@ -51,9 +51,9 @@ async function scanPage(url: string): Promise<IndexedContent | null> {
     const simulatedContent = getSimulatedContent(url);
 
     // Generate a unique ID for this content
-    const id = createHash("md5")
+    const id = createHash('md5')
       .update(`${url}-${new Date().toISOString()}`)
-      .digest("hex");
+      .digest('hex');
 
     return {
       id,
@@ -71,69 +71,69 @@ async function scanPage(url: string): Promise<IndexedContent | null> {
 // Function to simulate content for different pages
 function getSimulatedContent(url: string): { title: string; content: string } {
   switch (url) {
-    case "/menu":
+    case '/menu':
       return {
         title: "Menu - Broski's Kitchen",
         content: `Our menu features luxury street gourmet items including burgers, tacos, wings, and sides. 
         Popular items include the Luxury Burger ($18.99), Gourmet Street Tacos ($14.99), and Truffle Parmesan Fries ($9.99).
         We offer vegetarian, vegan, gluten-free, and dairy-free options. All items are clearly marked with dietary information.`,
       };
-    case "/infused-menu":
+    case '/infused-menu':
       return {
         title: "Infused Menu - Broski's Kitchen",
         content: `Our infused menu features premium culinary creations with special infusions. 
         You must be 21+ to access this menu, and it's only available in locations where legal.
         Popular items include Infused Wings ($16.99), Infused Chocolate Brownie ($12.99), and Infused Luxury Margarita ($15.99).`,
       };
-    case "/locations":
+    case '/locations':
       return {
         title: "Locations - Broski's Kitchen",
         content: `We have locations in LA, SF, NYC, and Chicago. 
         Our flagship location is in Downtown LA at 420 S Grand Ave, Los Angeles, CA 90071.
         Most locations are open from 11 AM to 10 PM Monday through Thursday, 11 AM to 12 AM Friday and Saturday, and 10 AM to 9 PM on Sunday.`,
       };
-    case "/events":
+    case '/events':
       return {
         title: "Events - Broski's Kitchen",
         content: `Join us for exclusive tastings, chef workshops, and special dining experiences.
         Upcoming events include Luxury Tasting Experience, Infused Cooking Workshop, and Chef's Table Underground Dinner Series.
         You can register for events on our website.`,
       };
-    case "/rewards":
+    case '/rewards':
       return {
         title: "Rewards Program - Broski's Kitchen",
         content: `Our rewards program lets you earn points with every purchase. 
         Bronze tier: 1 point per $1 spent, Silver tier: 1.5 points per $1 spent, Gold tier: 2 points per $1 spent.
         You can redeem points for free menu items, discounts, and exclusive experiences.`,
       };
-    case "/shop":
+    case '/shop':
       return {
         title: "Shop - Broski's Kitchen",
         content: `We offer a range of merchandise including t-shirts, hats, hoodies, and more.
         Popular items include the Classic Logo T-Shirt ($29.99), Graffiti Style Hoodie ($59.99), and Luxury Snapback Cap ($34.99).`,
       };
-    case "/contact":
+    case '/contact':
       return {
         title: "Contact Us - Broski's Kitchen",
         content: `You can contact us through our Contact page, by email at info@broskiskitchen.com, or by phone at (260) 555-BROS.
         Our headquarters is located at 420 S Grand Ave, Los Angeles, CA 90071.
         For catering inquiries, contact catering@broskiskitchen.com or call (213) 555-5678.`,
       };
-    case "/volunteer":
+    case '/volunteer':
       return {
         title: "Volunteer - Broski's Kitchen",
         content: `We have volunteer opportunities through our community outreach programs.
         Volunteer positions include Kitchen Assistant, Event Support, Food Distribution, Community Outreach, and Administrative Support.
         You must be at least 16 years old to volunteer.`,
       };
-    case "/about":
+    case '/about':
       return {
         title: "About Us - Broski's Kitchen",
         content: `Broski's Kitchen was founded with a vision to blend luxury dining with street food culture.
         We started as a food truck in LA and have grown to multiple locations across the country.
         Our mission is to provide gourmet street food experiences that are accessible to everyone.`,
       };
-    case "/loyalty":
+    case '/loyalty':
       return {
         title: "Loyalty Program - Broski's Kitchen",
         content: `Join our exclusive loyalty program and unlock premium benefits, rewards, and experiences.
@@ -143,7 +143,7 @@ function getSimulatedContent(url: string): { title: string; content: string } {
     default:
       return {
         title: "Broski's Kitchen",
-        content: "Luxury Street Gourmet – Where Flavor Meets Culture",
+        content: 'Luxury Street Gourmet – Where Flavor Meets Culture',
       };
   }
 }

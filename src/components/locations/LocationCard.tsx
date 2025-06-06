@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
 import {
   FaMapMarkerAlt,
   FaPhone,
   FaClock,
   FaChevronRight,
-} from "react-icons/fa";
-import type { Location } from "../../types/location";
+} from 'react-icons/fa';
+import type { Location } from '../../types/location';
 
 interface LocationCardProps {
   location: Location;
@@ -24,39 +24,39 @@ const LocationCard: React.FC<LocationCardProps> = ({
   // Determine if the location is currently open
   const getCurrentStatus = () => {
     const now = new Date();
-    const day = now.toLocaleDateString("en-US", { weekday: "long" });
+    const day = now.toLocaleDateString('en-US', { weekday: 'long' });
     const currentHour = now.getHours() * 100 + now.getMinutes();
 
     const todayHours = location.hours.find((h) => h.day === day);
 
-    if (!todayHours || todayHours.hours === "Closed") {
-      return { isOpen: false, status: "Closed" };
+    if (!todayHours || todayHours.hours === 'Closed') {
+      return { isOpen: false, status: 'Closed' };
     }
 
     // Parse hours like "11:00 AM - 10:00 PM"
-    const [openStr, closeStr] = todayHours.hours.split(" - ");
+    const [openStr, closeStr] = todayHours.hours.split(' - ');
 
     const parseTimeStr = (timeStr: string) => {
-      const [time, period] = timeStr.split(" ");
+      const [time, period] = timeStr.split(' ');
       // Add a check to ensure time is defined before using it
-      if (!time) return 0;
-      
-      const timeParts = time.split(":").map(Number);
+      if (!time) {return 0;}
+
+      const timeParts = time.split(':').map(Number);
       let hours = timeParts[0] || 0;
       const minutes = timeParts[1] || 0;
-      if (period === "PM" && hours !== 12) hours += 12;
-      if (period === "AM" && hours === 12) hours = 0; // Reset to 0 for midnight
+      if (period === 'PM' && hours !== 12) {hours += 12;}
+      if (period === 'AM' && hours === 12) {hours = 0;} // Reset to 0 for midnight
       return hours * 100 + minutes;
     };
 
     // Add null checks to ensure we're passing strings to parseTimeStr
-    const openTime = parseTimeStr(openStr || "");
-    const closeTime = parseTimeStr(closeStr || "");
+    const openTime = parseTimeStr(openStr || '');
+    const closeTime = parseTimeStr(closeStr || '');
 
     if (currentHour >= openTime && currentHour < closeTime) {
-      return { isOpen: true, status: "Open Now" };
+      return { isOpen: true, status: 'Open Now' };
     } else {
-      return { isOpen: false, status: "Closed" };
+      return { isOpen: false, status: 'Closed' };
     }
   };
 
@@ -67,12 +67,12 @@ const LocationCard: React.FC<LocationCardProps> = ({
       id={`location-${location.id}`}
       className={`bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
         isSelected
-          ? "border-gold-foil"
-          : "border-[#333333] hover:border-[#555555]"
+          ? 'border-gold-foil'
+          : 'border-[#333333] hover:border-[#555555]'
       }`}
       onClick={() => onSelect(location)}
       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
+        if (e.key === 'Enter' || e.key === ' ') {
           onSelect(location);
         }
       }}
@@ -85,8 +85,8 @@ const LocationCard: React.FC<LocationCardProps> = ({
           <span
             className={`text-xs px-2 py-1 rounded-full ${
               isOpen
-                ? "bg-emerald-green bg-opacity-20 text-emerald-green"
-                : "bg-blood-red bg-opacity-20 text-blood-red"
+                ? 'bg-emerald-green bg-opacity-20 text-emerald-green'
+                : 'bg-blood-red bg-opacity-20 text-blood-red'
             }`}
           >
             {status}
@@ -97,7 +97,7 @@ const LocationCard: React.FC<LocationCardProps> = ({
           <div className="flex items-start">
             <FaMapMarkerAlt className="text-gold-foil mt-1 mr-2 flex-shrink-0" />
             <address className="not-italic text-gray-300 text-sm">
-              {location.address}, {location.city}, {location.state}{" "}
+              {location.address}, {location.city}, {location.state}{' '}
               {location.zipCode}
             </address>
           </div>
@@ -115,8 +115,8 @@ const LocationCard: React.FC<LocationCardProps> = ({
                 {location.hours.find(
                   (h) =>
                     h.day ===
-                    new Date().toLocaleDateString("en-US", { weekday: "long" }),
-                )?.hours || "Closed"}
+                    new Date().toLocaleDateString('en-US', { weekday: 'long' }),
+                )?.hours || 'Closed'}
               </p>
             </div>
           </div>

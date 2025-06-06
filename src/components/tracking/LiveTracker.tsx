@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import type { Socket } from "socket.io-client";
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import type { Socket } from 'socket.io-client';
 
 // Dynamically import the map component to avoid SSR issues
-const MapComponent = dynamic(() => import("@/components/maps/MapSearch"), {
+const MapComponent = dynamic(() => import('@/components/maps/MapSearch'), {
   ssr: false,
   loading: () => (
     <div className="h-[400px] w-full bg-gray-100 animate-pulse"></div>
@@ -26,16 +26,16 @@ export function LiveTracker({ orderId, socket }: LiveTrackerProps) {
   // Removed unused eta state
 
   useEffect(() => {
-    socket.emit("join_tracking", orderId);
+    socket.emit('join_tracking', orderId);
 
-    socket.on("location_update", (data: Location) => {
+    socket.on('location_update', (data: Location) => {
       setLocation(data);
       // Calculate new ETA
     });
 
     return () => {
-      socket.emit("leave_tracking", orderId);
-      socket.off("location_update");
+      socket.emit('leave_tracking', orderId);
+      socket.off('location_update');
     };
   }, [orderId, socket]);
 

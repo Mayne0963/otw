@@ -6,10 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
-import { 
-  Calendar, 
-  Users, 
-  MapPin, 
+import {
+  Calendar,
+  Users,
+  MapPin,
   Clock,
   Phone,
   Mail,
@@ -22,7 +22,7 @@ import {
   Utensils,
   Cake,
   PartyPopper,
-  Crown
+  Crown,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -64,8 +64,8 @@ const EVENT_PACKAGES: EventPackage[] = [
       'Table setup and decoration',
       'Professional service staff',
       'Basic sound system',
-      'Cleanup service'
-    ]
+      'Cleanup service',
+    ],
   },
   {
     id: 'celebration',
@@ -81,9 +81,9 @@ const EVENT_PACKAGES: EventPackage[] = [
       'Custom cake or dessert station',
       'Premium sound system',
       'Dance floor setup',
-      'Personalized menu cards'
+      'Personalized menu cards',
     ],
-    popular: true
+    popular: true,
   },
   {
     id: 'premium',
@@ -100,10 +100,10 @@ const EVENT_PACKAGES: EventPackage[] = [
       'Gourmet multi-course menu',
       'Floral arrangements',
       'Valet parking service',
-      'Custom lighting design'
+      'Custom lighting design',
     ],
-    premium: true
-  }
+    premium: true,
+  },
 ];
 
 const EVENT_TYPES: EventType[] = [
@@ -114,7 +114,7 @@ const EVENT_TYPES: EventType[] = [
     description: 'Memorable birthday celebrations for all ages',
     minGuests: 10,
     maxGuests: 100,
-    basePrice: 25
+    basePrice: 25,
   },
   {
     id: 'anniversary',
@@ -123,7 +123,7 @@ const EVENT_TYPES: EventType[] = [
     description: 'Romantic celebrations for couples',
     minGuests: 10,
     maxGuests: 80,
-    basePrice: 30
+    basePrice: 30,
   },
   {
     id: 'corporate',
@@ -132,7 +132,7 @@ const EVENT_TYPES: EventType[] = [
     description: 'Professional gatherings and team building',
     minGuests: 20,
     maxGuests: 150,
-    basePrice: 35
+    basePrice: 35,
   },
   {
     id: 'graduation',
@@ -141,7 +141,7 @@ const EVENT_TYPES: EventType[] = [
     description: 'Celebrate academic achievements',
     minGuests: 15,
     maxGuests: 75,
-    basePrice: 28
+    basePrice: 28,
   },
   {
     id: 'baby-shower',
@@ -150,7 +150,7 @@ const EVENT_TYPES: EventType[] = [
     description: 'Welcome new arrivals with style',
     minGuests: 10,
     maxGuests: 50,
-    basePrice: 25
+    basePrice: 25,
   },
   {
     id: 'holiday',
@@ -159,8 +159,8 @@ const EVENT_TYPES: EventType[] = [
     description: 'Festive celebrations for any holiday',
     minGuests: 15,
     maxGuests: 100,
-    basePrice: 32
-  }
+    basePrice: 32,
+  },
 ];
 
 export default function PrivateEventsPage() {
@@ -177,29 +177,29 @@ export default function PrivateEventsPage() {
     packageType: '',
     venue: '',
     budget: '',
-    specialRequests: ''
+    specialRequests: '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmitQuote = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Simulate API call
     try {
       // In a real app, this would send to your API
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       toast({
-        title: "Quote Request Submitted!",
+        title: 'Quote Request Submitted!',
         description: "We'll contact you within 24 hours with a custom quote.",
       });
-      
+
       setShowQuoteForm(false);
       setFormData({
         name: '',
@@ -211,13 +211,13 @@ export default function PrivateEventsPage() {
         packageType: '',
         venue: '',
         budget: '',
-        specialRequests: ''
+        specialRequests: '',
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to submit quote request. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to submit quote request. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -240,7 +240,7 @@ export default function PrivateEventsPage() {
                 Create unforgettable memories with our premium private event services. From intimate gatherings to grand celebrations, we handle every detail.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
+                <Button
                   onClick={() => setShowQuoteForm(true)}
                   className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300"
                 >
@@ -252,7 +252,7 @@ export default function PrivateEventsPage() {
                 </Button>
               </div>
             </div>
-            
+
             <div className="flex-1 max-w-lg">
               <div className="relative h-80 rounded-2xl overflow-hidden">
                 <Image
@@ -284,11 +284,11 @@ export default function PrivateEventsPage() {
             {EVENT_TYPES.map((eventType) => {
               const IconComponent = eventType.icon;
               return (
-                <Card 
-                  key={eventType.id} 
+                <Card
+                  key={eventType.id}
                   className={`bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:shadow-otw-gold/10 cursor-pointer ${
-                    selectedEventType === eventType.id 
-                      ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20' 
+                    selectedEventType === eventType.id
+                      ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20'
                       : 'border-otw-gold/20 hover:border-otw-gold/40'
                   }`}
                   onClick={() => setSelectedEventType(eventType.id)}
@@ -335,11 +335,11 @@ export default function PrivateEventsPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {EVENT_PACKAGES.map((pkg) => (
-              <Card 
-                key={pkg.id} 
+              <Card
+                key={pkg.id}
                 className={`bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:shadow-otw-gold/10 relative ${
-                  selectedPackage === pkg.id 
-                    ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20 scale-105' 
+                  selectedPackage === pkg.id
+                    ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20 scale-105'
                     : 'border-otw-gold/20 hover:border-otw-gold/40'
                 }`}
               >
@@ -357,7 +357,7 @@ export default function PrivateEventsPage() {
                     </Badge>
                   </div>
                 )}
-                
+
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl text-white mb-2">{pkg.name}</CardTitle>
                   <CardDescription className="text-gray-300 mb-4">
@@ -370,7 +370,7 @@ export default function PrivateEventsPage() {
                     {pkg.duration} • {pkg.guestCount}
                   </div>
                 </CardHeader>
-                
+
                 <CardContent>
                   <ul className="space-y-3 mb-6">
                     {pkg.features.map((feature, index) => (
@@ -380,15 +380,15 @@ export default function PrivateEventsPage() {
                       </li>
                     ))}
                   </ul>
-                  
-                  <Button 
+
+                  <Button
                     onClick={() => {
                       setSelectedPackage(pkg.id);
                       setFormData(prev => ({ ...prev, packageType: pkg.name }));
                       setShowQuoteForm(true);
                     }}
                     className={`w-full py-3 rounded-xl transition-all duration-300 ${
-                      pkg.premium 
+                      pkg.premium
                         ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
                         : 'bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold hover:shadow-lg hover:shadow-otw-gold/20'
                     }`}
@@ -422,7 +422,7 @@ export default function PrivateEventsPage() {
               <h3 className="text-xl font-semibold text-white mb-2">Catering</h3>
               <p className="text-gray-300 text-sm">Custom menus from local restaurants and professional chefs</p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Camera className="w-8 h-8 text-black" />
@@ -430,7 +430,7 @@ export default function PrivateEventsPage() {
               <h3 className="text-xl font-semibold text-white mb-2">Photography</h3>
               <p className="text-gray-300 text-sm">Professional photography and videography services</p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Music className="w-8 h-8 text-black" />
@@ -438,7 +438,7 @@ export default function PrivateEventsPage() {
               <h3 className="text-xl font-semibold text-white mb-2">Entertainment</h3>
               <p className="text-gray-300 text-sm">DJ services, live music, and entertainment options</p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="w-8 h-8 text-black" />
@@ -536,8 +536,8 @@ export default function PrivateEventsPage() {
             <CardHeader>
               <CardTitle className="text-white flex items-center justify-between">
                 <span>Get Custom Quote</span>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   onClick={() => setShowQuoteForm(false)}
                   className="text-gray-400 hover:text-white"
                 >
@@ -682,7 +682,7 @@ export default function PrivateEventsPage() {
             Let our experienced team create an unforgettable experience for you and your guests.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
+            <Button
               onClick={() => setShowQuoteForm(true)}
               className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300"
             >

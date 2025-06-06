@@ -31,7 +31,7 @@ interface Order {
 const ADMIN_EMAILS = [
   'admin@otw.com',
   'manager@otw.com',
-  'supervisor@otw.com'
+  'supervisor@otw.com',
 ];
 
 export default function AdminDashboard() {
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
       // const response = await fetch('/api/orders');
       // const orders = await response.json();
       // setOrders(orders);
-      
+
       // For now, set empty array until backend is implemented
       setOrders([]);
     } catch (error) {
@@ -88,10 +88,10 @@ export default function AdminDashboard() {
     let filtered = orders.filter(order => order.status !== 'delivered' && order.status !== 'cancelled');
 
     if (searchTerm) {
-      filtered = filtered.filter(order => 
+      filtered = filtered.filter(order =>
         order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase())
+        order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
@@ -129,8 +129,8 @@ export default function AdminDashboard() {
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       // Mock update - replace with actual API call
-      setOrders(prev => prev.map(order => 
-        order.id === orderId ? { ...order, status: newStatus as any } : order
+      setOrders(prev => prev.map(order =>
+        order.id === orderId ? { ...order, status: newStatus as any } : order,
       ));
     } catch (error) {
       console.error('Error updating order status:', error);
@@ -332,7 +332,7 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                   </div>
-                  
+
                   {order.assignedDriver && (
                     <div className="mt-4 p-3 bg-gray-800 rounded-lg">
                       <p className="text-gray-300">
@@ -340,7 +340,7 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                   )}
-                  
+
                   {order.specialInstructions && (
                     <div className="mt-4 p-3 bg-gray-800 rounded-lg">
                       <p className="text-gray-300">
@@ -348,10 +348,10 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                   )}
-                  
+
                   <div className="mt-4 flex gap-2">
                     {order.status === 'pending' && (
-                      <Button 
+                      <Button
                         onClick={() => updateOrderStatus(order.id, 'confirmed')}
                         className="bg-blue-600 hover:bg-blue-700"
                       >
@@ -359,7 +359,7 @@ export default function AdminDashboard() {
                       </Button>
                     )}
                     {order.status === 'confirmed' && (
-                      <Button 
+                      <Button
                         onClick={() => updateOrderStatus(order.id, 'preparing')}
                         className="bg-orange-600 hover:bg-orange-700"
                       >
@@ -367,7 +367,7 @@ export default function AdminDashboard() {
                       </Button>
                     )}
                     {order.status === 'preparing' && (
-                      <Button 
+                      <Button
                         onClick={() => updateOrderStatus(order.id, 'out_for_delivery')}
                         className="bg-green-600 hover:bg-green-700"
                       >
@@ -375,7 +375,7 @@ export default function AdminDashboard() {
                       </Button>
                     )}
                     {order.status === 'out_for_delivery' && (
-                      <Button 
+                      <Button
                         onClick={() => updateOrderStatus(order.id, 'delivered')}
                         className="bg-otw-gold hover:bg-yellow-600 text-black"
                       >

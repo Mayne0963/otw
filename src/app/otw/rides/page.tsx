@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
-import { Textarea } from "../../../components/ui/textarea";
+import type { Metadata } from 'next';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { Label } from '../../../components/ui/label';
+import { Textarea } from '../../../components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
-import { Badge } from "../../../components/ui/badge";
-import { Separator } from "../../../components/ui/separator";
+} from '../../../components/ui/select';
+import { Badge } from '../../../components/ui/badge';
+import { Separator } from '../../../components/ui/separator';
 
 interface VehicleType {
   id: string;
@@ -29,12 +29,12 @@ interface VehicleType {
   estimatedArrival: string;
   available?: boolean;
 }
-import { Calendar } from "../../../components/ui/calendar";
+import { Calendar } from '../../../components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../../../components/ui/popover";
+} from '../../../components/ui/popover';
 import {
   CalendarIcon,
   Clock,
@@ -48,7 +48,7 @@ import {
   Users,
   ArrowRight,
   Navigation,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   FaCar,
   FaMapMarkerAlt,
@@ -76,10 +76,10 @@ import {
   FaEye,
   FaDownload,
   FaPrint,
-} from "react-icons/fa";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import PlaceAutocomplete from "../../../components/maps/PlaceAutocomplete";
+} from 'react-icons/fa';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import PlaceAutocomplete from '../../../components/maps/PlaceAutocomplete';
 
 export default function RidesPage() {
   const [pickupLocation, setPickupLocation] = useState('');
@@ -94,12 +94,12 @@ export default function RidesPage() {
   const [stats, setStats] = useState({
     rating: 4.9,
     totalRides: 10000,
-    averagePickupTime: 5
+    averagePickupTime: 5,
   });
   const [fareBreakdown, setFareBreakdown] = useState({
     baseFare: 0,
     distanceFare: 0,
-    total: 0
+    total: 0,
   });
 
   // Fetch vehicle types and stats from API
@@ -134,20 +134,20 @@ export default function RidesPage() {
     const baseFare = vehicle.basePrice;
     const distanceFare = vehicle.pricePerMile * calculatedDistance;
     const total = baseFare + distanceFare;
-    
+
     setFareBreakdown({
       baseFare,
       distanceFare,
-      total
+      total,
     });
-    
+
     return total;
   };
 
   // Calculate distance between pickup and destination
   const calculateDistance = async (pickup: string, dest: string) => {
-    if (!pickup || !dest) return;
-    
+    if (!pickup || !dest) {return;}
+
     try {
       const response = await fetch('/api/maps/distance', {
         method: 'POST',
@@ -156,10 +156,10 @@ export default function RidesPage() {
         },
         body: JSON.stringify({
           origin: pickup,
-          destination: dest
-        })
+          destination: dest,
+        }),
       });
-      
+
       const data = await response.json();
       if (data.success && data.distance) {
         setDistance(data.distance);
@@ -213,7 +213,7 @@ export default function RidesPage() {
           <div className="absolute top-40 right-20 w-1 h-1 bg-otw-red rounded-full animate-ping"></div>
           <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-otw-gold rounded-full animate-pulse delay-1000"></div>
         </div>
-        
+
         <div className="container mx-auto px-4 z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left side - Hero content */}
@@ -229,7 +229,7 @@ export default function RidesPage() {
               <p className="text-xl text-gray-300 mb-8 max-w-lg">
                 Safe, reliable rides at the tap of a button. Professional drivers, transparent pricing, no surge fees.
               </p>
-              
+
               {/* Quick stats */}
               <div className="flex flex-wrap gap-6 mb-8">
                 <div className="flex items-center text-gray-300">
@@ -251,7 +251,7 @@ export default function RidesPage() {
             {/* Right side - Quick booking form */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
               <h3 className="text-2xl font-bold text-white mb-6">Book your ride</h3>
-              
+
               <div className="space-y-4">
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full z-20"></div>
@@ -264,7 +264,7 @@ export default function RidesPage() {
                     className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
-                
+
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full z-20"></div>
                   <PlaceAutocomplete
@@ -276,9 +276,9 @@ export default function RidesPage() {
                     className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
-                
-                <Button 
-                  size="lg" 
+
+                <Button
+                  size="lg"
                   className="w-full h-14 text-lg font-semibold bg-otw-gold hover:bg-otw-gold/90 text-black"
                   disabled={!pickupLocation || !destination}
                 >
@@ -286,7 +286,7 @@ export default function RidesPage() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </div>
-              
+
               {estimatedPrice && (
                 <div className="mt-4 p-4 bg-white/10 rounded-lg border border-white/20">
                   <p className="text-otw-gold font-semibold">Estimated fare: ${estimatedPrice.toFixed(2)}</p>
@@ -318,8 +318,8 @@ export default function RidesPage() {
                   key={vehicle.id}
                   className={`relative bg-white rounded-2xl p-6 border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
                     selectedVehicle?.id === vehicle.id
-                      ? "border-otw-gold shadow-lg scale-105"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? 'border-otw-gold shadow-lg scale-105'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => handleVehicleSelect(vehicle)}
                 >
@@ -330,7 +330,7 @@ export default function RidesPage() {
                       </svg>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center justify-between mb-4">
                     <Car className="w-12 h-12 text-gray-700" />
                     <div className="text-right">
@@ -338,7 +338,7 @@ export default function RidesPage() {
                       <div className="text-sm text-gray-500">{vehicle.estimatedArrival}</div>
                     </div>
                   </div>
-                  
+
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{vehicle.name}</h3>
                   <p className="text-gray-600 mb-3">{vehicle.description}</p>
                   <div className="flex items-center text-sm text-gray-500 mb-2">
@@ -361,7 +361,7 @@ export default function RidesPage() {
           <div className="max-w-3xl mx-auto mt-16">
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
               <h3 className="text-2xl font-bold text-gray-900 mb-8">Complete your booking</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <Label className="text-gray-700 font-medium">When do you need this ride?</Label>
@@ -377,7 +377,7 @@ export default function RidesPage() {
                         <Calendar mode="single" initialFocus />
                       </PopoverContent>
                     </Popover>
-                    
+
                     <Select>
                       <SelectTrigger className="h-12">
                         <SelectValue placeholder="Time" />
@@ -391,7 +391,7 @@ export default function RidesPage() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div>
                   <Label className="text-gray-700 font-medium">Contact Information</Label>
                   <Input placeholder="Your phone number" className="mt-2 h-12" />
@@ -435,18 +435,18 @@ export default function RidesPage() {
                 <Button variant="outline" className="flex-1 h-12">
                   Save for later
                 </Button>
-                <Button 
+                <Button
                   onClick={() => {
                     if (!selectedVehicle) {
                       alert('Please select a vehicle type first');
                       return;
                     }
-                    
+
                     if (!pickupLocation || !destination) {
                       alert('Please enter pickup and destination locations');
                       return;
                     }
-                    
+
                     // Store service details in localStorage for checkout
                     const serviceDetails = {
                       type: 'rides' as const,
@@ -461,22 +461,22 @@ export default function RidesPage() {
                         scheduledTime: scheduledTime?.toISOString(),
                         distance,
                         fareBreakdown,
-                        estimatedArrival: selectedVehicle.estimatedArrival
-                      }
+                        estimatedArrival: selectedVehicle.estimatedArrival,
+                      },
                     };
-                    
+
                     // Store basic customer info (will be completed in checkout)
                     const customerDetails = {
                       name: '',
                       phone: '',
                       email: '',
                       address: pickupLocation,
-                      specialInstructions: `Pickup: ${pickupLocation}, Destination: ${destination}. Vehicle: ${selectedVehicle.name}, Passengers: ${passengers}. ${scheduledTime ? 'Scheduled for: ' + scheduledTime.toLocaleString() : 'ASAP'}`
+                      specialInstructions: `Pickup: ${pickupLocation}, Destination: ${destination}. Vehicle: ${selectedVehicle.name}, Passengers: ${passengers}. ${scheduledTime ? 'Scheduled for: ' + scheduledTime.toLocaleString() : 'ASAP'}`,
                     };
-                    
+
                     localStorage.setItem('otwServiceDetails', JSON.stringify(serviceDetails));
                     localStorage.setItem('otwCustomerInfo', JSON.stringify(customerDetails));
-                    
+
                     // Navigate to checkout
                     window.location.href = '/otw/checkout?service=rides';
                   }}

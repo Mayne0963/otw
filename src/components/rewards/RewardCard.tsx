@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
 import {
   FaGift,
@@ -10,8 +10,8 @@ import {
   FaPercent,
   FaStar,
   FaTshirt,
-} from "react-icons/fa";
-import type { Reward } from "../../types/reward";
+} from 'react-icons/fa';
+import type { Reward } from '../../types/reward';
 
 interface RewardCardProps {
   reward: Reward;
@@ -33,23 +33,23 @@ const RewardCard: React.FC<RewardCardProps> = ({
   const hasTierAccess =
     !reward.tierRequired ||
     userTier === reward.tierRequired ||
-    (reward.tierRequired === "silver" && userTier === "gold") ||
-    (reward.tierRequired === "bronze" &&
-      (userTier === "silver" || userTier === "gold"));
+    (reward.tierRequired === 'silver' && userTier === 'gold') ||
+    (reward.tierRequired === 'bronze' &&
+      (userTier === 'silver' || userTier === 'gold'));
 
   // Get category icon and color
   const getCategoryDetails = () => {
     switch (reward.category) {
-      case "food":
-        return { icon: <FaUtensils />, color: "bg-emerald-green" };
-      case "discount":
-        return { icon: <FaPercent />, color: "bg-citrus-orange" };
-      case "experience":
-        return { icon: <FaStar />, color: "bg-royal-purple" };
-      case "merchandise":
-        return { icon: <FaTshirt />, color: "bg-blood-red" };
+      case 'food':
+        return { icon: <FaUtensils />, color: 'bg-emerald-green' };
+      case 'discount':
+        return { icon: <FaPercent />, color: 'bg-citrus-orange' };
+      case 'experience':
+        return { icon: <FaStar />, color: 'bg-royal-purple' };
+      case 'merchandise':
+        return { icon: <FaTshirt />, color: 'bg-blood-red' };
       default:
-        return { icon: <FaGift />, color: "bg-gold-foil" };
+        return { icon: <FaGift />, color: 'bg-gold-foil' };
     }
   };
 
@@ -59,8 +59,8 @@ const RewardCard: React.FC<RewardCardProps> = ({
     <div
       className={`bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border ${
         hasEnoughPoints && hasTierAccess
-          ? "border-[#333333] hover:border-gold-foil"
-          : "border-[#333333] opacity-80"
+          ? 'border-[#333333] hover:border-gold-foil'
+          : 'border-[#333333] opacity-80'
       } transition-colors`}
     >
       <div
@@ -88,16 +88,16 @@ const RewardCard: React.FC<RewardCardProps> = ({
           <div className="absolute top-3 right-3">
             <span
               className={`bg-black bg-opacity-70 text-xs px-3 py-1 rounded-full flex items-center gap-1 ${
-                reward.tierRequired === "bronze"
-                  ? "text-[#CD7F32]"
-                  : reward.tierRequired === "silver"
-                    ? "text-gray-400"
-                    : "text-gold-foil"
+                reward.tierRequired === 'bronze'
+                  ? 'text-[#CD7F32]'
+                  : reward.tierRequired === 'silver'
+                    ? 'text-gray-400'
+                    : 'text-gold-foil'
               }`}
             >
-              <FaCrown />{" "}
+              <FaCrown />{' '}
               {reward.tierRequired.charAt(0).toUpperCase() +
-                reward.tierRequired.slice(1)}{" "}
+                reward.tierRequired.slice(1)}{' '}
               Tier
             </span>
           </div>
@@ -113,7 +113,7 @@ const RewardCard: React.FC<RewardCardProps> = ({
             className="btn-secondary w-full flex items-center justify-center gap-2"
             disabled
           >
-            <FaLock size={12} />{" "}
+            <FaLock size={12} />{' '}
             {`Requires ${reward.tierRequired?.charAt(0).toUpperCase()}${reward.tierRequired?.slice(1)} Tier`}
           </button>
         ) : hasEnoughPoints ? (
@@ -127,7 +127,7 @@ const RewardCard: React.FC<RewardCardProps> = ({
           <button className="btn-outline w-full" disabled>
             {userPoints > 0
               ? `${reward.pointsRequired - userPoints} more points needed`
-              : "Earn points to redeem"}
+              : 'Earn points to redeem'}
           </button>
         )}
       </div>

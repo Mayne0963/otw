@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import Image from "next/image";
-import { useState } from "react";
-import { FaShoppingCart, FaEye, FaStar, FaFire } from "react-icons/fa";
-import type { Product } from "../../types/merch";
+import Image from 'next/image';
+import { useState } from 'react';
+import { FaShoppingCart, FaEye, FaStar, FaFire } from 'react-icons/fa';
+import type { Product } from '../../types/merch';
 
 interface ProductCardProps {
   product: Product;
@@ -40,7 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           alt={product.name}
           fill
           className={`object-cover transition-all duration-500 ${
-            isImageLoading ? "opacity-0" : "opacity-100"
+            isImageLoading ? 'opacity-0' : 'opacity-100'
           }`}
           onLoadingComplete={() => setIsImageLoading(false)}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -62,7 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Quick Actions */}
         <div
-          className={`absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2 flex justify-center gap-2 transition-all duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}
+          className={`absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2 flex justify-center gap-2 transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
         >
           <button
             className="bg-gold-foil text-black p-2 rounded-full hover:bg-opacity-80 transition-colors"

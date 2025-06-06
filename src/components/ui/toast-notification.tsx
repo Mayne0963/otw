@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState, useEffect } from "react";
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { useState, useEffect } from 'react';
+import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
-type ToastType = "success" | "error" | "info" | "warning";
+type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 interface ToastNotificationProps {
   type?: ToastType;
@@ -18,7 +18,7 @@ interface ToastNotificationProps {
 }
 
 export function ToastNotification({
-  type = "info",
+  type = 'info',
   title,
   message,
   duration = 5000,
@@ -29,7 +29,7 @@ export function ToastNotification({
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
-    if (duration === Number.POSITIVE_INFINITY) return;
+    if (duration === Number.POSITIVE_INFINITY) {return;}
 
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -70,19 +70,19 @@ export function ToastNotification({
 
   const bgColors = {
     success:
-      "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800",
-    error: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800",
-    info: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
+      'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800',
+    error: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',
+    info: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800',
     warning:
-      "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800",
+      'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800',
   };
 
   return (
     <div
       className={cn(
-        "max-w-md w-full pointer-events-auto overflow-hidden rounded-lg border shadow-lg",
+        'max-w-md w-full pointer-events-auto overflow-hidden rounded-lg border shadow-lg',
         bgColors[type],
-        isVisible ? "animate-fade-in" : "animate-fade-out opacity-0",
+        isVisible ? 'animate-fade-in' : 'animate-fade-out opacity-0',
       )}
     >
       <div className="p-4">
@@ -115,11 +115,11 @@ export function ToastNotification({
         <div className="h-1 bg-gray-200 dark:bg-gray-700">
           <div
             className={cn(
-              "h-full transition-all duration-100",
-              type === "success" && "bg-green-500",
-              type === "error" && "bg-red-500",
-              type === "info" && "bg-blue-500",
-              type === "warning" && "bg-yellow-500",
+              'h-full transition-all duration-100',
+              type === 'success' && 'bg-green-500',
+              type === 'error' && 'bg-red-500',
+              type === 'info' && 'bg-blue-500',
+              type === 'warning' && 'bg-yellow-500',
             )}
             style={{ width: `${progress}%` }}
           />

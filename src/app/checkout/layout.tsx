@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { CartProvider } from "../../lib/context/CartContext";
+import { CartProvider } from '../../lib/context/CartContext';
 
 export default function CheckoutLayout({
   children,

@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Search, MapPin, Navigation, Calculator } from "lucide-react";
+import React, { useState, useEffect, useCallback } from 'react';
+import { Search, MapPin, Navigation, Calculator } from 'lucide-react';
 import {
   useLoadScript,
   GoogleMap,
   Marker,
-} from "@react-google-maps/api";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Label } from "../ui/label";
-import { Separator } from "../ui/separator";
-import PlaceAutocomplete from "./PlaceAutocomplete";
+} from '@react-google-maps/api';
+import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Label } from '../ui/label';
+import { Separator } from '../ui/separator';
+import PlaceAutocomplete from './PlaceAutocomplete';
 
-const libraries: "places"[] = ["places"];
+const libraries: 'places'[] = ['places'];
 
 interface AddressSearchProps {
   onAddressSelect?: (address: {
@@ -50,7 +50,7 @@ export default function AddressSearch({
   onAddressSelect,
   onDistanceCalculated,
   defaultLocation = { lat: 40.7128, lng: -74.006 },
-  height = "500px",
+  height = '500px',
   showFeeCalculator = true,
   baseFee = 5.99,
   perMileRate = 1.5,
@@ -60,17 +60,17 @@ export default function AddressSearch({
     useState<google.maps.DirectionsService | null>(null);
   const [directionsRenderer, setDirectionsRenderer] =
     useState<google.maps.DirectionsRenderer | null>(null);
-  
+
   const [originLocation, setOriginLocation] = useState<google.maps.LatLng | null>(null);
   const [destinationLocation, setDestinationLocation] = useState<google.maps.LatLng | null>(null);
   const [currentLocation, setCurrentLocation] = useState<google.maps.LatLng | null>(null);
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  
+
 
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     libraries,
   });
 
@@ -87,13 +87,13 @@ export default function AddressSearch({
           }
         },
         (error) => {
-          console.error("Error getting location:", error);
+          console.error('Error getting location:', error);
         },
         {
           enableHighAccuracy: true,
           timeout: 10000,
           maximumAge: 300000, // 5 minutes
-        }
+        },
       );
     }
   }, [map, isLoaded]);
@@ -123,7 +123,7 @@ export default function AddressSearch({
     }
 
     setIsCalculating(true);
-    
+
     try {
       const result = await new Promise<google.maps.DirectionsResult>((resolve, reject) => {
         directionsService.route(
@@ -141,7 +141,7 @@ export default function AddressSearch({
             } else {
               reject(new Error(`Directions request failed: ${status}`));
             }
-          }
+          },
         );
       });
 
@@ -150,29 +150,29 @@ export default function AddressSearch({
       }
 
       const route = result.routes[0];
-      if (!route) return;
-      
+      if (!route) {return;}
+
       const leg = route.legs[0];
-      if (!leg) return;
-      
+      if (!leg) {return;}
+
       const distance = leg.distance?.value || 0;
       const duration = leg.duration?.value || 0;
       const fee = calculateFee(distance);
 
       const routeData: RouteInfo = {
         distance: {
-          text: leg.distance?.text || "0 mi",
+          text: leg.distance?.text || '0 mi',
           value: distance,
         },
         duration: {
-          text: leg.duration?.text || "0 mins",
+          text: leg.duration?.text || '0 mins',
           value: duration,
         },
         fee,
       };
 
       setRouteInfo(routeData);
-      
+
       if (onDistanceCalculated) {
         onDistanceCalculated({
           distance,
@@ -181,7 +181,7 @@ export default function AddressSearch({
         });
       }
     } catch (error) {
-      console.error("Error calculating route:", error);
+      console.error('Error calculating route:', error);
     } finally {
       setIsCalculating(false);
     }
@@ -191,13 +191,13 @@ export default function AddressSearch({
     if (place && place.geometry && place.geometry.location) {
       const location = new google.maps.LatLng(
         place.geometry.location.lat(),
-        place.geometry.location.lng()
+        place.geometry.location.lng(),
       );
       setOriginLocation(location);
-      
+
       if (onAddressSelect) {
         const addressData: any = {
-          formatted_address: place.formatted_address || "",
+          formatted_address: place.formatted_address || '',
           lat: place.geometry.location.lat(),
           lng: place.geometry.location.lng(),
         };
@@ -206,7 +206,7 @@ export default function AddressSearch({
         }
         onAddressSelect(addressData);
       }
-      
+
       if (map) {
         map.panTo(location);
       }
@@ -217,13 +217,13 @@ export default function AddressSearch({
     if (place && place.geometry && place.geometry.location) {
       const location = new google.maps.LatLng(
         place.geometry.location.lat(),
-        place.geometry.location.lng()
+        place.geometry.location.lng(),
       );
       setDestinationLocation(location);
-      
+
       if (map) {
         const bounds = new google.maps.LatLngBounds();
-        if (originLocation) bounds.extend(originLocation);
+        if (originLocation) {bounds.extend(originLocation);}
         bounds.extend(location);
         map.fitBounds(bounds);
       }
@@ -235,12 +235,12 @@ export default function AddressSearch({
       map.panTo(currentLocation);
       map.setZoom(15);
       setOriginLocation(currentLocation);
-      
+
       // Note: PlaceAutocomplete will handle the display value internally
-      
+
       if (onAddressSelect) {
         onAddressSelect({
-          formatted_address: "Current Location",
+          formatted_address: 'Current Location',
           lat: currentLocation.lat(),
           lng: currentLocation.lng(),
         });
@@ -295,7 +295,7 @@ export default function AddressSearch({
           Address Search & Route Calculator
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Origin Address Input */}
         <div className="space-y-2">
@@ -389,16 +389,16 @@ export default function AddressSearch({
         {/* Map */}
         <div className="relative rounded-lg overflow-hidden" style={{ height }}>
           <GoogleMap
-            mapContainerStyle={{ width: "100%", height: "100%" }}
+            mapContainerStyle={{ width: '100%', height: '100%' }}
             center={currentLocation || defaultLocation}
             zoom={13}
             onLoad={onMapLoad}
             options={{
               styles: [
                 {
-                  featureType: "poi",
-                  elementType: "labels",
-                  stylers: [{ visibility: "off" }],
+                  featureType: 'poi',
+                  elementType: 'labels',
+                  stylers: [{ visibility: 'off' }],
                 },
               ],
               disableDefaultUI: true,
@@ -419,7 +419,7 @@ export default function AddressSearch({
                 }}
               />
             )}
-            
+
             {/* Destination Marker */}
             {destinationLocation && (
               <Marker

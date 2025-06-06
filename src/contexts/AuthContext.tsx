@@ -55,12 +55,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           photoURL: firebaseUser.photoURL,
         };
         setUser(userData);
-        
+
         // Create or update user document in Firestore
         try {
           const userDocRef = doc(db, 'users', firebaseUser.uid);
           const userDoc = await getDoc(userDocRef);
-          
+
           if (!userDoc.exists()) {
             await setDoc(userDocRef, {
               uid: firebaseUser.uid,
@@ -100,12 +100,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, password);
-      
+
       // Update the user's display name
       await updateProfile(firebaseUser, {
         displayName: displayName,
       });
-      
+
       router.push('/dashboard');
     } catch (error: any) {
       console.error('Sign up error:', error);

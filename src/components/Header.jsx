@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import Button from "./Button";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import Button from './Button';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,14 +19,14 @@ export default function Header() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-black/95 backdrop-blur-md shadow-lg" : "bg-black/80"
+        scrolled ? 'bg-black/95 backdrop-blur-md shadow-lg' : 'bg-black/80'
       } border-b border-primary-red/50`}
     >
       <div className="container mx-auto px-4 py-3 sm:py-4">
@@ -38,7 +38,7 @@ export default function Header() {
                   src="/assets/logos/otw-logo-new-red-transparent.jpg"
                   alt="OTW Logo"
                   fill
-                  style={{ objectFit: "contain" }}
+                  style={{ objectFit: 'contain' }}
                   className="transition-opacity duration-300 hover:opacity-90"
                   priority
                   sizes="(max-width: 640px) 80px, 96px"
@@ -51,7 +51,7 @@ export default function Header() {
                 href="/broskis"
                 className="text-white hover:text-accent-gold transition-colors duration-300 font-medium min-h-[44px] flex items-center"
               >
-                Broski's Kitchen
+                Broski&apos;s Kitchen
               </Link>
               <Link
                 href="/otw"
@@ -147,7 +147,7 @@ export default function Header() {
         {/* Mobile menu - improved animation and touch targets */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            isMenuOpen ? "max-h-[600px] opacity-100 mt-4" : "max-h-0 opacity-0"
+            isMenuOpen ? 'max-h-[600px] opacity-100 mt-4' : 'max-h-0 opacity-0'
           }`}
         >
           <nav className="flex flex-col space-y-4 py-4">
@@ -156,7 +156,7 @@ export default function Header() {
               className="text-white hover:text-accent-gold transition-colors px-2 py-2 rounded hover:bg-gray-800/50 min-h-[44px] flex items-center"
               onClick={() => setIsMenuOpen(false)}
             >
-              Broski's Kitchen
+              Broski&apos;s Kitchen
             </Link>
             <Link
               href="/otw"

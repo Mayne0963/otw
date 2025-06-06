@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Component, type ErrorInfo, type ReactNode } from "react";
-import { Button } from "./button";
-import { AlertTriangle } from "lucide-react";
+import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Button } from './button';
+import { AlertTriangle } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
+    console.error('Uncaught error:', error, errorInfo);
 
     // Here you could send the error to your error reporting service
     // Example: reportError(error, errorInfo)
@@ -58,7 +58,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 Try Again
               </Button>
             </div>
-            {this.state.error && process.env.NODE_ENV === "development" && (
+            {this.state.error && process.env.NODE_ENV === 'development' && (
               <div className="mt-6 p-4 bg-gray-900 rounded-md text-left overflow-auto max-w-full">
                 <p className="text-sm text-red-400 mb-2">
                   Error details (visible in development only):

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   FaTimes,
   FaCalendarAlt,
@@ -10,8 +10,8 @@ import {
   FaClock,
   FaTicketAlt,
   FaCheck,
-} from "react-icons/fa";
-import type { Event } from "../../types/event";
+} from 'react-icons/fa';
+import type { Event } from '../../types/event';
 
 interface RegistrationModalProps {
   event: Event;
@@ -24,13 +24,13 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
 }) => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
     tickets: 1,
-    specialRequests: "",
-    dietaryRestrictions: "",
+    specialRequests: '',
+    dietaryRestrictions: '',
     agreeToTerms: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -42,11 +42,11 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
     });
   };
 
@@ -58,18 +58,18 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
   ) => {
     const { name, value, type } = e.target;
     const checked =
-      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
+      type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
 
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === 'checkbox' ? checked : value,
     });
 
     // Clear error when field is updated
     if (errors[name]) {
       setErrors({
         ...errors,
-        [name]: "",
+        [name]: '',
       });
     }
   };
@@ -79,31 +79,31 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
+      newErrors.firstName = 'First name is required';
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+      newErrors.lastName = 'Last name is required';
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email = 'Email is invalid';
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = 'Phone number is required';
     }
 
     if (formData.tickets < 1) {
-      newErrors.tickets = "At least 1 ticket is required";
+      newErrors.tickets = 'At least 1 ticket is required';
     } else if (formData.tickets > event.capacity - event.registered) {
       newErrors.tickets = `Only ${event.capacity - event.registered} tickets available`;
     }
 
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = "You must agree to the terms and conditions";
+      newErrors.agreeToTerms = 'You must agree to the terms and conditions';
     }
 
     setErrors(newErrors);
@@ -136,10 +136,10 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
         // Show success step
         setStep(3);
       } catch (error) {
-        console.error("Registration error:", error);
+        console.error('Registration error:', error);
         setErrors({
           ...errors,
-          form: "An error occurred during registration. Please try again.",
+          form: 'An error occurred during registration. Please try again.',
         });
       } finally {
         setIsSubmitting(false);
@@ -153,7 +153,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
         <div className="relative p-6 border-b border-[#333333]">
           <h2 className="text-xl font-bold pr-8">
             {step === 3
-              ? "Registration Complete"
+              ? 'Registration Complete'
               : `Register for ${event.title}`}
           </h2>
           <button
@@ -205,7 +205,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      className={`input w-full ${errors.firstName ? "border-blood-red" : ""}`}
+                      className={`input w-full ${errors.firstName ? 'border-blood-red' : ''}`}
                       required
                     />
                     {errors.firstName && (
@@ -228,7 +228,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      className={`input w-full ${errors.lastName ? "border-blood-red" : ""}`}
+                      className={`input w-full ${errors.lastName ? 'border-blood-red' : ''}`}
                       required
                     />
                     {errors.lastName && (
@@ -252,7 +252,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`input w-full ${errors.email ? "border-blood-red" : ""}`}
+                    className={`input w-full ${errors.email ? 'border-blood-red' : ''}`}
                     required
                   />
                   {errors.email && (
@@ -275,7 +275,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`input w-full ${errors.phone ? "border-blood-red" : ""}`}
+                    className={`input w-full ${errors.phone ? 'border-blood-red' : ''}`}
                     required
                   />
                   {errors.phone && (
@@ -297,7 +297,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     name="tickets"
                     value={formData.tickets}
                     onChange={handleChange}
-                    className={`input w-full ${errors.tickets ? "border-blood-red" : ""}`}
+                    className={`input w-full ${errors.tickets ? 'border-blood-red' : ''}`}
                     required
                   >
                     {[
@@ -363,14 +363,14 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   </div>
                   <div className="ml-3 text-sm">
                     <label htmlFor="agreeToTerms" className="text-gray-300">
-                      I agree to the{" "}
+                      I agree to the{' '}
                       <a
                         href="/terms"
                         className="text-gold-foil hover:underline"
                       >
                         Terms and Conditions
-                      </a>{" "}
-                      and{" "}
+                      </a>{' '}
+                      and{' '}
                       <a
                         href="/privacy"
                         className="text-gold-foil hover:underline"
@@ -402,14 +402,14 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     <span className="text-gray-400">Event:</span> {event.title}
                   </p>
                   <p>
-                    <span className="text-gray-400">Date:</span>{" "}
+                    <span className="text-gray-400">Date:</span>{' '}
                     {formatDate(event.date)}
                   </p>
                   <p>
                     <span className="text-gray-400">Time:</span> {event.time}
                   </p>
                   <p>
-                    <span className="text-gray-400">Location:</span>{" "}
+                    <span className="text-gray-400">Location:</span>{' '}
                     {event.location.name}
                   </p>
                 </div>
@@ -419,32 +419,32 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                 <h4 className="font-medium mb-2">Attendee Information</h4>
                 <div className="space-y-2 text-gray-300">
                   <p>
-                    <span className="text-gray-400">Name:</span>{" "}
+                    <span className="text-gray-400">Name:</span>{' '}
                     {formData.firstName} {formData.lastName}
                   </p>
                   <p>
-                    <span className="text-gray-400">Email:</span>{" "}
+                    <span className="text-gray-400">Email:</span>{' '}
                     {formData.email}
                   </p>
                   <p>
-                    <span className="text-gray-400">Phone:</span>{" "}
+                    <span className="text-gray-400">Phone:</span>{' '}
                     {formData.phone}
                   </p>
                   <p>
-                    <span className="text-gray-400">Tickets:</span>{" "}
+                    <span className="text-gray-400">Tickets:</span>{' '}
                     {formData.tickets}
                   </p>
                   {formData.dietaryRestrictions && (
                     <p>
                       <span className="text-gray-400">
                         Dietary Restrictions:
-                      </span>{" "}
+                      </span>{' '}
                       {formData.dietaryRestrictions}
                     </p>
                   )}
                   {formData.specialRequests && (
                     <p>
-                      <span className="text-gray-400">Special Requests:</span>{" "}
+                      <span className="text-gray-400">Special Requests:</span>{' '}
                       {formData.specialRequests}
                     </p>
                   )}
@@ -491,7 +491,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                   Registration Successful!
                 </h3>
                 <p className="text-gray-300 mb-4">
-                  Thank you for registering for {event.title}. We've sent a
+                  Thank you for registering for {event.title}. We&apos;ve sent a
                   confirmation email to {formData.email} with all the details.
                 </p>
               </div>
@@ -503,18 +503,18 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                     <span className="text-gray-400">Event:</span> {event.title}
                   </p>
                   <p>
-                    <span className="text-gray-400">Date:</span>{" "}
+                    <span className="text-gray-400">Date:</span>{' '}
                     {formatDate(event.date)}
                   </p>
                   <p>
                     <span className="text-gray-400">Time:</span> {event.time}
                   </p>
                   <p>
-                    <span className="text-gray-400">Location:</span>{" "}
+                    <span className="text-gray-400">Location:</span>{' '}
                     {event.location.name}
                   </p>
                   <p>
-                    <span className="text-gray-400">Tickets:</span>{" "}
+                    <span className="text-gray-400">Tickets:</span>{' '}
                     {formData.tickets}
                   </p>
                 </div>
@@ -580,7 +580,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
                       Processing...
                     </span>
                   ) : (
-                    "Complete Registration"
+                    'Complete Registration'
                   )}
                 </button>
               </>

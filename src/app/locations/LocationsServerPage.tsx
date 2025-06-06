@@ -1,28 +1,28 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import LocationMap from "../../components/locations/LocationMap"
+import { useState, useEffect } from 'react';
+import LocationMap from '../../components/locations/LocationMap';
 
-import type { Location } from "../../types/location"
+import type { Location } from '../../types/location';
 
 type LocationsClientPageProps = {
   locations: Location[]
 }
 
 export default function LocationsClientPage({ locations }: LocationsClientPageProps) {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedState, setSelectedState] = useState("all")
-  const [filteredLocations, setFilteredLocations] = useState(locations)
-  const [mapCenter, setMapCenter] = useState({ lat: 34.0522, lng: -118.2437 }) // Default to LA
-  const [mapZoom, setMapZoom] = useState(5)
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
-  const states = [...new Set(locations.map((location) => location.state))].sort()
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedState, setSelectedState] = useState('all');
+  const [filteredLocations, setFilteredLocations] = useState(locations);
+  const [mapCenter, setMapCenter] = useState({ lat: 34.0522, lng: -118.2437 }); // Default to LA
+  const [mapZoom, setMapZoom] = useState(5);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const states = [...new Set(locations.map((location) => location.state))].sort();
 
   useEffect(() => {
-    let filtered = [...locations]
+    let filtered = [...locations];
 
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (location) =>
           location.name.toLowerCase().includes(query) ||
@@ -30,23 +30,23 @@ export default function LocationsClientPage({ locations }: LocationsClientPagePr
           location.city.toLowerCase().includes(query) ||
           location.state.toLowerCase().includes(query) ||
           location.zipCode.toLowerCase().includes(query),
-      )
+      );
     }
 
-    if (selectedState !== "all") {
-      filtered = filtered.filter((location) => location.state === selectedState)
+    if (selectedState !== 'all') {
+      filtered = filtered.filter((location) => location.state === selectedState);
     }
 
-    setFilteredLocations(filtered)
+    setFilteredLocations(filtered);
 
-    if (filtered.length > 0 && (searchQuery || selectedState !== "all") && filtered[0]?.coordinates) {
-      setMapCenter({ lat: filtered[0].coordinates.lat, lng: filtered[0].coordinates.lng })
-      setMapZoom(10)
+    if (filtered.length > 0 && (searchQuery || selectedState !== 'all') && filtered[0]?.coordinates) {
+      setMapCenter({ lat: filtered[0].coordinates.lat, lng: filtered[0].coordinates.lng });
+      setMapZoom(10);
     } else {
-      setMapCenter({ lat: 34.0522, lng: -118.2437 })
-      setMapZoom(5)
+      setMapCenter({ lat: 34.0522, lng: -118.2437 });
+      setMapZoom(5);
     }
-  }, [searchQuery, selectedState, locations])
+  }, [searchQuery, selectedState, locations]);
 
   // Handle location selection for the map
   const handleMarkerClick = (location: Location) => {
@@ -87,8 +87,8 @@ export default function LocationsClientPage({ locations }: LocationsClientPagePr
         <div className="lg:col-span-2">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredLocations.map((location) => (
-              <div 
-                key={location.id} 
+              <div
+                key={location.id}
                 className={`border rounded-lg overflow-hidden shadow-lg cursor-pointer ${selectedLocation?.id === location.id ? 'ring-2 ring-blue-500' : ''}`}
                 onClick={() => handleMarkerClick(location)}
               >
@@ -129,9 +129,9 @@ export default function LocationsClientPage({ locations }: LocationsClientPagePr
             ))}
           </div>
         </div>
-        
+
         <div className="h-[600px] lg:h-auto">
-          <LocationMap 
+          <LocationMap
             locations={filteredLocations}
             center={mapCenter}
             zoom={mapZoom}

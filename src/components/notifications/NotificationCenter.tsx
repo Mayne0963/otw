@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import { ScrollArea } from "../ui/scroll-area";
-import { Bell, X, Check, AlertCircle, Info } from "lucide-react";
-import { useToast } from "../ui/use-toast";
+import { useState, useEffect, useCallback } from 'react';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { ScrollArea } from '../ui/scroll-area';
+import { Bell, X, Check, AlertCircle, Info } from 'lucide-react';
+import { useToast } from '../ui/use-toast';
 
 interface Notification {
   id: string;
-  type: "info" | "success" | "warning" | "error";
+  type: 'info' | 'success' | 'warning' | 'error';
   title: string;
   message: string;
   timestamp: Date;
@@ -25,7 +25,7 @@ export default function NotificationCenter() {
 
   // Define addNotification with useCallback to prevent recreation on every render
   const addNotification = useCallback(
-    (notification: Omit<Notification, "id" | "timestamp" | "read">) => {
+    (notification: Omit<Notification, 'id' | 'timestamp' | 'read'>) => {
       const newNotification: Notification = {
         ...notification,
         id: Math.random().toString(36).substr(2, 9),
@@ -37,33 +37,33 @@ export default function NotificationCenter() {
       setUnreadCount((prev) => prev + 1);
 
       // Show toast for new notifications
-      if (typeof toast === "function") {
+      if (typeof toast === 'function') {
         toast({
           title: notification.title,
           description: notification.message,
-          variant: notification.type === "error" ? "destructive" : "default",
+          variant: notification.type === 'error' ? 'destructive' : 'default',
         });
       } else if (typeof toast === 'object') {
         // Handle case where toast is the object with methods
-        const toastWithMethods = toast as { 
+        const toastWithMethods = toast as {
           error: (message: string) => void;
           warning: (message: string) => void;
           success: (message: string) => void;
           info: (message: string) => void;
         };
-        
+
         switch (notification.type) {
-          case "error":
-            if ('error' in toast) toastWithMethods.error(notification.message);
+          case 'error':
+            if ('error' in toast) {toastWithMethods.error(notification.message);}
             break;
-          case "warning":
-            if ('warning' in toast) toastWithMethods.warning(notification.message);
+          case 'warning':
+            if ('warning' in toast) {toastWithMethods.warning(notification.message);}
             break;
-          case "success":
-            if ('success' in toast) toastWithMethods.success(notification.message);
+          case 'success':
+            if ('success' in toast) {toastWithMethods.success(notification.message);}
             break;
           default:
-            if ('info' in toast) toastWithMethods.info(notification.message);
+            if ('info' in toast) {toastWithMethods.info(notification.message);}
             break;
         }
       }
@@ -74,12 +74,12 @@ export default function NotificationCenter() {
   // Simulate real-time notifications
   useEffect(() => {
     const socket = new WebSocket(
-      process.env.NEXT_PUBLIC_WEBSOCKET_URL || "ws://localhost:3001",
+      process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:3001',
     );
 
     // Add proper error handling for WebSocket
     socket.onopen = () => {
-      console.log("WebSocket connection established");
+      console.log('WebSocket connection established');
     };
 
     socket.onmessage = (event) => {
@@ -87,16 +87,16 @@ export default function NotificationCenter() {
         const notification = JSON.parse(event.data);
         addNotification(notification);
       } catch (error) {
-        console.error("Error parsing notification:", error);
+        console.error('Error parsing notification:', error);
       }
     };
 
     socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      console.error('WebSocket error:', error);
     };
 
     socket.onclose = (event) => {
-      console.log("WebSocket connection closed:", event.code, event.reason);
+      console.log('WebSocket connection closed:', event.code, event.reason);
     };
 
     return () => {
@@ -131,13 +131,13 @@ export default function NotificationCenter() {
     );
   };
 
-  const getNotificationIcon = (type: Notification["type"]) => {
+  const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
-      case "success":
+      case 'success':
         return <Check className="h-5 w-5 text-green-500" />;
-      case "warning":
+      case 'warning':
         return <AlertCircle className="h-5 w-5 text-yellow-500" />;
-      case "error":
+      case 'error':
         return <AlertCircle className="h-5 w-5 text-red-500" />;
       default:
         return <Info className="h-5 w-5 text-blue-500" />;
@@ -187,7 +187,7 @@ export default function NotificationCenter() {
                   <div
                     key={notification.id}
                     className={`p-4 hover:bg-gray-50 ${
-                      !notification.read ? "bg-blue-50" : ""
+                      !notification.read ? 'bg-blue-50' : ''
                     }`}
                   >
                     <div className="flex items-start gap-3">

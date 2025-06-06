@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useGeocoding, useAddressInput, useCurrentLocation } from '../../hooks/useGeocoding';
-import { extractAddressComponents, calculateDistance, isValidCoordinates } from '../../lib/utils/geocoding-utils';
-import type { GeocodeResult, AddressValidationResult } from '../../lib/services/geocoding-service';
+import { extractAddressComponents } from '../../lib/utils/geocoding-utils';
+import type { GeocodeResult as _GeocodeResult, AddressValidationResult as _AddressValidationResult } from '../../lib/services/geocoding-service';
 
 /**
  * Example component demonstrating geocoding functionality
@@ -15,7 +15,7 @@ export default function GeocodingExample() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Geocoding Service Examples</h1>
-        
+
         {/* Tab Navigation */}
         <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
           {[
@@ -23,7 +23,7 @@ export default function GeocodingExample() {
             { key: 'reverse', label: 'Reverse Geocoding' },
             { key: 'validate', label: 'Address Validation' },
             { key: 'input', label: 'Address Input' },
-            { key: 'location', label: 'Current Location' }
+            { key: 'location', label: 'Current Location' },
           ].map(tab => (
             <button
               key={tab.key}
@@ -72,7 +72,7 @@ function GeocodingTab() {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-900">Address Geocoding</h2>
       <p className="text-gray-600">Convert an address to geographic coordinates.</p>
-      
+
       <div className="flex space-x-2">
         <input
           type="text"
@@ -155,7 +155,7 @@ function ReverseGeocodingTab() {
   const handleReverseGeocode = async () => {
     const latitude = parseFloat(lat);
     const longitude = parseFloat(lng);
-    
+
     if (isValidCoordinates(latitude, longitude)) {
       await reverseGeocode(latitude, longitude);
     }
@@ -167,7 +167,7 @@ function ReverseGeocodingTab() {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-900">Reverse Geocoding</h2>
       <p className="text-gray-600">Convert geographic coordinates to an address.</p>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <input
           type="number"
@@ -238,7 +238,7 @@ function ValidationTab() {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-900">Address Validation</h2>
       <p className="text-gray-600">Validate an address and check its deliverability.</p>
-      
+
       <div className="flex space-x-2">
         <input
           type="text"
@@ -335,7 +335,7 @@ function AddressInputTab() {
     isValid,
     isDeliverable,
     confidence,
-    issues
+    issues,
   } = useAddressInput({
     autoValidate: true,
     onAddressSelect: (result) => {
@@ -343,14 +343,14 @@ function AddressInputTab() {
     },
     onValidationChange: (validation) => {
       console.log('Validation changed:', validation);
-    }
+    },
   });
 
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-900">Smart Address Input</h2>
       <p className="text-gray-600">Address input with auto-validation and suggestions.</p>
-      
+
       <div className="space-y-2">
         <div className="relative">
           <input
@@ -369,11 +369,11 @@ function AddressInputTab() {
             </button>
           )}
         </div>
-        
+
         {loading && (
           <p className="text-sm text-blue-600">Validating address...</p>
         )}
-        
+
         {error && (
           <p className="text-sm text-red-600">{error}</p>
         )}
@@ -436,7 +436,7 @@ function AddressInputTab() {
               <p className="text-gray-700 capitalize">{confidence}</p>
             </div>
           </div>
-          
+
           {issues.length > 0 && (
             <div className="mt-3">
               <p className="font-medium text-yellow-800 mb-1">Issues:</p>
@@ -464,7 +464,7 @@ function CurrentLocationTab() {
     error,
     getCurrentLocation,
     clearLocation,
-    hasLocation
+    hasLocation,
   } = useCurrentLocation();
 
   const [targetLat, setTargetLat] = useState('');
@@ -475,13 +475,13 @@ function CurrentLocationTab() {
     if (coords && targetLat && targetLng) {
       const targetLatNum = parseFloat(targetLat);
       const targetLngNum = parseFloat(targetLng);
-      
+
       if (isValidCoordinates(targetLatNum, targetLngNum)) {
         const dist = calculateDistance(
           coords.latitude,
           coords.longitude,
           targetLatNum,
-          targetLngNum
+          targetLngNum,
         );
         setDistance(dist);
       }
@@ -492,7 +492,7 @@ function CurrentLocationTab() {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-gray-900">Current Location</h2>
       <p className="text-gray-600">Get your current location and reverse geocode it to an address.</p>
-      
+
       <div className="flex space-x-2">
         <button
           onClick={getCurrentLocation}
@@ -501,7 +501,7 @@ function CurrentLocationTab() {
         >
           {loading ? 'Getting Location...' : 'Get Current Location'}
         </button>
-        
+
         {hasLocation && (
           <button
             onClick={clearLocation}
@@ -539,7 +539,7 @@ function CurrentLocationTab() {
           <div className="p-4 bg-gray-50 border border-gray-200 rounded-md">
             <h3 className="font-semibold text-gray-800 mb-2">Distance Calculator</h3>
             <p className="text-sm text-gray-600 mb-3">Calculate distance to another location:</p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               <input
                 type="number"
@@ -565,7 +565,7 @@ function CurrentLocationTab() {
                 Calculate
               </button>
             </div>
-            
+
             {distance !== null && (
               <div className="mt-3 p-3 bg-white border border-gray-200 rounded-md">
                 <p className="text-sm">

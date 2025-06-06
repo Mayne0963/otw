@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "../../../lib/firebase";
-import { doc, getDoc, updateDoc, setDoc, collection, addDoc } from "firebase/firestore";
-import { getAuth } from "firebase-admin/auth";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '../../../lib/firebase';
+import { doc, getDoc, updateDoc, setDoc, collection, addDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase-admin/auth';
 
 interface SpinReward {
   type: 'points' | 'discount' | 'free_delivery' | 'free_item' | 'cashback' | 'nothing';
@@ -12,16 +12,16 @@ interface SpinReward {
 }
 
 const SPIN_REWARDS: SpinReward[] = [
-  { type: "points", value: 100, label: "100 Points", description: "Added to your account" },
-  { type: "points", value: 250, label: "250 Points", description: "Added to your account" },
-  { type: "points", value: 500, label: "500 Points", description: "Added to your account" },
-  { type: "discount", value: 10, label: "10% Off", description: "Next order discount" },
-  { type: "discount", value: 15, label: "15% Off", description: "Next order discount" },
-  { type: "discount", value: 20, label: "20% Off", description: "Next order discount" },
-  { type: "free_delivery", value: 1, label: "Free Delivery", description: "Next order" },
-  { type: "free_item", value: 1, label: "Free Side", description: "Any side item" },
-  { type: "cashback", value: 5, label: "$5 Cashback", description: "Added to wallet" },
-  { type: "nothing", value: 0, label: "Better Luck Next Time", description: "Try again tomorrow" },
+  { type: 'points', value: 100, label: '100 Points', description: 'Added to your account' },
+  { type: 'points', value: 250, label: '250 Points', description: 'Added to your account' },
+  { type: 'points', value: 500, label: '500 Points', description: 'Added to your account' },
+  { type: 'discount', value: 10, label: '10% Off', description: 'Next order discount' },
+  { type: 'discount', value: 15, label: '15% Off', description: 'Next order discount' },
+  { type: 'discount', value: 20, label: '20% Off', description: 'Next order discount' },
+  { type: 'free_delivery', value: 1, label: 'Free Delivery', description: 'Next order' },
+  { type: 'free_item', value: 1, label: 'Free Side', description: 'Any side item' },
+  { type: 'cashback', value: 5, label: '$5 Cashback', description: 'Added to wallet' },
+  { type: 'nothing', value: 0, label: 'Better Luck Next Time', description: 'Try again tomorrow' },
 ];
 
 // Weighted probabilities for different rewards
@@ -31,13 +31,13 @@ const REWARD_WEIGHTS = {
   free_delivery: 0.15, // 15% chance
   free_item: 0.1,   // 10% chance
   cashback: 0.05,   // 5% chance
-  nothing: 0.05     // 5% chance
+  nothing: 0.05,     // 5% chance
 };
 
 function getWeightedRandomReward(): SpinReward {
   const random = Math.random();
   let cumulativeWeight = 0;
-  
+
   for (const [type, weight] of Object.entries(REWARD_WEIGHTS)) {
     cumulativeWeight += weight;
     if (random <= cumulativeWeight) {
@@ -45,7 +45,7 @@ function getWeightedRandomReward(): SpinReward {
       return rewardsOfType[Math.floor(Math.random() * rewardsOfType.length)];
     }
   }
-  
+
   // Fallback
   return SPIN_REWARDS[SPIN_REWARDS.length - 1]; // "Better Luck Next Time"
 }
@@ -55,13 +55,13 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
     const token = authHeader.split(' ')[1];
-    
+
     // Verify the Firebase token
     let decodedToken;
     try {
@@ -69,8 +69,8 @@ export async function POST(request: NextRequest) {
       decodedToken = await getAuth().verifyIdToken(token);
     } catch (error) {
       return NextResponse.json(
-        { error: "Invalid authentication token" },
-        { status: 401 }
+        { error: 'Invalid authentication token' },
+        { status: 401 },
       );
     }
 
@@ -79,19 +79,19 @@ export async function POST(request: NextRequest) {
 
     if (!spinType) {
       return NextResponse.json(
-        { error: "Missing spin type" },
-        { status: 400 }
+        { error: 'Missing spin type' },
+        { status: 400 },
       );
     }
 
     // Check user's spin availability
     const userRef = doc(db, 'users', userId);
     const userDoc = await getDoc(userRef);
-    
+
     if (!userDoc.exists()) {
       return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
+        { error: 'User not found' },
+        { status: 404 },
       );
     }
 
@@ -104,8 +104,8 @@ export async function POST(request: NextRequest) {
     // Check if user can spin today
     if (lastSpinDate === today && dailySpinsUsed >= maxDailySpins) {
       return NextResponse.json(
-        { error: "Daily spin limit reached. Try again tomorrow!" },
-        { status: 429 }
+        { error: 'Daily spin limit reached. Try again tomorrow!' },
+        { status: 429 },
       );
     }
 
@@ -118,19 +118,19 @@ export async function POST(request: NextRequest) {
     const newSpinsUsed = lastSpinDate === today ? dailySpinsUsed + 1 : 1;
     await updateDoc(userRef, {
       lastSpinDate: today,
-      dailySpinsUsed: newSpinsUsed
+      dailySpinsUsed: newSpinsUsed,
     });
 
     // Apply reward based on type
     if (reward.type === 'points') {
       const currentPoints = userData.loyaltyPoints || 0;
       await updateDoc(userRef, {
-        loyaltyPoints: currentPoints + reward.value
+        loyaltyPoints: currentPoints + reward.value,
       });
     } else if (reward.type === 'cashback') {
       const currentWallet = userData.walletBalance || 0;
       await updateDoc(userRef, {
-        walletBalance: currentWallet + reward.value
+        walletBalance: currentWallet + reward.value,
       });
     }
 
@@ -141,11 +141,11 @@ export async function POST(request: NextRequest) {
       spinType,
       reward: {
         ...reward,
-        expiresAt: reward.type !== 'points' && reward.type !== 'cashback' ? expiresAt : null
+        expiresAt: reward.type !== 'points' && reward.type !== 'cashback' ? expiresAt : null,
       },
       timestamp: new Date().toISOString(),
       redeemed: reward.type === 'points' || reward.type === 'cashback', // Auto-redeem points and cashback
-      redeemedAt: reward.type === 'points' || reward.type === 'cashback' ? new Date().toISOString() : null
+      redeemedAt: reward.type === 'points' || reward.type === 'cashback' ? new Date().toISOString() : null,
     };
 
     await addDoc(collection(db, 'spin_history'), spinRecord);
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
         expiresAt,
         isUsed: false,
         createdAt: new Date().toISOString(),
-        source: 'daily_spin'
+        source: 'daily_spin',
       });
     }
 
@@ -169,17 +169,17 @@ export async function POST(request: NextRequest) {
       success: true,
       reward: {
         ...reward,
-        expiresAt: reward.type !== 'points' && reward.type !== 'cashback' ? expiresAt : null
+        expiresAt: reward.type !== 'points' && reward.type !== 'cashback' ? expiresAt : null,
       },
       message: `You won: ${reward.label}!`,
-      spinsRemaining: maxDailySpins - newSpinsUsed
+      spinsRemaining: maxDailySpins - newSpinsUsed,
     });
-    
+
   } catch (error) {
-    console.error("Spin redemption error:", error);
+    console.error('Spin redemption error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: 'Internal server error' },
+      { status: 500 },
     );
   }
 }

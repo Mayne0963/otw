@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "About Us | On The Way",
+  title: 'About Us | On The Way',
   description: "Learn about On The Way's mission, values, and team",
 };
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default function AboutPage() {
   return (

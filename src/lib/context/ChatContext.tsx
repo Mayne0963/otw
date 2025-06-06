@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 import {
   createContext,
   useState,
   useContext,
   useEffect,
   type ReactNode,
-} from "react";
-import type { ChatContextType, ChatMessage } from "../../types";
+} from 'react';
+import type { ChatContextType, ChatMessage } from '../../types';
 
 // Create the context with a default undefined value
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -33,12 +33,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   // Load chat history from localStorage
   useEffect(() => {
     try {
-      const savedMessages = localStorage.getItem("chatHistory");
+      const savedMessages = localStorage.getItem('chatHistory');
       if (savedMessages) {
         setMessages(JSON.parse(savedMessages));
       }
     } catch (error) {
-      console.error("Failed to load chat history:", error);
+      console.error('Failed to load chat history:', error);
     }
   }, []);
 
@@ -47,29 +47,29 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
     try {
       // Only save if there are messages
       if (messages.length > 0) {
-        localStorage.setItem("chatHistory", JSON.stringify(messages));
+        localStorage.setItem('chatHistory', JSON.stringify(messages));
       }
     } catch (error) {
-      console.error("Failed to save chat history:", error);
+      console.error('Failed to save chat history:', error);
     }
   }, [messages]);
 
   // Send a message and get a response
   const sendMessage = async (text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim()) {return;}
 
     setIsLoading(true);
 
     try {
       // Add user message to the chat
-      const userMessage: ChatMessage = { role: "user", text };
+      const userMessage: ChatMessage = { role: 'user', text };
       setMessages((current) => [...current, userMessage]);
 
       // Get response from API
-      const response = await fetch("/api/chat", {
-        method: "POST",
+      const response = await fetch('/api/chat', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           messages: [...messages, userMessage],
@@ -87,19 +87,19 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       setMessages((current) => [
         ...current,
         {
-          role: "assistant",
+          role: 'assistant',
           text:
             data.text ||
             "I'm sorry, I couldn't process your request. Please try again.",
         },
       ]);
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error('Error sending message:', error);
       // Add a fallback response when the API fails
       setMessages((current) => [
         ...current,
         {
-          role: "assistant",
+          role: 'assistant',
           text: "I'm having trouble connecting to my services. Please try again later.",
         },
       ]);
@@ -111,7 +111,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
   // Clear chat history
   const clearChat = () => {
     setMessages([]);
-    localStorage.removeItem("chatHistory");
+    localStorage.removeItem('chatHistory');
   };
 
   return (
@@ -133,7 +133,7 @@ export const useChat = (): ChatContextType => {
   const context = useContext(ChatContext);
 
   if (context === undefined) {
-    throw new Error("useChat must be used within a ChatProvider");
+    throw new Error('useChat must be used within a ChatProvider');
   }
 
   return context;

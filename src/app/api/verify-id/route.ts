@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth, db } from "../../../lib/firebase";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { getAuth } from "firebase-admin/auth";
+import { NextRequest, NextResponse } from 'next/server';
+import { auth, db } from '../../../lib/firebase';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase-admin/auth';
 
 interface VerificationRequest {
   idType: 'drivers_license' | 'passport' | 'state_id';
@@ -18,13 +18,13 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
     const token = authHeader.split(' ')[1];
-    
+
     // Verify the Firebase token
     let decodedToken;
     try {
@@ -32,8 +32,8 @@ export async function POST(request: NextRequest) {
       decodedToken = await getAuth().verifyIdToken(token);
     } catch (error) {
       return NextResponse.json(
-        { error: "Invalid authentication token" },
-        { status: 401 }
+        { error: 'Invalid authentication token' },
+        { status: 401 },
       );
     }
 
@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!data.idType || !data.idNumber || !data.fullName || !data.dateOfBirth || !data.address) {
       return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
+        { error: 'Missing required fields' },
+        { status: 400 },
       );
     }
 
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       submittedAt: new Date().toISOString(),
       verifiedAt: null,
       verifiedBy: null,
-      notes: null
+      notes: null,
     };
 
     // Save to Firestore
@@ -73,20 +73,20 @@ export async function POST(request: NextRequest) {
     const userRef = doc(db, 'users', userId);
     await updateDoc(userRef, {
       idVerificationStatus: 'pending',
-      idVerificationSubmittedAt: new Date().toISOString()
+      idVerificationSubmittedAt: new Date().toISOString(),
     });
 
     return NextResponse.json({
-      message: "ID verification submitted successfully",
-      status: "pending",
-      submittedAt: verificationData.submittedAt
+      message: 'ID verification submitted successfully',
+      status: 'pending',
+      submittedAt: verificationData.submittedAt,
     });
 
   } catch (error) {
     console.error('ID verification error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: 'Internal server error' },
+      { status: 500 },
     );
   }
 }
@@ -96,13 +96,13 @@ export async function GET(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
+        { error: 'Authentication required' },
+        { status: 401 },
       );
     }
 
     const token = authHeader.split(' ')[1];
-    
+
     // Verify the Firebase token
     let decodedToken;
     try {
@@ -110,8 +110,8 @@ export async function GET(request: NextRequest) {
       decodedToken = await getAuth().verifyIdToken(token);
     } catch (error) {
       return NextResponse.json(
-        { error: "Invalid authentication token" },
-        { status: 401 }
+        { error: 'Invalid authentication token' },
+        { status: 401 },
       );
     }
 
@@ -123,27 +123,27 @@ export async function GET(request: NextRequest) {
 
     if (!verificationDoc.exists()) {
       return NextResponse.json({
-        status: "not_submitted",
-        message: "No ID verification found"
+        status: 'not_submitted',
+        message: 'No ID verification found',
       });
     }
 
     const verificationData = verificationDoc.data();
-    
+
     // Return verification status (excluding sensitive data)
     return NextResponse.json({
       status: verificationData.status,
       submittedAt: verificationData.submittedAt,
       verifiedAt: verificationData.verifiedAt,
       idType: verificationData.idType,
-      notes: verificationData.notes
+      notes: verificationData.notes,
     });
 
   } catch (error) {
     console.error('ID verification status error:', error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: 'Internal server error' },
+      { status: 500 },
     );
   }
 }

@@ -1,5 +1,5 @@
-import type React from "react";
-import { FaCheckCircle } from "react-icons/fa";
+import type React from 'react';
+import { FaCheckCircle } from 'react-icons/fa';
 
 interface Requirement {
   title: string;

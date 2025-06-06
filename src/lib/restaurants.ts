@@ -19,15 +19,15 @@ export interface Restaurant {
 
 export const restaurants: Restaurant[] = [
   {
-    id: "1",
-    name: "Sample Restaurant",
-    description: "A sample restaurant description",
+    id: '1',
+    name: 'Sample Restaurant',
+    description: 'A sample restaurant description',
     rating: 4.5,
     reviewCount: 100,
-    categories: ["italian", "pizza"],
-    priceLevel: "$$",
+    categories: ['italian', 'pizza'],
+    priceLevel: '$$',
     deliveryFee: 2.99,
-    deliveryTime: "30-45",
+    deliveryTime: '30-45',
     distance: 1.5,
     isPartner: true,
   },

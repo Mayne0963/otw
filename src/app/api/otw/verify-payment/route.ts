@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       console.error('Firebase Admin not initialized');
       return NextResponse.json(
         { error: 'Server configuration error' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -22,14 +22,14 @@ export async function POST(request: NextRequest) {
       console.error('Stripe secret key not configured');
       return NextResponse.json(
         { error: 'Payment processing not configured' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Get and verify the authorization token (optional for payment verification)
     const authHeader = request.headers.get('authorization');
     let userId = null;
-    
+
     if (authHeader && authHeader.startsWith('Bearer ')) {
       try {
         const token = authHeader.substring(7);
@@ -51,18 +51,18 @@ export async function POST(request: NextRequest) {
     if (!sessionId || !orderId) {
       return NextResponse.json(
         { error: 'Missing session ID or order ID' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     try {
       // Retrieve the Stripe session
       const session = await stripe.checkout.sessions.retrieve(sessionId);
-      
+
       if (!session) {
         return NextResponse.json(
           { error: 'Invalid session ID' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -70,27 +70,27 @@ export async function POST(request: NextRequest) {
       if (session.payment_status !== 'paid') {
         return NextResponse.json(
           { error: 'Payment not completed' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       // Get the order from Firestore
       const orderDoc = await adminDb.collection('otw_orders').doc(orderId).get();
-      
+
       if (!orderDoc.exists) {
         return NextResponse.json(
           { error: 'Order not found' },
-          { status: 404 }
+          { status: 404 },
         );
       }
 
       const orderData = orderDoc.data();
-      
+
       // Verify the session ID matches
       if (orderData?.stripeSessionId !== sessionId) {
         return NextResponse.json(
           { error: 'Session ID mismatch' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -102,12 +102,12 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date().toISOString(),
           stripePaymentIntentId: session.payment_intent,
           actualPrice: (session.amount_total || 0) / 100, // Convert from cents
-          paymentCompletedAt: new Date().toISOString()
+          paymentCompletedAt: new Date().toISOString(),
         };
 
         // Update main order document
         await adminDb.collection('otw_orders').doc(orderId).update(updateData);
-        
+
         // Update user's order record if user is authenticated
         if (orderData.userId) {
           await adminDb
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
             .update({
               paymentStatus: 'paid',
               orderStatus: 'confirmed',
-              updatedAt: new Date().toISOString()
+              updatedAt: new Date().toISOString(),
             });
         }
 
@@ -140,21 +140,21 @@ export async function POST(request: NextRequest) {
           orderStatus: updatedOrderData?.orderStatus,
           actualPrice: updatedOrderData?.actualPrice,
           createdAt: updatedOrderData?.createdAt,
-          paymentCompletedAt: updatedOrderData?.paymentCompletedAt
-        }
+          paymentCompletedAt: updatedOrderData?.paymentCompletedAt,
+        },
       });
     } catch (stripeError) {
       console.error('Stripe verification error:', stripeError);
       return NextResponse.json(
         { error: 'Failed to verify payment with Stripe' },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (error) {
     console.error('Payment verification error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -162,20 +162,20 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function PUT() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }

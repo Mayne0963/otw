@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { FaPaperPlane, FaCheck } from "react-icons/fa";
+import { useState } from 'react';
+import { FaPaperPlane, FaCheck } from 'react-icons/fa';
 
 const Newsletter: React.FC = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +16,7 @@ const Newsletter: React.FC = () => {
 
     // Basic validation
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address");
+      setError('Please enter a valid email address');
       return;
     }
 
@@ -29,9 +29,9 @@ const Newsletter: React.FC = () => {
 
       // Success
       setIsSubmitted(true);
-      setEmail("");
+      setEmail('');
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError('Something went wrong. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -52,7 +52,7 @@ const Newsletter: React.FC = () => {
           </div>
           <h3 className="text-lg font-bold mb-2">Thank You for Subscribing!</h3>
           <p>
-            You're now on the list to receive our latest merch updates and
+            You&apos;re now on the list to receive our latest merch updates and
             exclusive offers.
           </p>
         </div>
@@ -65,7 +65,7 @@ const Newsletter: React.FC = () => {
             <input
               type="email"
               placeholder="Your email address"
-              className={`input w-full ${error ? "border-blood-red" : ""}`}
+              className={`input w-full ${error ? 'border-blood-red' : ''}`}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isSubmitting}

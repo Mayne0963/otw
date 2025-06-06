@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   collection,
   doc,
@@ -13,8 +13,8 @@ import {
   onSnapshot,
   DocumentData,
   QueryConstraint,
-} from "firebase/firestore";
-import { db } from "../lib/api";
+} from 'firebase/firestore';
+import { db } from '../lib/api';
 
 export function useFirestore<T extends DocumentData>(collectionName: string) {
   const [loading, setLoading] = useState(true);

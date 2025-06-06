@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface Toast {
   id: string;
@@ -16,12 +16,12 @@ export function useToast() {
     description,
     action,
     duration = 5000,
-  }: Omit<Toast, "id">) => {
+  }: Omit<Toast, 'id'>) => {
     const id = Math.random().toString(36).substr(2, 9);
     const newToast: Toast = { id, duration };
-    if (title !== undefined) newToast.title = title;
-    if (description !== undefined) newToast.description = description;
-    if (action !== undefined) newToast.action = action;
+    if (title !== undefined) {newToast.title = title;}
+    if (description !== undefined) {newToast.description = description;}
+    if (action !== undefined) {newToast.action = action;}
 
     setToasts((currentToasts) => [...currentToasts, newToast]);
 

@@ -23,11 +23,11 @@ const AddressSearchStylesExample: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">AddressSearch Styling Examples</h1>
-      
+
       {/* Theme Variants */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Theme Variants</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Default Theme</label>
@@ -38,7 +38,7 @@ const AddressSearchStylesExample: React.FC = () => {
               theme="default"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Modern Theme</label>
             <AddressSearch
@@ -48,7 +48,7 @@ const AddressSearchStylesExample: React.FC = () => {
               theme="modern"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Minimal Theme</label>
             <AddressSearch
@@ -58,7 +58,7 @@ const AddressSearchStylesExample: React.FC = () => {
               theme="minimal"
             />
           </div>
-          
+
           <div className="space-y-2 bg-gradient-to-r from-blue-400 to-purple-500 p-4 rounded-lg">
             <label className="block text-sm font-medium text-white">Glassmorphism Theme</label>
             <AddressSearch
@@ -69,7 +69,7 @@ const AddressSearchStylesExample: React.FC = () => {
             />
           </div>
         </div>
-        
+
         <div className="bg-gray-900 p-4 rounded-lg">
           <label className="block text-sm font-medium text-white mb-2">Dark Theme</label>
           <AddressSearch
@@ -84,7 +84,7 @@ const AddressSearchStylesExample: React.FC = () => {
       {/* Size Variants */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Size Variants</h2>
-        
+
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Small</label>
@@ -95,7 +95,7 @@ const AddressSearchStylesExample: React.FC = () => {
               size="sm"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Medium (Default)</label>
             <AddressSearch
@@ -105,7 +105,7 @@ const AddressSearchStylesExample: React.FC = () => {
               size="md"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Large</label>
             <AddressSearch
@@ -115,7 +115,7 @@ const AddressSearchStylesExample: React.FC = () => {
               size="lg"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Extra Large</label>
             <AddressSearch
@@ -131,7 +131,7 @@ const AddressSearchStylesExample: React.FC = () => {
       {/* Border Radius Variants */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Border Radius Variants</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">No Radius</label>
@@ -142,7 +142,7 @@ const AddressSearchStylesExample: React.FC = () => {
               borderRadius="none"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Large Radius</label>
             <AddressSearch
@@ -152,7 +152,7 @@ const AddressSearchStylesExample: React.FC = () => {
               borderRadius="lg"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Full Radius</label>
             <AddressSearch
@@ -168,7 +168,7 @@ const AddressSearchStylesExample: React.FC = () => {
       {/* Custom Focus Color */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Custom Focus Colors</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Purple Focus</label>
@@ -179,7 +179,7 @@ const AddressSearchStylesExample: React.FC = () => {
               focusColor="#8B5CF6"
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Green Focus</label>
             <AddressSearch
@@ -195,7 +195,7 @@ const AddressSearchStylesExample: React.FC = () => {
       {/* Icon Options */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Icon Options</h2>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">With Icon (Default)</label>
@@ -206,7 +206,7 @@ const AddressSearchStylesExample: React.FC = () => {
               showIcon={true}
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Without Icon</label>
             <AddressSearch
@@ -222,7 +222,7 @@ const AddressSearchStylesExample: React.FC = () => {
       {/* Custom Styles */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Custom Styles</h2>
-        
+
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Custom Container & Input Styles</label>
@@ -233,11 +233,11 @@ const AddressSearchStylesExample: React.FC = () => {
               customStyles={{
                 container: 'shadow-lg',
                 input: 'border-2 border-orange-300 focus:border-orange-500 focus:ring-orange-200',
-                icon: 'text-orange-500'
+                icon: 'text-orange-500',
               }}
             />
           </div>
-          
+
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Disabled State</label>
             <AddressSearch
@@ -253,7 +253,7 @@ const AddressSearchStylesExample: React.FC = () => {
       {/* Combined Example */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Combined Example</h2>
-        
+
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
             Large Modern Theme with Custom Focus Color
@@ -268,7 +268,7 @@ const AddressSearchStylesExample: React.FC = () => {
             focusColor="#F59E0B"
             customStyles={{
               container: 'shadow-xl',
-              input: 'font-medium'
+              input: 'font-medium',
             }}
           />
         </div>

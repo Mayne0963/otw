@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { Search, X, ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from 'react';
+import { Search, X, ChevronDown, ChevronUp } from 'lucide-react';
 import type {
   RestaurantFilters,
   Category,
   DietaryOption,
   RestaurantFeature,
-} from "../../types/restaurant";
-import { Button } from "../ui/button";
-import { Slider } from "../ui/slider";
-import { Badge } from "../ui/badge";
+} from '../../types/restaurant';
+import { Button } from '../ui/button';
+import { Slider } from '../ui/slider';
+import { Badge } from '../ui/badge';
 
 interface AdvancedSearchProps {
   filters: RestaurantFilters;
@@ -38,13 +38,13 @@ export default function AdvancedSearch({
   // Count active filters for the badge
   const countActiveFilters = (currentFilters: RestaurantFilters) => {
     let count = 0;
-    if (currentFilters.category !== "all") count++;
-    if (currentFilters.priceLevel.length > 0) count++;
-    if (currentFilters.partnerOnly) count++;
-    if (currentFilters.dietaryOptions.length > 0) count++;
-    if (currentFilters.deliveryTimeMax !== null) count++;
-    if (currentFilters.distance !== null) count++;
-    if (currentFilters.features.length > 0) count++;
+    if (currentFilters.category !== 'all') {count++;}
+    if (currentFilters.priceLevel.length > 0) {count++;}
+    if (currentFilters.partnerOnly) {count++;}
+    if (currentFilters.dietaryOptions.length > 0) {count++;}
+    if (currentFilters.deliveryTimeMax !== null) {count++;}
+    if (currentFilters.distance !== null) {count++;}
+    if (currentFilters.features.length > 0) {count++;}
     return count;
   };
 
@@ -121,14 +121,14 @@ export default function AdvancedSearch({
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilters({
       ...filters,
-      sortBy: e.target.value as RestaurantFilters["sortBy"],
+      sortBy: e.target.value as RestaurantFilters['sortBy'],
     });
   };
 
   // Handle reset
   const handleReset = () => {
     resetFilters();
-    setSearchQuery("");
+    setSearchQuery('');
     setActiveFiltersCount(0);
   };
 
@@ -157,8 +157,8 @@ export default function AdvancedSearch({
                 type="button"
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                 onClick={() => {
-                  setSearchQuery("");
-                  setFilters({ ...filters, search: "" });
+                  setSearchQuery('');
+                  setFilters({ ...filters, search: '' });
                 }}
               >
                 <X size={18} />
@@ -196,8 +196,8 @@ export default function AdvancedSearch({
                 key={category.id}
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                   filters.category === category.id
-                    ? "bg-[#FFD700] text-black"
-                    : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
+                    ? 'bg-[#FFD700] text-black'
+                    : 'bg-[#1A1A1A] text-white hover:bg-[#333333]'
                 }`}
                 onClick={() => handleCategoryChange(category.id)}
               >
@@ -236,8 +236,8 @@ export default function AdvancedSearch({
                       key={category.id}
                       className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                         filters.category === category.id
-                          ? "bg-[#FFD700] text-black"
-                          : "bg-[#222222] text-white hover:bg-[#333333]"
+                          ? 'bg-[#FFD700] text-black'
+                          : 'bg-[#222222] text-white hover:bg-[#333333]'
                       }`}
                       onClick={() => handleCategoryChange(category.id)}
                     >
@@ -251,13 +251,13 @@ export default function AdvancedSearch({
               <div>
                 <h3 className="text-white font-medium mb-3">Price Range</h3>
                 <div className="flex gap-2">
-                  {["$", "$$", "$$$", "$$$$"].map((level) => (
+                  {['$', '$$', '$$$', '$$$$'].map((level) => (
                     <button
                       key={level}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                         filters.priceLevel.includes(level)
-                          ? "bg-[#FFD700] text-black"
-                          : "bg-[#222222] text-white hover:bg-[#333333]"
+                          ? 'bg-[#FFD700] text-black'
+                          : 'bg-[#222222] text-white hover:bg-[#333333]'
                       }`}
                       onClick={() => handlePriceLevelChange(level)}
                     >
@@ -276,8 +276,8 @@ export default function AdvancedSearch({
                       key={option.id}
                       className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                         filters.dietaryOptions.includes(option.id)
-                          ? "bg-[#FFD700] text-black"
-                          : "bg-[#222222] text-white hover:bg-[#333333]"
+                          ? 'bg-[#FFD700] text-black'
+                          : 'bg-[#222222] text-white hover:bg-[#333333]'
                       }`}
                       onClick={() => handleDietaryChange(option.id)}
                     >
@@ -296,8 +296,8 @@ export default function AdvancedSearch({
                       key={feature.id}
                       className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                         filters.features.includes(feature.id)
-                          ? "bg-[#FFD700] text-black"
-                          : "bg-[#222222] text-white hover:bg-[#333333]"
+                          ? 'bg-[#FFD700] text-black'
+                          : 'bg-[#222222] text-white hover:bg-[#333333]'
                       }`}
                       onClick={() => handleFeatureChange(feature.id)}
                     >
@@ -316,7 +316,7 @@ export default function AdvancedSearch({
                   <span className="text-white">
                     {filters.deliveryTimeMax
                       ? `${filters.deliveryTimeMax} min`
-                      : "Any"}
+                      : 'Any'}
                   </span>
                 </div>
                 <Slider
@@ -339,7 +339,7 @@ export default function AdvancedSearch({
                 <div className="flex justify-between mb-2">
                   <h3 className="text-white font-medium">Max Distance</h3>
                   <span className="text-white">
-                    {filters.distance ? `${filters.distance} miles` : "Any"}
+                    {filters.distance ? `${filters.distance} miles` : 'Any'}
                   </span>
                 </div>
                 <Slider

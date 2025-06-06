@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
-import { 
+import {
   Search,
   Book,
   Code,
@@ -24,7 +24,7 @@ import {
   Shield,
   Zap,
   Heart,
-  Star
+  Star,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -61,7 +61,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '5 min',
         difficulty: 'Beginner',
         tags: ['overview', 'introduction'],
-        lastUpdated: '2024-01-15'
+        lastUpdated: '2024-01-15',
       },
       {
         id: 'account-setup',
@@ -70,7 +70,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '8 min',
         difficulty: 'Beginner',
         tags: ['account', 'setup', 'profile'],
-        lastUpdated: '2024-01-12'
+        lastUpdated: '2024-01-12',
       },
       {
         id: 'first-order',
@@ -79,9 +79,9 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '10 min',
         difficulty: 'Beginner',
         tags: ['ordering', 'tutorial', 'food'],
-        lastUpdated: '2024-01-10'
-      }
-    ]
+        lastUpdated: '2024-01-10',
+      },
+    ],
   },
   {
     id: 'mobile-app',
@@ -96,7 +96,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '3 min',
         difficulty: 'Beginner',
         tags: ['mobile', 'download', 'ios', 'android'],
-        lastUpdated: '2024-01-14'
+        lastUpdated: '2024-01-14',
       },
       {
         id: 'app-features',
@@ -105,7 +105,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '12 min',
         difficulty: 'Intermediate',
         tags: ['features', 'mobile', 'navigation'],
-        lastUpdated: '2024-01-08'
+        lastUpdated: '2024-01-08',
       },
       {
         id: 'notifications',
@@ -114,9 +114,9 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '6 min',
         difficulty: 'Beginner',
         tags: ['notifications', 'settings', 'mobile'],
-        lastUpdated: '2024-01-05'
-      }
-    ]
+        lastUpdated: '2024-01-05',
+      },
+    ],
   },
   {
     id: 'ordering',
@@ -131,7 +131,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '7 min',
         difficulty: 'Beginner',
         tags: ['menu', 'restaurants', 'browsing'],
-        lastUpdated: '2024-01-13'
+        lastUpdated: '2024-01-13',
       },
       {
         id: 'customizations',
@@ -140,7 +140,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '9 min',
         difficulty: 'Intermediate',
         tags: ['customization', 'modifications', 'special-requests'],
-        lastUpdated: '2024-01-11'
+        lastUpdated: '2024-01-11',
       },
       {
         id: 'tracking',
@@ -149,9 +149,9 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '5 min',
         difficulty: 'Beginner',
         tags: ['tracking', 'delivery', 'status'],
-        lastUpdated: '2024-01-09'
-      }
-    ]
+        lastUpdated: '2024-01-09',
+      },
+    ],
   },
   {
     id: 'payments',
@@ -166,7 +166,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '6 min',
         difficulty: 'Beginner',
         tags: ['payment', 'credit-card', 'billing'],
-        lastUpdated: '2024-01-07'
+        lastUpdated: '2024-01-07',
       },
       {
         id: 'refunds',
@@ -175,7 +175,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '8 min',
         difficulty: 'Intermediate',
         tags: ['refunds', 'cancellation', 'support'],
-        lastUpdated: '2024-01-06'
+        lastUpdated: '2024-01-06',
       },
       {
         id: 'billing-history',
@@ -184,9 +184,9 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '4 min',
         difficulty: 'Beginner',
         tags: ['billing', 'history', 'receipts'],
-        lastUpdated: '2024-01-04'
-      }
-    ]
+        lastUpdated: '2024-01-04',
+      },
+    ],
   },
   {
     id: 'account',
@@ -201,7 +201,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '7 min',
         difficulty: 'Beginner',
         tags: ['profile', 'settings', 'personal-info'],
-        lastUpdated: '2024-01-03'
+        lastUpdated: '2024-01-03',
       },
       {
         id: 'addresses',
@@ -210,7 +210,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '5 min',
         difficulty: 'Beginner',
         tags: ['addresses', 'delivery', 'locations'],
-        lastUpdated: '2024-01-02'
+        lastUpdated: '2024-01-02',
       },
       {
         id: 'privacy',
@@ -219,9 +219,9 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '10 min',
         difficulty: 'Intermediate',
         tags: ['privacy', 'security', 'password'],
-        lastUpdated: '2024-01-01'
-      }
-    ]
+        lastUpdated: '2024-01-01',
+      },
+    ],
   },
   {
     id: 'api',
@@ -236,7 +236,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '15 min',
         difficulty: 'Advanced',
         tags: ['api', 'authentication', 'overview'],
-        lastUpdated: '2023-12-28'
+        lastUpdated: '2023-12-28',
       },
       {
         id: 'webhooks',
@@ -245,7 +245,7 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '20 min',
         difficulty: 'Advanced',
         tags: ['webhooks', 'notifications', 'integration'],
-        lastUpdated: '2023-12-25'
+        lastUpdated: '2023-12-25',
       },
       {
         id: 'rate-limits',
@@ -254,10 +254,10 @@ const DOC_SECTIONS: DocSection[] = [
         readTime: '8 min',
         difficulty: 'Intermediate',
         tags: ['rate-limits', 'best-practices', 'performance'],
-        lastUpdated: '2023-12-22'
-      }
-    ]
-  }
+        lastUpdated: '2023-12-22',
+      },
+    ],
+  },
 ];
 
 const POPULAR_ARTICLES = [
@@ -265,26 +265,26 @@ const POPULAR_ARTICLES = [
     id: 'welcome',
     title: 'Welcome to OTW',
     views: '12.5k',
-    category: 'Getting Started'
+    category: 'Getting Started',
   },
   {
     id: 'first-order',
     title: 'Placing Your First Order',
     views: '8.2k',
-    category: 'Getting Started'
+    category: 'Getting Started',
   },
   {
     id: 'tracking',
     title: 'Order Tracking',
     views: '6.8k',
-    category: 'Ordering & Delivery'
+    category: 'Ordering & Delivery',
   },
   {
     id: 'payment-methods',
     title: 'Payment Methods',
     views: '5.4k',
-    category: 'Payments & Billing'
-  }
+    category: 'Payments & Billing',
+  },
 ];
 
 export default function DocsPage() {
@@ -292,17 +292,17 @@ export default function DocsPage() {
   const [selectedSection, setSelectedSection] = useState<string | null>(null);
 
   const filteredSections = DOC_SECTIONS.filter(section => {
-    if (!searchQuery) return true;
-    
+    if (!searchQuery) {return true;}
+
     const sectionMatch = section.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         section.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const articleMatch = section.articles.some(article => 
+
+    const articleMatch = section.articles.some(article =>
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())),
     );
-    
+
     return sectionMatch || articleMatch;
   });
 
@@ -331,7 +331,7 @@ export default function DocsPage() {
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               Everything you need to know about using OTW. From getting started to advanced features, find answers to all your questions.
             </p>
-            
+
             {/* Search Bar */}
             <div className="relative max-w-2xl mx-auto mb-8">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -343,7 +343,7 @@ export default function DocsPage() {
                 className="pl-12 pr-4 py-4 text-lg bg-otw-black-800/80 border-otw-gold/30 text-white rounded-full focus:border-otw-gold/60 transition-all duration-300"
               />
             </div>
-            
+
             <div className="flex flex-wrap justify-center gap-4">
               <Button className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300">
                 <Video className="w-5 h-5 mr-2" />
@@ -397,18 +397,18 @@ export default function DocsPage() {
             <h2 className="text-3xl font-bold text-white mb-4">
               Documentation <span className="text-otw-gold">Sections</span>
             </h2>
-            <p className="text-gray-300">Browse by category to find what you're looking for</p>
+            <p className="text-gray-300">Browse by category to find what you&apos;re looking for</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
             {filteredSections.map((section) => {
               const IconComponent = section.icon;
               return (
-                <Card 
-                  key={section.id} 
+                <Card
+                  key={section.id}
                   className={`bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:shadow-otw-gold/10 cursor-pointer ${
-                    selectedSection === section.id 
-                      ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20' 
+                    selectedSection === section.id
+                      ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20'
                       : 'border-otw-gold/20 hover:border-otw-gold/40'
                   }`}
                   onClick={() => setSelectedSection(selectedSection === section.id ? null : section.id)}
@@ -429,7 +429,7 @@ export default function DocsPage() {
                       }`} />
                     </div>
                   </CardHeader>
-                  
+
                   {selectedSection === section.id && (
                     <CardContent className="pt-0">
                       <div className="space-y-4">
@@ -625,7 +625,7 @@ export default function DocsPage() {
             Still Need <span className="text-otw-gold">Help</span>?
           </h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            Can't find what you're looking for? Our support team is here to help you get the most out of OTW.
+            Can&apos;t find what you&apos;re looking for? Our support team is here to help you get the most out of OTW.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/help">

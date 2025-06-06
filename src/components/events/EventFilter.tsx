@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
 interface FilterItem {
   id: string;
@@ -23,11 +23,11 @@ const EventFilter: React.FC<EventFilterProps> = ({
       <div className="flex space-x-2 min-w-max">
         <button
           className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            selectedItem === "all"
-              ? "bg-gold-foil text-black"
-              : "bg-[#222222] text-white hover:bg-[#333333]"
+            selectedItem === 'all'
+              ? 'bg-gold-foil text-black'
+              : 'bg-[#222222] text-white hover:bg-[#333333]'
           }`}
-          onClick={() => setSelectedItem("all")}
+          onClick={() => setSelectedItem('all')}
         >
           All
         </button>
@@ -37,8 +37,8 @@ const EventFilter: React.FC<EventFilterProps> = ({
             key={item.id}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedItem === item.id
-                ? "bg-gold-foil text-black"
-                : "bg-[#222222] text-white hover:bg-[#333333]"
+                ? 'bg-gold-foil text-black'
+                : 'bg-[#222222] text-white hover:bg-[#333333]'
             }`}
             onClick={() => setSelectedItem(item.id)}
           >

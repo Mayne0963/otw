@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react";
-import PlaceAutocomplete from "./PlaceAutocomplete";
-import { MapPin } from "lucide-react";
+import React from 'react';
+import PlaceAutocomplete from './PlaceAutocomplete';
+import { MapPin } from 'lucide-react';
 
 interface AddressAutocompleteProps {
   value: string;
@@ -16,13 +16,13 @@ export function AddressAutocomplete({
   value,
   onChange,
   onPlaceSelect,
-  placeholder = "Enter address...",
-  className = "",
+  placeholder = 'Enter address...',
+  className = '',
 }: AddressAutocompleteProps) {
   const handlePlaceSelect = (place: google.maps.places.PlaceResult) => {
     if (place && place.formatted_address) {
       onChange(place.formatted_address);
-      
+
       if (onPlaceSelect) {
         onPlaceSelect(place);
       }

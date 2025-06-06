@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useEffect, useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import { Input } from "../ui/input";
-import MenuGrid from "./MenuGrid";
-import { MenuItem } from "../../lib/firestoreModels";
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
+import { Input } from '../ui/input';
+import MenuGrid from './MenuGrid';
+import { MenuItem } from '../../lib/firestoreModels';
 
 export default function MenuTabs() {
   const [menu, setMenu] = useState<MenuItem[]>([]);
-  const [tab, setTab] = useState<"classic" | "infused">("classic");
-  const [search, setSearch] = useState("");
+  const [tab, setTab] = useState<'classic' | 'infused'>('classic');
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchMenu() {
       try {
         setLoading(true);
-        const res = await fetch("/api/menu");
+        const res = await fetch('/api/menu');
         const data = await res.json();
-        
+
         if (data.success) {
           setMenu(data.data || []);
         } else {
@@ -48,7 +48,7 @@ export default function MenuTabs() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <Tabs
           value={tab}
-          onValueChange={(v) => setTab(v as "classic" | "infused")}
+          onValueChange={(v) => setTab(v as 'classic' | 'infused')}
         >
           <TabsList>
             <TabsTrigger value="classic">Classic</TabsTrigger>

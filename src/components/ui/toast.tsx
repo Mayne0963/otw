@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { cn } from "../../lib/utils";
-import { CheckCircle, XCircle, AlertCircle, X } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { cn } from '../../lib/utils';
+import { CheckCircle, XCircle, AlertCircle, X } from 'lucide-react';
 
-export type ToastType = "success" | "error" | "warning" | "info";
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 interface Toast {
   id: string;
@@ -26,10 +26,10 @@ const toastIcons = {
 };
 
 const toastStyles = {
-  success: "bg-green-50 text-green-800 border-green-200",
-  error: "bg-red-50 text-red-800 border-red-200",
-  warning: "bg-yellow-50 text-yellow-800 border-yellow-200",
-  info: "bg-otw-black text-white border-otw-gold/20",
+  success: 'bg-green-50 text-green-800 border-green-200',
+  error: 'bg-red-50 text-red-800 border-red-200',
+  warning: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+  info: 'bg-otw-black text-white border-otw-gold/20',
 };
 
 function ToastItem({ message, type, onClose }: ToastProps) {
@@ -41,7 +41,7 @@ function ToastItem({ message, type, onClose }: ToastProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-lg border p-4 shadow-lg transition-all",
+        'flex items-center gap-3 rounded-lg border p-4 shadow-lg transition-all',
         toastStyles[type],
       )}
     >

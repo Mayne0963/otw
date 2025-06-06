@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import RestaurantDetailPage from "./RestaurantDetailPage";
+import type { Metadata } from 'next';
+import RestaurantDetailPage from './RestaurantDetailPage';
 
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 
 interface RestaurantPageProps {
   params: {
@@ -12,10 +12,10 @@ interface RestaurantPageProps {
 async function getRestaurant(id: string) {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/restaurants`, {
-      cache: 'no-store'
+      cache: 'no-store',
     });
     const data = await response.json();
-    
+
     if (data.success) {
       return data.data.find((r: any) => r.id === id);
     }
@@ -33,7 +33,7 @@ export async function generateMetadata({
 
   if (!restaurant) {
     return {
-      title: "Restaurant Not Found | OTW",
+      title: 'Restaurant Not Found | OTW',
       description: "The restaurant you're looking for could not be found.",
     };
   }

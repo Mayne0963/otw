@@ -3,7 +3,7 @@ import AddressSearch, { PlaceDetails } from './AddressSearch';
 
 const AddressSearchExample: React.FC = () => {
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetails | null>(null);
-  
+
   // You'll need to replace this with your actual Google Maps API key
   const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
 
@@ -15,7 +15,7 @@ const AddressSearchExample: React.FC = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Address Search</h2>
-      
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Search for an address:
@@ -35,14 +35,14 @@ const AddressSearchExample: React.FC = () => {
             <p><strong>Address:</strong> {selectedPlace.formatted_address}</p>
             <p><strong>Place ID:</strong> {selectedPlace.place_id}</p>
             <p>
-              <strong>Coordinates:</strong> 
+              <strong>Coordinates:</strong>
               {selectedPlace.geometry.location.lat()}, {selectedPlace.geometry.location.lng()}
             </p>
             {selectedPlace.name && (
               <p><strong>Name:</strong> {selectedPlace.name}</p>
             )}
           </div>
-          
+
           {selectedPlace.address_components.length > 0 && (
             <div className="mt-4">
               <h4 className="font-medium text-gray-700 mb-2">Address Components:</h4>
@@ -62,7 +62,7 @@ const AddressSearchExample: React.FC = () => {
       {!GOOGLE_MAPS_API_KEY && (
         <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
           <p className="text-yellow-800 text-sm">
-            <strong>Note:</strong> You need to set your Google Maps API key in the environment variable 
+            <strong>Note:</strong> You need to set your Google Maps API key in the environment variable
             <code className="bg-yellow-100 px-1 rounded">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>
           </p>
         </div>

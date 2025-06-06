@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { FaTimes, FaEnvelope, FaPhone, FaCheck } from "react-icons/fa";
+import { useState } from 'react';
+import { FaTimes, FaEnvelope, FaPhone, FaCheck } from 'react-icons/fa';
 
 interface VolunteerFormProps {
   onClose: () => void;
@@ -11,16 +11,16 @@ interface VolunteerFormProps {
 
 const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    age: "",
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    age: '',
     interests: [] as string[],
     availability: [] as string[],
-    experience: "",
-    motivation: "",
-    hearAbout: "",
+    experience: '',
+    motivation: '',
+    hearAbout: '',
     agreeToTerms: false,
   });
 
@@ -29,21 +29,21 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const interestOptions = [
-    "Kitchen Assistant",
-    "Event Support",
-    "Food Distribution",
-    "Community Outreach",
-    "Administrative Support",
-    "Culinary Education",
+    'Kitchen Assistant',
+    'Event Support',
+    'Food Distribution',
+    'Community Outreach',
+    'Administrative Support',
+    'Culinary Education',
   ];
 
   const availabilityOptions = [
-    "Weekday Mornings",
-    "Weekday Afternoons",
-    "Weekday Evenings",
-    "Weekend Mornings",
-    "Weekend Afternoons",
-    "Weekend Evenings",
+    'Weekday Mornings',
+    'Weekday Afternoons',
+    'Weekday Evenings',
+    'Weekend Mornings',
+    'Weekend Afternoons',
+    'Weekend Evenings',
   ];
 
   const handleChange = (
@@ -53,24 +53,24 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
   ) => {
     const { name, value, type } = e.target;
 
-    if (type === "checkbox") {
+    if (type === 'checkbox') {
       const checkbox = e.target as HTMLInputElement;
 
-      if (name === "agreeToTerms") {
+      if (name === 'agreeToTerms') {
         setFormData({
           ...formData,
           [name]: checkbox.checked,
         });
-      } else if (name.startsWith("interest-")) {
-        const interest = name.replace("interest-", "");
+      } else if (name.startsWith('interest-')) {
+        const interest = name.replace('interest-', '');
         setFormData({
           ...formData,
           interests: checkbox.checked
             ? [...formData.interests, interest]
             : formData.interests.filter((i) => i !== interest),
         });
-      } else if (name.startsWith("availability-")) {
-        const availability = name.replace("availability-", "");
+      } else if (name.startsWith('availability-')) {
+        const availability = name.replace('availability-', '');
         setFormData({
           ...formData,
           availability: checkbox.checked
@@ -89,7 +89,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
     if (errors[name]) {
       setErrors({
         ...errors,
-        [name]: "",
+        [name]: '',
       });
     }
   };
@@ -98,27 +98,27 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
+      newErrors.firstName = 'First name is required';
     }
 
     if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+      newErrors.lastName = 'Last name is required';
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email = 'Email is invalid';
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = 'Phone number is required';
     }
 
     if (!formData.age.trim()) {
-      newErrors.age = "Age is required";
+      newErrors.age = 'Age is required';
     } else if (Number.parseInt(formData.age) < 16) {
-      newErrors.age = "You must be at least 16 years old to volunteer";
+      newErrors.age = 'You must be at least 16 years old to volunteer';
     }
 
     setErrors(newErrors);
@@ -129,19 +129,19 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
     const newErrors: Record<string, string> = {};
 
     if (formData.interests.length === 0) {
-      newErrors.interests = "Please select at least one area of interest";
+      newErrors.interests = 'Please select at least one area of interest';
     }
 
     if (formData.availability.length === 0) {
-      newErrors.availability = "Please select at least one availability option";
+      newErrors.availability = 'Please select at least one availability option';
     }
 
     if (!formData.experience.trim()) {
-      newErrors.experience = "Please share your relevant experience";
+      newErrors.experience = 'Please share your relevant experience';
     }
 
     if (!formData.motivation.trim()) {
-      newErrors.motivation = "Please share your motivation for volunteering";
+      newErrors.motivation = 'Please share your motivation for volunteering';
     }
 
     setErrors(newErrors);
@@ -152,11 +152,11 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.hearAbout.trim()) {
-      newErrors.hearAbout = "Please let us know how you heard about us";
+      newErrors.hearAbout = 'Please let us know how you heard about us';
     }
 
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = "You must agree to the terms and conditions";
+      newErrors.agreeToTerms = 'You must agree to the terms and conditions';
     }
 
     setErrors(newErrors);
@@ -188,10 +188,10 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
         // Show success step
         setStep(4);
       } catch (error) {
-        console.error("Form submission error:", error);
+        console.error('Form submission error:', error);
         setErrors({
           ...errors,
-          form: "An error occurred during submission. Please try again.",
+          form: 'An error occurred during submission. Please try again.',
         });
       } finally {
         setIsSubmitting(false);
@@ -203,7 +203,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
     <>
       <div className="relative p-6 border-b border-[#333333]">
         <h2 className="text-xl font-bold pr-8">
-          {step === 4 ? "Application Submitted" : "Volunteer Application"}
+          {step === 4 ? 'Application Submitted' : 'Volunteer Application'}
         </h2>
         <button
           onClick={onClose}
@@ -251,7 +251,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className={`input w-full ${errors.firstName ? "border-blood-red" : ""}`}
+                    className={`input w-full ${errors.firstName ? 'border-blood-red' : ''}`}
                     required
                   />
                   {errors.firstName && (
@@ -274,7 +274,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className={`input w-full ${errors.lastName ? "border-blood-red" : ""}`}
+                    className={`input w-full ${errors.lastName ? 'border-blood-red' : ''}`}
                     required
                   />
                   {errors.lastName && (
@@ -302,7 +302,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`input pl-10 w-full ${errors.email ? "border-blood-red" : ""}`}
+                    className={`input pl-10 w-full ${errors.email ? 'border-blood-red' : ''}`}
                     required
                   />
                 </div>
@@ -328,7 +328,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`input pl-10 w-full ${errors.phone ? "border-blood-red" : ""}`}
+                    className={`input pl-10 w-full ${errors.phone ? 'border-blood-red' : ''}`}
                     required
                   />
                 </div>
@@ -349,7 +349,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                   max="100"
                   value={formData.age}
                   onChange={handleChange}
-                  className={`input w-full ${errors.age ? "border-blood-red" : ""}`}
+                  className={`input w-full ${errors.age ? 'border-blood-red' : ''}`}
                   required
                 />
                 {errors.age && (
@@ -453,7 +453,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                   name="experience"
                   value={formData.experience}
                   onChange={handleChange}
-                  className={`input w-full h-24 ${errors.experience ? "border-blood-red" : ""}`}
+                  className={`input w-full h-24 ${errors.experience ? 'border-blood-red' : ''}`}
                   placeholder="Please describe any relevant experience you have (previous volunteer work, culinary experience, etc.)"
                   required
                 ></textarea>
@@ -476,7 +476,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                   name="motivation"
                   value={formData.motivation}
                   onChange={handleChange}
-                  className={`input w-full h-24 ${errors.motivation ? "border-blood-red" : ""}`}
+                  className={`input w-full h-24 ${errors.motivation ? 'border-blood-red' : ''}`}
                   placeholder="Why are you interested in volunteering with Broski's Kitchen?"
                   required
                 ></textarea>
@@ -522,7 +522,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                   name="hearAbout"
                   value={formData.hearAbout}
                   onChange={handleChange}
-                  className={`input w-full ${errors.hearAbout ? "border-blood-red" : ""}`}
+                  className={`input w-full ${errors.hearAbout ? 'border-blood-red' : ''}`}
                   required
                 >
                   <option value="">Please select</option>
@@ -545,27 +545,27 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                 <h3 className="font-bold mb-2">Application Summary</h3>
                 <div className="space-y-2 text-sm">
                   <p>
-                    <span className="text-gray-400">Name:</span>{" "}
+                    <span className="text-gray-400">Name:</span>{' '}
                     {formData.firstName} {formData.lastName}
                   </p>
                   <p>
-                    <span className="text-gray-400">Email:</span>{" "}
+                    <span className="text-gray-400">Email:</span>{' '}
                     {formData.email}
                   </p>
                   <p>
-                    <span className="text-gray-400">Phone:</span>{" "}
+                    <span className="text-gray-400">Phone:</span>{' '}
                     {formData.phone}
                   </p>
                   <p>
                     <span className="text-gray-400">Age:</span> {formData.age}
                   </p>
                   <p>
-                    <span className="text-gray-400">Interests:</span>{" "}
-                    {formData.interests.join(", ")}
+                    <span className="text-gray-400">Interests:</span>{' '}
+                    {formData.interests.join(', ')}
                   </p>
                   <p>
-                    <span className="text-gray-400">Availability:</span>{" "}
-                    {formData.availability.join(", ")}
+                    <span className="text-gray-400">Availability:</span>{' '}
+                    {formData.availability.join(', ')}
                   </p>
                 </div>
               </div>
@@ -584,11 +584,11 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                 </div>
                 <div className="ml-3 text-sm">
                   <label htmlFor="agreeToTerms" className="text-gray-300">
-                    I agree to the{" "}
+                    I agree to the{' '}
                     <a href="/terms" className="text-gold-foil hover:underline">
                       Volunteer Terms and Conditions
-                    </a>{" "}
-                    and{" "}
+                    </a>{' '}
+                    and{' '}
                     <a
                       href="/privacy"
                       className="text-gold-foil hover:underline"
@@ -706,7 +706,7 @@ const VolunteerForm: React.FC<VolunteerFormProps> = ({ onClose }) => {
                   Submitting...
                 </span>
               ) : (
-                "Submit Application"
+                'Submit Application'
               )}
             </button>
           )}

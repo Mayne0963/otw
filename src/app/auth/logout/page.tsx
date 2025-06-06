@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import { useEffect } from "react";
-import { useAuth } from "../../../contexts/AuthContext";
-import { useRouter } from "next/navigation";
+import { useEffect } from 'react';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
-import { Loader2 } from "lucide-react";
+} from '../../../components/ui/card';
+import { Loader2 } from 'lucide-react';
 
 export default function LogoutPage() {
   const router = useRouter();
@@ -22,10 +22,10 @@ export default function LogoutPage() {
     const performLogout = async () => {
       try {
         await signOut();
-        router.push("/");
+        router.push('/');
       } catch (error) {
-        console.error("Error signing out:", error);
-        router.push("/");
+        console.error('Error signing out:', error);
+        router.push('/');
       }
     };
 

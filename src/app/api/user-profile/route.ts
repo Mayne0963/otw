@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { adminAuth, adminDb } from "../../../lib/firebaseAdmin";
+import { NextRequest, NextResponse } from 'next/server';
+import { adminAuth, adminDb } from '../../../lib/firebaseAdmin';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 // Helper function to verify authentication
 async function verifyAuth(req: NextRequest) {
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 
     // Get user profile from Firestore
     const userDoc = await adminDb.collection('users').doc(userId).get();
-    
+
     if (!userDoc.exists) {
       // Create default profile if it doesn't exist
       const defaultProfile = {
@@ -34,14 +34,14 @@ export async function GET(req: NextRequest) {
         preferences: {
           notifications: true,
           marketing: false,
-          darkMode: false
+          darkMode: false,
         },
         loyaltyPoints: 0,
         membershipTier: 'bronze',
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
-      
+
       await adminDb.collection('users').doc(userId).set(defaultProfile);
       return NextResponse.json({ success: true, data: defaultProfile });
     }
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
     console.error('Error fetching user profile:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch user profile' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -66,17 +66,17 @@ export async function POST(req: NextRequest) {
     const profileData = {
       ...body,
       uid: userId,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     await adminDb.collection('users').doc(userId).set(profileData, { merge: true });
-    
+
     return NextResponse.json({ success: true, data: profileData });
   } catch (error) {
     console.error('Error creating user profile:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to create user profile' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -89,21 +89,21 @@ export async function PUT(req: NextRequest) {
 
     const updateData = {
       ...body,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     await adminDb.collection('users').doc(userId).update(updateData);
-    
+
     // Get updated document
     const updatedDoc = await adminDb.collection('users').doc(userId).get();
     const updatedData = updatedDoc.data();
-    
+
     return NextResponse.json({ success: true, data: updatedData });
   } catch (error) {
     console.error('Error updating user profile:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to update user profile' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -114,13 +114,13 @@ export async function DELETE(req: NextRequest) {
     const userId = decodedToken.uid;
 
     await adminDb.collection('users').doc(userId).delete();
-    
+
     return NextResponse.json({ success: true, message: 'User profile deleted successfully' });
   } catch (error) {
     console.error('Error deleting user profile:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to delete user profile' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

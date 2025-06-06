@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useState, useRef } from "react";
-import Image from "next/image";
+import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 
 import {
   FaPlay,
@@ -10,9 +10,9 @@ import {
   FaBackward,
   FaVolumeUp,
   FaVolumeDown,
-} from "react-icons/fa";
-import { useMediaPlayer } from "../../lib/context/MediaPlayerContext";
-import type { Track } from "../../types";
+} from 'react-icons/fa';
+import { useMediaPlayer } from '../../lib/context/MediaPlayerContext';
+import type { Track } from '../../types';
 
 const MusicPlayer = () => {
   const {
@@ -30,56 +30,56 @@ const MusicPlayer = () => {
   // Dummy track data
   const classicHipHop: Track[] = [
     {
-      id: "1",
-      title: "California Love",
-      artist: "2Pac",
-      url: "/music/tupac-california-love.mp3",
-      coverImage: "/images/tupac.jpg",
+      id: '1',
+      title: 'California Love',
+      artist: '2Pac',
+      url: '/music/tupac-california-love.mp3',
+      coverImage: '/images/tupac.jpg',
     },
     {
-      id: "2",
-      title: "Hypnotize",
-      artist: "The Notorious B.I.G.",
-      url: "/music/biggie-hypnotize.mp3",
-      coverImage: "/images/biggie.jpg",
+      id: '2',
+      title: 'Hypnotize',
+      artist: 'The Notorious B.I.G.',
+      url: '/music/biggie-hypnotize.mp3',
+      coverImage: '/images/biggie.jpg',
     },
     {
-      id: "3",
-      title: "Still D.R.E.",
-      artist: "Dr. Dre",
-      url: "/music/dr-dre-still-dre.mp3",
-      coverImage: "/images/dr-dre.jpg",
+      id: '3',
+      title: 'Still D.R.E.',
+      artist: 'Dr. Dre',
+      url: '/music/dr-dre-still-dre.mp3',
+      coverImage: '/images/dr-dre.jpg',
     },
     {
-      id: "4",
-      title: "Gin and Juice",
-      artist: "Snoop Dogg",
-      url: "/music/snoop-dogg-gin-and-juice.mp3",
-      coverImage: "/images/snoop-dogg.jpg",
+      id: '4',
+      title: 'Gin and Juice',
+      artist: 'Snoop Dogg',
+      url: '/music/snoop-dogg-gin-and-juice.mp3',
+      coverImage: '/images/snoop-dogg.jpg',
     },
   ];
 
   const chillBeats: Track[] = [
     {
-      id: "5",
-      title: "Lofi Study Beats",
-      artist: "Various Artists",
-      url: "/music/lofi-study-beats.mp3",
-      coverImage: "/images/lofi-study-beats.jpg",
+      id: '5',
+      title: 'Lofi Study Beats',
+      artist: 'Various Artists',
+      url: '/music/lofi-study-beats.mp3',
+      coverImage: '/images/lofi-study-beats.jpg',
     },
     {
-      id: "6",
-      title: "Chilled Vibes",
-      artist: "Various Artists",
-      url: "/music/chilled-vibes.mp3",
-      coverImage: "/images/chilled-vibes.jpg",
+      id: '6',
+      title: 'Chilled Vibes',
+      artist: 'Various Artists',
+      url: '/music/chilled-vibes.mp3',
+      coverImage: '/images/chilled-vibes.jpg',
     },
     {
-      id: "7",
-      title: "Relaxing Piano",
-      artist: "Various Artists",
-      url: "/music/relaxing-piano.mp3",
-      coverImage: "/images/relaxing-piano.jpg",
+      id: '7',
+      title: 'Relaxing Piano',
+      artist: 'Various Artists',
+      url: '/music/relaxing-piano.mp3',
+      coverImage: '/images/relaxing-piano.jpg',
     },
   ];
 
@@ -120,7 +120,7 @@ const MusicPlayer = () => {
           {currentTrack && currentTrack.coverImage && (
             <div className="relative w-12 h-12 rounded object-cover mr-4">
               <Image
-                src={currentTrack.coverImage || "/placeholder.svg"}
+                src={currentTrack.coverImage || '/placeholder.svg'}
                 alt={currentTrack.title}
                 layout="fill"
                 objectFit="cover"
@@ -130,10 +130,10 @@ const MusicPlayer = () => {
           )}
           <div>
             <p className="text-white font-bold">
-              {currentTrack ? currentTrack.title : "No track selected"}
+              {currentTrack ? currentTrack.title : 'No track selected'}
             </p>
             <p className="text-gray-400 text-sm">
-              {currentTrack ? currentTrack.artist : ""}
+              {currentTrack ? currentTrack.artist : ''}
             </p>
           </div>
         </div>
@@ -180,8 +180,8 @@ const MusicPlayer = () => {
           <button
             className={`text-white text-xs px-2 py-1 rounded ${
               currentPlaylist === classicHipHop
-                ? "bg-gold-foil text-black"
-                : "hover:text-gold-foil"
+                ? 'bg-gold-foil text-black'
+                : 'hover:text-gold-foil'
             }`}
             onClick={() => handlePlaylistSwitch(classicHipHop)}
           >
@@ -190,8 +190,8 @@ const MusicPlayer = () => {
           <button
             className={`text-white text-xs px-2 py-1 rounded ${
               currentPlaylist === chillBeats
-                ? "bg-gold-foil text-black"
-                : "hover:text-gold-foil"
+                ? 'bg-gold-foil text-black'
+                : 'hover:text-gold-foil'
             }`}
             onClick={() => handlePlaylistSwitch(chillBeats)}
           >

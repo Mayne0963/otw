@@ -1,5 +1,5 @@
-import { Client } from "@googlemaps/google-maps-services-js";
-import type { LatLngLiteral } from "@googlemaps/google-maps-services-js";
+import { Client } from '@googlemaps/google-maps-services-js';
+import type { LatLngLiteral } from '@googlemaps/google-maps-services-js';
 
 
 // Initialize Google Maps client for server-side operations
@@ -64,13 +64,13 @@ export async function calculateRoute(
       destination,
       waypoints,
       optimize: true, // Optimize waypoint order if present
-      mode: "driving",
-      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || "",
+      mode: 'driving',
+      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || '',
     },
   });
 
   if (!response.data.routes?.[0]) {
-    throw new Error("Route not found");
+    throw new Error('Route not found');
   }
 
   const route = response.data.routes[0].legs[0];
@@ -91,7 +91,7 @@ export async function searchNearbyPlaces(
       location,
       radius,
       type,
-      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || "",
+      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || '',
     },
   });
 
@@ -103,14 +103,14 @@ export async function getPlaceDetails(placeId: string) {
     params: {
       place_id: placeId,
       fields: [
-        "name",
-        "formatted_address",
-        "geometry",
-        "rating",
-        "opening_hours",
-        "photos",
+        'name',
+        'formatted_address',
+        'geometry',
+        'rating',
+        'opening_hours',
+        'photos',
       ],
-      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || "",
+      key: process.env.GOOGLE_MAPS_SERVER_API_KEY || '',
     },
   });
 
@@ -120,7 +120,7 @@ export async function getPlaceDetails(placeId: string) {
 // Distance matrix for multiple origins/destinations
 export async function calculateDistanceMatrix(
   origins: LatLngLiteral[],
-  destinations: LatLngLiteral[]
+  destinations: LatLngLiteral[],
 ): Promise<DistanceMatrixResult[][]> {
   try {
     const response = await client.distancematrix({
@@ -128,8 +128,8 @@ export async function calculateDistanceMatrix(
         origins,
         destinations,
         key: process.env.GOOGLE_MAPS_API_KEY!,
-        units: "imperial",
-        mode: "driving",
+        units: 'imperial',
+        mode: 'driving',
       },
     });
 
@@ -138,11 +138,11 @@ export async function calculateDistanceMatrix(
         distance: element.distance!,
         duration: element.duration!,
         status: element.status,
-      }))
+      })),
     );
   } catch (error) {
-    console.error("Error calculating distance matrix:", error);
-    throw new Error("Failed to calculate distance matrix");
+    console.error('Error calculating distance matrix:', error);
+    throw new Error('Failed to calculate distance matrix');
   }
 }
 
@@ -177,7 +177,7 @@ export async function geocodeAddress(address: string): Promise<GeocodeResult | n
       address_components: result.address_components,
     };
   } catch (error) {
-    console.error("Error geocoding address:", error);
+    console.error('Error geocoding address:', error);
     throw new Error(`Failed to geocode address: ${address}`);
   }
 }
@@ -213,7 +213,7 @@ export async function reverseGeocode(lat: number, lng: number): Promise<GeocodeR
       address_components: result.address_components,
     };
   } catch (error) {
-    console.error("Error reverse geocoding:", error);
+    console.error('Error reverse geocoding:', error);
     throw new Error(`Failed to reverse geocode coordinates: ${lat}, ${lng}`);
   }
 }
@@ -229,7 +229,7 @@ export async function validateAddress(address: string): Promise<{
 }> {
   try {
     const geocodeResult = await geocodeAddress(address);
-    
+
     if (!geocodeResult) {
       return {
         isValid: false,
@@ -249,9 +249,9 @@ export async function validateAddress(address: string): Promise<{
 
     // Check if it's a valid street address
     const hasStreetNumber = geocodeResult.address_components.some(
-      component => component.types.includes('street_number')
+      component => component.types.includes('street_number'),
     );
-    
+
     if (!hasStreetNumber) {
       issues.push('No street number found - please provide a complete address');
       isDeliverable = false;
@@ -270,7 +270,7 @@ export async function validateAddress(address: string): Promise<{
       issues: issues.length > 0 ? issues : undefined,
     };
   } catch (error) {
-    console.error("Error validating address:", error);
+    console.error('Error validating address:', error);
     return {
       isValid: false,
       isDeliverable: false,
@@ -284,17 +284,17 @@ export async function validateAddress(address: string): Promise<{
  */
 export function calculateStraightLineDistance(
   point1: Location,
-  point2: Location
+  point2: Location,
 ): number {
   const R = 3959; // Earth's radius in miles
   const dLat = toRadians(point2.lat - point1.lat);
   const dLng = toRadians(point2.lng - point1.lng);
-  
-  const a = 
+
+  const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(toRadians(point1.lat)) * Math.cos(toRadians(point2.lat)) *
     Math.sin(dLng / 2) * Math.sin(dLng / 2);
-  
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distance in miles
 }
@@ -309,7 +309,7 @@ function toRadians(degrees: number): number {
 export function isWithinDeliveryZone(
   location: Location,
   centerPoint: Location,
-  radiusMiles: number
+  radiusMiles: number,
 ): boolean {
   const distance = calculateStraightLineDistance(location, centerPoint);
   return distance <= radiusMiles;
@@ -321,7 +321,7 @@ export function isWithinDeliveryZone(
 export function getDeliveryZones(
   locations: Location[],
   centerPoint: Location,
-  radiusMiles: number
+  radiusMiles: number,
 ): { location: Location; isInZone: boolean; distance: number }[] {
   return locations.map(location => {
     const distance = calculateStraightLineDistance(location, centerPoint);

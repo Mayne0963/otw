@@ -1,15 +1,15 @@
-import { 
-  collection, 
-  doc, 
-  getDocs, 
-  getDoc, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
-  limit
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  limit,
 } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -142,23 +142,23 @@ class DatabaseService {
   }): Promise<Restaurant[]> {
     try {
       let q = collection(db, 'restaurants');
-      
+
       if (filters?.category && filters.category !== 'all') {
         q = query(q, where('categories', 'array-contains', filters.category));
       }
-      
+
       if (filters?.featured !== undefined) {
         q = query(q, where('featured', '==', filters.featured));
       }
-      
+
       if (filters?.isPartner !== undefined) {
         q = query(q, where('isPartner', '==', filters.isPartner));
       }
-      
+
       if (filters?.limit) {
         q = query(q, limit(filters.limit));
       }
-      
+
       const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Restaurant));
     } catch (error) {
@@ -171,7 +171,7 @@ class DatabaseService {
     try {
       const docRef = doc(db, 'restaurants', id);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as Restaurant;
       }
@@ -187,7 +187,7 @@ class DatabaseService {
       const docRef = await addDoc(collection(db, 'restaurants'), {
         ...restaurant,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return docRef.id;
     } catch (error) {
@@ -201,7 +201,7 @@ class DatabaseService {
       const docRef = doc(db, 'restaurants', id);
       await updateDoc(docRef, {
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return true;
     } catch (error) {
@@ -224,15 +224,15 @@ class DatabaseService {
   async getMenuItems(restaurantId?: string, category?: string): Promise<MenuItem[]> {
     try {
       let q = collection(db, 'menuItems');
-      
+
       if (restaurantId) {
         q = query(q, where('restaurantId', '==', restaurantId));
       }
-      
+
       if (category) {
         q = query(q, where('category', '==', category));
       }
-      
+
       const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as MenuItem));
     } catch (error) {
@@ -245,7 +245,7 @@ class DatabaseService {
     try {
       const docRef = doc(db, 'menuItems', id);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as MenuItem;
       }
@@ -261,7 +261,7 @@ class DatabaseService {
       const docRef = await addDoc(collection(db, 'menuItems'), {
         ...menuItem,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return docRef.id;
     } catch (error) {
@@ -275,7 +275,7 @@ class DatabaseService {
       const docRef = doc(db, 'menuItems', id);
       await updateDoc(docRef, {
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return true;
     } catch (error) {
@@ -303,26 +303,26 @@ class DatabaseService {
   }): Promise<Event[]> {
     try {
       let q = collection(db, 'events');
-      
+
       if (filters?.category) {
         q = query(q, where('category', '==', filters.category));
       }
-      
+
       if (filters?.featured !== undefined) {
         q = query(q, where('featured', '==', filters.featured));
       }
-      
+
       if (filters?.upcoming) {
         const today = new Date().toISOString().split('T')[0];
         q = query(q, where('date', '>=', today));
       }
-      
+
       q = query(q, orderBy('date', 'asc'));
-      
+
       if (filters?.limit) {
         q = query(q, limit(filters.limit));
       }
-      
+
       const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Event));
     } catch (error) {
@@ -335,7 +335,7 @@ class DatabaseService {
     try {
       const docRef = doc(db, 'events', id);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as Event;
       }
@@ -351,7 +351,7 @@ class DatabaseService {
       const docRef = await addDoc(collection(db, 'events'), {
         ...event,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return docRef.id;
     } catch (error) {
@@ -365,7 +365,7 @@ class DatabaseService {
       const docRef = doc(db, 'events', id);
       await updateDoc(docRef, {
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return true;
     } catch (error) {
@@ -399,7 +399,7 @@ class DatabaseService {
     try {
       const docRef = doc(db, 'volunteers', id);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as Volunteer;
       }
@@ -415,7 +415,7 @@ class DatabaseService {
       const docRef = await addDoc(collection(db, 'volunteers'), {
         ...volunteer,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return docRef.id;
     } catch (error) {
@@ -429,7 +429,7 @@ class DatabaseService {
       const docRef = doc(db, 'volunteers', id);
       await updateDoc(docRef, {
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return true;
     } catch (error) {
@@ -456,21 +456,21 @@ class DatabaseService {
   }): Promise<Reward[]> {
     try {
       let q = collection(db, 'rewards');
-      
+
       if (filters?.category) {
         q = query(q, where('category', '==', filters.category));
       }
-      
+
       if (filters?.available !== undefined) {
         q = query(q, where('available', '==', filters.available));
       }
-      
+
       q = query(q, orderBy('points', 'asc'));
-      
+
       if (filters?.limit) {
         q = query(q, limit(filters.limit));
       }
-      
+
       const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Reward));
     } catch (error) {
@@ -483,7 +483,7 @@ class DatabaseService {
     try {
       const docRef = doc(db, 'rewards', id);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as Reward;
       }
@@ -499,7 +499,7 @@ class DatabaseService {
       const docRef = await addDoc(collection(db, 'rewards'), {
         ...reward,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return docRef.id;
     } catch (error) {
@@ -513,7 +513,7 @@ class DatabaseService {
       const docRef = doc(db, 'rewards', id);
       await updateDoc(docRef, {
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return true;
     } catch (error) {
@@ -541,25 +541,25 @@ class DatabaseService {
   }): Promise<Location[]> {
     try {
       let q = collection(db, 'locations');
-      
+
       if (filters?.city) {
         q = query(q, where('city', '==', filters.city));
       }
-      
+
       if (filters?.state) {
         q = query(q, where('state', '==', filters.state));
       }
-      
+
       if (filters?.featured !== undefined) {
         q = query(q, where('featured', '==', filters.featured));
       }
-      
+
       q = query(q, orderBy('name', 'asc'));
-      
+
       if (filters?.limit) {
         q = query(q, limit(filters.limit));
       }
-      
+
       const snapshot = await getDocs(q);
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Location));
     } catch (error) {
@@ -572,7 +572,7 @@ class DatabaseService {
     try {
       const docRef = doc(db, 'locations', id);
       const docSnap = await getDoc(docRef);
-      
+
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as Location;
       }
@@ -588,7 +588,7 @@ class DatabaseService {
       const docRef = await addDoc(collection(db, 'locations'), {
         ...location,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return docRef.id;
     } catch (error) {
@@ -602,7 +602,7 @@ class DatabaseService {
       const docRef = doc(db, 'locations', id);
       await updateDoc(docRef, {
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
       return true;
     } catch (error) {

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
-import { useState, useEffect } from "react";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
+import type { Metadata } from 'next';
+import { useState, useEffect } from 'react';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import {
   Card,
   CardContent,
@@ -14,19 +14,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
+} from '../../components/ui/card';
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "../../components/ui/avatar";
-import { Badge } from "../../components/ui/badge";
-import { User, CreditCard, MapPin, Bell, Shield, LogOut } from "lucide-react";
-import Link from "next/link";
-import { useAuth } from "../../contexts/AuthContext";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../../lib/firebase-config";
-import type { UserProfile } from "../../types";
+} from '../../components/ui/avatar';
+import { Badge } from '../../components/ui/badge';
+import { User, CreditCard, MapPin, Bell, Shield, LogOut } from 'lucide-react';
+import Link from 'next/link';
+import { useAuth } from '../../contexts/AuthContext';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../lib/firebase-config';
+import type { UserProfile } from '../../types';
 
 interface Address {
   id: string;
@@ -59,7 +59,7 @@ interface UserData {
 }
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("account");
+  const [activeTab, setActiveTab] = useState('account');
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const { user, logout } = useAuth();
@@ -68,7 +68,7 @@ export default function ProfilePage() {
     try {
       await logout();
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error('Error signing out:', error);
     }
   };
 
@@ -84,7 +84,7 @@ export default function ProfilePage() {
         // Fetch user profile from Firestore
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
-        
+
         let profileData: Partial<UserProfile> = {};
         if (userDoc.exists()) {
           profileData = userDoc.data() as UserProfile;
@@ -93,38 +93,38 @@ export default function ProfilePage() {
         // Fetch user addresses
         const addressesQuery = query(
           collection(db, 'addresses'),
-          where('userId', '==', user.uid)
+          where('userId', '==', user.uid),
         );
         const addressesSnapshot = await getDocs(addressesQuery);
         const addresses: Address[] = addressesSnapshot.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         })) as Address[];
 
         // Fetch user payment methods
         const paymentMethodsQuery = query(
           collection(db, 'paymentMethods'),
-          where('userId', '==', user.uid)
+          where('userId', '==', user.uid),
         );
         const paymentMethodsSnapshot = await getDocs(paymentMethodsQuery);
         const paymentMethods: PaymentMethod[] = paymentMethodsSnapshot.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         })) as PaymentMethod[];
 
         // Calculate member since date
-        const memberSince = profileData.createdAt 
-          ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
-              year: 'numeric', 
-              month: 'long' 
+        const memberSince = profileData.createdAt
+          ? new Date(profileData.createdAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
             })
           : 'Recently';
 
         // Determine tier based on reward points
         const points = profileData.rewardPoints || 0;
         let tier = 'Bronze';
-        if (points >= 1000) tier = 'Gold';
-        else if (points >= 500) tier = 'Silver';
+        if (points >= 1000) {tier = 'Gold';}
+        else if (points >= 500) {tier = 'Silver';}
 
         setUserData({
           name: user.displayName || profileData.displayName || 'User',
@@ -135,7 +135,7 @@ export default function ProfilePage() {
           tier,
           rewardPoints: points,
           addresses,
-          paymentMethods
+          paymentMethods,
         });
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -182,14 +182,14 @@ export default function ProfilePage() {
                 <div className="flex flex-col items-center">
                   <Avatar className="h-24 w-24 mb-4">
                     <AvatarImage
-                      src={userData.avatar || "/assets/users/default-avatar.jpg"}
+                      src={userData.avatar || '/assets/users/default-avatar.jpg'}
                       alt={userData.name}
                     />
                     <AvatarFallback>
                       {userData.name
-                        .split(" ")
+                        .split(' ')
                         .map((n) => n[0])
-                        .join("")}
+                        .join('')}
                     </AvatarFallback>
                   </Avatar>
                   <CardTitle>{userData.name}</CardTitle>
@@ -204,43 +204,43 @@ export default function ProfilePage() {
               <CardContent>
                 <nav className="flex flex-col space-y-1">
                   <Button
-                    variant={activeTab === "account" ? "default" : "ghost"}
+                    variant={activeTab === 'account' ? 'default' : 'ghost'}
                     className="justify-start"
-                    onClick={() => setActiveTab("account")}
+                    onClick={() => setActiveTab('account')}
                   >
                     <User className="mr-2 h-4 w-4" />
                     Account
                   </Button>
                   <Button
-                    variant={activeTab === "addresses" ? "default" : "ghost"}
+                    variant={activeTab === 'addresses' ? 'default' : 'ghost'}
                     className="justify-start"
-                    onClick={() => setActiveTab("addresses")}
+                    onClick={() => setActiveTab('addresses')}
                   >
                     <MapPin className="mr-2 h-4 w-4" />
                     Addresses
                   </Button>
                   <Button
-                    variant={activeTab === "payment" ? "default" : "ghost"}
+                    variant={activeTab === 'payment' ? 'default' : 'ghost'}
                     className="justify-start"
-                    onClick={() => setActiveTab("payment")}
+                    onClick={() => setActiveTab('payment')}
                   >
                     <CreditCard className="mr-2 h-4 w-4" />
                     Payment Methods
                   </Button>
                   <Button
                     variant={
-                      activeTab === "notifications" ? "default" : "ghost"
+                      activeTab === 'notifications' ? 'default' : 'ghost'
                     }
                     className="justify-start"
-                    onClick={() => setActiveTab("notifications")}
+                    onClick={() => setActiveTab('notifications')}
                   >
                     <Bell className="mr-2 h-4 w-4" />
                     Notifications
                   </Button>
                   <Button
-                    variant={activeTab === "security" ? "default" : "ghost"}
+                    variant={activeTab === 'security' ? 'default' : 'ghost'}
                     className="justify-start"
-                    onClick={() => setActiveTab("security")}
+                    onClick={() => setActiveTab('security')}
                   >
                     <Shield className="mr-2 h-4 w-4" />
                     Security
@@ -248,8 +248,8 @@ export default function ProfilePage() {
                 </nav>
               </CardContent>
               <CardFooter>
-                <Button 
-                  variant="destructive" 
+                <Button
+                  variant="destructive"
                   className="w-full"
                   onClick={handleSignOut}
                 >
@@ -284,7 +284,7 @@ export default function ProfilePage() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {/* Account Tab */}
-            {activeTab === "account" && (
+            {activeTab === 'account' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Account Information</CardTitle>
@@ -338,7 +338,7 @@ export default function ProfilePage() {
             )}
 
             {/* Addresses Tab */}
-            {activeTab === "addresses" && (
+            {activeTab === 'addresses' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Saved Addresses</CardTitle>
@@ -382,7 +382,7 @@ export default function ProfilePage() {
             )}
 
             {/* Payment Methods Tab */}
-            {activeTab === "payment" && (
+            {activeTab === 'payment' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Payment Methods</CardTitle>
@@ -434,7 +434,7 @@ export default function ProfilePage() {
             )}
 
             {/* Notifications Tab */}
-            {activeTab === "notifications" && (
+            {activeTab === 'notifications' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Notification Preferences</CardTitle>

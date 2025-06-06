@@ -160,7 +160,7 @@ export default function PlaceAutocompleteExample() {
                   'location',
                   'displayName',
                   'businessStatus',
-                  'rating'
+                  'rating',
                 ]}
               />
             </div>

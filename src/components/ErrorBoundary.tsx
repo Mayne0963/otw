@@ -1,5 +1,5 @@
-import { Component, ErrorInfo, ReactNode } from "react";
-import * as Sentry from "@sentry/nextjs";
+import { Component, ErrorInfo, ReactNode } from 'react';
+import * as Sentry from '@sentry/nextjs';
 
 interface Props {
   children: ReactNode;

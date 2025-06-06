@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "../../components/ui/tabs";
-import OrderHistory from "../../components/dashboard/OrderHistory";
-import Favorites from "../../components/dashboard/Favorites";
-import TierPerks from "../../components/dashboard/TierPerks";
-import Tasks from "../../components/dashboard/Tasks";
+} from '../../components/ui/tabs';
+import OrderHistory from '../../components/dashboard/OrderHistory';
+import Favorites from '../../components/dashboard/Favorites';
+import TierPerks from '../../components/dashboard/TierPerks';
+import Tasks from '../../components/dashboard/Tasks';
 
 
 

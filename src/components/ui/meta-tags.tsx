@@ -1,36 +1,36 @@
-import Head from "next/head";
-import { env } from "../../lib/env";
+import Head from 'next/head';
+import { env } from '../../lib/env';
 
 interface MetaTagsProps {
   title?: string;
   description?: string;
   keywords?: string[];
   ogImage?: string;
-  ogType?: "website" | "article" | "profile";
-  twitterCard?: "summary" | "summary_large_image" | "app" | "player";
+  ogType?: 'website' | 'article' | 'profile';
+  twitterCard?: 'summary' | 'summary_large_image' | 'app' | 'player';
   canonicalUrl?: string;
   noIndex?: boolean;
 }
 
 export function MetaTags({
-  title = "OTW - On The Way | Food Delivery & Local Rides",
-  description = "OTW delivers food, groceries, and provides local rides with community-driven service. Fast, reliable, and powered by the people.",
+  title = 'OTW - On The Way | Food Delivery & Local Rides',
+  description = 'OTW delivers food, groceries, and provides local rides with community-driven service. Fast, reliable, and powered by the people.',
   keywords = [
-    "food delivery",
-    "grocery delivery",
-    "local rides",
-    "OTW",
-    "On The Way",
-    "community service",
-    "delivery app",
+    'food delivery',
+    'grocery delivery',
+    'local rides',
+    'OTW',
+    'On The Way',
+    'community service',
+    'delivery app',
   ],
   ogImage = `${env.WEBSITE_URL}/menu-hero.jpg`,
-  ogType = "website",
-  twitterCard = "summary_large_image",
+  ogType = 'website',
+  twitterCard = 'summary_large_image',
   canonicalUrl,
   noIndex = false,
 }: MetaTagsProps) {
-  const fullTitle = title.includes("OTW")
+  const fullTitle = title.includes('OTW')
     ? title
     : `${title} | OTW - On The Way`;
   const fullCanonicalUrl = canonicalUrl || env.WEBSITE_URL;
@@ -40,7 +40,7 @@ export function MetaTags({
       {/* Basic Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
-      <meta name="keywords" content={keywords.join(", ")} />
+      <meta name="keywords" content={keywords.join(', ')} />
 
       {/* Canonical URL */}
       <link rel="canonical" href={fullCanonicalUrl} />

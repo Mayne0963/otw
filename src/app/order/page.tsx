@@ -1,76 +1,76 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Badge } from "../../components/ui/badge";
-import { Separator } from "../../components/ui/separator";
-import type React from "react";
+import type { Metadata } from 'next';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Badge } from '../../components/ui/badge';
+import { Separator } from '../../components/ui/separator';
+import type React from 'react';
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useCart } from "../../lib/context/CartContext";
-import { toast } from "../../components/ui/use-toast";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
+import { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useCart } from '../../lib/context/CartContext';
+import { toast } from '../../components/ui/use-toast';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
-import { MapPin, Clock, CreditCard } from "lucide-react";
+} from '../../components/ui/select';
+import { MapPin, Clock, CreditCard } from 'lucide-react';
 
 // Define menu items
 const menuItems = [
   {
-    id: "luxury-burger",
-    name: "Luxury Burger",
+    id: 'luxury-burger',
+    name: 'Luxury Burger',
     price: 18.99,
-    description: "Wagyu beef, truffle aioli, gold leaf, brioche bun",
-    image: "/assets/images/vegan-burger.jpg",
-    category: "burgers",
-    popular: true
+    description: 'Wagyu beef, truffle aioli, gold leaf, brioche bun',
+    image: '/assets/images/vegan-burger.jpg',
+    category: 'burgers',
+    popular: true,
   },
   {
-    id: "lobster-tacos",
-    name: "Lobster Tacos",
+    id: 'lobster-tacos',
+    name: 'Lobster Tacos',
     price: 22.99,
-    description: "Maine lobster, avocado crema, mango salsa",
-    image: "/assets/images/lobster-tacos.jpg",
-    category: "tacos",
-    popular: true
+    description: 'Maine lobster, avocado crema, mango salsa',
+    image: '/assets/images/lobster-tacos.jpg',
+    category: 'tacos',
+    popular: true,
   },
   {
-    id: "truffle-pasta",
-    name: "Truffle Pasta",
+    id: 'truffle-pasta',
+    name: 'Truffle Pasta',
     price: 24.99,
-    description: "Fresh pasta with black truffle and parmesan",
-    image: "/assets/images/truffle-pasta.jpg",
-    category: "pasta",
-    popular: false
+    description: 'Fresh pasta with black truffle and parmesan',
+    image: '/assets/images/truffle-pasta.jpg',
+    category: 'pasta',
+    popular: false,
   },
   {
-    id: "wagyu-steak",
-    name: "Wagyu Steak",
+    id: 'wagyu-steak',
+    name: 'Wagyu Steak',
     price: 45.99,
-    description: "Premium wagyu beef with seasonal vegetables",
-    image: "/assets/images/wagyu-steak.jpg",
-    category: "steaks",
-    popular: true
-  }
+    description: 'Premium wagyu beef with seasonal vegetables',
+    image: '/assets/images/wagyu-steak.jpg',
+    category: 'steaks',
+    popular: true,
+  },
 ];
 
 export default function OrderPage() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
   const { addItem } = useCart();
 
   const handleAddToCart = (item: typeof menuItems[0]) => {
@@ -80,12 +80,12 @@ export default function OrderPage() {
       price: item.price,
       quantity: 1,
       image: item.image,
-      description: item.description
+      description: item.description,
     };
-    
+
     addItem(cartItem);
     toast({
-      title: "Added to Cart!",
+      title: 'Added to Cart!',
       description: `${item.name} has been added to your cart.`,
     });
   };
@@ -194,8 +194,8 @@ export default function OrderPage() {
                   <p className="text-gray-400 text-sm mb-4">
                     {item.description}
                   </p>
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full"
                     onClick={() => handleAddToCart(item)}
                   >
                     Add to Cart

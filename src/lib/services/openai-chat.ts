@@ -1,5 +1,5 @@
-import OpenAI from "openai";
-import { vectorStore } from "../utils/vectorStore";
+import OpenAI from 'openai';
+import { vectorStore } from '../utils/vectorStore';
 
 // Initialize OpenAI client with the provided API key
 const openai = new OpenAI({
@@ -27,23 +27,23 @@ export async function generateChatResponse(
     const searchResults = vectorStore.search(query);
 
     // Create context from search results
-    const context = searchResults.map((result) => result.text).join("\n\n");
+    const context = searchResults.map((result) => result.text).join('\n\n');
 
     // Create system message with context
-    const systemMessage = SYSTEM_PROMPT.replace("{{context}}", context);
+    const systemMessage = SYSTEM_PROMPT.replace('{{context}}', context);
 
     // Format messages for OpenAI
     const formattedMessages = [
-      { role: "system", content: systemMessage },
+      { role: 'system', content: systemMessage },
       ...messages.map((msg) => ({
-        role: msg.role === "user" ? "user" : "assistant",
+        role: msg.role === 'user' ? 'user' : 'assistant',
         content: msg.text,
       })),
     ];
 
     // Call OpenAI API
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: 'gpt-4o',
       messages: formattedMessages as any,
       temperature: 0.7,
       max_tokens: 500,
@@ -55,7 +55,7 @@ export async function generateChatResponse(
       "I'm sorry, I couldn't generate a response."
     );
   } catch (error) {
-    console.error("Error generating chat response:", error);
+    console.error('Error generating chat response:', error);
     return "I'm having trouble connecting to my services. Please try again later.";
   }
 }

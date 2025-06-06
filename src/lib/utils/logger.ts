@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 // import { firestore } from "../firebaseAdmin";
 
 interface LogEntry {
@@ -22,7 +22,7 @@ interface LogEntry {
 
 class Logger {
   private static instance: Logger;
-  private readonly collection = "api_logs";
+  private readonly collection = 'api_logs';
   private readonly maxBodySize = 10000; // characters
 
   private constructor() {}
@@ -39,7 +39,7 @@ class Logger {
     if (stringified.length > this.maxBodySize) {
       return {
         _truncated: true,
-        preview: stringified.substring(0, this.maxBodySize) + "...",
+        preview: stringified.substring(0, this.maxBodySize) + '...',
         originalSize: stringified.length,
       };
     }
@@ -47,14 +47,14 @@ class Logger {
   }
 
   private sanitizeBody(body: any): any {
-    if (!body) return body;
+    if (!body) {return body;}
 
     const sensitiveFields = [
-      "password",
-      "token",
-      "secret",
-      "authorization",
-      "apiKey",
+      'password',
+      'token',
+      'secret',
+      'authorization',
+      'apiKey',
     ];
     const sanitized = { ...body };
 
@@ -65,8 +65,8 @@ class Logger {
             key.toLowerCase().includes(field.toLowerCase()),
           )
         ) {
-          obj[key] = "[REDACTED]";
-        } else if (typeof obj[key] === "object" && obj[key] !== null) {
+          obj[key] = '[REDACTED]';
+        } else if (typeof obj[key] === 'object' && obj[key] !== null) {
           sanitizeObject(obj[key]);
         }
       }
@@ -101,11 +101,11 @@ class Logger {
       //   ...entry,
       //   _ttl: thirtyDaysAgo, // For Firestore TTL if enabled
       // });
-      
+
       // Console log for now
       console.log('Log entry:', entry);
     } catch (error) {
-      console.error("Failed to save log entry:", error);
+      console.error('Failed to save log entry:', error);
     }
   }
 
@@ -144,7 +144,7 @@ class Logger {
       query: Object.fromEntries(url.searchParams),
       userId,
       ip: req.ip,
-      userAgent: req.headers.get("user-agent") || undefined,
+      userAgent: req.headers.get('user-agent') || undefined,
       requestBody: this.truncateBody(this.sanitizeBody(requestBody)),
       responseStatus: res.status,
       responseBody: this.truncateBody(this.sanitizeBody(responseBody)),
@@ -154,7 +154,7 @@ class Logger {
             message: error.message,
             code: (error as any).code,
             stack:
-              process.env.NODE_ENV === "development" ? error.stack : undefined,
+              process.env.NODE_ENV === 'development' ? error.stack : undefined,
           }
         : undefined,
     };
@@ -182,7 +182,7 @@ class Logger {
 
     // const snapshot = await query.get();
     // return snapshot.docs.map((doc) => doc.data() as LogEntry);
-    
+
     console.log('getRecentLogs called with:', { userId, path, limit });
     return [];
   }
@@ -201,7 +201,7 @@ class Logger {
     //   .get();
 
     // return snapshot.docs.map((doc) => doc.data() as LogEntry);
-    
+
     console.log('getErrorLogs called with:', { hours, limit });
     return [];
   }

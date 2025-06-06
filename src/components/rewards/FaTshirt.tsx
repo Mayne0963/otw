@@ -1,2 +1,2 @@
-import { FaTshirt } from "react-icons/fa";
+import { FaTshirt } from 'react-icons/fa';
 export default FaTshirt;

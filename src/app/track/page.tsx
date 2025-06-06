@@ -9,34 +9,34 @@ import { CheckCircle, Clock, MapPin, User, AlertCircle } from 'lucide-react';
 
 const statusSteps = [
   {
-    id: "received",
-    title: "Order Received",
+    id: 'received',
+    title: 'Order Received',
     icon: Clock,
     description: "We've received your order",
   },
   {
-    id: "confirmed",
-    title: "Order Confirmed",
+    id: 'confirmed',
+    title: 'Order Confirmed',
     icon: CheckCircle,
-    description: "Your order has been confirmed",
+    description: 'Your order has been confirmed',
   },
   {
-    id: "preparing",
-    title: "Preparing",
+    id: 'preparing',
+    title: 'Preparing',
     icon: User,
-    description: "Your order is being prepared",
+    description: 'Your order is being prepared',
   },
   {
-    id: "out_for_delivery",
-    title: "Out for Delivery",
+    id: 'out_for_delivery',
+    title: 'Out for Delivery',
     icon: MapPin,
-    description: "Your order is on the way",
+    description: 'Your order is on the way',
   },
   {
-    id: "delivered",
-    title: "Delivered",
+    id: 'delivered',
+    title: 'Delivered',
     icon: CheckCircle,
-    description: "Order delivered successfully",
+    description: 'Order delivered successfully',
   },
 ];
 
@@ -51,14 +51,14 @@ export default function TrackPage() {
     e.preventDefault();
     setError('');
     setOrderData(null);
-    
+
     if (!orderId.trim() || !email.trim()) {
       setError('Please enter both Order ID and email address');
       return;
     }
 
     setIsLoading(true);
-    
+
     try {
       // Mock verification - replace with actual API call
       // This would verify the order belongs to the customer
@@ -69,12 +69,12 @@ export default function TrackPage() {
         estimatedDelivery: '7:30 PM',
         items: ['2x Pepperoni Pizza', '1x Garlic Bread'],
         total: 28.99,
-        address: '123 Main St, Fort Wayne, IN'
+        address: '123 Main St, Fort Wayne, IN',
       };
-      
+
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock validation - in real implementation, verify email matches order
       if (email.toLowerCase() === 'test@example.com' || email.includes('@')) {
         setOrderData(mockOrderData);
@@ -139,8 +139,8 @@ export default function TrackPage() {
                   </AlertDescription>
                 </Alert>
               )}
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isLoading}
                 className="w-full bg-otw-gold hover:bg-yellow-600 text-black font-semibold"
               >
@@ -204,7 +204,7 @@ export default function TrackPage() {
                         <div key={step.id} className="relative flex items-start gap-4">
                           <div
                             className={`relative z-10 rounded-full p-2 ${
-                              isActive ? "bg-otw-gold text-black" : "bg-gray-800 text-gray-400"
+                              isActive ? 'bg-otw-gold text-black' : 'bg-gray-800 text-gray-400'
                             }`}
                           >
                             <step.icon className="w-4 h-4" />
@@ -212,7 +212,7 @@ export default function TrackPage() {
                           <div>
                             <h3
                               className={`font-semibold ${
-                                isActive ? "text-otw-gold" : "text-gray-400"
+                                isActive ? 'text-otw-gold' : 'text-gray-400'
                               }`}
                             >
                               {step.title}

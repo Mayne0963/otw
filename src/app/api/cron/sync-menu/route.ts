@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "../../../../lib/firebase";
-import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit, writeBatch } from "firebase/firestore";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '../../../../lib/firebase';
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy, limit, writeBatch } from 'firebase/firestore';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 interface SyncConfig {
   restaurantId: string;
@@ -28,11 +28,11 @@ interface SyncResult {
 function verifyCronAuth(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
-  
+
   if (!cronSecret) {
     throw new Error('Cron secret not configured');
   }
-  
+
   if (!authHeader || authHeader !== `Bearer ${cronSecret}`) {
     throw new Error('Unauthorized cron request');
   }
@@ -42,59 +42,59 @@ function verifyCronAuth(request: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     verifyCronAuth(req);
-    
+
     const { searchParams } = new URL(req.url);
     const restaurantId = searchParams.get('restaurantId');
     const limit_param = searchParams.get('limit');
     const status = searchParams.get('status');
-    
+
     // Get sync configurations
     const configQuery = collection(db, 'sync_configs');
     const configConstraints = [];
-    
+
     if (restaurantId) {
       configConstraints.push(where('restaurantId', '==', restaurantId));
     }
-    
+
     configConstraints.push(where('enabled', '==', true));
-    
+
     const configQ = query(configQuery, ...configConstraints);
     const configSnapshot = await getDocs(configQ);
-    
+
     const configs: any[] = [];
     configSnapshot.forEach((doc) => {
       configs.push({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       });
     });
-    
+
     // Get recent sync logs
     const logQuery = collection(db, 'sync_logs');
     const logConstraints = [];
-    
+
     if (restaurantId) {
       logConstraints.push(where('restaurantId', '==', restaurantId));
     }
-    
+
     if (status) {
       logConstraints.push(where('status', '==', status));
     }
-    
+
     logConstraints.push(orderBy('timestamp', 'desc'));
     logConstraints.push(limit(parseInt(limit_param || '50')));
-    
+
     const logQ = query(logQuery, ...logConstraints);
     const logSnapshot = await getDocs(logQ);
-    
+
     const logs: any[] = [];
     logSnapshot.forEach((doc) => {
       logs.push({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       });
     });
-    
+
     return NextResponse.json({
       success: true,
       data: {
@@ -103,24 +103,24 @@ export async function GET(req: NextRequest) {
         summary: {
           totalConfigs: configs.length,
           totalLogs: logs.length,
-          lastSync: logs[0]?.timestamp || null
-        }
-      }
+          lastSync: logs[0]?.timestamp || null,
+        },
+      },
     });
-    
+
   } catch (error) {
     console.error('Sync status error:', error);
-    
+
     if (error instanceof Error && error.message.includes('Unauthorized')) {
       return NextResponse.json(
         { error: error.message },
-        { status: 401 }
+        { status: 401 },
       );
     }
-    
+
     return NextResponse.json(
-      { error: "Failed to get sync status" },
-      { status: 500 }
+      { error: 'Failed to get sync status' },
+      { status: 500 },
     );
   }
 }
@@ -129,30 +129,30 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     verifyCronAuth(req);
-    
+
     const { action, restaurantId, source, force } = await req.json();
-    
+
     if (action === 'sync') {
       // Trigger manual sync
       if (!restaurantId) {
         return NextResponse.json(
-          { error: "Restaurant ID required for manual sync" },
-          { status: 400 }
+          { error: 'Restaurant ID required for manual sync' },
+          { status: 400 },
         );
       }
-      
+
       const result = await syncRestaurantMenu(restaurantId, source, force);
-      
+
       return NextResponse.json({
         success: true,
-        data: result
+        data: result,
       });
     }
-    
+
     if (action === 'sync-all') {
       // Sync all enabled restaurants
       const results = await syncAllRestaurants(force);
-      
+
       return NextResponse.json({
         success: true,
         data: {
@@ -160,29 +160,29 @@ export async function POST(req: NextRequest) {
           successful: results.filter(r => r.status === 'success').length,
           failed: results.filter(r => r.status === 'error').length,
           skipped: results.filter(r => r.status === 'skipped').length,
-          results
-        }
+          results,
+        },
       });
     }
-    
+
     return NextResponse.json(
       { error: "Invalid action. Use 'sync' or 'sync-all'" },
-      { status: 400 }
+      { status: 400 },
     );
-    
+
   } catch (error) {
     console.error('Manual sync error:', error);
-    
+
     if (error instanceof Error && error.message.includes('Unauthorized')) {
       return NextResponse.json(
         { error: error.message },
-        { status: 401 }
+        { status: 401 },
       );
     }
-    
+
     return NextResponse.json(
-      { error: "Failed to trigger sync" },
-      { status: 500 }
+      { error: 'Failed to trigger sync' },
+      { status: 500 },
     );
   }
 }
@@ -191,58 +191,58 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     verifyCronAuth(req);
-    
+
     const { searchParams } = new URL(req.url);
     const configId = searchParams.get('id');
-    
+
     if (!configId) {
       return NextResponse.json(
-        { error: "Config ID required" },
-        { status: 400 }
+        { error: 'Config ID required' },
+        { status: 400 },
       );
     }
-    
+
     const updates = await req.json();
-    
+
     const configRef = doc(db, 'sync_configs', configId);
     const configDoc = await getDoc(configRef);
-    
+
     if (!configDoc.exists()) {
       return NextResponse.json(
-        { error: "Sync config not found" },
-        { status: 404 }
+        { error: 'Sync config not found' },
+        { status: 404 },
       );
     }
-    
+
     await updateDoc(configRef, {
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
-    
+
     const updatedDoc = await getDoc(configRef);
-    
+
     return NextResponse.json({
       success: true,
       data: {
         id: updatedDoc.id,
-        ...updatedDoc.data()
+        ...updatedDoc.data(),
       },
-      message: "Sync config updated successfully"
+      message: 'Sync config updated successfully',
     });
-    
+
   } catch (error) {
     console.error('Sync config update error:', error);
-    
+
     if (error instanceof Error && error.message.includes('Unauthorized')) {
       return NextResponse.json(
         { error: error.message },
-        { status: 401 }
+        { status: 401 },
       );
     }
-    
+
     return NextResponse.json(
-      { error: "Failed to update sync config" },
-      { status: 500 }
+      { error: 'Failed to update sync config' },
+      { status: 500 },
     );
   }
 }
@@ -251,47 +251,47 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     verifyCronAuth(req);
-    
+
     const { searchParams } = new URL(req.url);
     const configId = searchParams.get('id');
-    
+
     if (!configId) {
       return NextResponse.json(
-        { error: "Config ID required" },
-        { status: 400 }
+        { error: 'Config ID required' },
+        { status: 400 },
       );
     }
-    
+
     const configRef = doc(db, 'sync_configs', configId);
     const configDoc = await getDoc(configRef);
-    
+
     if (!configDoc.exists()) {
       return NextResponse.json(
-        { error: "Sync config not found" },
-        { status: 404 }
+        { error: 'Sync config not found' },
+        { status: 404 },
       );
     }
-    
+
     await deleteDoc(configRef);
-    
+
     return NextResponse.json({
       success: true,
-      message: "Sync config deleted successfully"
+      message: 'Sync config deleted successfully',
     });
-    
+
   } catch (error) {
     console.error('Sync config delete error:', error);
-    
+
     if (error instanceof Error && error.message.includes('Unauthorized')) {
       return NextResponse.json(
         { error: error.message },
-        { status: 401 }
+        { status: 401 },
       );
     }
-    
+
     return NextResponse.json(
-      { error: "Failed to delete sync config" },
-      { status: 500 }
+      { error: 'Failed to delete sync config' },
+      { status: 500 },
     );
   }
 }
@@ -299,19 +299,19 @@ export async function DELETE(req: NextRequest) {
 // Helper function to sync all restaurants
 async function syncAllRestaurants(force = false): Promise<SyncResult[]> {
   const results: SyncResult[] = [];
-  
+
   try {
     // Get all enabled sync configs
     const configQuery = query(
       collection(db, 'sync_configs'),
-      where('enabled', '==', true)
+      where('enabled', '==', true),
     );
-    
+
     const configSnapshot = await getDocs(configQuery);
-    
+
     for (const configDoc of configSnapshot.docs) {
       const config = configDoc.data() as SyncConfig;
-      
+
       try {
         const result = await syncRestaurantMenu(config.restaurantId, config.source, force);
         results.push(result);
@@ -324,32 +324,32 @@ async function syncAllRestaurants(force = false): Promise<SyncResult[]> {
           itemsUpdated: 0,
           itemsRemoved: 0,
           error: error instanceof Error ? error.message : 'Unknown error',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     }
-    
+
   } catch (error) {
     console.error('Sync all restaurants error:', error);
   }
-  
+
   return results;
 }
 
 // Helper function to sync individual restaurant menu
 async function syncRestaurantMenu(restaurantId: string, source?: string, force = false): Promise<SyncResult> {
   const timestamp = new Date().toISOString();
-  
+
   try {
     // Get sync config
     const configQuery = query(
       collection(db, 'sync_configs'),
       where('restaurantId', '==', restaurantId),
-      where('enabled', '==', true)
+      where('enabled', '==', true),
     );
-    
+
     const configSnapshot = await getDocs(configQuery);
-    
+
     if (configSnapshot.empty) {
       return {
         restaurantId,
@@ -359,19 +359,19 @@ async function syncRestaurantMenu(restaurantId: string, source?: string, force =
         itemsUpdated: 0,
         itemsRemoved: 0,
         error: 'No enabled sync config found',
-        timestamp
+        timestamp,
       };
     }
-    
+
     const config = configSnapshot.docs[0].data() as SyncConfig;
     const actualSource = source || config.source;
-    
+
     // Check if sync is needed (unless forced)
     if (!force && config.lastSync) {
       const lastSyncTime = new Date(config.lastSync);
       const now = new Date();
       const hoursSinceLastSync = (now.getTime() - lastSyncTime.getTime()) / (1000 * 60 * 60);
-      
+
       if (hoursSinceLastSync < config.syncInterval) {
         return {
           restaurantId,
@@ -381,40 +381,40 @@ async function syncRestaurantMenu(restaurantId: string, source?: string, force =
           itemsUpdated: 0,
           itemsRemoved: 0,
           error: `Sync not due yet. Last sync: ${config.lastSync}`,
-          timestamp
+          timestamp,
         };
       }
     }
-    
+
     // Fetch external menu data
     const externalData = await fetchExternalMenuData(actualSource, restaurantId);
-    
+
     if (!externalData || !externalData.success) {
       throw new Error(`Failed to fetch external data: ${externalData?.error || 'Unknown error'}`);
     }
-    
+
     // Sync data to local database
     const syncStats = await syncMenuData(restaurantId, externalData.data, actualSource);
-    
+
     // Update sync config
     await updateDoc(configSnapshot.docs[0].ref, {
       lastSync: timestamp,
-      updatedAt: timestamp
+      updatedAt: timestamp,
     });
-    
+
     // Log sync result
     const result: SyncResult = {
       restaurantId,
       source: actualSource,
       status: 'success',
       ...syncStats,
-      timestamp
+      timestamp,
     };
-    
+
     await addDoc(collection(db, 'sync_logs'), result);
-    
+
     return result;
-    
+
   } catch (error) {
     const result: SyncResult = {
       restaurantId,
@@ -424,12 +424,12 @@ async function syncRestaurantMenu(restaurantId: string, source?: string, force =
       itemsUpdated: 0,
       itemsRemoved: 0,
       error: error instanceof Error ? error.message : 'Unknown error',
-      timestamp
+      timestamp,
     };
-    
+
     // Log error
     await addDoc(collection(db, 'sync_logs'), result);
-    
+
     return result;
   }
 }
@@ -440,14 +440,14 @@ async function fetchExternalMenuData(source: string, restaurantId: string) {
     const response = await fetch(`${process.env.NEXTAUTH_URL}/api/fetch-menu`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         source,
-        restaurantId
-      })
+        restaurantId,
+      }),
     });
-    
+
     return await response.json();
   } catch (error) {
     console.error('External menu fetch error:', error);
@@ -461,30 +461,30 @@ async function syncMenuData(restaurantId: string, externalItems: any[], source: 
   let itemsAdded = 0;
   let itemsUpdated = 0;
   let itemsRemoved = 0;
-  
+
   try {
     // Get existing menu items for this restaurant
     const existingQuery = query(
       collection(db, 'menu_items'),
       where('restaurantId', '==', restaurantId),
-      where('source', '==', source)
+      where('source', '==', source),
     );
-    
+
     const existingSnapshot = await getDocs(existingQuery);
     const existingItems = new Map();
-    
+
     existingSnapshot.forEach((doc) => {
       const data = doc.data();
       existingItems.set(data.externalId || doc.id, { id: doc.id, ...data });
     });
-    
+
     // Process external items
     const processedIds = new Set();
-    
+
     for (const externalItem of externalItems) {
       const externalId = externalItem.id || externalItem.menu_item_id;
       processedIds.add(externalId);
-      
+
       const menuItem = {
         restaurantId,
         source,
@@ -496,9 +496,9 @@ async function syncMenuData(restaurantId: string, externalItems: any[], source: 
         image: externalItem.image || externalItem.menu_item_image,
         available: externalItem.available !== false,
         updatedAt: new Date().toISOString(),
-        syncedAt: new Date().toISOString()
+        syncedAt: new Date().toISOString(),
       };
-      
+
       if (existingItems.has(externalId)) {
         // Update existing item
         const existing = existingItems.get(externalId);
@@ -510,12 +510,12 @@ async function syncMenuData(restaurantId: string, externalItems: any[], source: 
         const newItemRef = doc(collection(db, 'menu_items'));
         batch.set(newItemRef, {
           ...menuItem,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
         itemsAdded++;
       }
     }
-    
+
     // Remove items that are no longer in external source
     for (const [externalId, existing] of existingItems) {
       if (!processedIds.has(externalId)) {
@@ -524,12 +524,12 @@ async function syncMenuData(restaurantId: string, externalItems: any[], source: 
         itemsRemoved++;
       }
     }
-    
+
     // Commit batch
     await batch.commit();
-    
+
     return { itemsAdded, itemsUpdated, itemsRemoved };
-    
+
   } catch (error) {
     console.error('Menu sync error:', error);
     throw error;

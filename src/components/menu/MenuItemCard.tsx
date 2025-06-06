@@ -1,11 +1,11 @@
-"use client"
+'use client';
 
-import React, { useState } from "react"
-import Image from "next/image"
-import { FaStar, FaFire, FaLeaf, FaShoppingCart, FaPlus, FaMinus, FaCog } from "react-icons/fa"
-import CustomizationModal from "./CustomizationModal"
+import React, { useState } from 'react';
+import Image from 'next/image';
+import { FaStar, FaFire, FaLeaf, FaShoppingCart, FaPlus, FaMinus, FaCog } from 'react-icons/fa';
+import CustomizationModal from './CustomizationModal';
 // TODO: Remove static data import - get customization options from API
-import type { CustomizationOption } from "../../types"
+import type { CustomizationOption } from '../../types';
 
 interface MenuItem {
   id: string
@@ -31,33 +31,33 @@ interface MenuItemProps {
 }
 
 const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
-  const [quantity, setQuantity] = useState(1)
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [showCustomizationModal, setShowCustomizationModal] = useState(false)
+  const [quantity, setQuantity] = useState(1);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showCustomizationModal, setShowCustomizationModal] = useState(false);
 
   // TODO: Replace with API call to get customization options
-  const customizationOptions: any[] = []
-  const hasCustomizationOptions = customizationOptions.length > 0
+  const customizationOptions: any[] = [];
+  const hasCustomizationOptions = customizationOptions.length > 0;
 
   const handleQuantityChange = (change: number) => {
-    const newQuantity = Math.max(1, quantity + change)
-    setQuantity(newQuantity)
-  }
+    const newQuantity = Math.max(1, quantity + change);
+    setQuantity(newQuantity);
+  };
 
   const handleAddToCart = () => {
     if (hasCustomizationOptions) {
-      setShowCustomizationModal(true)
+      setShowCustomizationModal(true);
     } else {
-      onAddToCart(quantity)
+      onAddToCart(quantity);
     }
-  }
+  };
 
   const handleCustomizedAddToCart = (
     quantity: number,
     customizations: { [categoryId: string]: CustomizationOption[] },
   ) => {
-    onAddToCart(quantity, customizations)
-  }
+    onAddToCart(quantity, customizations);
+  };
 
   return (
     <>
@@ -65,7 +65,7 @@ const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
         <div className="relative h-48 w-full">
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
           {item.image ? (
-            <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+            <Image src={item.image || '/placeholder.svg'} alt={item.name} fill className="object-cover" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-800 text-gray-500">No Image</div>
           )}
@@ -101,11 +101,11 @@ const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
             <span className="text-gold-foil font-bold">${item.price.toFixed(2)}</span>
           </div>
 
-          <p className={`text-gray-400 text-sm mb-4 ${isExpanded ? "" : "line-clamp-2"}`}>{item.description}</p>
+          <p className={`text-gray-400 text-sm mb-4 ${isExpanded ? '' : 'line-clamp-2'}`}>{item.description}</p>
 
           {item.description.length > 100 && (
             <button className="text-gold-foil text-xs mb-4 hover:underline" onClick={() => setIsExpanded(!isExpanded)}>
-              {isExpanded ? "Show less" : "Read more"}
+              {isExpanded ? 'Show less' : 'Read more'}
             </button>
           )}
 
@@ -167,7 +167,7 @@ const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
         />
       )}
     </>
-  )
-}
+  );
+};
 
-export default MenuItemCard
+export default MenuItemCard;

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { createContext, useState, useContext, type ReactNode } from "react";
-import type { DeliveryContextType, DeliveryAddress } from "../../types";
+import { createContext, useState, useContext, type ReactNode } from 'react';
+import type { DeliveryContextType, DeliveryAddress } from '../../types';
 
 // Create the context with a default undefined value
 const DeliveryContext = createContext<DeliveryContextType | undefined>(
@@ -64,7 +64,7 @@ export const useDelivery = (): DeliveryContextType => {
   const context = useContext(DeliveryContext);
 
   if (context === undefined) {
-    throw new Error("useDelivery must be used within a DeliveryProvider");
+    throw new Error('useDelivery must be used within a DeliveryProvider');
   }
 
   return context;

@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { 
-  CheckCircle, 
-  Clock, 
-  Star, 
-  Gift, 
-  Users, 
-  MessageSquare, 
-  Camera, 
+import { useState, useEffect } from 'react';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import {
+  CheckCircle,
+  Clock,
+  Star,
+  Gift,
+  Users,
+  MessageSquare,
+  Camera,
   Share2,
   Trophy,
-  Target
-} from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
+  Target,
+} from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface Task {
   id: string;
@@ -71,13 +71,13 @@ export default function Tasks() {
   const filteredTasks = filter === 'all' ? tasks : tasks.filter(task => task.type === filter);
 
   const completeTask = (taskId: string) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, completed: true } : task
+    setTasks(prev => prev.map(task =>
+      task.id === taskId ? { ...task, completed: true } : task,
     ));
   };
 
   const getTimeRemaining = (expiresAt?: Date) => {
-    if (!expiresAt) return null;
+    if (!expiresAt) {return null;}
     const now = new Date();
     const diff = expiresAt.getTime() - now.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -100,7 +100,7 @@ export default function Tasks() {
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-full bg-green-500/20">
@@ -112,7 +112,7 @@ export default function Tasks() {
             </div>
           </div>
         </Card>
-        
+
         <Card className="p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-full bg-blue-500/20">
@@ -131,10 +131,10 @@ export default function Tasks() {
         {['all', 'daily', 'weekly', 'monthly', 'achievement'].map((type) => (
           <Button
             key={type}
-            variant={filter === type ? "default" : "outline"}
+            variant={filter === type ? 'default' : 'outline'}
             size="sm"
             onClick={() => setFilter(type as any)}
-            className={filter === type ? "bg-otw-gold text-black hover:bg-otw-gold/90" : ""}
+            className={filter === type ? 'bg-otw-gold text-black hover:bg-otw-gold/90' : ''}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
           </Button>
@@ -146,7 +146,7 @@ export default function Tasks() {
         {filteredTasks.map((task) => {
           const Icon = task.icon;
           const progressPercentage = task.progress ? (task.progress.current / task.progress.total) * 100 : 0;
-          
+
           return (
             <Card key={task.id} className={`p-6 relative ${task.completed ? 'opacity-75' : ''}`}>
               {task.completed && (
@@ -154,12 +154,12 @@ export default function Tasks() {
                   <CheckCircle className="w-6 h-6 text-green-400" />
                 </div>
               )}
-              
+
               <div className="flex items-start gap-4">
-                <div className={`p-3 rounded-full bg-gray-800`}>
+                <div className={'p-3 rounded-full bg-gray-800'}>
                   <Icon className={`w-6 h-6 ${getTypeColor(task.type)}`} />
                 </div>
-                
+
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="font-semibold">{task.title}</h3>
@@ -167,9 +167,9 @@ export default function Tasks() {
                       {task.type}
                     </span>
                   </div>
-                  
+
                   <p className="text-sm text-gray-400 mb-3">{task.description}</p>
-                  
+
                   {task.progress && (
                     <div className="mb-3">
                       <div className="flex justify-between text-xs text-gray-400 mb-1">
@@ -177,21 +177,21 @@ export default function Tasks() {
                         <span>{task.progress.current}/{task.progress.total}</span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-otw-gold h-2 rounded-full transition-all duration-300"
                           style={{ width: `${progressPercentage}%` }}
                         />
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="flex items-center gap-1">
                         <Gift className="w-4 h-4 text-otw-gold" />
                         <span className="text-sm font-medium text-otw-gold">{task.points} pts</span>
                       </div>
-                      
+
                       {task.expiresAt && (
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4 text-orange-400" />
@@ -201,7 +201,7 @@ export default function Tasks() {
                         </div>
                       )}
                     </div>
-                    
+
                     {!task.completed && (
                       <Button
                         size="sm"
@@ -212,7 +212,7 @@ export default function Tasks() {
                       </Button>
                     )}
                   </div>
-                  
+
                   {task.reward && (
                     <div className="mt-3 p-2 bg-otw-gold/10 rounded border border-otw-gold/20">
                       <p className="text-xs text-otw-gold">
@@ -226,7 +226,7 @@ export default function Tasks() {
           );
         })}
       </div>
-      
+
       {filteredTasks.length === 0 && (
         <div className="text-center py-12">
           <Target className="w-12 h-12 text-gray-400 mx-auto mb-4" />

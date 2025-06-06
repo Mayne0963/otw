@@ -1,48 +1,48 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { Label } from "../ui/label";
-import { Card } from "../ui/card";
-import PlaceAutocomplete from "../maps/PlaceAutocomplete";
+import { useState } from 'react';
+import { Button } from '../ui/button';
+
+import { Textarea } from '../ui/textarea';
+import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
+import { Label } from '../ui/label';
+import { Card } from '../ui/card';
+import PlaceAutocomplete from '../maps/PlaceAutocomplete';
 
 const services = [
   {
-    id: "delivery",
-    name: "Delivery",
-    description: "Food, packages, and more delivered to your door",
+    id: 'delivery',
+    name: 'Delivery',
+    description: 'Food, packages, and more delivered to your door',
   },
   {
-    id: "errands",
-    name: "Errands",
-    description: "Grocery shopping, pharmacy pickup, and other errands",
+    id: 'errands',
+    name: 'Errands',
+    description: 'Grocery shopping, pharmacy pickup, and other errands',
   },
   {
-    id: "roadside",
-    name: "Roadside Help",
-    description: "Jump starts, tire changes, and fuel delivery",
+    id: 'roadside',
+    name: 'Roadside Help',
+    description: 'Jump starts, tire changes, and fuel delivery',
   },
   {
-    id: "moving",
-    name: "Moving Help",
-    description: "Furniture moving and home relocation assistance",
+    id: 'moving',
+    name: 'Moving Help',
+    description: 'Furniture moving and home relocation assistance',
   },
 ];
 
 export default function BookingForm() {
-  const [selectedService, setSelectedService] = useState("");
+  const [selectedService, setSelectedService] = useState('');
   const [isEmergency, setIsEmergency] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     // Removed async
     e.preventDefault();
     // TODO: Implement form submission
-    console.log("Form submitted", { selectedService, isEmergency }); // Added console log for now
+    console.log('Form submitted', { selectedService, isEmergency }); // Added console log for now
   };
 
   return (

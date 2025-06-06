@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import { useJsApiLoader } from '@react-google-maps/api';
-import type { Location } from "../../types/location";
+import type { Location } from '../../types/location';
 
-const libraries: "places"[] = ["places"];
+const libraries: 'places'[] = ['places'];
 
 interface ContactMapProps {
   locations: Location[];
@@ -27,7 +27,7 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
 
   // Calculate center point of all locations
   const calculateCenter = () => {
-    if (locations.length === 0) return { lat: 37.0902, lng: -95.7129 }; // Default to US center
+    if (locations.length === 0) {return { lat: 37.0902, lng: -95.7129 };} // Default to US center
 
     const totalLat = locations.reduce(
       (sum, loc) => sum + loc.coordinates.lat,
@@ -45,7 +45,7 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
   };
 
   useEffect(() => {
-    if (!isLoaded || !mapRef.current) return;
+    if (!isLoaded || !mapRef.current) {return;}
 
     // Initialize map
     const initializeMap = () => {
@@ -56,86 +56,86 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
         center: center,
         zoom: 5,
         styles: [
-          { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+          { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
           {
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#242f3e" }],
+            elementType: 'labels.text.stroke',
+            stylers: [{ color: '#242f3e' }],
           },
-          { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+          { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
           {
-            featureType: "administrative.locality",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-          },
-          {
-            featureType: "poi",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
+            featureType: 'administrative.locality',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#d59563' }],
           },
           {
-            featureType: "poi.park",
-            elementType: "geometry",
-            stylers: [{ color: "#263c3f" }],
+            featureType: 'poi',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#d59563' }],
           },
           {
-            featureType: "poi.park",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#6b9a76" }],
+            featureType: 'poi.park',
+            elementType: 'geometry',
+            stylers: [{ color: '#263c3f' }],
           },
           {
-            featureType: "road",
-            elementType: "geometry",
-            stylers: [{ color: "#38414e" }],
+            featureType: 'poi.park',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#6b9a76' }],
           },
           {
-            featureType: "road",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#212a37" }],
+            featureType: 'road',
+            elementType: 'geometry',
+            stylers: [{ color: '#38414e' }],
           },
           {
-            featureType: "road",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#9ca5b3" }],
+            featureType: 'road',
+            elementType: 'geometry.stroke',
+            stylers: [{ color: '#212a37' }],
           },
           {
-            featureType: "road.highway",
-            elementType: "geometry",
-            stylers: [{ color: "#746855" }],
+            featureType: 'road',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#9ca5b3' }],
           },
           {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#1f2835" }],
+            featureType: 'road.highway',
+            elementType: 'geometry',
+            stylers: [{ color: '#746855' }],
           },
           {
-            featureType: "road.highway",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#f3d19c" }],
+            featureType: 'road.highway',
+            elementType: 'geometry.stroke',
+            stylers: [{ color: '#1f2835' }],
           },
           {
-            featureType: "transit",
-            elementType: "geometry",
-            stylers: [{ color: "#2f3948" }],
+            featureType: 'road.highway',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#f3d19c' }],
           },
           {
-            featureType: "transit.station",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
+            featureType: 'transit',
+            elementType: 'geometry',
+            stylers: [{ color: '#2f3948' }],
           },
           {
-            featureType: "water",
-            elementType: "geometry",
-            stylers: [{ color: "#17263c" }],
+            featureType: 'transit.station',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#d59563' }],
           },
           {
-            featureType: "water",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#515c6d" }],
+            featureType: 'water',
+            elementType: 'geometry',
+            stylers: [{ color: '#17263c' }],
           },
           {
-            featureType: "water",
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#17263c" }],
+            featureType: 'water',
+            elementType: 'labels.text.fill',
+            stylers: [{ color: '#515c6d' }],
+          },
+          {
+            featureType: 'water',
+            elementType: 'labels.text.stroke',
+            stylers: [{ color: '#17263c' }],
           },
         ],
         disableDefaultUI: true,
@@ -159,7 +159,7 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
           map: map,
           title: location.name,
           icon: {
-            url: "/images/marker.png",
+            url: '/images/marker.png',
             scaledSize: new window.google.maps.Size(30, 40),
           },
         });
@@ -176,7 +176,7 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
         });
 
         // Add click event to marker
-        marker.addListener("click", () => {
+        marker.addListener('click', () => {
           // Close any open info windows
           infoWindow.close();
 

@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { Button } from "../ui/button";
+import { useState } from 'react';
+import { Button } from '../ui/button';
 // import { Card } from "../ui/card" // Removed unused Card import
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Label } from "../ui/label";
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Upload } from "lucide-react";
+} from '../ui/select';
+import { Upload } from 'lucide-react';
 
 const businessTypes = [
-  "Restaurant",
-  "Retail Store",
-  "Service Provider",
-  "Grocery Store",
-  "Other",
+  'Restaurant',
+  'Retail Store',
+  'Service Provider',
+  'Grocery Store',
+  'Other',
 ];
 
 export default function PartnerSignup() {
@@ -32,15 +32,15 @@ export default function PartnerSignup() {
     // Removed async
     e.preventDefault();
     // TODO: Implement form submission
-    console.log("Partner signup submitted"); // Added console log for now
+    console.log('Partner signup submitted'); // Added console log for now
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Removed async
-    if (!e.target.files?.length) return;
+    if (!e.target.files?.length) {return;}
     setUploading(true);
     // TODO: Implement file upload
-    console.log("File selected:", e.target.files && e.target.files[0] ? e.target.files[0].name : 'No file selected'); // Added console log for now
+    console.log('File selected:', e.target.files && e.target.files[0] ? e.target.files[0].name : 'No file selected'); // Added console log for now
     setTimeout(() => setUploading(false), 1500); // Mock upload
   };
 
@@ -148,7 +148,7 @@ export default function PartnerSignup() {
         className="w-full bg-otw-red hover:bg-otw-gold hover:text-black"
         disabled={uploading}
       >
-        {uploading ? "Uploading..." : "Submit Application"}
+        {uploading ? 'Uploading...' : 'Submit Application'}
       </Button>
     </form>
   );

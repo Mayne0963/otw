@@ -1,23 +1,23 @@
-import Image from "next/image";
-import { Card } from "../ui/card";
-import { Award, Clock, Heart } from "lucide-react";
+import Image from 'next/image';
+import { Card } from '../ui/card';
+import { Clock, Heart } from 'lucide-react';
 
 const volunteerStories = [
   {
     id: 1,
-    name: "Aaliyah",
-    image: "/assets/volunteers/aaliyah.jpg",
+    name: 'Aaliyah',
+    image: '/assets/volunteers/aaliyah.jpg',
     story:
-      "Just delivered groceries to Mrs. Johnson on the northeast side. Her smile made my whole day! 🥰",
-    time: "2 hours ago",
+      'Just delivered groceries to Mrs. Johnson on the northeast side. Her smile made my whole day! 🥰',
+    time: '2 hours ago',
   },
   {
     id: 2,
-    name: "Marcus",
-    image: "/assets/volunteers/marcus.jpg",
+    name: 'Marcus',
+    image: '/assets/volunteers/marcus.jpg',
     story:
-      "Helped a family move their furniture today. Love being part of this amazing Fort Wayne community! 💪",
-    time: "4 hours ago",
+      'Helped a family move their furniture today. Love being part of this amazing Fort Wayne community! 💪',
+    time: '4 hours ago',
   },
 ];
 

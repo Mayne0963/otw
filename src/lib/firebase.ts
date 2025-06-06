@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 // Validate required Firebase environment variables
 const requiredEnvVars = {
@@ -60,7 +60,7 @@ export async function updateUserProfile(
   userId: string,
   updates: Partial<UserProfile>,
 ): Promise<UserProfile> {
-  const docRef = doc(firestore, "users", userId);
+  const docRef = doc(firestore, 'users', userId);
   await updateDoc(docRef, updates);
   return (await getDoc(docRef)).data() as UserProfile;
 }

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Clock, MapPin, DollarSign, Star, Loader2 } from "lucide-react";
-import { useAuth } from "../../contexts/AuthContext";
-import { collection, query, where, orderBy, getDocs, limit } from "firebase/firestore";
-import { db } from "../../lib/firebase-config";
+import { useState, useEffect } from 'react';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { Clock, MapPin, DollarSign, Star, Loader2 } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import { collection, query, where, orderBy, getDocs, limit } from 'firebase/firestore';
+import { db } from '../../lib/firebase-config';
 
 interface Order {
   id: string;
@@ -61,35 +61,35 @@ export default function OrderHistory() {
 
         // Fetch regular orders
         const ordersQuery = query(
-          collection(db, "orders"),
-          where("userRef", "==", user.uid),
-          orderBy("createdAt", "desc"),
-          limit(20)
+          collection(db, 'orders'),
+          where('userRef', '==', user.uid),
+          orderBy('createdAt', 'desc'),
+          limit(20),
         );
         const ordersSnapshot = await getDocs(ordersQuery);
         const ordersData = ordersSnapshot.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         })) as Order[];
 
         // Fetch screenshot orders
         const screenshotOrdersQuery = query(
-          collection(db, "screenshot_orders"),
-          where("customerInfo.email", "==", user.email || ""),
-          orderBy("timestamps.created", "desc"),
-          limit(20)
+          collection(db, 'screenshot_orders'),
+          where('customerInfo.email', '==', user.email || ''),
+          orderBy('timestamps.created', 'desc'),
+          limit(20),
         );
         const screenshotOrdersSnapshot = await getDocs(screenshotOrdersQuery);
         const screenshotOrdersData = screenshotOrdersSnapshot.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         })) as ScreenshotOrder[];
 
         setOrders(ordersData);
         setScreenshotOrders(screenshotOrdersData);
       } catch (err) {
-        console.error("Error fetching orders:", err);
-        setError("Failed to load order history");
+        console.error('Error fetching orders:', err);
+        setError('Failed to load order history');
       } finally {
         setLoading(false);
       }
@@ -105,14 +105,14 @@ export default function OrderHistory() {
       const total = parseFloat(order.orderDetails?.estimatedTotal?.replace(/[^\d.]/g, '') || '0');
       return sum + total;
     }, 0);
-  
+
   // For now, we'll show a placeholder for average rating since we don't have rating data
-  const avgRating = "N/A";
+  const avgRating = 'N/A';
 
   // Format date helper
   const formatDate = (date: any) => {
-    if (!date) return "Unknown";
-    
+    if (!date) {return 'Unknown';}
+
     let dateObj: Date;
     if (typeof date === 'string') {
       dateObj = new Date(date);
@@ -121,13 +121,13 @@ export default function OrderHistory() {
     } else if (date instanceof Date) {
       dateObj = date;
     } else {
-      return "Unknown";
+      return 'Unknown';
     }
-    
+
     return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 

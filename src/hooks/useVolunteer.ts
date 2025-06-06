@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { useFirestore } from "./useFirestore";
-import { Volunteer } from "../types/firestore";
-import { orderBy } from "firebase/firestore";
+import { useState, useEffect } from 'react';
+import { useFirestore } from './useFirestore';
+import { Volunteer } from '../types/firestore';
+import { orderBy } from 'firebase/firestore';
 
 export function useVolunteer(userId: string) {
   const [loading, setLoading] = useState(true);
@@ -9,10 +9,10 @@ export function useVolunteer(userId: string) {
   const [volunteer, setVolunteer] = useState<Volunteer | null>(null);
 
   const { getDocument, setDocument, subscribeToDocument, getDocuments } =
-    useFirestore<Volunteer>("volunteers");
+    useFirestore<Volunteer>('volunteers');
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {return;}
 
     const unsubscribe = subscribeToDocument(userId, (data) => {
       setVolunteer(data);
@@ -75,7 +75,7 @@ export function useVolunteer(userId: string) {
   const getLeaderboard = async () => {
     try {
       // Use the getDocuments function with proper constraints
-      return await getDocuments([orderBy("hours", "desc")]);
+      return await getDocuments([orderBy('hours', 'desc')]);
     } catch (err) {
       setError(err as Error);
       return [];

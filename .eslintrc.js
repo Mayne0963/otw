@@ -24,7 +24,7 @@ module.exports = {
     'react/prop-types': 'off',
     
     // General code quality
-    'no-console': 'warn',
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': 'error',
     'no-var': 'error',
     'prefer-const': 'error',

@@ -1,7 +1,7 @@
-"use server";
+'use server';
 // import { getCloudflareContext } from '@opennextjs/cloudflare'
 // import { headers } from "next/headers"
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers';
 
 /**
  * Increment counter and log access
@@ -22,16 +22,16 @@ export async function incrementAndLog() {
 
   // Get current count from cookie or start at 0
   let currentCount = Number.parseInt(
-    cookieStore.get("page_views")?.value || "0",
+    cookieStore.get('page_views')?.value || '0',
   );
 
   // Increment count
   currentCount += 1;
 
   // Store updated count in cookie (expires in 1 year)
-  cookieStore.set("page_views", currentCount.toString(), {
+  cookieStore.set('page_views', currentCount.toString(), {
     expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-    path: "/",
+    path: '/',
   });
 
   // Log this access in memory (will be lost on restart)
@@ -39,10 +39,10 @@ export async function incrementAndLog() {
   let recentAccessList;
   try {
     recentAccessList = JSON.parse(
-      cookieStore.get("recent_access")?.value || "[]",
+      cookieStore.get('recent_access')?.value || '[]',
     );
   } catch (error) {
-    console.error("Error parsing recent_access cookie:", error);
+    console.error('Error parsing recent_access cookie:', error);
     recentAccessList = [];
   }
   recentAccessList.unshift({ accessed_at: accessTime });
@@ -53,9 +53,9 @@ export async function incrementAndLog() {
   }
 
   // Store recent access list in cookie
-  cookieStore.set("recent_access", JSON.stringify(recentAccessList), {
+  cookieStore.set('recent_access', JSON.stringify(recentAccessList), {
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week
-    path: "/",
+    path: '/',
   });
 
   // Database operation example (commented out):
@@ -93,17 +93,17 @@ export async function getStats() {
 
   // Get current count from cookie or default to 0
   const currentCount = Number.parseInt(
-    cookieStore.get("page_views")?.value || "0",
+    cookieStore.get('page_views')?.value || '0',
   );
 
   // Get recent access list from cookie or default to empty array
   let recentAccessList;
   try {
     recentAccessList = JSON.parse(
-      cookieStore.get("recent_access")?.value || "[]",
+      cookieStore.get('recent_access')?.value || '[]',
     );
   } catch (error) {
-    console.error("Error parsing recent_access cookie:", error);
+    console.error('Error parsing recent_access cookie:', error);
     recentAccessList = [];
   }
 

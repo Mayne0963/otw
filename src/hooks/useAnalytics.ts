@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { analytics } from "../lib/services/analytics";
-import { env } from "../lib/env";
+import { useEffect } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { analytics } from '../lib/services/analytics';
+import { env } from '../lib/env';
 
 export function useAnalytics() {
   const pathname = usePathname();
@@ -14,7 +14,7 @@ export function useAnalytics() {
     if (env.ENABLE_ANALYTICS) {
       const url =
         pathname +
-        (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+        (searchParams?.toString() ? `?${searchParams.toString()}` : '');
       analytics.trackPageView(url);
     }
   }, [pathname, searchParams]);

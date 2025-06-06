@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { useFirestore } from "./useFirestore";
-import { Tracking } from "../types/firestore";
+import { useState, useEffect, useCallback } from 'react';
+import { useFirestore } from './useFirestore';
+import { Tracking } from '../types/firestore';
 
 export function useTracking(userId: string) {
   const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ export function useTracking(userId: string) {
 
   // Destructure only what we need from useFirestore
   const { setDocument, subscribeToDocument } =
-    useFirestore<Tracking>("tracking");
+    useFirestore<Tracking>('tracking');
 
   // Get address from coordinates using Google Maps Geocoding API
   const getAddressFromCoords = useCallback(async (lat: number, lng: number) => {
@@ -20,17 +20,17 @@ export function useTracking(userId: string) {
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`,
       );
       const data = await response.json();
-      return data.results[0]?.formatted_address || "Unknown location";
+      return data.results[0]?.formatted_address || 'Unknown location';
     } catch (err) {
-      console.error("Error getting address:", err);
-      return "Unknown location";
+      console.error('Error getting address:', err);
+      return 'Unknown location';
     }
   }, []);
 
   // Update tracking location in Firestore
   const updateTrackingLocation = useCallback(
     async (position: GeolocationPosition) => {
-      if (!activeTracking) return;
+      if (!activeTracking) {return;}
 
       try {
         await setDocument(activeTracking.id, {
@@ -54,7 +54,7 @@ export function useTracking(userId: string) {
   // Start tracking user's location
   const startLocationTracking = useCallback(() => {
     if (!navigator.geolocation) {
-      setError(new Error("Geolocation is not supported by your browser"));
+      setError(new Error('Geolocation is not supported by your browser'));
       return;
     }
 
@@ -68,7 +68,7 @@ export function useTracking(userId: string) {
       (error: GeolocationPositionError) => {
         // Create a proper Error object from GeolocationPositionError
         const customError = new Error(error.message);
-        customError.name = "GeolocationError";
+        customError.name = 'GeolocationError';
         setError(customError);
       },
       {
@@ -91,7 +91,7 @@ export function useTracking(userId: string) {
 
   // Start a new tracking session
   const startTracking = async (
-    type: "delivery" | "service" | "volunteer",
+    type: 'delivery' | 'service' | 'volunteer',
     destination?: {
       lat: number;
       lng: number;
@@ -100,7 +100,7 @@ export function useTracking(userId: string) {
   ) => {
     try {
       if (!location) {
-        throw new Error("Location not available");
+        throw new Error('Location not available');
       }
 
       const trackingId = Date.now().toString();
@@ -108,7 +108,7 @@ export function useTracking(userId: string) {
         id: trackingId,
         userId,
         type,
-        status: "in_progress",
+        status: 'in_progress',
         location: {
           lat: location.coords.latitude,
           lng: location.coords.longitude,
@@ -133,18 +133,18 @@ export function useTracking(userId: string) {
 
   // Update tracking status
   const updateStatus = async (
-    status: "pending" | "in_progress" | "completed" | "cancelled",
+    status: 'pending' | 'in_progress' | 'completed' | 'cancelled',
   ) => {
-    if (!activeTracking) return;
+    if (!activeTracking) {return;}
 
     try {
       await setDocument(activeTracking.id, {
         status,
         updatedAt: new Date(),
-        ...(status === "completed" && { actualArrival: new Date() }),
+        ...(status === 'completed' && { actualArrival: new Date() }),
       });
 
-      if (status === "completed" || status === "cancelled") {
+      if (status === 'completed' || status === 'cancelled') {
         stopLocationTracking();
         setActiveTracking(null);
       }
@@ -156,7 +156,7 @@ export function useTracking(userId: string) {
 
   // Subscribe to active tracking
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) {return;}
 
     const unsubscribe = subscribeToDocument(userId, (data) => {
       setActiveTracking(data);

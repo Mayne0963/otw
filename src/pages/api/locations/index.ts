@@ -3,18 +3,18 @@ import { databaseService } from '@/lib/services/database';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method === 'GET') {
     try {
       const { city, state, featured, limit } = req.query;
-      
+
       const filters: any = {};
-      if (city) filters.city = city as string;
-      if (state) filters.state = state as string;
-      if (featured !== undefined) filters.featured = featured === 'true';
-      if (limit) filters.limit = parseInt(limit as string);
-      
+      if (city) {filters.city = city as string;}
+      if (state) {filters.state = state as string;}
+      if (featured !== undefined) {filters.featured = featured === 'true';}
+      if (limit) {filters.limit = parseInt(limit as string);}
+
       const locations = await databaseService.getLocations(filters);
       res.status(200).json(locations);
     } catch (error) {

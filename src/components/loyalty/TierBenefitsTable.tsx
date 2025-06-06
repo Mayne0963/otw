@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import { FaCheck, FaTimes } from "react-icons/fa";
+import React from 'react';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 
 interface MembershipTier {
   name: string;

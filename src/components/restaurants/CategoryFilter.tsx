@@ -1,6 +1,6 @@
-"use client";
-import type { Category } from "../../types/restaurant";
-import React from "react";
+'use client';
+import type { Category } from '../../types/restaurant';
+import React from 'react';
 
 interface CategoryFilterProps {
   categories: Category[];
@@ -21,8 +21,8 @@ export default function CategoryFilter({
             key={category.id}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedCategory === category.id
-                ? "bg-[#FFD700] text-black"
-                : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
+                ? 'bg-[#FFD700] text-black'
+                : 'bg-[#1A1A1A] text-white hover:bg-[#333333]'
             }`}
             onClick={() => setSelectedCategory(category.id)}
           >

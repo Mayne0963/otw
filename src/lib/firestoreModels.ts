@@ -1,12 +1,12 @@
-import { z } from "zod";
-import { Timestamp } from "firebase-admin/firestore";
+import { z } from 'zod';
+import { Timestamp } from 'firebase-admin/firestore';
 
 // User roles
 enum UserRole {
-  Guest = "guest",
-  Member = "member",
-  Admin = "admin",
-  PartnerAdmin = "partner-admin",
+  Guest = 'guest',
+  Member = 'member',
+  Admin = 'admin',
+  PartnerAdmin = 'partner-admin',
 }
 
 export const userSchema = z.object({
@@ -25,8 +25,8 @@ export const menuItemSchema = z.object({
   price: z.number(),
   description: z.string(),
   image: z.string().url().optional(),
-  type: z.enum(["classic", "infused"]),
-  source: z.enum(["broskis", "partner"]),
+  type: z.enum(['classic', 'infused']),
+  source: z.enum(['broskis', 'partner']),
 });
 export type MenuItem = z.infer<typeof menuItemSchema>;
 
@@ -35,7 +35,7 @@ export const orderSchema = z.object({
   userRef: z.string(), // user UID
   cart: z.array(menuItemSchema),
   total: z.number(),
-  status: z.enum(["pending", "paid", "fulfilled", "cancelled"]),
+  status: z.enum(['pending', 'paid', 'fulfilled', 'cancelled']),
   stripeId: z.string().optional(),
   createdAt: z.date(),
 });

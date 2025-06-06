@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Star, Clock, DollarSign, MapPin, Check } from "lucide-react";
-import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
-import Link from "next/link";
-import type { Restaurant } from "../../types/restaurant";
-import Image from "next/image";
-import React from "react";
+import { Star, Clock, DollarSign, MapPin, Check } from 'lucide-react';
+import { Card, CardContent } from '../ui/card';
+import { Badge } from '../ui/badge';
+import Link from 'next/link';
+import type { Restaurant } from '../../types/restaurant';
+import Image from 'next/image';
+import React from 'react';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -19,7 +19,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
         <div className="relative h-48 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
           <Image
-            src={restaurant.image || "/placeholder.svg"}
+            src={restaurant.image || '/placeholder.svg'}
             alt={restaurant.name}
             fill
             className="object-cover transition-transform duration-500 hover:scale-110"
@@ -28,7 +28,7 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
           <div className="absolute bottom-0 left-0 p-4 z-20 flex items-center gap-2">
             <div className="h-12 w-12 bg-white rounded-full p-1 flex items-center justify-center overflow-hidden">
               <Image
-                src={restaurant.logo || "/placeholder.svg"}
+                src={restaurant.logo || '/placeholder.svg'}
                 alt={`${restaurant.name} logo`}
                 width={40}
                 height={40}
@@ -104,12 +104,12 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
                     >
                       <Check className="h-3 w-3 mr-1 text-green-500" />
                       {option
-                        .split("_")
+                        .split('_')
                         .map(
                           (word) =>
                             word.charAt(0).toUpperCase() + word.slice(1),
                         )
-                        .join(" ")}
+                        .join(' ')}
                     </Badge>
                   ))}
                   {restaurant.dietaryOptions.length > 3 && (
@@ -133,11 +133,11 @@ export default function RestaurantCard({ restaurant }: RestaurantCardProps) {
                     className="text-xs text-gray-300 border-gray-600"
                   >
                     {feature
-                      .split("_")
+                      .split('_')
                       .map(
                         (word) => word.charAt(0).toUpperCase() + word.slice(1),
                       )
-                      .join(" ")}
+                      .join(' ')}
                   </Badge>
                 ))}
                 {restaurant.features.length > 3 && (

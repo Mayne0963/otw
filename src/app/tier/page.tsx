@@ -1,8 +1,8 @@
-import { Button } from "../../components/ui/button";
-import { Check, Star, Shield, Clock, Gift, Zap } from "lucide-react";
-import Link from "next/link";
+import { Button } from '../../components/ui/button';
+import { Check, Star, Shield, Clock, Gift, Zap } from 'lucide-react';
+import Link from 'next/link';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default function TierMembershipPage() {
   return (
@@ -264,9 +264,9 @@ export default function TierMembershipPage() {
                 ))}
               </div>
               <p className="text-gray-300 mb-4">
-                "The Silver membership has paid for itself in just two weeks! I
+                &quot;The Silver membership has paid for itself in just two weeks! I
                 use OTW for food delivery almost daily, and the savings on fees
-                alone is worth it."
+                alone is worth it.&quot;
               </p>
               <p className="font-bold">- Michael R.</p>
               <p className="text-sm text-gray-400">Silver Member</p>
@@ -285,9 +285,9 @@ export default function TierMembershipPage() {
                 ))}
               </div>
               <p className="text-gray-300 mb-4">
-                "As a Gold member, I love the unlimited free grocery delivery.
-                It's so convenient to have my groceries delivered whenever I
-                need them without worrying about fees."
+                &quot;As a Gold member, I love the unlimited free grocery delivery.
+                It&apos;s so convenient to have my groceries delivered whenever I
+                need them without worrying about fees.&quot;
               </p>
               <p className="font-bold">- Jessica T.</p>
               <p className="text-sm text-gray-400">Gold Member</p>
@@ -306,9 +306,9 @@ export default function TierMembershipPage() {
                 ))}
               </div>
               <p className="text-gray-300 mb-4">
-                "The ride tokens that come with my Bronze membership are perfect
+                &quot;The ride tokens that come with my Bronze membership are perfect
                 for my needs. I use them for my weekly grocery trips and save a
-                ton on transportation costs."
+                ton on transportation costs.&quot;
               </p>
               <p className="font-bold">- David L.</p>
               <p className="text-sm text-gray-400">Bronze Member</p>
@@ -331,7 +331,7 @@ export default function TierMembershipPage() {
               </h3>
               <p className="text-gray-400">
                 Ride tokens are credits you can use for OTW rides. Each token is
-                worth up to $10 in ride value. They're automatically applied to
+                worth up to $10 in ride value. They&apos;re automatically applied to
                 your account each month and expire at the end of the month if
                 unused.
               </p>
@@ -378,7 +378,7 @@ export default function TierMembershipPage() {
           <h2 className="text-3xl font-bold mb-6">Ready to Join?</h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Start saving today with an OTW Tier Membership. Choose the plan
-            that's right for you and enjoy exclusive benefits.
+            that&apos;s right for you and enjoy exclusive benefits.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link href="/checkout?plan=bronze">

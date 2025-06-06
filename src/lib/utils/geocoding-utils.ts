@@ -14,7 +14,7 @@ export const GEOCODING_ENDPOINTS = {
   BATCH_GEOCODE: '/api/maps?action=batch-geocode',
   HEALTH: '/api/maps?action=health',
   STATS: '/api/maps?action=stats',
-  CLEAR_CACHE: '/api/maps?action=clear-cache'
+  CLEAR_CACHE: '/api/maps?action=clear-cache',
 } as const;
 
 /**
@@ -36,7 +36,7 @@ export class GeocodingError extends Error {
     public type: GeocodingErrorType,
     message: string,
     public statusCode?: number,
-    public retryAfter?: number
+    public retryAfter?: number,
   ) {
     super(message);
     this.name = 'GeocodingError';
@@ -57,49 +57,49 @@ export interface GeocodingRequestOptions {
  */
 export async function geocodeAddress(
   address: string,
-  options: GeocodingRequestOptions = {}
+  options: GeocodingRequestOptions = {},
 ): Promise<GeocodeResult | null> {
   const { timeout = 10000, retries = 3, retryDelay = 1000 } = options;
-  
+
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
-      
+
       const response = await fetch(GEOCODING_ENDPOINTS.GEOCODE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ address }),
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        
+
         if (response.status === 429) {
           const retryAfter = parseInt(response.headers.get('Retry-After') || '60');
           throw new GeocodingError(
             GeocodingErrorType.RATE_LIMIT_ERROR,
             'Rate limit exceeded',
             response.status,
-            retryAfter
+            retryAfter,
           );
         }
-        
+
         throw new GeocodingError(
           GeocodingErrorType.API_ERROR,
           errorData.error || `HTTP ${response.status}`,
-          response.status
+          response.status,
         );
       }
-      
+
       const data = await response.json();
       return data.result || null;
-      
+
     } catch (error) {
       if (error instanceof GeocodingError) {
         if (error.type === GeocodingErrorType.RATE_LIMIT_ERROR && attempt < retries) {
@@ -108,29 +108,29 @@ export async function geocodeAddress(
         }
         throw error;
       }
-      
+
       if (error instanceof DOMException && error.name === 'AbortError') {
         throw new GeocodingError(
           GeocodingErrorType.NETWORK_ERROR,
-          'Request timeout'
+          'Request timeout',
         );
       }
-      
+
       if (attempt < retries) {
         await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
         continue;
       }
-      
+
       throw new GeocodingError(
         GeocodingErrorType.UNKNOWN_ERROR,
-        error instanceof Error ? error.message : 'Unknown error occurred'
+        error instanceof Error ? error.message : 'Unknown error occurred',
       );
     }
   }
-  
+
   throw new GeocodingError(
     GeocodingErrorType.UNKNOWN_ERROR,
-    'Max retries exceeded'
+    'Max retries exceeded',
   );
 }
 
@@ -140,49 +140,49 @@ export async function geocodeAddress(
 export async function reverseGeocodeCoordinates(
   lat: number,
   lng: number,
-  options: GeocodingRequestOptions = {}
+  options: GeocodingRequestOptions = {},
 ): Promise<ReverseGeocodeResult | null> {
   const { timeout = 10000, retries = 3, retryDelay = 1000 } = options;
-  
+
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
-      
+
       const response = await fetch(GEOCODING_ENDPOINTS.REVERSE_GEOCODE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ lat, lng }),
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        
+
         if (response.status === 429) {
           const retryAfter = parseInt(response.headers.get('Retry-After') || '60');
           throw new GeocodingError(
             GeocodingErrorType.RATE_LIMIT_ERROR,
             'Rate limit exceeded',
             response.status,
-            retryAfter
+            retryAfter,
           );
         }
-        
+
         throw new GeocodingError(
           GeocodingErrorType.API_ERROR,
           errorData.error || `HTTP ${response.status}`,
-          response.status
+          response.status,
         );
       }
-      
+
       const data = await response.json();
       return data.result || null;
-      
+
     } catch (error) {
       if (error instanceof GeocodingError) {
         if (error.type === GeocodingErrorType.RATE_LIMIT_ERROR && attempt < retries) {
@@ -191,29 +191,29 @@ export async function reverseGeocodeCoordinates(
         }
         throw error;
       }
-      
+
       if (error instanceof DOMException && error.name === 'AbortError') {
         throw new GeocodingError(
           GeocodingErrorType.NETWORK_ERROR,
-          'Request timeout'
+          'Request timeout',
         );
       }
-      
+
       if (attempt < retries) {
         await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
         continue;
       }
-      
+
       throw new GeocodingError(
         GeocodingErrorType.UNKNOWN_ERROR,
-        error instanceof Error ? error.message : 'Unknown error occurred'
+        error instanceof Error ? error.message : 'Unknown error occurred',
       );
     }
   }
-  
+
   throw new GeocodingError(
     GeocodingErrorType.UNKNOWN_ERROR,
-    'Max retries exceeded'
+    'Max retries exceeded',
   );
 }
 
@@ -222,49 +222,49 @@ export async function reverseGeocodeCoordinates(
  */
 export async function validateAddress(
   address: string,
-  options: GeocodingRequestOptions = {}
+  options: GeocodingRequestOptions = {},
 ): Promise<AddressValidationResult> {
   const { timeout = 10000, retries = 3, retryDelay = 1000 } = options;
-  
+
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
-      
+
       const response = await fetch(GEOCODING_ENDPOINTS.VALIDATE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ address }),
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        
+
         if (response.status === 429) {
           const retryAfter = parseInt(response.headers.get('Retry-After') || '60');
           throw new GeocodingError(
             GeocodingErrorType.RATE_LIMIT_ERROR,
             'Rate limit exceeded',
             response.status,
-            retryAfter
+            retryAfter,
           );
         }
-        
+
         throw new GeocodingError(
           GeocodingErrorType.API_ERROR,
           errorData.error || `HTTP ${response.status}`,
-          response.status
+          response.status,
         );
       }
-      
+
       const data = await response.json();
       return data.result;
-      
+
     } catch (error) {
       if (error instanceof GeocodingError) {
         if (error.type === GeocodingErrorType.RATE_LIMIT_ERROR && attempt < retries) {
@@ -273,29 +273,29 @@ export async function validateAddress(
         }
         throw error;
       }
-      
+
       if (error instanceof DOMException && error.name === 'AbortError') {
         throw new GeocodingError(
           GeocodingErrorType.NETWORK_ERROR,
-          'Request timeout'
+          'Request timeout',
         );
       }
-      
+
       if (attempt < retries) {
         await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
         continue;
       }
-      
+
       throw new GeocodingError(
         GeocodingErrorType.UNKNOWN_ERROR,
-        error instanceof Error ? error.message : 'Unknown error occurred'
+        error instanceof Error ? error.message : 'Unknown error occurred',
       );
     }
   }
-  
+
   throw new GeocodingError(
     GeocodingErrorType.UNKNOWN_ERROR,
-    'Max retries exceeded'
+    'Max retries exceeded',
   );
 }
 
@@ -305,16 +305,16 @@ export async function validateAddress(
 export async function getGeocodingHealth(): Promise<any> {
   try {
     const response = await fetch(GEOCODING_ENDPOINTS.HEALTH);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     throw new GeocodingError(
       GeocodingErrorType.API_ERROR,
-      error instanceof Error ? error.message : 'Failed to get health status'
+      error instanceof Error ? error.message : 'Failed to get health status',
     );
   }
 }
@@ -325,16 +325,16 @@ export async function getGeocodingHealth(): Promise<any> {
 export async function getGeocodingStats(): Promise<any> {
   try {
     const response = await fetch(GEOCODING_ENDPOINTS.STATS);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     throw new GeocodingError(
       GeocodingErrorType.API_ERROR,
-      error instanceof Error ? error.message : 'Failed to get statistics'
+      error instanceof Error ? error.message : 'Failed to get statistics',
     );
   }
 }
@@ -345,16 +345,16 @@ export async function getGeocodingStats(): Promise<any> {
 export async function clearGeocodingCache(): Promise<void> {
   try {
     const response = await fetch(GEOCODING_ENDPOINTS.CLEAR_CACHE, {
-      method: 'POST'
+      method: 'POST',
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
   } catch (error) {
     throw new GeocodingError(
       GeocodingErrorType.API_ERROR,
-      error instanceof Error ? error.message : 'Failed to clear cache'
+      error instanceof Error ? error.message : 'Failed to clear cache',
     );
   }
 }
@@ -371,13 +371,13 @@ export function formatGeocodeResult(result: GeocodeResult): string {
  */
 export function extractAddressComponents(result: GeocodeResult) {
   const components: Record<string, string> = {};
-  
+
   result.address_components.forEach(component => {
     component.types.forEach(type => {
       components[type] = component.long_name;
     });
   });
-  
+
   return {
     streetNumber: components.street_number || '',
     route: components.route || '',
@@ -386,7 +386,7 @@ export function extractAddressComponents(result: GeocodeResult) {
     administrativeAreaLevel2: components.administrative_area_level_2 || '',
     country: components.country || '',
     postalCode: components.postal_code || '',
-    formattedAddress: result.formatted_address
+    formattedAddress: result.formatted_address,
   };
 }
 
@@ -413,19 +413,19 @@ export function calculateDistance(
   lat1: number,
   lng1: number,
   lat2: number,
-  lng2: number
+  lng2: number,
 ): number {
   const R = 6371; // Earth's radius in kilometers
   const dLat = toRadians(lat2 - lat1);
   const dLng = toRadians(lng2 - lng1);
-  
+
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(toRadians(lat1)) *
     Math.cos(toRadians(lat2)) *
     Math.sin(dLng / 2) *
     Math.sin(dLng / 2);
-  
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
@@ -439,10 +439,10 @@ function toRadians(degrees: number): number {
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);
@@ -454,10 +454,10 @@ export function debounce<T extends (...args: any[]) => any>(
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
-  
+
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       func(...args);

@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       if (!businessId) {
         return NextResponse.json(
           { success: false, error: 'Business ID is required' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       if (!businessId) {
         return NextResponse.json(
           { success: false, error: 'Business ID is required' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { success: false, error: 'Invalid action. Use "search", "details", or "reviews"' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     console.error('Yelp API error:', error);
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

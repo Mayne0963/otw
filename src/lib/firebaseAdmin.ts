@@ -1,11 +1,11 @@
-import { initializeApp, getApps, cert } from "firebase-admin/app";
-import { getFirestore, Firestore } from "firebase-admin/firestore";
-import { getAuth, Auth } from "firebase-admin/auth";
-import { getStorage, Storage } from "firebase-admin/storage";
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getFirestore, Firestore } from 'firebase-admin/firestore';
+import { getAuth, Auth } from 'firebase-admin/auth';
+import { getStorage, Storage } from 'firebase-admin/storage';
 
 // Check if we're in a build environment and skip initialization
-const isBuildTime = process.env.NODE_ENV === 'production' && 
-  (typeof window === 'undefined') && 
+const isBuildTime = process.env.NODE_ENV === 'production' &&
+  (typeof window === 'undefined') &&
   (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_PRIVATE_KEY);
 
 let adminApp: any = null;
@@ -18,27 +18,27 @@ function formatPrivateKey(privateKey: string): string {
   if (!privateKey) {
     throw new Error('Private key is required');
   }
-  
+
   // Remove any extra quotes and whitespace
   let formattedKey = privateKey.trim();
-  
+
   // Remove surrounding quotes if present
   if (formattedKey.startsWith('"') && formattedKey.endsWith('"')) {
     formattedKey = formattedKey.slice(1, -1);
   }
-  
+
   // Replace escaped newlines with actual newlines
   formattedKey = formattedKey.replace(/\\n/g, '\n');
-  
+
   // Ensure the key has proper PEM format
   if (!formattedKey.includes('-----BEGIN PRIVATE KEY-----')) {
     throw new Error('Invalid private key format: Missing PEM header');
   }
-  
+
   if (!formattedKey.includes('-----END PRIVATE KEY-----')) {
     throw new Error('Invalid private key format: Missing PEM footer');
   }
-  
+
   return formattedKey;
 }
 
@@ -46,7 +46,7 @@ function formatPrivateKey(privateKey: string): string {
 if (!isBuildTime && process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIVATE_KEY) {
   try {
     const privateKey = formatPrivateKey(process.env.FIREBASE_PRIVATE_KEY);
-    
+
     const firebaseAdminConfig = {
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
@@ -73,7 +73,7 @@ if (!isBuildTime && process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_PRIV
     adminDb = getFirestore(adminApp);
     adminAuth = getAuth(adminApp);
     adminStorage = getStorage(adminApp);
-    
+
     console.log('Firebase Admin initialized successfully');
   } catch (error) {
     console.error('Firebase Admin initialization failed:', error);

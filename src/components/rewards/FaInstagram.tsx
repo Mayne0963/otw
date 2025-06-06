@@ -1,2 +1,2 @@
-import { FaInstagram } from "react-icons/fa";
+import { FaInstagram } from 'react-icons/fa';
 export default FaInstagram;

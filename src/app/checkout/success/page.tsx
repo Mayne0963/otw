@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { FaCheckCircle, FaSpinner } from "react-icons/fa";
-import { useCart } from "../../../lib/context/CartContext";
+import { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { FaCheckCircle, FaSpinner } from 'react-icons/fa';
+import { useCart } from '../../../lib/context/CartContext';
 
 interface OrderDetails {
   id: string;
@@ -36,13 +36,13 @@ export default function CheckoutSuccess() {
   const { clearCart } = useCart();
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const sessionId = searchParams.get("session_id");
-    
+    const sessionId = searchParams.get('session_id');
+
     if (!sessionId) {
-      setError("No session ID found");
+      setError('No session ID found');
       setLoading(false);
       return;
     }
@@ -51,19 +51,19 @@ export default function CheckoutSuccess() {
     const fetchOrderDetails = async () => {
       try {
         const response = await fetch(`/api/checkout/session?session_id=${sessionId}`);
-        
+
         if (!response.ok) {
-          throw new Error("Failed to fetch order details");
+          throw new Error('Failed to fetch order details');
         }
 
         const data = await response.json();
         setOrderDetails(data);
-        
+
         // Clear cart after successful payment
         clearCart();
       } catch (err) {
-        console.error("Error fetching order details:", err);
-        setError("Failed to load order details");
+        console.error('Error fetching order details:', err);
+        setError('Failed to load order details');
       } finally {
         setLoading(false);
       }
@@ -106,7 +106,7 @@ export default function CheckoutSuccess() {
           <FaCheckCircle className="text-6xl text-green-500 mx-auto mb-4" />
           <h1 className="text-4xl font-bold mb-2">Order Confirmed!</h1>
           <p className="text-xl text-gray-400">
-            Thank you for your order. We'll send you a confirmation email shortly.
+            Thank you for your order. We&apos;ll send you a confirmation email shortly.
           </p>
         </div>
 
@@ -158,8 +158,8 @@ export default function CheckoutSuccess() {
                     <div className="flex justify-between">
                       <span className="text-gray-400">Delivery Time:</span>
                       <span className="capitalize">
-                        {orderDetails.metadata.deliveryTime === 'asap' 
-                          ? 'As Soon As Possible' 
+                        {orderDetails.metadata.deliveryTime === 'asap'
+                          ? 'As Soon As Possible'
                           : orderDetails.metadata.scheduledTime || 'ASAP'
                         }
                       </span>
@@ -182,7 +182,7 @@ export default function CheckoutSuccess() {
                         </p>
                       </div>
                     ))}
-                    
+
                     <div className="border-t border-[#333333] pt-3 mt-4">
                       <div className="flex justify-between font-bold text-lg">
                         <span>Total</span>
@@ -197,10 +197,10 @@ export default function CheckoutSuccess() {
 
               <div className="mt-8 pt-6 border-t border-[#333333]">
                 <div className="bg-[#111111] p-4 rounded-lg">
-                  <h4 className="font-bold mb-2">What's Next?</h4>
+                  <h4 className="font-bold mb-2">What&apos;s Next?</h4>
                   <ul className="text-sm text-gray-400 space-y-1">
-                    <li>• You'll receive an email confirmation shortly</li>
-                    <li>• We'll notify you when your order is being prepared</li>
+                    <li>• You&apos;ll receive an email confirmation shortly</li>
+                    <li>• We&apos;ll notify you when your order is being prepared</li>
                     <li>• Estimated delivery/pickup time: 30-45 minutes</li>
                     <li>• Track your order status in your account</li>
                   </ul>

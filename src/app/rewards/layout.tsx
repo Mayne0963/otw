@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { RewardsProvider } from "../../lib/context/RewardsContext";
+import { RewardsProvider } from '../../lib/context/RewardsContext';
 
 export default function RewardsLayout({
   children,

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import { FaTimes, FaCheck } from "react-icons/fa";
-import type { CustomizationCategory, CustomizationOption } from "../../types";
+import React, { useState, useEffect } from 'react';
+import { FaTimes, FaCheck } from 'react-icons/fa';
+import type { CustomizationCategory, CustomizationOption } from '../../types';
 
 interface CustomizationModalProps {
   item: {
@@ -43,7 +43,7 @@ const CustomizationModal: React.FC<CustomizationModalProps> = ({
     customizationOptions.forEach((category) => {
       // Initialize empty array for all categories
       initialOptions[category.id] = [];
-      
+
       if (category.required && !category.multiple) {
         // Pre-select the first option for required single-select categories
         if (category.options && Array.isArray(category.options) && category.options.length > 0) {
@@ -167,13 +167,13 @@ const CustomizationModal: React.FC<CustomizationModalProps> = ({
             <div key={category.id} className="mb-6">
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-bold">
-                  {category.name}{" "}
+                  {category.name}{' '}
                   {category.required && (
                     <span className="text-blood-red">*</span>
                   )}
                 </h3>
                 <span className="text-sm text-gray-400">
-                  {category.multiple ? "Select multiple" : "Select one"}
+                  {category.multiple ? 'Select multiple' : 'Select one'}
                 </span>
               </div>
 
@@ -189,8 +189,8 @@ const CustomizationModal: React.FC<CustomizationModalProps> = ({
                     key={option.id}
                     className={`p-3 rounded-md border ${
                       isOptionSelected(category.id, option.id)
-                        ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                        : "border-[#333333] hover:border-[#555555]"
+                        ? 'border-gold-foil bg-gold-foil bg-opacity-10'
+                        : 'border-[#333333] hover:border-[#555555]'
                     } text-left flex justify-between items-center transition-colors`}
                     onClick={() => handleOptionSelect(category, option)}
                   >

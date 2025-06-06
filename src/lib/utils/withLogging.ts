@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { logger } from "./logger";
+import { NextRequest, NextResponse } from 'next/server';
+import { logger } from './logger';
 // import { auth } from "../firebaseAdmin";
 
 type RouteHandler = (

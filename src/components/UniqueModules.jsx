@@ -1,33 +1,33 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function QRTipComponent({
-  repName = "Aaliyah Johnson",
-  repId = "OTW2847",
-  repPhoto = "/assets/volunteers/aaliyah.jpg",
+  repName = 'Aaliyah Johnson',
+  repId = 'OTW2847',
+  repPhoto = '/assets/volunteers/aaliyah.jpg',
 }) {
-  const [tipAmount, setTipAmount] = useState(5)
-  const [showTipModal, setShowTipModal] = useState(false)
-  const [tipSent, setTipSent] = useState(false)
+  const [tipAmount, setTipAmount] = useState(5);
+  const [showTipModal, setShowTipModal] = useState(false);
+  const [tipSent, setTipSent] = useState(false);
 
-  const predefinedAmounts = [2, 5, 10, 15, 20]
+  const predefinedAmounts = [2, 5, 10, 15, 20];
 
   const handleTipClick = () => {
-    setShowTipModal(true)
-  }
+    setShowTipModal(true);
+  };
 
   const handleCloseModal = () => {
-    setShowTipModal(false)
-    setTipSent(false)
-  }
+    setShowTipModal(false);
+    setTipSent(false);
+  };
 
   const handleSendTip = () => {
     // In a real app, this would process the payment
-    setTipSent(true)
-  }
+    setTipSent(true);
+  };
 
   return (
     <div className="bg-gray-900 rounded-lg p-6">
@@ -56,7 +56,7 @@ export default function QRTipComponent({
         <h3 className="text-xl font-bold mb-4">Rep Storyline</h3>
         <div className="flex items-start">
           <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4 flex-shrink-0">
-            <Image src={repPhoto || "/assets/users/default-avatar.jpg"} alt={repName} fill style={{ objectFit: "cover" }} />
+            <Image src={repPhoto || '/assets/users/default-avatar.jpg'} alt={repName} fill style={{ objectFit: 'cover' }} />
           </div>
           <div>
             <h4 className="font-bold">{repName}</h4>
@@ -115,7 +115,7 @@ export default function QRTipComponent({
 
                 <div className="flex items-center mb-6">
                   <div className="relative h-12 w-12 rounded-full overflow-hidden mr-3">
-                    <Image src={repPhoto || "/assets/users/default-avatar.jpg"} alt={repName} fill style={{ objectFit: "cover" }} />
+                    <Image src={repPhoto || '/assets/users/default-avatar.jpg'} alt={repName} fill style={{ objectFit: 'cover' }} />
                   </div>
                   <div>
                     <p className="font-bold">{repName}</p>
@@ -131,8 +131,8 @@ export default function QRTipComponent({
                         key={amount}
                         className={`py-2 rounded-lg font-bold ${
                           tipAmount === amount
-                            ? "bg-accent-gold text-black"
-                            : "bg-gray-800 text-white hover:bg-gray-700"
+                            ? 'bg-accent-gold text-black'
+                            : 'bg-gray-800 text-white hover:bg-gray-700'
                         }`}
                         onClick={() => setTipAmount(amount)}
                       >
@@ -171,7 +171,7 @@ export default function QRTipComponent({
         </div>
       )}
     </div>
-  )
+  );
 }
 
 // Emergency Mode Button Component
@@ -194,40 +194,40 @@ export function EmergencyModeButton({ onActivate }) {
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
 // Role Application Component
 export function RoleApplicationComponent() {
-  const [role, setRole] = useState("volunteer")
+  const [role, setRole] = useState('volunteer');
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    experience: "",
-    reason: "",
-  })
-  const [isSubmitted, setIsSubmitted] = useState(false)
+    name: '',
+    email: '',
+    phone: '',
+    experience: '',
+    reason: '',
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const roles = [
-    { id: "volunteer", name: "Volunteer", description: "Help with community events and services" },
-    { id: "community_leader", name: "Community Leader", description: "Organize and lead community initiatives" },
-    { id: "vip", name: "VIP Member", description: "Exclusive access to special events and services" },
-  ]
+    { id: 'volunteer', name: 'Volunteer', description: 'Help with community events and services' },
+    { id: 'community_leader', name: 'Community Leader', description: 'Organize and lead community initiatives' },
+    { id: 'vip', name: 'VIP Member', description: 'Exclusive access to special events and services' },
+  ];
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     // In a real app, this would send the application to the backend for AI verification
-    setIsSubmitted(true)
-  }
+    setIsSubmitted(true);
+  };
 
   return (
     <div className="bg-gray-900 rounded-lg p-6">
@@ -248,15 +248,15 @@ export function RoleApplicationComponent() {
           </div>
           <h4 className="text-xl font-bold mb-2">Application Submitted!</h4>
           <p className="text-gray-400 mb-6">
-            Your application for the {roles.find((r) => r.id === role)?.name} role has been submitted for review. We'll
-            notify you once it's been processed.
+            Your application for the {roles.find((r) => r.id === role)?.name} role has been submitted for review. We&apos;ll
+            notify you once it&apos;s been processed.
           </p>
           <div className="bg-black p-4 rounded-lg mb-6 text-left">
             <h5 className="font-bold mb-2">What happens next?</h5>
             <ol className="space-y-2 text-gray-400 list-decimal list-inside">
               <li>Our AI system will review your application</li>
               <li>You may be contacted for additional information</li>
-              <li>Once approved, you'll receive role access</li>
+              <li>Once approved, you&apos;ll receive role access</li>
               <li>You can check your application status in your account</li>
             </ol>
           </div>
@@ -274,7 +274,7 @@ export function RoleApplicationComponent() {
                   key={r.id}
                   type="button"
                   className={`p-4 rounded-lg text-center transition-all ${
-                    role === r.id ? "bg-primary-red text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                    role === r.id ? 'bg-primary-red text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   }`}
                   onClick={() => setRole(r.id)}
                 >
@@ -388,76 +388,76 @@ export function RoleApplicationComponent() {
         </form>
       )}
     </div>
-  )
+  );
 }
 
 // Age Verification Component for Cannabis-Infused Menu
 export function AgeVerificationComponent({ onVerified }) {
   const [formData, setFormData] = useState({
-    name: "",
-    dob: "",
+    name: '',
+    dob: '',
     agreeToTerms: false,
-  })
-  const [errors, setErrors] = useState({})
+  });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }))
+      [name]: type === 'checkbox' ? checked : value,
+    }));
 
     // Clear error when field is edited
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
         [name]: null,
-      }))
+      }));
     }
-  }
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    const newErrors = {}
+    e.preventDefault();
+    const newErrors = {};
 
     // Validate name
     if (!formData.name.trim()) {
-      newErrors.name = "Name is required"
+      newErrors.name = 'Name is required';
     }
 
     // Validate date of birth
     if (!formData.dob) {
-      newErrors.dob = "Date of birth is required"
+      newErrors.dob = 'Date of birth is required';
     } else {
-      const birthDate = new Date(formData.dob)
-      const today = new Date()
-      let age = today.getFullYear() - birthDate.getFullYear()
-      const monthDiff = today.getMonth() - birthDate.getMonth()
+      const birthDate = new Date(formData.dob);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
 
       if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--
+        age--;
       }
 
       if (age < 21) {
-        newErrors.dob = "You must be 21 or older"
+        newErrors.dob = 'You must be 21 or older';
       }
     }
 
     // Validate terms agreement
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = "You must agree to the terms"
+      newErrors.agreeToTerms = 'You must agree to the terms';
     }
 
     if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors)
-      return
+      setErrors(newErrors);
+      return;
     }
 
     // If validation passes, call the onVerified callback
     if (onVerified) {
-      onVerified()
+      onVerified();
     }
-  }
+  };
 
   return (
     <div className="bg-gray-900 rounded-lg p-6">
@@ -477,7 +477,7 @@ export function AgeVerificationComponent({ onVerified }) {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 ${errors.name ? "border border-red-500 focus:ring-red-500" : "focus:ring-primary-red"}`}
+            className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 ${errors.name ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-primary-red'}`}
           />
           {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
         </div>
@@ -492,13 +492,13 @@ export function AgeVerificationComponent({ onVerified }) {
             name="dob"
             value={formData.dob}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 ${errors.dob ? "border border-red-500 focus:ring-red-500" : "focus:ring-primary-red"}`}
+            className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 ${errors.dob ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-primary-red'}`}
           />
           {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
         </div>
 
         <div className="mb-6">
-          <label className={`flex items-start ${errors.agreeToTerms ? "text-red-500" : "text-gray-400"}`}>
+          <label className={`flex items-start ${errors.agreeToTerms ? 'text-red-500' : 'text-gray-400'}`}>
             <input
               type="checkbox"
               name="agreeToTerms"
@@ -542,8 +542,8 @@ export function AgeVerificationComponent({ onVerified }) {
         </button>
       </form>
     </div>
-  )
+  );
 }
 
 // Export all components
-export { AgeVerificationComponent, RoleApplicationComponent, EmergencyModeButton, QRTipComponent as default }
+export { AgeVerificationComponent, RoleApplicationComponent, EmergencyModeButton, QRTipComponent as default };

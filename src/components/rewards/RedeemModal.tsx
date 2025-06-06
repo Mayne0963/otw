@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import React from "react";
-import Image from "next/image"; // Import next/image
+import React from 'react';
+import Image from 'next/image'; // Import next/image
 
-import { useState } from "react";
+import { useState } from 'react';
 import {
   FaTimes,
   FaGift,
   FaCheck,
   FaExclamationTriangle,
-} from "react-icons/fa";
-import { useRewards } from "../../lib/context/RewardsContext";
-import type { Reward } from "../../types/reward";
+} from 'react-icons/fa';
+import { useRewards } from '../../lib/context/RewardsContext';
+import type { Reward } from '../../types/reward';
 
 interface RedeemModalProps {
   reward: Reward;
@@ -27,7 +27,7 @@ const RedeemModal: React.FC<RedeemModalProps> = ({
   const { redeemPoints } = useRewards();
   const [step, setStep] = useState(1);
   const [isRedeeming, setIsRedeeming] = useState(false);
-  const [redemptionCode, setRedemptionCode] = useState("");
+  const [redemptionCode, setRedemptionCode] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   // Check if user has enough points
@@ -57,8 +57,8 @@ const RedeemModal: React.FC<RedeemModalProps> = ({
       // Show success step
       setStep(2);
     } catch (err) {
-      console.error("Redemption error:", err);
-      setError("An error occurred during redemption. Please try again.");
+      console.error('Redemption error:', err);
+      setError('An error occurred during redemption. Please try again.');
     } finally {
       setIsRedeeming(false);
     }
@@ -69,7 +69,7 @@ const RedeemModal: React.FC<RedeemModalProps> = ({
       <div className="bg-[#1A1A1A] rounded-lg shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
         <div className="relative p-6 border-b border-[#333333]">
           <h2 className="text-xl font-bold pr-8">
-            {step === 1 ? "Redeem Reward" : "Redemption Successful"}
+            {step === 1 ? 'Redeem Reward' : 'Redemption Successful'}
           </h2>
           <button
             onClick={onClose}
@@ -87,7 +87,7 @@ const RedeemModal: React.FC<RedeemModalProps> = ({
                 <div className="w-20 h-20 bg-cover bg-center rounded-md overflow-hidden flex-shrink-0 mr-4 relative">
                   {/* Replaced <img> with next/image */}
                   <Image
-                    src={reward.image || "/placeholder.svg"}
+                    src={reward.image || '/placeholder.svg'}
                     alt={reward.name}
                     layout="fill"
                     objectFit="cover"
@@ -128,7 +128,7 @@ const RedeemModal: React.FC<RedeemModalProps> = ({
               <div className="flex items-center justify-between mb-6">
                 <span className="text-gray-400">Remaining Points:</span>
                 <span
-                  className={`font-bold ${hasEnoughPoints ? "" : "text-blood-red"}`}
+                  className={`font-bold ${hasEnoughPoints ? '' : 'text-blood-red'}`}
                 >
                   {userPoints - reward.pointsRequired}
                 </span>
@@ -176,7 +176,7 @@ const RedeemModal: React.FC<RedeemModalProps> = ({
                       Redeeming...
                     </span>
                   ) : (
-                    "Redeem Reward"
+                    'Redeem Reward'
                   )}
                 </button>
               </div>
@@ -190,7 +190,7 @@ const RedeemModal: React.FC<RedeemModalProps> = ({
               <h3 className="text-xl font-bold mb-4">Reward Redeemed!</h3>
               <p className="text-gray-300 mb-6">
                 {/* Fixed unescaped entity */}
-                You&apos;ve successfully redeemed {reward.name} for{" "}
+                You&apos;ve successfully redeemed {reward.name} for{' '}
                 {reward.pointsRequired} points.
               </p>
 
@@ -212,13 +212,13 @@ const RedeemModal: React.FC<RedeemModalProps> = ({
                 <div className="bg-[#111111] p-4 rounded-md mb-6">
                   <p className="text-sm text-gray-300">
                     <FaExclamationTriangle className="inline-block mr-2 text-citrus-orange" />
-                    This reward must be used by{" "}
+                    This reward must be used by{' '}
                     {new Date(
                       Date.now() + reward.expirationDays * 24 * 60 * 60 * 1000,
-                    ).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
+                    ).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
                     })}
                     .
                   </p>

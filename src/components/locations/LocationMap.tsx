@@ -1,12 +1,12 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import type { Location } from "../../types/location";
+'use client';
+import React, { useEffect, useState } from 'react';
+import type { Location } from '../../types/location';
 import {
   FaMapMarkerAlt,
   FaDirections,
   FaPhone,
   FaInfoCircle,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 
 interface LocationMapProps {
   locations: Location[];
@@ -32,11 +32,11 @@ const LocationMap: React.FC<LocationMapProps> = ({
     const checkMapAvailability = async () => {
       try {
         // Check if maps are available without exposing API key
-        const response = await fetch("/api/maps");
+        const response = await fetch('/api/maps');
         const data = (await response.json()) as MapAvailabilityResponse;
         setMapAvailable(data.hasApiKey);
       } catch (error) {
-        console.error("Error checking map availability:", error);
+        console.error('Error checking map availability:', error);
         setMapAvailable(false);
       } finally {
         setIsLoading(false);
@@ -81,12 +81,12 @@ const LocationMap: React.FC<LocationMapProps> = ({
             key={location.id}
             className={`p-4 rounded-lg cursor-pointer transition-all ${
               selectedLocation?.id === location.id
-                ? "bg-gold-foil/20 border border-gold-foil"
-                : "bg-gray-800 hover:bg-gray-700"
+                ? 'bg-gold-foil/20 border border-gold-foil'
+                : 'bg-gray-800 hover:bg-gray-700'
             }`}
             onClick={() => onMarkerClick(location)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+              if (e.key === 'Enter' || e.key === ' ') {
                 onMarkerClick(location);
               }
             }}
@@ -137,7 +137,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
               </a>
 
               <a
-                href={`tel:${location.phone.replace(/[^0-9]/g, "")}`}
+                href={`tel:${location.phone.replace(/[^0-9]/g, '')}`}
                 className="flex items-center text-gold-foil hover:text-gold-foil/80 text-sm"
                 aria-label={`Call ${location.name}`}
               >

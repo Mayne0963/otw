@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react"; // Added React import
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
+import React, { useEffect, useState } from 'react'; // Added React import
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
 // import { Progress } from '../ui/progress' // Removed unused Progress import
-import { Badge } from "../ui/badge";
-import Confetti from "react-confetti";
+import { Badge } from '../ui/badge';
+import Confetti from 'react-confetti';
 
 interface PrizeHistoryItem {
   prize: string;
@@ -75,13 +75,13 @@ export default function RewardsDashboard() {
         const token = await (window as any).firebase
           ?.auth()
           .currentUser?.getIdToken();
-        const res = await fetch("/api/user-profile", {
+        const res = await fetch('/api/user-profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data: ProfileResponse = await res.json(); // Typed data
         setProfile(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load profile");
+        setError(err instanceof Error ? err.message : 'Failed to load profile');
         setProfile(null); // Set profile to null on error
       } finally {
         setLoading(false);
@@ -98,20 +98,20 @@ export default function RewardsDashboard() {
       const token = await (window as any).firebase
         ?.auth()
         .currentUser?.getIdToken();
-      const res = await fetch("/api/redeem-spin", {
-        method: "POST",
+      const res = await fetch('/api/redeem-spin', {
+        method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
       const data: SpinResultData = await res.json(); // Typed data
       if (data.error) {
         setError(
-          data.error === "Cooldown"
+          data.error === 'Cooldown'
             ? `Please wait ${Math.ceil((data.wait || 0) / 60)} min before your next spin.`
             : data.error,
         );
       } else {
         setSpinResult(data);
-        if (data.prize && data.prize.type !== "none") {
+        if (data.prize && data.prize.type !== 'none') {
           setShowConfetti(true);
           setTimeout(() => setShowConfetti(false), 4000);
         }
@@ -124,13 +124,13 @@ export default function RewardsDashboard() {
   };
 
   if (loading)
-    return <div className="text-center py-12">Loading rewards...</div>;
+    {return <div className="text-center py-12">Loading rewards...</div>;}
   if (!profile || !profile.user || !profile.rewards)
-    return (
+    {return (
       <div className="text-center py-12 text-red-500">
         Could not load profile data.
       </div>
-    ); // Added null check for profile.user and profile.rewards
+    );} // Added null check for profile.user and profile.rewards
 
   const { rewards, user } = profile;
   const spinsRemaining = rewards?.spinsRemaining || 0;
@@ -141,7 +141,7 @@ export default function RewardsDashboard() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      {showConfetti && typeof window !== "undefined" && (
+      {showConfetti && typeof window !== 'undefined' && (
         <Confetti
           width={window.innerWidth}
           height={window.innerHeight}
@@ -153,7 +153,7 @@ export default function RewardsDashboard() {
         <h2 className="text-2xl font-bold mb-2">Rewards Dashboard</h2>
         <div className="flex items-center gap-4">
           <Badge variant="default">Points: {user.rewardPoints}</Badge>
-          <Badge variant={spinsRemaining > 0 ? "default" : "destructive"}>
+          <Badge variant={spinsRemaining > 0 ? 'default' : 'destructive'}>
             Spins Remaining: {spinsRemaining}
           </Badge>
         </div>
@@ -163,19 +163,19 @@ export default function RewardsDashboard() {
             disabled={spinning || spinsRemaining < 1}
             className="bg-otw-gold-600 hover:bg-otw-gold-700 text-otw-black-950 font-bold px-6 py-2"
           >
-            {spinning ? "Spinning..." : "Spin the Wheel!"}
+            {spinning ? 'Spinning...' : 'Spin the Wheel!'}
           </Button>
           {error && <span className="text-red-500 text-sm">{error}</span>}
         </div>
         {spinResult && (
           <div className="mt-4 text-center">
             <h3 className="text-xl font-bold mb-2">
-              {spinResult.prize?.name || "No Prize"}
+              {spinResult.prize?.name || 'No Prize'}
             </h3>
             <p className="text-gray-400">
-              {spinResult.prize?.type === "none"
-                ? "Better luck next time!"
-                : "Congratulations!"}
+              {spinResult.prize?.type === 'none'
+                ? 'Better luck next time!'
+                : 'Congratulations!'}
             </p>
           </div>
         )}

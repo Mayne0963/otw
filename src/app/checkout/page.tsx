@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { useCart } from "../../lib/context/CartContext";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useCart } from '../../lib/context/CartContext';
 import {
   FaArrowLeft,
   FaCreditCard,
@@ -15,9 +15,9 @@ import {
   FaShoppingBag,
   FaCheck,
   FaExclamationTriangle,
-} from "react-icons/fa";
-import { getAuth } from "firebase/auth";
-import PlaceAutocomplete, { PlaceSuggestion } from "../../components/PlaceAutocomplete";
+} from 'react-icons/fa';
+import { getAuth } from 'firebase/auth';
+import PlaceAutocomplete, { PlaceSuggestion } from '../../components/PlaceAutocomplete';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -33,38 +33,38 @@ export default function CheckoutPage() {
   // Form state
   const [formData, setFormData] = useState({
     // Contact Information
-    email: "",
-    phone: "",
+    email: '',
+    phone: '',
 
     // Delivery Information
-    firstName: "",
-    lastName: "",
-    address: "",
-    apartment: "",
-    city: "",
-    state: "",
-    zipCode: "",
-    deliveryInstructions: "",
+    firstName: '',
+    lastName: '',
+    address: '',
+    apartment: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    deliveryInstructions: '',
 
     // Payment Information
-    paymentMethod: "card" as "card" | "cash",
-    cardNumber: "",
-    cardName: "",
-    expiryDate: "",
-    cvv: "",
+    paymentMethod: 'card' as 'card' | 'cash',
+    cardNumber: '',
+    cardName: '',
+    expiryDate: '',
+    cvv: '',
 
     // Order Type
-    orderType: "delivery" as "delivery" | "pickup",
+    orderType: 'delivery' as 'delivery' | 'pickup',
 
     // Pickup Location (if pickup selected)
-    pickupLocation: "",
+    pickupLocation: '',
 
     // Delivery Options
-    deliveryTime: "asap" as "asap" | "scheduled",
-    scheduledTime: "",
+    deliveryTime: 'asap' as 'asap' | 'scheduled',
+    scheduledTime: '',
 
     // Promo Code
-    promoCode: "",
+    promoCode: '',
 
     // Terms
     agreeToTerms: false,
@@ -87,16 +87,16 @@ export default function CheckoutPage() {
 
   // Format customizations for display
   const formatCustomizations = (item: CartItem) => {
-    if (!item.customizations?.length) return "";
+    if (!item.customizations?.length) {return '';}
     return `Customizations: ${item.customizations
       .map((c) => `${c.name}: ${c.value}`)
-      .join(", ")}`;
+      .join(', ')}`;
   };
 
   // Redirect to cart if cart is empty
   useEffect(() => {
     if (items.length === 0 && !orderComplete) {
-      router.push("/cart");
+      router.push('/cart');
     }
   }, [items, router, orderComplete]);
 
@@ -104,20 +104,20 @@ export default function CheckoutPage() {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     const checked =
-      type === "checkbox" ? (e.target as HTMLInputElement).checked : undefined;
+      type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
 
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
   // Handle order type change
-  const handleOrderTypeChange = (type: "delivery" | "pickup") => {
+  const handleOrderTypeChange = (type: 'delivery' | 'pickup') => {
     setFormData({
       ...formData,
       orderType: type,
@@ -146,7 +146,7 @@ export default function CheckoutPage() {
 
     try {
       // ====== CASH ON ARRIVAL =========
-      if (formData.paymentMethod === "cash") {
+      if (formData.paymentMethod === 'cash') {
         const orderData = {
           items: items.map((item) => ({
             name: item.name,
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
             phone: formData.phone,
           },
           deliveryInfo:
-            formData.orderType === "delivery"
+            formData.orderType === 'delivery'
               ? {
                   firstName: formData.firstName,
                   lastName: formData.lastName,
@@ -176,21 +176,21 @@ export default function CheckoutPage() {
                 },
           deliveryTime: formData.deliveryTime,
           scheduledTime: formData.scheduledTime,
-          paymentMethod: "cash",
+          paymentMethod: 'cash',
           subtotal,
           tax,
           total,
         };
 
-        const response = await fetch("/api/orders/create", {
-          method: "POST",
+        const response = await fetch('/api/orders/create', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(orderData),
         });
         if (!response.ok) {
-          throw new Error("Failed to create order");
+          throw new Error('Failed to create order');
         }
         const result = await response.json();
         localStorage.setItem(
@@ -198,7 +198,7 @@ export default function CheckoutPage() {
           JSON.stringify({
             ...orderData,
             orderId: result.orderId,
-          })
+          }),
         );
         router.push(`/checkout/cash-success?orderId=${result.orderId}`);
         return;
@@ -209,7 +209,7 @@ export default function CheckoutPage() {
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) {
-        throw new Error("Authentication required");
+        throw new Error('Authentication required');
       }
       const token = await user.getIdToken();
 
@@ -220,7 +220,7 @@ export default function CheckoutPage() {
           quantity: item.quantity,
           description: item.customizations?.length
             ? `Customizations: ${item.customizations.map(
-                (c) => `${c.name}: ${c.value}`
+                (c) => `${c.name}: ${c.value}`,
               )}`
             : undefined,
         })),
@@ -229,35 +229,35 @@ export default function CheckoutPage() {
           email: formData.email,
           phone: formData.phone,
           deliveryAddress:
-            formData.orderType === "delivery"
+            formData.orderType === 'delivery'
               ? `${formData.address}${
-                  formData.apartment ? `, ${formData.apartment}` : ""
+                  formData.apartment ? `, ${formData.apartment}` : ''
                 }, ${formData.city}, ${formData.state} ${formData.zipCode}`
               : undefined,
           pickupLocation:
-            formData.orderType === "pickup" ? formData.pickupLocation : undefined,
+            formData.orderType === 'pickup' ? formData.pickupLocation : undefined,
           deliveryTime: formData.deliveryTime,
           scheduledTime: formData.scheduledTime,
         },
       };
 
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(checkoutData),
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create checkout session");
+        throw new Error(errorData.error || 'Failed to create checkout session');
       }
       const { url } = await response.json();
       window.location.href = url;
     } catch (err) {
-      console.error("Order processing error:", err);
-      setError("There was an error processing your payment. Please try again.");
+      console.error('Order processing error:', err);
+      setError('There was an error processing your payment. Please try again.');
       setIsProcessing(false);
     }
   };
@@ -266,36 +266,36 @@ export default function CheckoutPage() {
   const validateForm = () => {
     const errors: Record<string, string> = {};
     if (step === 1) {
-      if (!formData.email) errors.email = "Email is required";
-      if (!formData.phone) errors.phone = "Phone number is required";
-      if (formData.orderType === "delivery") {
-        if (!formData.firstName) errors.firstName = "First name is required";
-        if (!formData.lastName) errors.lastName = "Last name is required";
-        if (!formData.address) errors.address = "Address is required";
-        if (!formData.city) errors.city = "City is required";
-        if (!formData.state) errors.state = "State is required";
-        if (!formData.zipCode) errors.zipCode = "ZIP code is required";
+      if (!formData.email) {errors.email = 'Email is required';}
+      if (!formData.phone) {errors.phone = 'Phone number is required';}
+      if (formData.orderType === 'delivery') {
+        if (!formData.firstName) {errors.firstName = 'First name is required';}
+        if (!formData.lastName) {errors.lastName = 'Last name is required';}
+        if (!formData.address) {errors.address = 'Address is required';}
+        if (!formData.city) {errors.city = 'City is required';}
+        if (!formData.state) {errors.state = 'State is required';}
+        if (!formData.zipCode) {errors.zipCode = 'ZIP code is required';}
       } else {
         if (!formData.pickupLocation)
-          errors.pickupLocation = "Please select a pickup location";
+          {errors.pickupLocation = 'Please select a pickup location';}
       }
     } else if (step === 2) {
-      if (!formData.cardNumber) errors.cardNumber = "Card number is required";
-      else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, "")))
-        errors.cardNumber = "Please enter a valid 16-digit card number";
-      if (!formData.cardName) errors.cardName = "Name on card is required";
-      if (!formData.expiryDate) errors.expiryDate = "Expiry date is required";
+      if (!formData.cardNumber) {errors.cardNumber = 'Card number is required';}
+      else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, '')))
+        {errors.cardNumber = 'Please enter a valid 16-digit card number';}
+      if (!formData.cardName) {errors.cardName = 'Name on card is required';}
+      if (!formData.expiryDate) {errors.expiryDate = 'Expiry date is required';}
       else if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate))
-        errors.expiryDate = "Please use MM/YY format";
-      if (!formData.cvv) errors.cvv = "CVV is required";
+        {errors.expiryDate = 'Please use MM/YY format';}
+      if (!formData.cvv) {errors.cvv = 'CVV is required';}
       else if (!/^\d{3,4}$/.test(formData.cvv))
-        errors.cvv = "CVV must be 3 or 4 digits";
+        {errors.cvv = 'CVV must be 3 or 4 digits';}
       if (!formData.agreeToTerms)
-        errors.agreeToTerms = "You must agree to the terms and conditions";
+        {errors.agreeToTerms = 'You must agree to the terms and conditions';}
     }
 
     if (Object.keys(errors).length > 0) {
-      setError("Please correct the errors in the form");
+      setError('Please correct the errors in the form');
       return false;
     }
     setError(null);
@@ -304,14 +304,14 @@ export default function CheckoutPage() {
 
   // Format card number with spaces
   const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     const matches = v.match(/\d{4,16}/g);
-    const match = (matches && matches[0]) || "";
+    const match = (matches && matches[0]) || '';
     const parts: string[] = [];
     for (let i = 0; i < match.length; i += 4) {
       parts.push(match.substring(i, i + 4));
     }
-    return parts.length ? parts.join(" ") : value;
+    return parts.length ? parts.join(' ') : value;
   };
 
   // Handle card number input
@@ -326,7 +326,7 @@ export default function CheckoutPage() {
   // Handle expiry date input
   const handleExpiryDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let { value } = e.target;
-    value = value.replace(/\D/g, "");
+    value = value.replace(/\D/g, '');
     if (value.length > 2) {
       value = `${value.slice(0, 2)}/${value.slice(2, 4)}`;
     }
@@ -364,12 +364,12 @@ export default function CheckoutPage() {
                 </div>
                 <div className="border-t border-[#333333] pt-4 mt-4">
                   <p className="text-gray-300 mb-2">
-                    <strong>Order Type:</strong>{" "}
-                    {formData.orderType === "delivery" ? "Delivery" : "Pickup"}
+                    <strong>Order Type:</strong>{' '}
+                    {formData.orderType === 'delivery' ? 'Delivery' : 'Pickup'}
                   </p>
-                  {formData.orderType === "delivery" ? (
+                  {formData.orderType === 'delivery' ? (
                     <p className="text-gray-300 mb-2">
-                      <strong>Delivery Address:</strong> {formData.address},{" "}
+                      <strong>Delivery Address:</strong> {formData.address},{' '}
                       {formData.city}, {formData.state} {formData.zipCode}
                     </p>
                   ) : (
@@ -378,9 +378,9 @@ export default function CheckoutPage() {
                     </p>
                   )}
                   <p className="text-gray-300">
-                    <strong>Estimated Time:</strong>{" "}
-                    {formData.deliveryTime === "asap"
-                      ? "30-45 minutes"
+                    <strong>Estimated Time:</strong>{' '}
+                    {formData.deliveryTime === 'asap'
+                      ? '30-45 minutes'
                       : formData.scheduledTime}
                   </p>
                 </div>
@@ -447,31 +447,31 @@ export default function CheckoutPage() {
                   <div className="flex items-center">
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        step >= 1 ? "bg-gold-foil text-black" : "bg-[#333333] text-white"
+                        step >= 1 ? 'bg-gold-foil text-black' : 'bg-[#333333] text-white'
                       }`}
                     >
                       1
                     </div>
                     <div
                       className={`flex-1 h-1 mx-2 ${
-                        step >= 2 ? "bg-gold-foil" : "bg-[#333333]"
+                        step >= 2 ? 'bg-gold-foil' : 'bg-[#333333]'
                       }`}
                     ></div>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        step >= 2 ? "bg-gold-foil text-black" : "bg-[#333333] text-white"
+                        step >= 2 ? 'bg-gold-foil text-black' : 'bg-[#333333] text-white'
                       }`}
                     >
                       2
                     </div>
                     <div
                       className={`flex-1 h-1 mx-2 ${
-                        step >= 3 ? "bg-gold-foil" : "bg-[#333333]"
+                        step >= 3 ? 'bg-gold-foil' : 'bg-[#333333]'
                       }`}
                     ></div>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        step >= 3 ? "bg-gold-foil text-black" : "bg-[#333333] text-white"
+                        step >= 3 ? 'bg-gold-foil text-black' : 'bg-[#333333] text-white'
                       }`}
                     >
                       3
@@ -535,11 +535,11 @@ export default function CheckoutPage() {
                           <button
                             type="button"
                             className={`p-4 rounded-lg border ${
-                              formData.orderType === "delivery"
-                                ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                                : "border-[#333333] hover:border-[#555555]"
+                              formData.orderType === 'delivery'
+                                ? 'border-gold-foil bg-gold-foil bg-opacity-10'
+                                : 'border-[#333333] hover:border-[#555555]'
                             } flex flex-col items-center`}
-                            onClick={() => handleOrderTypeChange("delivery")}
+                            onClick={() => handleOrderTypeChange('delivery')}
                           >
                             <span className="text-xl mb-2">🚚</span>
                             <span className="font-medium">Delivery</span>
@@ -547,11 +547,11 @@ export default function CheckoutPage() {
                           <button
                             type="button"
                             className={`p-4 rounded-lg border ${
-                              formData.orderType === "pickup"
-                                ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                                : "border-[#333333] hover:border-[#555555]"
+                              formData.orderType === 'pickup'
+                                ? 'border-gold-foil bg-gold-foil bg-opacity-10'
+                                : 'border-[#333333] hover:border-[#555555]'
                             } flex flex-col items-center`}
-                            onClick={() => handleOrderTypeChange("pickup")}
+                            onClick={() => handleOrderTypeChange('pickup')}
                           >
                             <span className="text-xl mb-2">🏬</span>
                             <span className="font-medium">Pickup</span>
@@ -559,7 +559,7 @@ export default function CheckoutPage() {
                         </div>
                       </div>
 
-                      {formData.orderType === "delivery" ? (
+                      {formData.orderType === 'delivery' ? (
                         <div>
                           <h2 className="text-xl font-bold mb-4">Delivery Address</h2>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -599,7 +599,7 @@ export default function CheckoutPage() {
                             </label>
                             <PlaceAutocomplete
                               onSelectAddress={(s) => {
-                                console.log("Selected address:", s);
+                                console.log('Selected address:', s);
                                 setSelected(s);
                                 // Update form data with selected address
                                 setFormData(prev => ({
@@ -725,16 +725,16 @@ export default function CheckoutPage() {
                         <div className="grid grid-cols-2 gap-4">
                           <label
                             className={`p-4 rounded-lg border cursor-pointer ${
-                              formData.deliveryTime === "asap"
-                                ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                                : "border-[#333333]"
+                              formData.deliveryTime === 'asap'
+                                ? 'border-gold-foil bg-gold-foil bg-opacity-10'
+                                : 'border-[#333333]'
                             }`}
                           >
                             <input
                               type="radio"
                               name="deliveryTime"
                               value="asap"
-                              checked={formData.deliveryTime === "asap"}
+                              checked={formData.deliveryTime === 'asap'}
                               onChange={handleChange}
                               className="hidden"
                             />
@@ -749,16 +749,16 @@ export default function CheckoutPage() {
 
                           <label
                             className={`p-4 rounded-lg border cursor-pointer ${
-                              formData.deliveryTime === "scheduled"
-                                ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                                : "border-[#333333]"
+                              formData.deliveryTime === 'scheduled'
+                                ? 'border-gold-foil bg-gold-foil bg-opacity-10'
+                                : 'border-[#333333]'
                             }`}
                           >
                             <input
                               type="radio"
                               name="deliveryTime"
                               value="scheduled"
-                              checked={formData.deliveryTime === "scheduled"}
+                              checked={formData.deliveryTime === 'scheduled'}
                               onChange={handleChange}
                               className="hidden"
                             />
@@ -772,7 +772,7 @@ export default function CheckoutPage() {
                           </label>
                         </div>
 
-                        {formData.deliveryTime === "scheduled" && (
+                        {formData.deliveryTime === 'scheduled' && (
                           <div className="mt-4">
                             <label htmlFor="scheduledTime" className="block text-sm font-medium mb-1">
                               Select Time *
@@ -820,12 +820,12 @@ export default function CheckoutPage() {
                             <button
                               type="button"
                               className={`p-4 rounded-lg border ${
-                                formData.paymentMethod === "card"
-                                  ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                                  : "border-[#333333] hover:border-[#555555]"
+                                formData.paymentMethod === 'card'
+                                  ? 'border-gold-foil bg-gold-foil bg-opacity-10'
+                                  : 'border-[#333333] hover:border-[#555555]'
                               } flex flex-col items-center`}
                               onClick={() =>
-                                setFormData((prev) => ({ ...prev, paymentMethod: "card" }))
+                                setFormData((prev) => ({ ...prev, paymentMethod: 'card' }))
                               }
                             >
                               <span className="text-xl mb-2">💳</span>
@@ -837,12 +837,12 @@ export default function CheckoutPage() {
                             <button
                               type="button"
                               className={`p-4 rounded-lg border ${
-                                formData.paymentMethod === "cash"
-                                  ? "border-gold-foil bg-gold-foil bg-opacity-10"
-                                  : "border-[#333333] hover:border-[#555555]"
+                                formData.paymentMethod === 'cash'
+                                  ? 'border-gold-foil bg-gold-foil bg-opacity-10'
+                                  : 'border-[#333333] hover:border-[#555555]'
                               } flex flex-col items-center`}
                               onClick={() =>
-                                setFormData((prev) => ({ ...prev, paymentMethod: "cash" }))
+                                setFormData((prev) => ({ ...prev, paymentMethod: 'cash' }))
                               }
                             >
                               <span className="text-xl mb-2">💵</span>
@@ -854,7 +854,7 @@ export default function CheckoutPage() {
                           </div>
                         </div>
 
-                        {formData.paymentMethod === "card" && (
+                        {formData.paymentMethod === 'card' && (
                           <div className="space-y-4">
                             <div className="mb-4">
                               <label htmlFor="cardNumber" className="block text-sm font-medium mb-1">
@@ -969,11 +969,11 @@ export default function CheckoutPage() {
                               required
                             />
                             <span className="text-sm">
-                              I agree to the{" "}
+                              I agree to the{' '}
                               <Link href="/terms" className="text-gold-foil hover:underline">
                                 Terms of Service
-                              </Link>{" "}
-                              and{" "}
+                              </Link>{' '}
+                              and{' '}
                               <Link href="/privacy" className="text-gold-foil hover:underline">
                                 Privacy Policy
                               </Link>
@@ -994,24 +994,24 @@ export default function CheckoutPage() {
                           <h3 className="font-bold mb-2">Order Details</h3>
                           <div className="space-y-2 text-sm">
                             <p>
-                              <span className="text-gray-400">Order Type:</span>{" "}
+                              <span className="text-gray-400">Order Type:</span>{' '}
                               <span className="font-medium">
-                                {formData.orderType === "delivery" ? "Delivery" : "Pickup"}
+                                {formData.orderType === 'delivery' ? 'Delivery' : 'Pickup'}
                               </span>
                             </p>
 
-                            {formData.orderType === "delivery" ? (
+                            {formData.orderType === 'delivery' ? (
                               <>
                                 <p>
-                                  <span className="text-gray-400">Delivery Address:</span>{" "}
+                                  <span className="text-gray-400">Delivery Address:</span>{' '}
                                   <span className="font-medium">
                                     {formData.address}
-                                    {formData.apartment ? `, ${formData.apartment}` : ""},{" "}
+                                    {formData.apartment ? `, ${formData.apartment}` : ''},{' '}
                                     {formData.city}, {formData.state} {formData.zipCode}
                                   </span>
                                 </p>
                                 <p>
-                                  <span className="text-gray-400">Recipient:</span>{" "}
+                                  <span className="text-gray-400">Recipient:</span>{' '}
                                   <span className="font-medium">
                                     {formData.firstName} {formData.lastName}
                                   </span>
@@ -1019,22 +1019,22 @@ export default function CheckoutPage() {
                               </>
                             ) : (
                               <p>
-                                <span className="text-gray-400">Pickup Location:</span>{" "}
+                                <span className="text-gray-400">Pickup Location:</span>{' '}
                                 <span className="font-medium">{formData.pickupLocation}</span>
                               </p>
                             )}
 
                             <p>
-                              <span className="text-gray-400">Time:</span>{" "}
+                              <span className="text-gray-400">Time:</span>{' '}
                               <span className="font-medium">
-                                {formData.deliveryTime === "asap"
-                                  ? "As soon as possible (30-45 min)"
+                                {formData.deliveryTime === 'asap'
+                                  ? 'As soon as possible (30-45 min)'
                                   : formData.scheduledTime}
                               </span>
                             </p>
 
                             <p>
-                              <span className="text-gray-400">Contact:</span>{" "}
+                              <span className="text-gray-400">Contact:</span>{' '}
                               <span className="font-medium">
                                 {formData.email} | {formData.phone}
                               </span>

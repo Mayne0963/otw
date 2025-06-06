@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import Image from "next/image";
-import { FaTimes, FaStar, FaFire, FaShoppingCart } from "react-icons/fa";
-import type { Product } from "../../types/merch";
+import { useState } from 'react';
+import Image from 'next/image';
+import { FaTimes, FaStar, FaFire, FaShoppingCart } from 'react-icons/fa';
+import type { Product } from '../../types/merch';
 
 interface ProductQuickViewProps {
   product: Product;
@@ -28,8 +28,8 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({
   );
 
   const handleQuantityChange = (value: number) => {
-    if (value < 1) return;
-    if (value > 10) return;
+    if (value < 1) {return;}
+    if (value > 10) {return;}
     setQuantity(value);
   };
 
@@ -52,7 +52,7 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({
           <div className="p-6 bg-[#111111]">
             <div className="relative h-80 w-full mb-4">
               <Image
-                src={product.images[selectedImage] || "/placeholder.svg"}
+                src={product.images[selectedImage] || '/placeholder.svg'}
                 alt={product.name}
                 fill
                 className="object-contain"
@@ -67,13 +67,13 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({
                     key={index}
                     className={`relative w-16 h-16 rounded-md overflow-hidden border-2 ${
                       selectedImage === index
-                        ? "border-gold-foil"
-                        : "border-[#333333]"
+                        ? 'border-gold-foil'
+                        : 'border-[#333333]'
                     }`}
                     onClick={() => setSelectedImage(index)}
                   >
                     <Image
-                      src={image || "/placeholder.svg"}
+                      src={image || '/placeholder.svg'}
                       alt={`${product.name} - view ${index + 1}`}
                       fill
                       className="object-cover"
@@ -124,8 +124,8 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({
                       key={size}
                       className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                         selectedSize === size
-                          ? "bg-gold-foil text-black"
-                          : "bg-[#222222] text-white hover:bg-[#333333]"
+                          ? 'bg-gold-foil text-black'
+                          : 'bg-[#222222] text-white hover:bg-[#333333]'
                       }`}
                       onClick={() => setSelectedSize(size)}
                     >
@@ -146,8 +146,8 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({
                       key={color.name}
                       className={`w-8 h-8 rounded-full transition-all ${
                         selectedColor?.name === color.name
-                          ? "ring-2 ring-gold-foil ring-offset-2 ring-offset-[#1A1A1A]"
-                          : ""
+                          ? 'ring-2 ring-gold-foil ring-offset-2 ring-offset-[#1A1A1A]'
+                          : ''
                       }`}
                       style={{ backgroundColor: color.hex }}
                       onClick={() => setSelectedColor(color)}
@@ -204,13 +204,13 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({
                 <div>
                   <h4 className="font-medium mb-1">Material</h4>
                   <p className="text-gray-400">
-                    {product.material || "100% Cotton"}
+                    {product.material || '100% Cotton'}
                   </p>
                 </div>
                 <div>
                   <h4 className="font-medium mb-1">Care</h4>
                   <p className="text-gray-400">
-                    {product.care || "Machine wash cold"}
+                    {product.care || 'Machine wash cold'}
                   </p>
                 </div>
                 <div>

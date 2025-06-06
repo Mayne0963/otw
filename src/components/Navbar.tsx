@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import Link from 'next/link';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,7 +22,7 @@ export default function Navbar() {
                 href="/restaurants"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
               >
-                Broski's Kitchen
+                Broski&apos;s Kitchen
               </Link>
               <Link
                 href="/otw"
@@ -50,7 +50,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       <div
         className={`md:hidden ${
-          isOpen ? "block" : "hidden"
+          isOpen ? 'block' : 'hidden'
         } fixed right-0 top-16 w-64 h-screen bg-black/95 backdrop-blur-sm border-l border-white/10`}
       >
         <div className="px-2 pt-2 pb-3 space-y-1">
@@ -59,7 +59,7 @@ export default function Navbar() {
             className="text-gray-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
             onClick={() => setIsOpen(false)}
           >
-            Broski's Kitchen
+            Broski&apos;s Kitchen
           </Link>
           <Link
             href="/otw"

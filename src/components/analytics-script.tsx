@@ -1,6 +1,6 @@
-"use client";
-import Script from "next/script";
-import { env } from "../lib/env";
+'use client';
+import Script from 'next/script';
+import { env } from '../lib/env';
 
 export function AnalyticsScript() {
   if (!env.ENABLE_ANALYTICS) {

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { FaPlay, FaVolumeUp, FaVolumeMute } from "react-icons/fa";
-import { useRewards } from "../../lib/context/RewardsContext";
+import type React from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { FaPlay, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import { useRewards } from '../../lib/context/RewardsContext';
 
 interface SpinGameProps {
   onComplete: (points: number) => void;
@@ -24,17 +24,17 @@ interface Particle {
   size: number;
 }
 
-const SpinGame: React.FC<SpinGameProps> = ({ 
-  onComplete, 
+const SpinGame: React.FC<SpinGameProps> = ({
+  onComplete,
   customSegments,
   customColors,
   wheelSize = 300,
-  animationDuration = 4000
+  animationDuration = 4000,
 }) => {
   const { addPoints } = useRewards();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particleCanvasRef = useRef<HTMLCanvasElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const _audioRef = useRef<HTMLAudioElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [result, setResult] = useState<number | null>(null);
   const [canSpin, setCanSpin] = useState(true);
@@ -45,32 +45,32 @@ const SpinGame: React.FC<SpinGameProps> = ({
   const [spinVelocity, setSpinVelocity] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [currentReward, setCurrentReward] = useState<number>(0);
-  const [highlightedSegment, setHighlightedSegment] = useState<number>(-1);
+  const [_highlightedSegment, setHighlightedSegment] = useState<number>(-1);
 
   // Dynamic wheel segments with better distribution
   const segments = useMemo(() => {
-    if (customSegments) return customSegments;
+    if (customSegments) {return customSegments;}
     return [
-      50, 100, 75, 150, 25, 200, 125, 300, 175, 500, 250, 1000
+      50, 100, 75, 150, 25, 200, 125, 300, 175, 500, 250, 1000,
     ];
   }, [customSegments]);
 
   // Dynamic colors with gradients
   const colors = useMemo(() => {
-    if (customColors) return customColors;
+    if (customColors) {return customColors;}
     return [
-      "#FFD700", // Gold
-      "#FF6B6B", // Coral Red
-      "#4ECDC4", // Turquoise
-      "#45B7D1", // Sky Blue
-      "#96CEB4", // Mint Green
-      "#FFEAA7", // Light Yellow
-      "#DDA0DD", // Plum
-      "#98D8C8", // Mint
-      "#F7DC6F", // Light Gold
-      "#BB8FCE", // Light Purple
-      "#85C1E9", // Light Blue
-      "#F8C471"  // Peach
+      '#FFD700', // Gold
+      '#FF6B6B', // Coral Red
+      '#4ECDC4', // Turquoise
+      '#45B7D1', // Sky Blue
+      '#96CEB4', // Mint Green
+      '#FFEAA7', // Light Yellow
+      '#DDA0DD', // Plum
+      '#98D8C8', // Mint
+      '#F7DC6F', // Light Gold
+      '#BB8FCE', // Light Purple
+      '#85C1E9', // Light Blue
+      '#F8C471',  // Peach
     ];
   }, [customColors]);
 
@@ -124,15 +124,15 @@ const SpinGame: React.FC<SpinGameProps> = ({
         // Create gradient for each segment
         const gradient = ctx.createRadialGradient(
           centerX, centerY, 0,
-          centerX, centerY, radius
+          centerX, centerY, radius,
         );
         let baseColor = colors[i] || '#FFD700';
-        
+
         // Brighten highlighted segment
         if (isHighlighted) {
           baseColor = adjustBrightness(baseColor, 40);
         }
-        
+
         gradient.addColorStop(0, baseColor);
         gradient.addColorStop(1, adjustBrightness(baseColor, -30));
 
@@ -143,9 +143,9 @@ const SpinGame: React.FC<SpinGameProps> = ({
 
         ctx.fillStyle = gradient;
         ctx.fill();
-        
+
         // Enhanced stroke for highlighted segment
-        ctx.strokeStyle = isHighlighted ? "#FFD700" : "#333";
+        ctx.strokeStyle = isHighlighted ? '#FFD700' : '#333';
         ctx.lineWidth = isHighlighted ? 4 : 2;
         ctx.stroke();
 
@@ -163,21 +163,21 @@ const SpinGame: React.FC<SpinGameProps> = ({
         ctx.save();
         ctx.translate(centerX, centerY);
         ctx.rotate(startAngle + segmentAngle / 2);
-        ctx.textAlign = "center";
-        
+        ctx.textAlign = 'center';
+
         // Enhanced text for highlighted segment
         if (isHighlighted) {
-          ctx.fillStyle = "#000";
-          ctx.font = "bold 16px Arial";
-          ctx.strokeStyle = "#FFD700";
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 16px Arial';
+          ctx.strokeStyle = '#FFD700';
           ctx.lineWidth = 4;
         } else {
-          ctx.fillStyle = "#000";
-          ctx.font = "bold 14px Arial";
-          ctx.strokeStyle = "#fff";
+          ctx.fillStyle = '#000';
+          ctx.font = 'bold 14px Arial';
+          ctx.strokeStyle = '#fff';
           ctx.lineWidth = 3;
         }
-        
+
         ctx.strokeText((segments[i] || 0).toString(), radius - 30, 5);
         ctx.fillText((segments[i] || 0).toString(), radius - 30, 5);
         ctx.restore();
@@ -186,16 +186,16 @@ const SpinGame: React.FC<SpinGameProps> = ({
       // Draw center hub with gradient
       const centerGradient = ctx.createRadialGradient(
         centerX, centerY, 0,
-        centerX, centerY, 25
+        centerX, centerY, 25,
       );
       centerGradient.addColorStop(0, '#FFD700');
       centerGradient.addColorStop(1, '#B8860B');
-      
+
       ctx.beginPath();
       ctx.arc(centerX, centerY, 25, 0, 2 * Math.PI);
       ctx.fillStyle = centerGradient;
       ctx.fill();
-      ctx.strokeStyle = "#8B4513";
+      ctx.strokeStyle = '#8B4513';
       ctx.lineWidth = 3;
       ctx.stroke();
 
@@ -220,12 +220,12 @@ const SpinGame: React.FC<SpinGameProps> = ({
 
   // Utility function to adjust color brightness
   const adjustBrightness = (color: string, amount: number): string => {
-    const num = parseInt(color.replace("#", ""), 16);
+    const num = parseInt(color.replace('#', ''), 16);
     const amt = Math.round(2.55 * amount);
     const R = (num >> 16) + amt;
     const G = (num >> 8 & 0x00FF) + amt;
     const B = (num & 0x0000FF) + amt;
-    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+    return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
       (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
       (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
   };
@@ -242,7 +242,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
         life: 60,
         maxLife: 60,
         color: colors[Math.floor(Math.random() * colors.length)],
-        size: Math.random() * 5 + 2
+        size: Math.random() * 5 + 2,
       });
     }
     setParticles(newParticles);
@@ -250,27 +250,27 @@ const SpinGame: React.FC<SpinGameProps> = ({
 
   // Animate particles
   const updateParticles = useCallback(() => {
-    setParticles(prev => 
+    setParticles(prev =>
       prev.map(particle => ({
         ...particle,
         x: particle.x + particle.vx,
         y: particle.y + particle.vy,
         vy: particle.vy + 0.2, // gravity
-        life: particle.life - 1
-      })).filter(particle => particle.life > 0)
+        life: particle.life - 1,
+      })).filter(particle => particle.life > 0),
     );
   }, []);
 
   // Draw particles
   const drawParticles = useCallback(() => {
     const canvas = particleCanvasRef.current;
-    if (!canvas) return;
-    
+    if (!canvas) {return;}
+
     const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    
+    if (!ctx) {return;}
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     particles.forEach(particle => {
       const alpha = particle.life / particle.maxLife;
       ctx.globalAlpha = alpha;
@@ -279,22 +279,22 @@ const SpinGame: React.FC<SpinGameProps> = ({
       ctx.arc(particle.x, particle.y, particle.size, 0, 2 * Math.PI);
       ctx.fill();
     });
-    
+
     ctx.globalAlpha = 1;
   }, [particles]);
 
   // Play sound effect
   const playSound = (type: 'spin' | 'win') => {
-    if (!soundEnabled) return;
-    
+    if (!soundEnabled) {return;}
+
     // Create audio context for sound effects
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
-    
+
     oscillator.connect(gainNode);
     gainNode.connect(audioContext.destination);
-    
+
     if (type === 'spin') {
       oscillator.frequency.setValueAtTime(200, audioContext.currentTime);
       oscillator.frequency.exponentialRampToValueAtTime(100, audioContext.currentTime + 0.5);
@@ -315,7 +315,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
 
   // Enhanced spinning animation with dynamic effects
   const spinTheWheel = () => {
-    if (!canSpin || isSpinning) return;
+    if (!canSpin || isSpinning) {return;}
 
     setIsSpinning(true);
     setResult(null);
@@ -323,16 +323,16 @@ const SpinGame: React.FC<SpinGameProps> = ({
 
     // Weighted random selection (higher values are rarer)
     const weights = segments.map(segment => {
-      if (segment >= 500) return 0.5;  // Very rare
-      if (segment >= 200) return 1;    // Rare
-      if (segment >= 100) return 3;    // Uncommon
+      if (segment >= 500) {return 0.5;}  // Very rare
+      if (segment >= 200) {return 1;}    // Rare
+      if (segment >= 100) {return 3;}    // Uncommon
       return 5;                        // Common
     });
-    
+
     const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
     let random = Math.random() * totalWeight;
     let randomSegmentIndex = 0;
-    
+
     for (let i = 0; i < weights.length; i++) {
       random -= weights[i];
       if (random <= 0) {
@@ -354,7 +354,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
     let start = 0;
     const startAngle = spinAngle;
     let currentVelocity = 0;
-    const maxVelocity = 20;
+    const _maxVelocity = 20;
 
     // Enhanced easing with bounce effect
     const easeOutElastic = (t: number): number => {
@@ -364,10 +364,10 @@ const SpinGame: React.FC<SpinGameProps> = ({
     };
 
     const animate = (timestamp: number) => {
-      if (!start) start = timestamp;
+      if (!start) {start = timestamp;}
       const progress = timestamp - start;
       const time = Math.min(progress / animationDuration, 1);
-      
+
       // Use different easing for different phases
       let easedTime;
       if (time < 0.7) {
@@ -382,7 +382,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
 
       const newAngle = startAngle + (targetRotation - startAngle) * easedTime;
       setSpinAngle(newAngle);
-      
+
       // Calculate velocity for visual effects
       currentVelocity = Math.abs(newAngle - spinAngle) * 0.1;
       setSpinVelocity(currentVelocity);
@@ -390,7 +390,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
       // Force complete wheel redraw from scratch
       const canvas = canvasRef.current;
       if (canvas) {
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         if (ctx) {
           // Clear all cached state and force fresh render
           ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -409,7 +409,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
         setCanSpin(false);
         setSpinVelocity(0);
         playSound('win');
-        
+
         // Create celebration particles
         const canvas = canvasRef.current;
         if (canvas) {
@@ -425,7 +425,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
       if (ctx) {
         // Clear any cached rendering state
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -442,7 +442,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
         updateParticles();
         drawParticles();
       }, 16); // ~60fps
-      
+
       return () => clearInterval(interval);
     }
   }, [particles, updateParticles, drawParticles]);
@@ -456,7 +456,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
           // Force canvas refresh on each update
           const canvas = canvasRef.current;
           if (canvas) {
-            const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext('2d');
             if (ctx) {
               ctx.clearRect(0, 0, canvas.width, canvas.height);
               drawWheel(ctx, canvas.width, canvas.height, newAngle);
@@ -465,7 +465,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
           return newAngle;
         });
       }, 100);
-      
+
       return () => clearInterval(interval);
     }
   }, [isSpinning, canSpin, drawWheel]);
@@ -484,17 +484,17 @@ const SpinGame: React.FC<SpinGameProps> = ({
       <button
         onClick={() => setSoundEnabled(!soundEnabled)}
         className="absolute top-0 right-0 p-2 text-gray-400 hover:text-white transition-colors"
-        title={soundEnabled ? "Mute sounds" : "Enable sounds"}
+        title={soundEnabled ? 'Mute sounds' : 'Enable sounds'}
       >
         {soundEnabled ? <FaVolumeUp size={20} /> : <FaVolumeMute size={20} />}
       </button>
 
       <div className="relative mb-6">
         {/* Main wheel canvas - dynamically rendered */}
-        <canvas 
-          ref={canvasRef} 
-          width={wheelSize} 
-          height={wheelSize} 
+        <canvas
+          ref={canvasRef}
+          width={wheelSize}
+          height={wheelSize}
           className={`mx-auto transition-all duration-300 ${
             isHovering && !isSpinning ? 'scale-105' : ''
           } ${
@@ -505,7 +505,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
             // Force redraw on hover for dynamic effects
             const canvas = canvasRef.current;
             if (canvas) {
-              const ctx = canvas.getContext("2d");
+              const ctx = canvas.getContext('2d');
               if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawWheel(ctx, canvas.width, canvas.height, spinAngle);
@@ -517,7 +517,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
             // Force redraw when leaving hover
             const canvas = canvasRef.current;
             if (canvas) {
-              const ctx = canvas.getContext("2d");
+              const ctx = canvas.getContext('2d');
               if (ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawWheel(ctx, canvas.width, canvas.height, spinAngle);
@@ -525,9 +525,9 @@ const SpinGame: React.FC<SpinGameProps> = ({
             }
           }}
         />
-        
+
         {/* Particle canvas overlay */}
-        <canvas 
+        <canvas
           ref={particleCanvasRef}
           width={wheelSize}
           height={wheelSize}
@@ -565,7 +565,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
             </div>
           </div>
         )}
-        
+
         {/* Spinning indicator ring */}
         {isSpinning && (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -580,18 +580,18 @@ const SpinGame: React.FC<SpinGameProps> = ({
           <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white p-6 rounded-lg shadow-xl mb-4">
             <h3 className="text-2xl font-bold mb-2 animate-pulse">🎉 Congratulations! 🎉</h3>
             <p className="text-lg mb-4">
-              You won{" "}
+              You won{' '}
               <span className="text-yellow-300 font-bold text-3xl animate-bounce inline-block">
                 {finalPoints}
               </span>
-              {" "}points!
+              {' '}points!
             </p>
             {finalPoints >= 500 && (
               <p className="text-yellow-200 text-sm animate-pulse">🌟 MEGA WIN! 🌟</p>
             )}
           </div>
-          <button 
-            className="btn-primary w-full transform hover:scale-105 transition-transform duration-200 shadow-lg" 
+          <button
+            className="btn-primary w-full transform hover:scale-105 transition-transform duration-200 shadow-lg"
             onClick={handleClaim}
           >
             🎁 Claim Your Points 🎁
@@ -620,8 +620,8 @@ const SpinGame: React.FC<SpinGameProps> = ({
             <div className="bg-gray-800/50 p-4 rounded-lg">
               <p className="text-gray-300 text-lg">
                 {canSpin
-                  ? "🎯 Ready to test your luck? Click the wheel to spin! 🎯"
-                  : "⏰ You've used your daily spin. Come back tomorrow for another chance! ⏰"}
+                  ? '🎯 Ready to test your luck? Click the wheel to spin! 🎯'
+                  : "⏰ You&apos;ve used your daily spin. Come back tomorrow for another chance! ⏰"}
               </p>
               {canSpin && (
                 <div className="mt-3 space-y-2">
@@ -633,7 +633,7 @@ const SpinGame: React.FC<SpinGameProps> = ({
                     <div className="text-xs text-gray-400 mb-2">REWARD BREAKDOWN:</div>
                     <div className="grid grid-cols-4 gap-1 text-xs">
                       {segments.map((segment, index) => (
-                        <div 
+                        <div
                           key={index}
                           className={`p-1 rounded text-center ${
                             segment >= 500 ? 'bg-purple-600/30 text-purple-300' :
@@ -647,9 +647,9 @@ const SpinGame: React.FC<SpinGameProps> = ({
                       ))}
                     </div>
                     <div className="mt-2 text-xs text-gray-500">
-                      <span className="text-purple-300">●</span> Legendary (500+) 
-                      <span className="text-red-300 ml-2">●</span> Rare (200+) 
-                      <span className="text-orange-300 ml-2">●</span> Uncommon (100+) 
+                      <span className="text-purple-300">●</span> Legendary (500+)
+                      <span className="text-red-300 ml-2">●</span> Rare (200+)
+                      <span className="text-orange-300 ml-2">●</span> Uncommon (100+)
                       <span className="text-green-300 ml-2">●</span> Common
                     </div>
                   </div>

@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 import LocationsServerPage from './LocationsServerPage';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: "Locations | Broski's Chicken",
@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 
 export default async function LocationsPage() {
   let locations: any[] = [];
-  
+
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/locations`, {
-      cache: 'no-store'
+      cache: 'no-store',
     });
     if (response.ok) {
       locations = await response.json();

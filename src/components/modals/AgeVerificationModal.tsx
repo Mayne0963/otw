@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState, useCallback } from "react";
-import { useAgeVerification } from "../../lib/context/AgeVerificationContext";
-import { FaTimes, FaExclamationTriangle } from "react-icons/fa";
+import { useState, useCallback } from 'react';
+import { useAgeVerification } from '../../lib/context/AgeVerificationContext';
+import { FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 
 interface AgeVerificationModalProps {
   onClose: () => void;
@@ -17,24 +17,24 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({
 }) => {
   // Added onSuccess to destructuring
   const { verifyAge } = useAgeVerification();
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
   const months = [
-    { value: "1", label: "January" },
-    { value: "2", label: "February" },
-    { value: "3", label: "March" },
-    { value: "4", label: "April" },
-    { value: "5", label: "May" },
-    { value: "6", label: "June" },
-    { value: "7", label: "July" },
-    { value: "8", label: "August" },
-    { value: "9", label: "September" },
-    { value: "10", label: "October" },
-    { value: "11", label: "November" },
-    { value: "12", label: "December" },
+    { value: '1', label: 'January' },
+    { value: '2', label: 'February' },
+    { value: '3', label: 'March' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'May' },
+    { value: '6', label: 'June' },
+    { value: '7', label: 'July' },
+    { value: '8', label: 'August' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' },
   ];
 
   const handleSubmit = useCallback(
@@ -51,7 +51,7 @@ const AgeVerificationModal: React.FC<AgeVerificationModalProps> = ({
         onSuccess(); // Call onSuccess after verification
         onClose(); // Still call onClose to close the modal
       } catch (error) {
-        console.error("Age verification error:", error);
+        console.error('Age verification error:', error);
       }
     },
     [month, year, verifyAge, onSuccess, onClose],

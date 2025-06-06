@@ -1,35 +1,35 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 export interface ToastProps {
   message: string;
-  type?: "success" | "error" | "warning" | "info";
+  type?: 'success' | 'error' | 'warning' | 'info';
   duration?: number;
 }
 
 export const toast = {
   success: (message: string, duration = 3000) => {
-    const event = new CustomEvent("toast", {
-      detail: { message, type: "success", duration },
+    const event = new CustomEvent('toast', {
+      detail: { message, type: 'success', duration },
     });
     window.dispatchEvent(event);
   },
   error: (message: string, duration = 3000) => {
-    const event = new CustomEvent("toast", {
-      detail: { message, type: "error", duration },
+    const event = new CustomEvent('toast', {
+      detail: { message, type: 'error', duration },
     });
     window.dispatchEvent(event);
   },
   warning: (message: string, duration = 3000) => {
-    const event = new CustomEvent("toast", {
-      detail: { message, type: "warning", duration },
+    const event = new CustomEvent('toast', {
+      detail: { message, type: 'warning', duration },
     });
     window.dispatchEvent(event);
   },
   info: (message: string, duration = 3000) => {
-    const event = new CustomEvent("toast", {
-      detail: { message, type: "info", duration },
+    const event = new CustomEvent('toast', {
+      detail: { message, type: 'info', duration },
     });
     window.dispatchEvent(event);
   },
@@ -52,10 +52,10 @@ export const useToast = () => {
       }
     };
 
-    window.addEventListener("toast", handleToast as EventListener);
+    window.addEventListener('toast', handleToast as EventListener);
 
     return () => {
-      window.removeEventListener("toast", handleToast as EventListener);
+      window.removeEventListener('toast', handleToast as EventListener);
     };
   }, []);
 
@@ -75,13 +75,13 @@ export const ToastContainer = () => {
         <div
           key={toast.id}
           className={`p-4 rounded-md shadow-md text-white flex justify-between items-center min-w-[300px] max-w-md animate-fade-in ${
-            toast.type === "success"
-              ? "bg-emerald-green"
-              : toast.type === "error"
-                ? "bg-blood-red"
-                : toast.type === "warning"
-                  ? "bg-amber-500"
-                  : "bg-blue-500"
+            toast.type === 'success'
+              ? 'bg-emerald-green'
+              : toast.type === 'error'
+                ? 'bg-blood-red'
+                : toast.type === 'warning'
+                  ? 'bg-amber-500'
+                  : 'bg-blue-500'
           }`}
         >
           <span>{toast.message}</span>

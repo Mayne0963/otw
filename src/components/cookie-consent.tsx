@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Button } from "./ui/button";
-import { X } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Button } from './ui/button';
+import { X } from 'lucide-react';
 
 export function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     // Check if user has already consented
-    const hasConsented = localStorage.getItem("cookie-consent");
+    const hasConsented = localStorage.getItem('cookie-consent');
     if (!hasConsented) {
       // Show banner after a short delay
       const timer = setTimeout(() => {
@@ -20,16 +20,16 @@ export function CookieConsent() {
   }, []);
 
   const acceptAll = () => {
-    localStorage.setItem("cookie-consent", "all");
+    localStorage.setItem('cookie-consent', 'all');
     setIsVisible(false);
   };
 
   const acceptEssential = () => {
-    localStorage.setItem("cookie-consent", "essential");
+    localStorage.setItem('cookie-consent', 'essential');
     setIsVisible(false);
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) {return null;}
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-otw-black-900 border-t border-otw-black-800 p-4 md:p-6 shadow-lg">
@@ -42,7 +42,7 @@ export function CookieConsent() {
             <p className="text-sm text-gray-400 mb-2">
               We use cookies to enhance your browsing experience, serve
               personalized ads or content, and analyze our traffic. By clicking
-              "Accept All", you consent to our use of cookies.
+              &quot;Accept All&quot;, you consent to our use of cookies.
             </p>
             <a
               href="/privacy-policy"

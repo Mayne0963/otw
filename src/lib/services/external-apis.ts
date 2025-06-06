@@ -347,12 +347,12 @@ export class DocumenuService {
     const searchParams = new URLSearchParams({
       key: env.DOCUMENU_API_KEY,
       ...Object.fromEntries(
-        Object.entries(params).map(([k, v]) => [k, String(v)])
+        Object.entries(params).map(([k, v]) => [k, String(v)]),
       ),
     });
 
     const response = await fetch(`${this.BASE_URL}/restaurants/search/geo?${searchParams}`);
-    
+
     if (!response.ok) {
       throw new Error(`Documenu API error: ${response.statusText}`);
     }
@@ -367,9 +367,9 @@ export class DocumenuService {
     }
 
     const response = await fetch(
-      `${this.BASE_URL}/restaurant/${restaurantId}?key=${env.DOCUMENU_API_KEY}`
+      `${this.BASE_URL}/restaurant/${restaurantId}?key=${env.DOCUMENU_API_KEY}`,
     );
-    
+
     if (!response.ok) {
       throw new Error(`Documenu API error: ${response.statusText}`);
     }
@@ -405,8 +405,8 @@ export class ZomatoService {
 
     const searchParams = new URLSearchParams(
       Object.fromEntries(
-        Object.entries(params).map(([k, v]) => [k, String(v)])
-      )
+        Object.entries(params).map(([k, v]) => [k, String(v)]),
+      ),
     );
 
     const response = await fetch(`${this.BASE_URL}/search?${searchParams}`, {
@@ -415,7 +415,7 @@ export class ZomatoService {
         'X-RapidAPI-Host': 'zomato.p.rapidapi.com',
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Zomato API error: ${response.statusText}`);
     }
@@ -435,7 +435,7 @@ export class ZomatoService {
         'X-RapidAPI-Host': 'zomato.p.rapidapi.com',
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Zomato API error: ${response.statusText}`);
     }
@@ -472,8 +472,8 @@ export class YelpService {
       Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
-      )
+          .map(([k, v]) => [k, String(v)]),
+      ),
     );
 
     const response = await fetch(`${this.BASE_URL}/businesses/search?${searchParams}`, {
@@ -481,7 +481,7 @@ export class YelpService {
         'Authorization': `Bearer ${env.YELP_API_KEY}`,
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Yelp API error: ${response.statusText}`);
     }
@@ -499,7 +499,7 @@ export class YelpService {
         'Authorization': `Bearer ${env.YELP_API_KEY}`,
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Yelp API error: ${response.statusText}`);
     }
@@ -529,7 +529,7 @@ export class YelpService {
     }
 
     const searchParams = new URLSearchParams();
-    if (locale) searchParams.append('locale', locale);
+    if (locale) {searchParams.append('locale', locale);}
 
     const response = await fetch(
       `${this.BASE_URL}/businesses/${businessId}/reviews?${searchParams}`,
@@ -537,9 +537,9 @@ export class YelpService {
         headers: {
           'Authorization': `Bearer ${env.YELP_API_KEY}`,
         },
-      }
+      },
     );
-    
+
     if (!response.ok) {
       throw new Error(`Yelp API error: ${response.statusText}`);
     }
@@ -562,13 +562,13 @@ export class KrogerService {
     limit?: number;
   }): Promise<{ data: KrogerProduct[]; meta: any }> {
     const token = await getKrogerAccessToken();
-    
+
     const searchParams = new URLSearchParams(
       Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
-      )
+          .map(([k, v]) => [k, String(v)]),
+      ),
     );
 
     const response = await fetch(`${this.BASE_URL}/products?${searchParams}`, {
@@ -577,7 +577,7 @@ export class KrogerService {
         'Accept': 'application/json',
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Kroger API error: ${response.statusText}`);
     }
@@ -593,13 +593,13 @@ export class KrogerService {
     'filter.department'?: string;
   }): Promise<{ data: any[]; meta: any }> {
     const token = await getKrogerAccessToken();
-    
+
     const searchParams = new URLSearchParams(
       Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
-      )
+          .map(([k, v]) => [k, String(v)]),
+      ),
     );
 
     const response = await fetch(`${this.BASE_URL}/locations?${searchParams}`, {
@@ -608,7 +608,7 @@ export class KrogerService {
         'Accept': 'application/json',
       },
     });
-    
+
     if (!response.ok) {
       throw new Error(`Kroger API error: ${response.statusText}`);
     }
@@ -642,12 +642,12 @@ export class BestBuyService {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
 
     const response = await fetch(`${this.BASE_URL}/products?${searchParams}`);
-    
+
     if (!response.ok) {
       throw new Error(`Best Buy API error: ${response.statusText}`);
     }
@@ -661,9 +661,9 @@ export class BestBuyService {
     }
 
     const response = await fetch(
-      `${this.BASE_URL}/products/${sku}.json?apiKey=${env.BESTBUY_API_KEY}`
+      `${this.BASE_URL}/products/${sku}.json?apiKey=${env.BESTBUY_API_KEY}`,
     );
-    
+
     if (!response.ok) {
       throw new Error(`Best Buy API error: ${response.statusText}`);
     }
@@ -691,12 +691,12 @@ export class BestBuyService {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
 
     const response = await fetch(`${this.BASE_URL}/stores?${searchParams}`);
-    
+
     if (!response.ok) {
       throw new Error(`Best Buy API error: ${response.statusText}`);
     }
@@ -716,9 +716,9 @@ export class BestBuyService {
     }
 
     const response = await fetch(
-      `${this.BASE_URL}/products/${sku}/stores/${storeId}.json?apiKey=${env.BESTBUY_API_KEY}`
+      `${this.BASE_URL}/products/${sku}/stores/${storeId}.json?apiKey=${env.BESTBUY_API_KEY}`,
     );
-    
+
     if (!response.ok) {
       throw new Error(`Best Buy API error: ${response.statusText}`);
     }
@@ -781,7 +781,7 @@ export class UnifiedSearchService {
         term: params.term,
         limit: params.limit || 20,
       };
-      
+
       if (params.latitude && params.longitude) {
         yelpParams.latitude = params.latitude;
         yelpParams.longitude = params.longitude;

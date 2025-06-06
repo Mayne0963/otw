@@ -1,8 +1,8 @@
 'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 import React, { useState } from 'react';
 import { useExternalAPIs } from '../../../hooks/useExternalAPIs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
@@ -82,28 +82,28 @@ export default function ExternalAPIsDemo() {
 
   const renderRestaurantCard = (restaurant: any, source: string) => {
     const getName = () => {
-      if (source === 'yelp') return restaurant.name;
-      if (source === 'zomato') return restaurant.name;
-      if (source === 'documenu') return restaurant.restaurant_name;
+      if (source === 'yelp') {return restaurant.name;}
+      if (source === 'zomato') {return restaurant.name;}
+      if (source === 'documenu') {return restaurant.restaurant_name;}
       return 'Unknown';
     };
 
     const getRating = () => {
-      if (source === 'yelp') return restaurant.rating;
-      if (source === 'zomato') return restaurant.user_rating?.aggregate_rating;
+      if (source === 'yelp') {return restaurant.rating;}
+      if (source === 'zomato') {return restaurant.user_rating?.aggregate_rating;}
       return null;
     };
 
     const getPrice = () => {
-      if (source === 'yelp') return restaurant.price;
-      if (source === 'zomato') return '$'.repeat(restaurant.price_range || 1);
-      if (source === 'documenu') return restaurant.price_range;
+      if (source === 'yelp') {return restaurant.price;}
+      if (source === 'zomato') {return '$'.repeat(restaurant.price_range || 1);}
+      if (source === 'documenu') {return restaurant.price_range;}
       return null;
     };
 
     const getAddress = () => {
-      if (source === 'yelp') return restaurant.location?.display_address?.join(', ');
-      if (source === 'zomato') return restaurant.location?.address;
+      if (source === 'yelp') {return restaurant.location?.display_address?.join(', ');}
+      if (source === 'zomato') {return restaurant.location?.address;}
       return null;
     };
 
@@ -156,20 +156,20 @@ export default function ExternalAPIsDemo() {
 
   const renderProductCard = (product: any, source: string) => {
     const getName = () => {
-      if (source === 'kroger') return product.description;
-      if (source === 'bestbuy') return product.name;
+      if (source === 'kroger') {return product.description;}
+      if (source === 'bestbuy') {return product.name;}
       return 'Unknown';
     };
 
     const getPrice = () => {
-      if (source === 'kroger') return product.items?.[0]?.price?.regular;
-      if (source === 'bestbuy') return product.salePrice || product.regularPrice;
+      if (source === 'kroger') {return product.items?.[0]?.price?.regular;}
+      if (source === 'bestbuy') {return product.salePrice || product.regularPrice;}
       return null;
     };
 
     const getBrand = () => {
-      if (source === 'kroger') return product.brand;
-      if (source === 'bestbuy') return product.manufacturer;
+      if (source === 'kroger') {return product.brand;}
+      if (source === 'bestbuy') {return product.manufacturer;}
       return null;
     };
 
@@ -269,8 +269,8 @@ export default function ExternalAPIsDemo() {
                     placeholder="e.g., New York, NY"
                   />
                 </div>
-                <Button 
-                  onClick={handleRestaurantSearch} 
+                <Button
+                  onClick={handleRestaurantSearch}
                   disabled={loading}
                   className="w-full"
                 >
@@ -304,8 +304,8 @@ export default function ExternalAPIsDemo() {
                     placeholder="e.g., organic milk, laptop, headphones"
                   />
                 </div>
-                <Button 
-                  onClick={handleProductSearch} 
+                <Button
+                  onClick={handleProductSearch}
                   disabled={loading}
                   className="w-full"
                 >
@@ -329,20 +329,20 @@ export default function ExternalAPIsDemo() {
                 <CardHeader>
                   <CardTitle>Restaurant Results</CardTitle>
                   <CardDescription>
-                    Found {(restaurantResults.documenu?.length || 0) + 
-                           (restaurantResults.zomato?.length || 0) + 
+                    Found {(restaurantResults.documenu?.length || 0) +
+                           (restaurantResults.zomato?.length || 0) +
                            (restaurantResults.yelp?.length || 0)} restaurants
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="max-h-96 overflow-y-auto">
-                  {restaurantResults.yelp?.map((restaurant: any) => 
-                    renderRestaurantCard(restaurant, 'yelp')
+                  {restaurantResults.yelp?.map((restaurant: any) =>
+                    renderRestaurantCard(restaurant, 'yelp'),
                   )}
-                  {restaurantResults.zomato?.map((restaurant: any) => 
-                    renderRestaurantCard(restaurant, 'zomato')
+                  {restaurantResults.zomato?.map((restaurant: any) =>
+                    renderRestaurantCard(restaurant, 'zomato'),
                   )}
-                  {restaurantResults.documenu?.map((restaurant: any) => 
-                    renderRestaurantCard(restaurant, 'documenu')
+                  {restaurantResults.documenu?.map((restaurant: any) =>
+                    renderRestaurantCard(restaurant, 'documenu'),
                   )}
                   {restaurantResults.errors?.length > 0 && (
                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
@@ -361,16 +361,16 @@ export default function ExternalAPIsDemo() {
                 <CardHeader>
                   <CardTitle>Product Results</CardTitle>
                   <CardDescription>
-                    Found {(productResults.kroger?.length || 0) + 
+                    Found {(productResults.kroger?.length || 0) +
                            (productResults.bestbuy?.length || 0)} products
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="max-h-96 overflow-y-auto">
-                  {productResults.kroger?.map((product: any) => 
-                    renderProductCard(product, 'kroger')
+                  {productResults.kroger?.map((product: any) =>
+                    renderProductCard(product, 'kroger'),
                   )}
-                  {productResults.bestbuy?.map((product: any) => 
-                    renderProductCard(product, 'bestbuy')
+                  {productResults.bestbuy?.map((product: any) =>
+                    renderProductCard(product, 'bestbuy'),
                   )}
                   {productResults.errors?.length > 0 && (
                     <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
@@ -409,8 +409,8 @@ export default function ExternalAPIsDemo() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="max-h-96 overflow-y-auto">
-                {yelpResults.businesses?.map((business: any) => 
-                  renderRestaurantCard(business, 'yelp')
+                {yelpResults.businesses?.map((business: any) =>
+                  renderRestaurantCard(business, 'yelp'),
                 )}
               </CardContent>
             </Card>
@@ -439,8 +439,8 @@ export default function ExternalAPIsDemo() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="max-h-96 overflow-y-auto">
-                  {krogerResults.data?.map((product: any) => 
-                    renderProductCard(product, 'kroger')
+                  {krogerResults.data?.map((product: any) =>
+                    renderProductCard(product, 'kroger'),
                   )}
                 </CardContent>
               </Card>
@@ -455,8 +455,8 @@ export default function ExternalAPIsDemo() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="max-h-96 overflow-y-auto">
-                  {bestbuyResults.products?.map((product: any) => 
-                    renderProductCard(product, 'bestbuy')
+                  {bestbuyResults.products?.map((product: any) =>
+                    renderProductCard(product, 'bestbuy'),
                   )}
                 </CardContent>
               </Card>

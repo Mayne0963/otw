@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
 // export const dynamic = "force-dynamic";
 
-import Image from "next/image";
-import Link from "next/link";
-import dynamic from "next/dynamic";
-import Button from "../components/Button.jsx";
-import AddressSearch, { PlaceDetails } from "../components/AddressSearch";
-import { useState } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import Button from '../components/Button.jsx';
+import AddressSearch, { PlaceDetails } from '../components/AddressSearch';
+import { useState } from 'react';
 
-const MapSearch = dynamic(() => import("../components/maps/MapSearch"), { ssr: false });
+const MapSearch = dynamic(() => import('../components/maps/MapSearch'), { ssr: false });
 
 interface ServiceCardProps {
   icon: string;
@@ -17,7 +17,7 @@ interface ServiceCardProps {
   description: string;
   href: string;
   buttonText: string;
-  buttonVariant: "primary" | "secondary";
+  buttonVariant: 'primary' | 'secondary';
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -46,9 +46,9 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 );
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedAddress, setSelectedAddress] = useState<PlaceDetails | null>(null);
-  
+
   const handleAddressSelect = (place: PlaceDetails) => {
     setSelectedAddress(place);
     console.log('Selected address:', place.formatted_address);
@@ -65,7 +65,7 @@ export default function Home() {
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-otw-red/10 rounded-full blur-3xl animate-pulse" />
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
           </div>
-          
+
           <div className="relative z-10 max-w-6xl mx-auto text-center">
             {/* Top Text */}
             <div className="mb-8">
@@ -74,12 +74,12 @@ export default function Home() {
                   OTW
                 </span>
               </h1>
-              
+
               <p className="text-xl md:text-2xl lg:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-                Experience lightning-fast delivery from Fort Wayne's
+                Experience lightning-fast delivery from Fort Wayne&apos;s
               </p>
             </div>
-            
+
             {/* Service Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
               <Button href="/restaurants" variant="primary" className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300 bg-otw-red hover:bg-otw-red/80">
@@ -90,7 +90,7 @@ export default function Home() {
               </Button>
             </div>
           </div>
-        
+
         {/* Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
@@ -106,7 +106,7 @@ export default function Home() {
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-otw-red/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-otw-gold/5 rounded-full blur-3xl" />
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -117,10 +117,10 @@ export default function Home() {
               <span className="text-white">Our Mission</span>
             </h2>
             <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
-              From late-night munchies to family feasts, we've got Fort Wayne covered with premium delivery services.
+              From late-night munchies to family feasts, we&apos;ve got Fort Wayne covered with premium delivery services.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             <ServiceCard
               icon="🚗"
@@ -161,7 +161,7 @@ export default function Home() {
               Search from 150+ restaurants in Fort Wayne
             </p>
           </div>
-          
+
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
             <div className="flex flex-col md:flex-row gap-4 mb-6">
               <input
@@ -185,7 +185,7 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
-            
+
             <MapSearch />
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function Home() {
               Top-rated spots loved by Fort Wayne
             </p>
           </div>
-          
+
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             {['All', 'Pizza', 'Asian', 'Mexican', 'American', 'Healthy'].map((category) => (
               <Link key={category} href={`/restaurants?category=${category.toLowerCase()}`}>
@@ -214,16 +214,16 @@ export default function Home() {
               </Link>
             ))}
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                name: "Broskis",
-                cuisine: "American",
+                name: 'Broskis',
+                cuisine: 'American',
                 rating: 4.9,
-                deliveryTime: "15-25 min",
-                image: "/restaurants/broskis.jpg"
-              }
+                deliveryTime: '15-25 min',
+                image: '/restaurants/broskis.jpg',
+              },
             ].map((restaurant, index) => (
               <div key={index} className="otw-card group cursor-pointer">
                 <div className="relative h-48 mb-4 overflow-hidden rounded-xl">
@@ -269,7 +269,7 @@ export default function Home() {
               We deliver everywhere in Fort Wayne and surrounding areas
             </p>
           </div>
-          
+
           <div className="otw-card p-8">
             <div className="relative h-96 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl overflow-hidden">
               <div className="absolute inset-0 flex items-center justify-center">
@@ -279,7 +279,7 @@ export default function Home() {
                   <p className="text-white/70">Real-time delivery zones and driver locations</p>
                 </div>
               </div>
-              
+
               {/* Animated delivery zones */}
               {Array.from({ length: 48 }).map((_, i) => {
                 // Use deterministic values based on index to avoid hydration mismatch
@@ -293,20 +293,20 @@ export default function Home() {
                     style={{
                       left: `${left}%`,
                       top: `${top}%`,
-                      animationDelay: `${delay}s`
+                      animationDelay: `${delay}s`,
                     }}
                   />
                 );
               })}
-              
+
               {/* Delivery trucks */}
               <div className="absolute top-1/4 left-1/4 text-2xl animate-bounce">
                 🚚
               </div>
-              <div className="absolute bottom-1/3 right-1/3 text-2xl animate-bounce" style={{animationDelay: '1s'}}>
+              <div className="absolute bottom-1/3 right-1/3 text-2xl animate-bounce" style={{ animationDelay: '1s' }}>
                 🚚
               </div>
-              <div className="absolute top-1/2 right-1/4 text-2xl animate-bounce" style={{animationDelay: '2s'}}>
+              <div className="absolute top-1/2 right-1/4 text-2xl animate-bounce" style={{ animationDelay: '2s' }}>
                 🚚
               </div>
             </div>
@@ -325,51 +325,51 @@ export default function Home() {
               Real reviews from real customers
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: "Sarah Johnson",
-                location: "Downtown Fort Wayne",
+                name: 'Sarah Johnson',
+                location: 'Downtown Fort Wayne',
                 rating: 5,
-                review: "OTW is a game-changer! Food arrives hot and fast every single time. The drivers are super friendly too.",
-                avatar: "👩‍💼"
+                review: 'OTW is a game-changer! Food arrives hot and fast every single time. The drivers are super friendly too.',
+                avatar: '👩‍💼',
               },
               {
-                name: "Mike Chen",
-                location: "Aboite",
+                name: 'Mike Chen',
+                location: 'Aboite',
                 rating: 5,
-                review: "Best delivery service in Fort Wayne hands down. The app is smooth and tracking is spot-on. Highly recommend!",
-                avatar: "👨‍💻"
+                review: 'Best delivery service in Fort Wayne hands down. The app is smooth and tracking is spot-on. Highly recommend!',
+                avatar: '👨‍💻',
               },
               {
-                name: "Emily Rodriguez",
-                location: "New Haven",
+                name: 'Emily Rodriguez',
+                location: 'New Haven',
                 rating: 5,
-                review: "Love the variety of restaurants and the quick delivery times. OTW has become our go-to for family dinners.",
-                avatar: "👩‍🍳"
+                review: 'Love the variety of restaurants and the quick delivery times. OTW has become our go-to for family dinners.',
+                avatar: '👩‍🍳',
               },
               {
-                name: "David Thompson",
-                location: "Southwest",
+                name: 'David Thompson',
+                location: 'Southwest',
                 rating: 5,
-                review: "Customer service is top-notch. Had an issue once and they resolved it immediately with a full refund.",
-                avatar: "👨‍🔧"
+                review: 'Customer service is top-notch. Had an issue once and they resolved it immediately with a full refund.',
+                avatar: '👨‍🔧',
               },
               {
-                name: "Lisa Park",
-                location: "Northeast",
+                name: 'Lisa Park',
+                location: 'Northeast',
                 rating: 5,
-                review: "The live tracking feature is amazing. I always know exactly when my food will arrive. So convenient!",
-                avatar: "👩‍⚕️"
+                review: 'The live tracking feature is amazing. I always know exactly when my food will arrive. So convenient!',
+                avatar: '👩‍⚕️',
               },
               {
-                name: "James Wilson",
-                location: "Waynedale",
+                name: 'James Wilson',
+                location: 'Waynedale',
                 rating: 5,
-                review: "Great selection of restaurants and the delivery fees are very reasonable. OTW is the best!",
-                avatar: "👨‍🎓"
-              }
+                review: 'Great selection of restaurants and the delivery fees are very reasonable. OTW is the best!',
+                avatar: '👨‍🎓',
+              },
             ].map((testimonial, index) => (
               <div key={index} className="otw-card">
                 <div className="p-6">
@@ -380,14 +380,14 @@ export default function Home() {
                       <p className="text-white/70 text-sm">{testimonial.location}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex mb-4">
                     {Array.from({ length: testimonial.rating }).map((_, i) => (
                       <span key={i} className="text-yellow-400 text-lg">⭐</span>
                     ))}
                   </div>
-                  
-                  <p className="text-white/80 italic">"{testimonial.review}"</p>
+
+                  <p className="text-white/80 italic">&quot;{testimonial.review}&quot;</p>
                 </div>
               </div>
             ))}
@@ -406,12 +406,12 @@ export default function Home() {
               <p className="text-xl text-white/80 mb-8">
                 Download our app for exclusive deals, faster ordering, and secure delivery
               </p>
-              
+
               <div className="grid md:grid-cols-3 gap-8 mb-12">
                 {[
-                  { icon: "🎯", title: "Exclusive Deals", description: "App-only discounts and promotions" },
-                  { icon: "⚡", title: "Faster Ordering", description: "One-tap reordering and saved favorites" },
-                  { icon: "🔒", title: "Secure Delivery", description: "Safe and reliable delivery service" }
+                  { icon: '🎯', title: 'Exclusive Deals', description: 'App-only discounts and promotions' },
+                  { icon: '⚡', title: 'Faster Ordering', description: 'One-tap reordering and saved favorites' },
+                  { icon: '🔒', title: 'Secure Delivery', description: 'Safe and reliable delivery service' },
                 ].map((feature, index) => (
                   <div key={index} className="text-center">
                     <div className="text-4xl mb-4">{feature.icon}</div>
@@ -420,7 +420,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="primary" className="text-lg px-8 py-4">
                   📱 Download for iOS
@@ -445,7 +445,7 @@ export default function Home() {
           <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-otw-gold/30 to-transparent" />
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -456,10 +456,10 @@ export default function Home() {
               <span className="text-white">for Fort Wayne</span>
             </h2>
             <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
-              Beyond food delivery - we're your complete lifestyle solution
+              Beyond food delivery - we&apos;re your complete lifestyle solution
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             <ServiceCard
               icon="🥘"
@@ -498,7 +498,7 @@ export default function Home() {
           <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-otw-gold/30 to-transparent" />
         </div>
-        
+
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold">
@@ -511,7 +511,7 @@ export default function Home() {
             <p className="text-xl text-white/80 max-w-2xl mx-auto leading-relaxed mb-8">
               Get exclusive deals, new restaurant announcements, and special offers delivered straight to your inbox. Join 25,000+ Fort Wayne food lovers!
             </p>
-            
+
             <div className="max-w-md mx-auto">
               <form className="flex flex-col sm:flex-row gap-4">
                 <input

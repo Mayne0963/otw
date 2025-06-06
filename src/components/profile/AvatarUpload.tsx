@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useRef } from "react"; // Added React import
-import { Button } from "../ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import React, { useState, useRef } from 'react'; // Added React import
+import { Button } from '../ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
 
 // Define a more specific type for the user prop
 interface User {
@@ -58,14 +58,14 @@ export default function AvatarUpload({
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {return;}
 
     setPreview(URL.createObjectURL(file));
     setUploading(true);
 
     const firebaseApp = getFirebase();
     if (!firebaseApp) {
-      alert("Firebase is not available.");
+      alert('Firebase is not available.');
       setUploading(false);
       return;
     }
@@ -80,14 +80,14 @@ export default function AvatarUpload({
       // Update Firestore user profile
       await firebaseApp
         .firestore()
-        .collection("users")
+        .collection('users')
         .doc(user.uid)
         .update({ photoURL: url });
 
-      if (onUpload) onUpload(url);
+      if (onUpload) {onUpload(url);}
     } catch (err: unknown) {
-      console.error("Failed to upload avatar:", err); // Log the error for debugging
-      alert("Failed to upload avatar. Please try again.");
+      console.error('Failed to upload avatar:', err); // Log the error for debugging
+      alert('Failed to upload avatar. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -98,9 +98,9 @@ export default function AvatarUpload({
       <Avatar className="w-24 h-24">
         <AvatarImage
           src={preview || user.photoURL}
-          alt={user.name || "User Avatar"}
+          alt={user.name || 'User Avatar'}
         />
-        <AvatarFallback>{user.name?.[0]?.toUpperCase() || "U"}</AvatarFallback>
+        <AvatarFallback>{user.name?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
       </Avatar>
       <input
         type="file"
@@ -118,7 +118,7 @@ export default function AvatarUpload({
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
       >
-        {uploading ? "Uploading..." : "Change Avatar"}
+        {uploading ? 'Uploading...' : 'Change Avatar'}
       </Button>
     </div>
   );

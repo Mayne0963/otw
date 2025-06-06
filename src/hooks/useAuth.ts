@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import type { User } from "../types";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import type { User } from '../types';
 import {
   signInWithPopup,
   signOut as firebaseSignOut,
@@ -18,16 +18,16 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   OAuthProvider,
-} from "firebase/auth";
+} from 'firebase/auth';
 import {
   ref,
   uploadBytes,
   getDownloadURL,
   deleteObject,
-} from "firebase/storage";
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { auth, db, storage } from "../lib/api";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+} from 'firebase/storage';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth, db, storage } from '../lib/api';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const supabase = createClientComponentClient();
 
@@ -39,7 +39,7 @@ export class AuthError extends Error {
     public originalError?: unknown,
   ) {
     super(message);
-    this.name = "AuthError";
+    this.name = 'AuthError';
   }
 }
 
@@ -56,8 +56,8 @@ const validateImage = (file: File): Promise<void> => {
       if (img.width < 100 || img.height < 100) {
         reject(
           new AuthError(
-            "Image dimensions must be at least 100x100 pixels",
-            "storage/invalid-dimensions",
+            'Image dimensions must be at least 100x100 pixels',
+            'storage/invalid-dimensions',
           ),
         );
       }
@@ -67,8 +67,8 @@ const validateImage = (file: File): Promise<void> => {
       if (aspectRatio < 0.5 || aspectRatio > 2) {
         reject(
           new AuthError(
-            "Image aspect ratio must be between 0.5 and 2",
-            "storage/invalid-aspect-ratio",
+            'Image aspect ratio must be between 0.5 and 2',
+            'storage/invalid-aspect-ratio',
           ),
         );
       }
@@ -78,7 +78,7 @@ const validateImage = (file: File): Promise<void> => {
 
     img.onerror = () => {
       URL.revokeObjectURL(img.src);
-      reject(new AuthError("Failed to load image", "storage/invalid-image"));
+      reject(new AuthError('Failed to load image', 'storage/invalid-image'));
     };
   });
 };
@@ -89,14 +89,14 @@ const compressImage = async (
     maxWidth?: number;
     maxHeight?: number;
     quality?: number;
-    format?: "jpeg" | "png" | "webp";
+    format?: 'jpeg' | 'png' | 'webp';
   } = {},
 ): Promise<File> => {
   const {
     maxWidth = 800,
     maxHeight = 800,
     quality = 0.8,
-    format = "jpeg",
+    format = 'jpeg',
   } = options;
 
   return new Promise((resolve, reject) => {
@@ -106,14 +106,14 @@ const compressImage = async (
     img.onload = () => {
       URL.revokeObjectURL(img.src);
 
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
       if (!ctx) {
         reject(
           new AuthError(
-            "Failed to create canvas context",
-            "storage/compression-error",
+            'Failed to create canvas context',
+            'storage/compression-error',
           ),
         );
         return;
@@ -143,8 +143,8 @@ const compressImage = async (
           if (!blob) {
             reject(
               new AuthError(
-                "Failed to compress image",
-                "storage/compression-error",
+                'Failed to compress image',
+                'storage/compression-error',
               ),
             );
             return;
@@ -158,7 +158,7 @@ const compressImage = async (
 
     img.onerror = () => {
       URL.revokeObjectURL(img.src);
-      reject(new AuthError("Failed to load image", "storage/invalid-image"));
+      reject(new AuthError('Failed to load image', 'storage/invalid-image'));
     };
   });
 };
@@ -179,14 +179,14 @@ const cropImage = async (
     img.onload = () => {
       URL.revokeObjectURL(img.src);
 
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
       if (!ctx) {
         reject(
           new AuthError(
-            "Failed to create canvas context",
-            "storage/crop-error",
+            'Failed to create canvas context',
+            'storage/crop-error',
           ),
         );
         return;
@@ -210,7 +210,7 @@ const cropImage = async (
       canvas.toBlob(
         (blob) => {
           if (!blob) {
-            reject(new AuthError("Failed to crop image", "storage/crop-error"));
+            reject(new AuthError('Failed to crop image', 'storage/crop-error'));
             return;
           }
           resolve(new File([blob], file.name, { type: file.type }));
@@ -222,7 +222,7 @@ const cropImage = async (
 
     img.onerror = () => {
       URL.revokeObjectURL(img.src);
-      reject(new AuthError("Failed to load image", "storage/invalid-image"));
+      reject(new AuthError('Failed to load image', 'storage/invalid-image'));
     };
   });
 };
@@ -239,7 +239,7 @@ export const useAuth = () => {
       try {
         if (firebaseUser) {
           // Get user data from Firestore
-          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           if (userDoc.exists()) {
             setUser(userDoc.data() as User);
           } else {
@@ -250,11 +250,11 @@ export const useAuth = () => {
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
             };
-            await setDoc(doc(db, "users", firebaseUser.uid), newUser);
+            await setDoc(doc(db, 'users', firebaseUser.uid), newUser);
             setUser({
             ...newUser,
             name: firebaseUser.displayName || '',
-            role: 'user' as const
+            role: 'user' as const,
           } as User);
           }
         } else {
@@ -282,7 +282,7 @@ export const useAuth = () => {
       );
 
       // Get user data from Firestore
-      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
+      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
       if (userDoc.exists()) {
         setUser(userDoc.data() as User);
       } else {
@@ -293,7 +293,7 @@ export const useAuth = () => {
           email: userCredential.user.email || '',
           role: 'user' as const,
         };
-        await setDoc(doc(db, "users", userCredential.user.uid), {
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
           ...newUser,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -301,7 +301,7 @@ export const useAuth = () => {
         setUser(newUser);
       }
 
-      router.push("/dashboard");
+      router.push('/dashboard');
     } catch (err: unknown) {
       const authError = handleFirebaseError(err);
       setError(authError);
@@ -331,12 +331,12 @@ export const useAuth = () => {
           id: userCredential.user.uid,
           email: userCredential.user.email,
           ...userData,
-          membershipTier: "none",
+          membershipTier: 'none',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
 
-        await setDoc(doc(db, "users", userCredential.user.uid), newUser);
+        await setDoc(doc(db, 'users', userCredential.user.uid), newUser);
         setUser(newUser as User);
       }
     } catch (err: unknown) {
@@ -355,7 +355,7 @@ export const useAuth = () => {
       setError(null);
       await firebaseSignOut(auth);
       setUser(null);
-      router.push("/");
+      router.push('/');
     } catch (err: unknown) {
       const authError = handleFirebaseError(err);
       setError(authError);
@@ -369,9 +369,9 @@ export const useAuth = () => {
   const updateProfile = async (updates: Partial<User>): Promise<void> => {
     try {
       setLoading(true);
-      if (!user) throw new Error("No user logged in");
+      if (!user) {throw new Error('No user logged in');}
 
-      await updateDoc(doc(db, "users", user.id), {
+      await updateDoc(doc(db, 'users', user.id), {
         ...updates,
         updatedAt: new Date().toISOString(),
       });
@@ -379,8 +379,8 @@ export const useAuth = () => {
       setUser((prev) => (prev ? { ...prev, ...updates } : null));
     } catch (err: unknown) {
       const errorMessage =
-        (err as Error)?.message || "Failed to update profile";
-      setError(new AuthError(errorMessage, "UPDATE_PROFILE_ERROR", err));
+        (err as Error)?.message || 'Failed to update profile';
+      setError(new AuthError(errorMessage, 'UPDATE_PROFILE_ERROR', err));
     } finally {
       setLoading(false);
     }
@@ -388,14 +388,14 @@ export const useAuth = () => {
 
   // Update user preferences
   const updatePreferences = async (
-    preferences: User["preferences"],
+    preferences: User['preferences'],
   ): Promise<void> => {
     try {
       setLoading(true);
-      if (!user) throw new Error("No user logged in");
+      if (!user) {throw new Error('No user logged in');}
 
       // Update preferences in Firestore
-      await updateDoc(doc(db, "users", user.id), {
+      await updateDoc(doc(db, 'users', user.id), {
         preferences,
         updatedAt: new Date().toISOString(),
       });
@@ -404,8 +404,8 @@ export const useAuth = () => {
       setUser((prev) => (prev ? { ...prev, preferences } : null));
     } catch (err: unknown) {
       const errorMessage =
-        (err as Error)?.message || "Failed to update preferences";
-      setError(new AuthError(errorMessage, "UPDATE_PREFERENCES_ERROR", err));
+        (err as Error)?.message || 'Failed to update preferences';
+      setError(new AuthError(errorMessage, 'UPDATE_PREFERENCES_ERROR', err));
     } finally {
       setLoading(false);
     }
@@ -413,14 +413,14 @@ export const useAuth = () => {
 
   // Update notification settings
   const updateNotificationSettings = async (
-    settings: User["notificationSettings"],
+    settings: User['notificationSettings'],
   ): Promise<void> => {
     try {
       setLoading(true);
-      if (!user) throw new Error("No user logged in");
+      if (!user) {throw new Error('No user logged in');}
 
       // Update notification settings in Firestore
-      await updateDoc(doc(db, "users", user.id), {
+      await updateDoc(doc(db, 'users', user.id), {
         notificationSettings: settings,
         updatedAt: new Date().toISOString(),
       });
@@ -431,9 +431,9 @@ export const useAuth = () => {
       );
     } catch (err: unknown) {
       const errorMessage =
-        (err as Error)?.message || "Failed to update notification settings";
+        (err as Error)?.message || 'Failed to update notification settings';
       setError(
-        new AuthError(errorMessage, "UPDATE_NOTIFICATION_SETTINGS_ERROR", err),
+        new AuthError(errorMessage, 'UPDATE_NOTIFICATION_SETTINGS_ERROR', err),
       );
     } finally {
       setLoading(false);
@@ -442,14 +442,14 @@ export const useAuth = () => {
 
   // Add activity to history
   const addActivity = async (
-    activity: NonNullable<User["activityHistory"]>[0],
+    activity: NonNullable<User['activityHistory']>[0],
   ): Promise<void> => {
     try {
       setLoading(true);
-      if (!user) throw new Error("No user logged in");
+      if (!user) {throw new Error('No user logged in');}
 
       // Update activity history in Firestore
-      await updateDoc(doc(db, "users", user.id), {
+      await updateDoc(doc(db, 'users', user.id), {
         activityHistory: [...(user.activityHistory || []), activity],
         updatedAt: new Date().toISOString(),
       });
@@ -464,21 +464,21 @@ export const useAuth = () => {
           : null,
       );
     } catch (err: unknown) {
-      const errorMessage = (err as Error)?.message || "Failed to add activity";
-      setError(new AuthError(errorMessage, "ADD_ACTIVITY_ERROR", err));
+      const errorMessage = (err as Error)?.message || 'Failed to add activity';
+      setError(new AuthError(errorMessage, 'ADD_ACTIVITY_ERROR', err));
     } finally {
       setLoading(false);
     }
   };
 
   // Save an item
-  const saveItem = async (item: NonNullable<User["savedItems"]>[0]): Promise<void> => {
+  const saveItem = async (item: NonNullable<User['savedItems']>[0]): Promise<void> => {
     try {
       setLoading(true);
-      if (!user) throw new Error("No user logged in");
+      if (!user) {throw new Error('No user logged in');}
 
       // Update saved items in Firestore
-      await updateDoc(doc(db, "users", user.id), {
+      await updateDoc(doc(db, 'users', user.id), {
         savedItems: [...(user.savedItems || []), item],
         updatedAt: new Date().toISOString(),
       });
@@ -493,8 +493,8 @@ export const useAuth = () => {
           : null,
       );
     } catch (err: unknown) {
-      const errorMessage = (err as Error)?.message || "Failed to save item";
-      setError(new AuthError(errorMessage, "SAVE_ITEM_ERROR", err));
+      const errorMessage = (err as Error)?.message || 'Failed to save item';
+      setError(new AuthError(errorMessage, 'SAVE_ITEM_ERROR', err));
     } finally {
       setLoading(false);
     }
@@ -504,10 +504,10 @@ export const useAuth = () => {
   const removeSavedItem = async (itemId: string): Promise<void> => {
     try {
       setLoading(true);
-      if (!user) throw new Error("No user logged in");
+      if (!user) {throw new Error('No user logged in');}
 
       // Update saved items in Firestore
-      await updateDoc(doc(db, "users", user.id), {
+      await updateDoc(doc(db, 'users', user.id), {
         savedItems: user.savedItems?.filter((item) => item.itemId !== itemId),
         updatedAt: new Date().toISOString(),
       });
@@ -525,8 +525,8 @@ export const useAuth = () => {
       );
     } catch (err: unknown) {
       const errorMessage =
-        (err as Error)?.message || "Failed to remove saved item";
-      setError(new AuthError(errorMessage, "REMOVE_SAVED_ITEM_ERROR", err));
+        (err as Error)?.message || 'Failed to remove saved item';
+      setError(new AuthError(errorMessage, 'REMOVE_SAVED_ITEM_ERROR', err));
     } finally {
       setLoading(false);
     }
@@ -543,25 +543,25 @@ export const useAuth = () => {
 
       if (result.user) {
         // Get user data from Firestore
-        const userDoc = await getDoc(doc(db, "users", result.user.uid));
+        const userDoc = await getDoc(doc(db, 'users', result.user.uid));
 
         if (!userDoc.exists()) {
           // Create user document if it doesn't exist
           const newUser = {
             id: result.user.uid,
             email: result.user.email,
-            displayName: result.user.displayName || "",
+            displayName: result.user.displayName || '',
             photoURL: result.user.photoURL,
-            membershipTier: "none",
+            membershipTier: 'none',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
 
-          await setDoc(doc(db, "users", result.user.uid), newUser);
+          await setDoc(doc(db, 'users', result.user.uid), newUser);
           setUser({
             ...newUser,
             name: result.user.displayName || '',
-            role: 'user' as const
+            role: 'user' as const,
           } as User);
         } else {
           setUser(userDoc.data() as User);
@@ -581,105 +581,105 @@ export const useAuth = () => {
   // Helper function to handle Firebase errors
   const handleFirebaseError = (err: unknown): AuthError => {
     const errorCode =
-      typeof err === "object" && err !== null && "code" in err
+      typeof err === 'object' && err !== null && 'code' in err
         ? (err as { code: string }).code
-        : "unknown";
-    let errorMessage = "An error occurred during authentication";
+        : 'unknown';
+    let errorMessage = 'An error occurred during authentication';
 
     switch (errorCode) {
-      case "auth/user-not-found":
-        errorMessage = "No user found with this email";
+      case 'auth/user-not-found':
+        errorMessage = 'No user found with this email';
         break;
-      case "auth/wrong-password":
-        errorMessage = "Incorrect password";
+      case 'auth/wrong-password':
+        errorMessage = 'Incorrect password';
         break;
-      case "auth/email-already-in-use":
-        errorMessage = "Email is already registered";
+      case 'auth/email-already-in-use':
+        errorMessage = 'Email is already registered';
         break;
-      case "auth/weak-password":
-        errorMessage = "Password is too weak";
+      case 'auth/weak-password':
+        errorMessage = 'Password is too weak';
         break;
-      case "auth/invalid-email":
-        errorMessage = "Invalid email address";
+      case 'auth/invalid-email':
+        errorMessage = 'Invalid email address';
         break;
-      case "auth/account-exists-with-different-credential":
+      case 'auth/account-exists-with-different-credential':
         errorMessage =
-          "An account already exists with the same email address but different sign-in credentials";
+          'An account already exists with the same email address but different sign-in credentials';
         break;
-      case "auth/popup-closed-by-user":
-        errorMessage = "Sign-in popup was closed before completing the sign-in";
+      case 'auth/popup-closed-by-user':
+        errorMessage = 'Sign-in popup was closed before completing the sign-in';
         break;
-      case "auth/cancelled-popup-request":
-        errorMessage = "Sign-in popup was cancelled";
+      case 'auth/cancelled-popup-request':
+        errorMessage = 'Sign-in popup was cancelled';
         break;
-      case "auth/popup-blocked":
-        errorMessage = "Sign-in popup was blocked by the browser";
+      case 'auth/popup-blocked':
+        errorMessage = 'Sign-in popup was blocked by the browser';
         break;
-      case "auth/network-request-failed":
-        errorMessage = "Network error occurred";
+      case 'auth/network-request-failed':
+        errorMessage = 'Network error occurred';
         break;
-      case "auth/requires-recent-login":
-        errorMessage = "Please sign in again to perform this action";
+      case 'auth/requires-recent-login':
+        errorMessage = 'Please sign in again to perform this action';
         break;
-      case "auth/too-many-requests":
-        errorMessage = "Too many attempts. Please try again later";
+      case 'auth/too-many-requests':
+        errorMessage = 'Too many attempts. Please try again later';
         break;
-      case "auth/operation-not-allowed":
-        errorMessage = "This operation is not allowed";
+      case 'auth/operation-not-allowed':
+        errorMessage = 'This operation is not allowed';
         break;
-      case "auth/invalid-verification-code":
-        errorMessage = "Invalid verification code";
+      case 'auth/invalid-verification-code':
+        errorMessage = 'Invalid verification code';
         break;
-      case "auth/invalid-verification-id":
-        errorMessage = "Invalid verification ID";
+      case 'auth/invalid-verification-id':
+        errorMessage = 'Invalid verification ID';
         break;
-      case "auth/missing-verification-code":
-        errorMessage = "Missing verification code";
+      case 'auth/missing-verification-code':
+        errorMessage = 'Missing verification code';
         break;
-      case "auth/missing-verification-id":
-        errorMessage = "Missing verification ID";
+      case 'auth/missing-verification-id':
+        errorMessage = 'Missing verification ID';
         break;
-      case "storage/object-not-found":
-        errorMessage = "File not found";
+      case 'storage/object-not-found':
+        errorMessage = 'File not found';
         break;
-      case "storage/unauthorized":
-        errorMessage = "Unauthorized to access this file";
+      case 'storage/unauthorized':
+        errorMessage = 'Unauthorized to access this file';
         break;
-      case "storage/canceled":
-        errorMessage = "Upload canceled";
+      case 'storage/canceled':
+        errorMessage = 'Upload canceled';
         break;
-      case "storage/unknown":
-        errorMessage = "Unknown storage error";
+      case 'storage/unknown':
+        errorMessage = 'Unknown storage error';
         break;
-      case "storage/invalid-dimensions":
-        errorMessage = "Image dimensions must be at least 100x100 pixels";
+      case 'storage/invalid-dimensions':
+        errorMessage = 'Image dimensions must be at least 100x100 pixels';
         break;
-      case "storage/invalid-aspect-ratio":
-        errorMessage = "Image aspect ratio must be between 0.5 and 2";
+      case 'storage/invalid-aspect-ratio':
+        errorMessage = 'Image aspect ratio must be between 0.5 and 2';
         break;
-      case "storage/invalid-image":
-        errorMessage = "Invalid image file";
+      case 'storage/invalid-image':
+        errorMessage = 'Invalid image file';
         break;
-      case "storage/compression-error":
-        errorMessage = "Failed to compress image";
+      case 'storage/compression-error':
+        errorMessage = 'Failed to compress image';
         break;
-      case "storage/crop-error":
-        errorMessage = "Failed to crop image";
+      case 'storage/crop-error':
+        errorMessage = 'Failed to crop image';
         break;
-      case "storage/filter-error":
-        errorMessage = "Failed to apply image filter";
+      case 'storage/filter-error':
+        errorMessage = 'Failed to apply image filter';
         break;
-      case "storage/invalid-crop-dimensions":
-        errorMessage = "Invalid crop dimensions";
+      case 'storage/invalid-crop-dimensions':
+        errorMessage = 'Invalid crop dimensions';
         break;
-      case "storage/invalid-filter":
-        errorMessage = "Invalid image filter";
+      case 'storage/invalid-filter':
+        errorMessage = 'Invalid image filter';
         break;
       default:
         errorMessage =
-          typeof err === "object" && err !== null && "message" in err
+          typeof err === 'object' && err !== null && 'message' in err
             ? String(err.message)
-            : "An unknown error occurred";
+            : 'An unknown error occurred';
     }
 
     return new AuthError(errorMessage, errorCode, err);
@@ -698,7 +698,7 @@ export const useAuth = () => {
       maxWidth?: number;
       maxHeight?: number;
       quality?: number;
-      format?: "jpeg" | "png" | "webp";
+      format?: 'jpeg' | 'png' | 'webp';
     } = {},
   ): Promise<string> => {
     try {
@@ -706,22 +706,22 @@ export const useAuth = () => {
       setError(null);
 
       if (!auth.currentUser) {
-        throw new AuthError("User not authenticated", "auth/user-not-found");
+        throw new AuthError('User not authenticated', 'auth/user-not-found');
       }
 
       // Validate file type and size
-      if (!file.type.startsWith("image/")) {
+      if (!file.type.startsWith('image/')) {
         throw new AuthError(
-          "File must be an image",
-          "storage/invalid-file-type",
+          'File must be an image',
+          'storage/invalid-file-type',
         );
       }
 
       if (file.size > 5 * 1024 * 1024) {
         // 5MB limit
         throw new AuthError(
-          "File size must be less than 5MB",
-          "storage/file-too-large",
+          'File size must be less than 5MB',
+          'storage/file-too-large',
         );
       }
 
@@ -749,12 +749,12 @@ export const useAuth = () => {
           await deleteObject(oldImageRef);
         } catch (err: unknown) {
           // Ignore error if file doesn't exist
-          console.warn("Error deleting old profile picture:", err);
+          console.warn('Error deleting old profile picture:', err);
         }
       }
 
       // Upload new profile picture
-      const fileExtension = processedFile.name.split(".").pop();
+      const fileExtension = processedFile.name.split('.').pop();
       const fileName = `profile-pictures/${auth.currentUser.uid}.${fileExtension}`;
       const storageRef = ref(storage, fileName);
       await uploadBytes(storageRef, processedFile);
@@ -767,14 +767,14 @@ export const useAuth = () => {
 
       // Update Supabase user data
       const { error: userError } = await supabase
-        .from("users")
+        .from('users')
         .update({
           profileImage: downloadURL,
           updatedAt: new Date().toISOString(),
         })
-        .eq("id", auth.currentUser.uid);
+        .eq('id', auth.currentUser.uid);
 
-      if (userError) throw userError;
+      if (userError) {throw userError;}
 
       // Update local state
       setUser((prev) => (prev ? { ...prev, profileImage: downloadURL } : null));
@@ -796,13 +796,13 @@ export const useAuth = () => {
       setError(null);
 
       if (!auth.currentUser) {
-        throw new AuthError("User not authenticated", "auth/user-not-found");
+        throw new AuthError('User not authenticated', 'auth/user-not-found');
       }
 
       if (!user?.profileImage) {
         throw new AuthError(
-          "No profile picture to delete",
-          "storage/object-not-found",
+          'No profile picture to delete',
+          'storage/object-not-found',
         );
       }
 
@@ -817,14 +817,14 @@ export const useAuth = () => {
 
       // Update Supabase user data
       const { error: userError } = await supabase
-        .from("users")
+        .from('users')
         .update({
           profileImage: null,
           updatedAt: new Date().toISOString(),
         })
-        .eq("id", auth.currentUser.uid);
+        .eq('id', auth.currentUser.uid);
 
-      if (userError) throw userError;
+      if (userError) {throw userError;}
 
       // Update local state
       setUser((prev) => (prev ? { ...prev, profileImage: undefined } : null));
@@ -848,12 +848,12 @@ export const useAuth = () => {
       setError(null);
 
       if (!auth.currentUser) {
-        throw new AuthError("User not authenticated", "auth/user-not-found");
+        throw new AuthError('User not authenticated', 'auth/user-not-found');
       }
 
       // Add activity to Supabase
       const { error: activityError } = await supabase
-        .from("user_activities")
+        .from('user_activities')
         .insert([
           {
             userId: auth.currentUser.uid,
@@ -864,7 +864,7 @@ export const useAuth = () => {
           },
         ]);
 
-      if (activityError) throw activityError;
+      if (activityError) {throw activityError;}
 
       // Update local state
       setUser((prev) =>
@@ -900,12 +900,12 @@ export const useAuth = () => {
       setError(null);
 
       if (!auth.currentUser) {
-        throw new AuthError("User not authenticated", "auth/user-not-found");
+        throw new AuthError('User not authenticated', 'auth/user-not-found');
       }
 
       // Add saved item to Supabase
       const { error: savedItemError } = await supabase
-        .from("saved_items")
+        .from('saved_items')
         .insert([
           {
             userId: auth.currentUser.uid,
@@ -916,7 +916,7 @@ export const useAuth = () => {
           },
         ]);
 
-      if (savedItemError) throw savedItemError;
+      if (savedItemError) {throw savedItemError;}
 
       // Update local state
       setUser((prev) =>
@@ -945,19 +945,19 @@ export const useAuth = () => {
   // Social Login Methods
   const signInWithGoogle = async (): Promise<UserCredential> => {
     const result = await handleSocialLogin(new GoogleAuthProvider());
-    router.push("/dashboard");
+    router.push('/dashboard');
     return result;
   };
 
   const signInWithFacebook = async (): Promise<UserCredential> => {
     const result = await handleSocialLogin(new FacebookAuthProvider());
-    router.push("/dashboard");
+    router.push('/dashboard');
     return result;
   };
 
   const signInWithApple = async (): Promise<UserCredential> => {
-    const result = await handleSocialLogin(new OAuthProvider("apple.com"));
-    router.push("/dashboard");
+    const result = await handleSocialLogin(new OAuthProvider('apple.com'));
+    router.push('/dashboard');
     return result;
   };
 
@@ -1004,14 +1004,14 @@ export const useAuth = () => {
 
         // Update email in Supabase
         const { error: userError } = await supabase
-          .from("users")
+          .from('users')
           .update({
             email: newEmail,
             updatedAt: new Date().toISOString(),
           })
-          .eq("id", auth.currentUser.uid);
+          .eq('id', auth.currentUser.uid);
 
-        if (userError) throw userError;
+        if (userError) {throw userError;}
 
         // Update local state
         setUser((prev) => (prev ? { ...prev, email: newEmail } : null));
@@ -1050,11 +1050,11 @@ export const useAuth = () => {
       if (auth.currentUser) {
         // Delete user data from Supabase
         const { error: userError } = await supabase
-          .from("users")
+          .from('users')
           .delete()
-          .eq("id", auth.currentUser.uid);
+          .eq('id', auth.currentUser.uid);
 
-        if (userError) throw userError;
+        if (userError) {throw userError;}
 
         // Delete Firebase user
         await deleteUser(auth.currentUser);

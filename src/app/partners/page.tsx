@@ -1,30 +1,30 @@
-import type { Metadata } from "next";
-import PartnerSignup from "../../components/partners/PartnerSignup";
-import { Card } from "../../components/ui/card";
-import { Building2, ShieldCheck, TrendingUp } from "lucide-react";
+import type { Metadata } from 'next';
+import PartnerSignup from '../../components/partners/PartnerSignup';
+import { Card } from '../../components/ui/card';
+import { Building2, ShieldCheck, TrendingUp } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "Partner with OTW | The One-Stop Motion Platform",
+  title: 'Partner with OTW | The One-Stop Motion Platform',
   description:
-    "Join OTW as a business partner and expand your reach in Fort Wayne.",
+    'Join OTW as a business partner and expand your reach in Fort Wayne.',
 };
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 const benefits = [
   {
-    title: "Expand Your Reach",
-    description: "Access our growing network of customers across Fort Wayne.",
+    title: 'Expand Your Reach',
+    description: 'Access our growing network of customers across Fort Wayne.',
     icon: TrendingUp,
   },
   {
-    title: "Secure Platform",
-    description: "Advanced security measures to protect your business data.",
+    title: 'Secure Platform',
+    description: 'Advanced security measures to protect your business data.',
     icon: ShieldCheck,
   },
   {
-    title: "Business Tools",
-    description: "Manage orders, inventory, and analytics all in one place.",
+    title: 'Business Tools',
+    description: 'Manage orders, inventory, and analytics all in one place.',
     icon: Building2,
   },
 ];

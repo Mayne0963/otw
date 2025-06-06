@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRewards } from "../../lib/context/RewardsContext";
-import { useAuth } from "../../contexts/AuthContext";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRewards } from '../../lib/context/RewardsContext';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   FaCrown,
   FaGift,
@@ -25,14 +25,14 @@ import {
   FaGamepad,
   FaTimes,
   FaTrophy,
-} from "react-icons/fa";
-import MembershipCard from "../../components/loyalty/MembershipCard";
-import TierBenefitsTable from "../../components/loyalty/TierBenefitsTable";
-import TestimonialCard from "../../components/loyalty/TestimonialCard";
-import SpinGame from "../../components/rewards/SpinGame";
-import RedeemModal from "../../components/rewards/RedeemModal";
-import RewardCard from "../../components/rewards/RewardCard";
-import type { Reward } from "../../types/reward";
+} from 'react-icons/fa';
+import MembershipCard from '../../components/loyalty/MembershipCard';
+import TierBenefitsTable from '../../components/loyalty/TierBenefitsTable';
+import TestimonialCard from '../../components/loyalty/TestimonialCard';
+import SpinGame from '../../components/rewards/SpinGame';
+import RedeemModal from '../../components/rewards/RedeemModal';
+import RewardCard from '../../components/rewards/RewardCard';
+import type { Reward } from '../../types/reward';
 // Dynamic testimonials loaded from API
 
 export default function LoyaltyPage() {
@@ -55,12 +55,12 @@ export default function LoyaltyPage() {
       try {
         const [tiersResponse, testimonialsResponse] = await Promise.all([
           fetch('/api/loyalty?type=tiers'),
-          fetch('/api/loyalty?type=testimonials')
+          fetch('/api/loyalty?type=testimonials'),
         ]);
-        
+
         const tiersData = await tiersResponse.json();
         const testimonialsData = await testimonialsResponse.json();
-        
+
         if (tiersData.success) {
           setMembershipTiersData(tiersData.data);
         }
@@ -128,15 +128,15 @@ export default function LoyaltyPage() {
 
   // Determine user tier based on points
   const getUserTier = () => {
-    if (membershipTiers.length === 0) return null;
-    
+    if (membershipTiers.length === 0) {return null;}
+
     // Sort tiers by points required (ascending)
     const sortedTiers = [...membershipTiers].sort((a, b) => a.pointsRequired - b.pointsRequired);
-    
+
     // Find the highest tier the user qualifies for
     let currentTier = sortedTiers[0];
     let nextTier = null;
-    
+
     for (let i = 0; i < sortedTiers.length; i++) {
       if (points >= sortedTiers[i].pointsRequired) {
         currentTier = sortedTiers[i];
@@ -145,10 +145,10 @@ export default function LoyaltyPage() {
         break;
       }
     }
-    
-    return { 
-      ...currentTier, 
-      next: nextTier ? { name: nextTier.name, points: nextTier.pointsRequired } : null 
+
+    return {
+      ...currentTier,
+      next: nextTier ? { name: nextTier.name, points: nextTier.pointsRequired } : null,
     };
   };
 
@@ -156,7 +156,7 @@ export default function LoyaltyPage() {
 
   // Calculate progress percentage to next tier
   const getProgressPercentage = () => {
-    if (!userTier || !userTier.next) return 100;
+    if (!userTier || !userTier.next) {return 100;}
     const currentPoints = userTier.pointsRequired;
     const nextPoints = userTier.next.points;
     const progress = ((points - currentPoints) / (nextPoints - currentPoints)) * 100;
@@ -178,7 +178,7 @@ export default function LoyaltyPage() {
               </div>
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-white">
-              ON THE WAY {" "}
+              ON THE WAY {' '}
               <span className="bg-gradient-to-r from-otw-gold via-otw-red to-otw-gold bg-clip-text text-transparent">
                 Loyalty Program
               </span>
@@ -216,28 +216,28 @@ export default function LoyaltyPage() {
                       <div className="flex items-center gap-3 mb-4 justify-center lg:justify-start flex-wrap">
                         <div
                           className={`w-5 h-5 rounded-full ${
-                            userTier?.name === "Gold"
-                              ? "bg-gradient-to-r from-otw-gold to-otw-gold-600"
-                              : userTier?.name === "Silver"
-                              ? "bg-gradient-to-r from-otw-red-400 to-otw-red-500"
-                              : "bg-gradient-to-r from-otw-gold-400 to-otw-gold-500"
+                            userTier?.name === 'Gold'
+                              ? 'bg-gradient-to-r from-otw-gold to-otw-gold-600'
+                              : userTier?.name === 'Silver'
+                              ? 'bg-gradient-to-r from-otw-red-400 to-otw-red-500'
+                              : 'bg-gradient-to-r from-otw-gold-400 to-otw-gold-500'
                           }`}
                         ></div>
                         <span className="text-xl font-bold text-white">
                           {userTier?.name} Member
                         </span>
                         <div className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          userTier?.name === "Gold"
-                            ? "bg-otw-gold/20 text-otw-gold border border-otw-gold/30"
-                            : userTier?.name === "Silver"
-                            ? "bg-otw-red-400/20 text-otw-red-400 border border-otw-red-400/30"
-                            : "bg-otw-gold-400/20 text-otw-gold-400 border border-otw-gold-400/30"
+                          userTier?.name === 'Gold'
+                            ? 'bg-otw-gold/20 text-otw-gold border border-otw-gold/30'
+                            : userTier?.name === 'Silver'
+                            ? 'bg-otw-red-400/20 text-otw-red-400 border border-otw-red-400/30'
+                            : 'bg-otw-gold-400/20 text-otw-gold-400 border border-otw-gold-400/30'
                         }`}>
                           Elite Status
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="bg-gradient-to-r from-otw-gold/10 to-transparent rounded-xl p-4 mb-6">
                       <p className="text-gray-300 mb-2 text-base">
                         Available Points
@@ -305,11 +305,11 @@ export default function LoyaltyPage() {
                     >
                       <div
                         className={`w-80 h-48 rounded-xl p-6 text-white relative overflow-hidden ${
-                          userTier?.name === "Gold"
-                            ? "bg-gradient-to-br from-otw-gold via-otw-gold-500 to-otw-gold-600"
-                            : userTier?.name === "Silver"
-                            ? "bg-gradient-to-br from-otw-red-400 via-otw-red-500 to-otw-red-600"
-                            : "bg-gradient-to-br from-otw-gold-400 via-otw-gold-500 to-otw-gold-600"
+                          userTier?.name === 'Gold'
+                            ? 'bg-gradient-to-br from-otw-gold via-otw-gold-500 to-otw-gold-600'
+                            : userTier?.name === 'Silver'
+                            ? 'bg-gradient-to-br from-otw-red-400 via-otw-red-500 to-otw-red-600'
+                            : 'bg-gradient-to-br from-otw-gold-400 via-otw-gold-500 to-otw-gold-600'
                         }`}
                       >
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20 rounded-xl"></div>
@@ -365,11 +365,11 @@ export default function LoyaltyPage() {
               <div className="flex flex-wrap justify-center gap-2">
                 <button
                   className={`px-4 py-3 font-semibold text-base whitespace-nowrap rounded-lg transition-all duration-300 flex items-center gap-2 ${
-                    activeTab === "overview"
-                      ? "bg-gradient-to-r from-otw-gold to-otw-gold-600 text-white shadow-lg shadow-otw-gold/30 transform scale-105"
-                      : "text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md"
+                    activeTab === 'overview'
+                      ? 'bg-gradient-to-r from-otw-gold to-otw-gold-600 text-white shadow-lg shadow-otw-gold/30 transform scale-105'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md'
                   }`}
-                  onClick={() => setActiveTab("overview")}
+                  onClick={() => setActiveTab('overview')}
                 >
                   <span className="text-lg">🏆</span>
                   <span className="hidden sm:inline">Program Overview</span>
@@ -377,11 +377,11 @@ export default function LoyaltyPage() {
                 </button>
                 <button
                   className={`px-4 py-3 font-semibold text-base whitespace-nowrap rounded-lg transition-all duration-300 flex items-center gap-2 ${
-                    activeTab === "tiers"
-                      ? "bg-gradient-to-r from-otw-red-400 to-otw-red-500 text-white shadow-lg shadow-otw-red-400/30 transform scale-105"
-                      : "text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md"
+                    activeTab === 'tiers'
+                      ? 'bg-gradient-to-r from-otw-red-400 to-otw-red-500 text-white shadow-lg shadow-otw-red-400/30 transform scale-105'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md'
                   }`}
-                  onClick={() => setActiveTab("tiers")}
+                  onClick={() => setActiveTab('tiers')}
                 >
                   <span className="text-lg">👑</span>
                   <span className="hidden sm:inline">Membership Tiers</span>
@@ -389,11 +389,11 @@ export default function LoyaltyPage() {
                 </button>
                 <button
                   className={`px-4 py-3 font-semibold text-base whitespace-nowrap rounded-lg transition-all duration-300 flex items-center gap-2 ${
-                    activeTab === "earn"
-                      ? "bg-gradient-to-r from-otw-gold-400 to-otw-gold-500 text-white shadow-lg shadow-otw-gold-400/30 transform scale-105"
-                      : "text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md"
+                    activeTab === 'earn'
+                      ? 'bg-gradient-to-r from-otw-gold-400 to-otw-gold-500 text-white shadow-lg shadow-otw-gold-400/30 transform scale-105'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md'
                   }`}
-                  onClick={() => setActiveTab("earn")}
+                  onClick={() => setActiveTab('earn')}
                 >
                   <span className="text-lg">💎</span>
                   <span className="hidden sm:inline">Ways to Earn</span>
@@ -401,11 +401,11 @@ export default function LoyaltyPage() {
                 </button>
                 <button
                   className={`px-4 py-3 font-semibold text-base whitespace-nowrap rounded-lg transition-all duration-300 flex items-center gap-2 ${
-                    activeTab === "perks"
-                      ? "bg-gradient-to-r from-otw-gold-400 to-otw-gold-500 text-white shadow-lg shadow-otw-gold-400/30 transform scale-105"
-                      : "text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md"
+                    activeTab === 'perks'
+                      ? 'bg-gradient-to-r from-otw-gold-400 to-otw-gold-500 text-white shadow-lg shadow-otw-gold-400/30 transform scale-105'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md'
                   }`}
-                  onClick={() => setActiveTab("perks")}
+                  onClick={() => setActiveTab('perks')}
                 >
                   <span className="text-lg">🎁</span>
                   <span className="hidden sm:inline">Exclusive Perks</span>
@@ -413,12 +413,12 @@ export default function LoyaltyPage() {
                 </button>
                 <button
                   className={`px-4 py-3 font-semibold text-base whitespace-nowrap rounded-lg transition-all duration-300 flex items-center gap-2 ${
-                    activeTab === "rewards"
-                      ? "bg-gradient-to-r from-otw-red to-otw-red-600 text-white shadow-lg shadow-otw-red/30 transform scale-105"
-                      : "text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md"
+                    activeTab === 'rewards'
+                      ? 'bg-gradient-to-r from-otw-red to-otw-red-600 text-white shadow-lg shadow-otw-red/30 transform scale-105'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800/60 hover:shadow-md'
                   }`}
                   onClick={() => {
-                    setActiveTab("rewards");
+                    setActiveTab('rewards');
                     if (rewards.length === 0) {
                       fetchRewards();
                     }
@@ -438,7 +438,7 @@ export default function LoyaltyPage() {
       <section className="py-12 md:py-16 bg-gradient-to-b from-black via-gray-900 to-black">
         <div className="container mx-auto px-6">
           {/* Program Overview Tab */}
-          {activeTab === "overview" && (
+          {activeTab === 'overview' && (
             <div className="animate-fade-in">
               <div className="max-w-5xl mx-auto text-center mb-12">
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-white">
@@ -563,7 +563,7 @@ export default function LoyaltyPage() {
           )}
 
           {/* Membership Tiers Tab */}
-          {activeTab === "tiers" && (
+          {activeTab === 'tiers' && (
             <div className="animate-fade-in">
               <div className="max-w-4xl mx-auto text-center mb-10">
                 <h2 className="text-2xl md:text-3xl font-bold mb-4 text-white">Membership Tiers</h2>
@@ -581,7 +581,7 @@ export default function LoyaltyPage() {
                     className={`bg-[#1A1A1A] rounded-lg overflow-hidden shadow-lg border ${
                       userTier?.name === tier.name
                         ? tier.borderColor
-                        : "border-[#333333]"
+                        : 'border-[#333333]'
                     } ${userTier?.name === tier.name ? 'ring-2 ring-opacity-50 ' + tier.borderColor.replace('border-', 'ring-') : ''}`}
                   >
                     <div className={`${tier.bgColor} bg-opacity-20 p-6 text-center relative`}>
@@ -625,7 +625,7 @@ export default function LoyaltyPage() {
                           )}
                         </ul>
                       </div>
-                      
+
                       {!user ? (
                         <Link href="/signup" className="btn-primary w-full text-sm">
                           Join Now
@@ -734,7 +734,7 @@ export default function LoyaltyPage() {
           )}
 
           {/* Ways to Earn Tab */}
-          {activeTab === "earn" && (
+          {activeTab === 'earn' && (
             <div className="animate-fade-in">
               <div className="max-w-3xl mx-auto text-center mb-12 bg-gradient-to-r from-purple-900/20 to-blue-900/20 p-8 rounded-2xl border border-purple-500/30 shadow-2xl">
                 <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">💰 Ways to Earn Points</h2>
@@ -905,7 +905,7 @@ export default function LoyaltyPage() {
           )}
 
           {/* Exclusive Perks Tab */}
-          {activeTab === "perks" && (
+          {activeTab === 'perks' && (
             <div className="animate-fade-in">
               <div className="max-w-3xl mx-auto text-center mb-12 bg-gradient-to-r from-otw-gold/20 to-otw-red/20 p-8 rounded-2xl border border-otw-gold/30 shadow-2xl">
                 <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-otw-gold to-otw-red bg-clip-text text-transparent">
@@ -996,7 +996,7 @@ export default function LoyaltyPage() {
                       </li>
                       <li className="flex items-start">
                         <FaCheck className="text-otw-red mt-1.5 mr-4 flex-shrink-0 text-lg" />
-                        <span className="text-gray-200 text-base">Chef's table access (Gold)</span>
+                        <span className="text-gray-200 text-base">Chef&apos;s table access (Gold)</span>
                       </li>
                       <li className="flex items-start">
                         <FaCheck className="text-otw-red mt-1.5 mr-4 flex-shrink-0 text-lg" />
@@ -1030,7 +1030,7 @@ export default function LoyaltyPage() {
                       </li>
                       <li className="flex items-start">
                         <FaCheck className="text-otw-gold mt-1.5 mr-4 flex-shrink-0 text-lg" />
-                        <span className="text-gray-200 text-base">Chef's special tasting opportunities</span>
+                        <span className="text-gray-200 text-base">Chef&apos;s special tasting opportunities</span>
                       </li>
                     </ul>
                   </div>
@@ -1097,7 +1097,7 @@ export default function LoyaltyPage() {
           )}
 
           {/* Rewards Tab */}
-          {activeTab === "rewards" && (
+          {activeTab === 'rewards' && (
             <div className="space-y-8">
               <div className="text-center mb-12">
                 <h2 className="text-4xl font-bold mb-4 text-gray-100">
@@ -1164,10 +1164,10 @@ export default function LoyaltyPage() {
                 are earned if there is no account activity.
               </p>
               <p className="text-gray-200 leading-relaxed text-lg">
-                For complete program terms and conditions, please visit our{" "}
+                For complete program terms and conditions, please visit our{' '}
                 <Link href="/terms" className="text-otw-gold hover:underline font-medium">
                   Terms of Service
-                </Link>{" "}
+                </Link>{' '}
                 page.
               </p>
             </div>
@@ -1195,7 +1195,7 @@ export default function LoyaltyPage() {
                   id: user.uid,
                   name: user.displayName || user.email || 'Member',
                   email: user.email || '',
-                  role: 'user'
+                  role: 'user',
                 }}
                 points={points}
                 tier={userTier?.name || 'Bronze'}

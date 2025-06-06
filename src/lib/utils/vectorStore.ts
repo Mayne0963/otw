@@ -1,4 +1,4 @@
-import { type IndexedContent, getContentDatabase } from "./contentIndexer";
+import { type IndexedContent, getContentDatabase } from './contentIndexer';
 
 // Simple vector representation for text
 interface TextVector {

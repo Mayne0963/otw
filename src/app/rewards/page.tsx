@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { useState } from "react";
-import { useRewards } from "../../lib/context/RewardsContext";
-import { useEffect } from "react";
-import RewardCard from "../../components/rewards/RewardCard";
-import PointsTracker from "../../components/rewards/PointsTracker";
-import RewardHistory from "../../components/rewards/RewardHistory";
-import SpinGame from "../../components/rewards/SpinGame";
-import RedeemModal from "../../components/rewards/RedeemModal";
-import { FaTrophy, FaGift, FaHistory, FaGamepad } from "react-icons/fa";
-import type { Reward } from "../../types/reward";
+import type { Metadata } from 'next';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { useState } from 'react';
+import { useRewards } from '../../lib/context/RewardsContext';
+import { useEffect } from 'react';
+import RewardCard from '../../components/rewards/RewardCard';
+import PointsTracker from '../../components/rewards/PointsTracker';
+import RewardHistory from '../../components/rewards/RewardHistory';
+import SpinGame from '../../components/rewards/SpinGame';
+import RedeemModal from '../../components/rewards/RedeemModal';
+import { FaTrophy, FaGift, FaHistory, FaGamepad } from 'react-icons/fa';
+import type { Reward } from '../../types/reward';
 
 export default function RewardsPage() {
   const { points, tier, history } = useRewards();
-  const [activeTab, setActiveTab] = useState("rewards");
+  const [activeTab, setActiveTab] = useState('rewards');
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [showRedeemModal, setShowRedeemModal] = useState(false);
   const [showSpinGame, setShowSpinGame] = useState(false);
@@ -48,12 +48,12 @@ export default function RewardsPage() {
 
   // Determine next tier details
   const getNextTierInfo = () => {
-    if (tier === "Gold") {
-      return { name: "Gold", points: 1000 };
-    } else if (tier === "Silver") {
-      return { name: "Gold", points: 1000 };
+    if (tier === 'Gold') {
+      return { name: 'Gold', points: 1000 };
+    } else if (tier === 'Silver') {
+      return { name: 'Gold', points: 1000 };
     } else {
-      return { name: "Silver", points: 500 };
+      return { name: 'Silver', points: 500 };
     }
   };
 
@@ -150,21 +150,21 @@ export default function RewardsPage() {
           <div className="flex overflow-x-auto pb-2 hide-scrollbar">
             <button
               className={`px-6 py-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "rewards"
-                  ? "text-gold-foil border-b-2 border-gold-foil"
-                  : "text-gray-400 hover:text-white"
+                activeTab === 'rewards'
+                  ? 'text-gold-foil border-b-2 border-gold-foil'
+                  : 'text-gray-400 hover:text-white'
               }`}
-              onClick={() => setActiveTab("rewards")}
+              onClick={() => setActiveTab('rewards')}
             >
               <FaGift className="inline mr-2" /> Rewards
             </button>
             <button
               className={`px-6 py-2 font-medium text-sm whitespace-nowrap ${
-                activeTab === "history"
-                  ? "text-gold-foil border-b-2 border-gold-foil"
-                  : "text-gray-400 hover:text-white"
+                activeTab === 'history'
+                  ? 'text-gold-foil border-b-2 border-gold-foil'
+                  : 'text-gray-400 hover:text-white'
               }`}
-              onClick={() => setActiveTab("history")}
+              onClick={() => setActiveTab('history')}
             >
               <FaHistory className="inline mr-2" /> History
             </button>
@@ -176,7 +176,7 @@ export default function RewardsPage() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           {/* Rewards Tab */}
-          {activeTab === "rewards" && (
+          {activeTab === 'rewards' && (
             <div className="animate-fade-in">
               {loading ? (
                 <div className="flex justify-center items-center py-12">
@@ -197,7 +197,7 @@ export default function RewardsPage() {
                   ([category, categoryRewards]) => (
                     <div key={category} className="mb-12">
                       <h2 className="text-2xl font-bold mb-6">
-                        {category.charAt(0).toUpperCase() + category.slice(1)}{" "}
+                        {category.charAt(0).toUpperCase() + category.slice(1)}{' '}
                         Rewards
                       </h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -219,7 +219,7 @@ export default function RewardsPage() {
           )}
 
           {/* History Tab */}
-          {activeTab === "history" && (
+          {activeTab === 'history' && (
             <div className="animate-fade-in">
               <h2 className="text-2xl font-bold mb-6">Points History</h2>
               <RewardHistory history={history} />

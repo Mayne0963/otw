@@ -13,7 +13,7 @@ export async function GET() {
         status: 'error',
         message: 'Internal server error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -21,7 +21,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    
+
     return NextResponse.json({
       status: 'success',
       data: body,
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         status: 'error',
         message: 'Invalid request body',
       },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
 
 interface ChatMessage {
   role: string;
@@ -39,8 +39,8 @@ export async function POST(request: Request) {
     // Check if OpenAI API key is configured
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
-        { error: "Chat service is not configured. Please contact support." },
-        { status: 503 }
+        { error: 'Chat service is not configured. Please contact support.' },
+        { status: 503 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json(
-        { error: "Invalid request format" },
+        { error: 'Invalid request format' },
         { status: 400 },
       );
     }
@@ -57,12 +57,12 @@ export async function POST(request: Request) {
     // Validate message format
     for (const message of messages) {
       if (
-        typeof message !== "object" ||
+        typeof message !== 'object' ||
         !message.role ||
-        typeof message.text !== "string"
+        typeof message.text !== 'string'
       ) {
         return NextResponse.json(
-          { error: "Invalid message format" },
+          { error: 'Invalid message format' },
           { status: 400 },
         );
       }
@@ -70,16 +70,16 @@ export async function POST(request: Request) {
 
     // Convert messages to OpenAI format
     const openaiMessages = [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: 'system', content: SYSTEM_PROMPT },
       ...messages.map(msg => ({
-        role: msg.role === "user" ? "user" : "assistant",
-        content: msg.text
-      }))
+        role: msg.role === 'user' ? 'user' : 'assistant',
+        content: msg.text,
+      })),
     ];
 
     // Generate response using OpenAI
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: 'gpt-3.5-turbo',
       messages: openaiMessages,
       max_tokens: 500,
       temperature: 0.7,
@@ -89,23 +89,23 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       message: {
-        role: "assistant",
+        role: 'assistant',
         text: responseText,
       },
     });
   } catch (error) {
-    console.error("Chat API error:", error);
-    
+    console.error('Chat API error:', error);
+
     // Handle specific OpenAI errors
     if (error instanceof Error && error.message.includes('API key')) {
       return NextResponse.json(
-        { error: "Chat service configuration error. Please contact support." },
-        { status: 503 }
+        { error: 'Chat service configuration error. Please contact support.' },
+        { status: 503 },
       );
     }
-    
+
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: 'Internal server error' },
       { status: 500 },
     );
   }

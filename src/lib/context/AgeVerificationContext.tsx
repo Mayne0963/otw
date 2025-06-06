@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface AgeVerificationContextType {
   isVerified: boolean;
@@ -20,8 +20,8 @@ export function AgeVerificationProvider({
 
   useEffect(() => {
     // Check if age verification is stored in localStorage
-    const storedVerification = localStorage.getItem("ageVerified");
-    if (storedVerification === "true") {
+    const storedVerification = localStorage.getItem('ageVerified');
+    if (storedVerification === 'true') {
       setIsVerified(true);
     }
   }, []);
@@ -33,15 +33,15 @@ export function AgeVerificationProvider({
     // Store verification data if month and year are provided
     if (month && year) {
       try {
-        localStorage.setItem("verificationMonth", String(month));
-        localStorage.setItem("verificationYear", String(year));
+        localStorage.setItem('verificationMonth', String(month));
+        localStorage.setItem('verificationYear', String(year));
       } catch (error) {
-        console.error("Error storing verification data:", error);
+        console.error('Error storing verification data:', error);
       }
     }
 
     setIsVerified(true);
-    localStorage.setItem("ageVerified", "true");
+    localStorage.setItem('ageVerified', 'true');
     return Promise.resolve();
   };
 
@@ -56,7 +56,7 @@ export function useAgeVerification() {
   const context = useContext(AgeVerificationContext);
   if (context === undefined) {
     throw new Error(
-      "useAgeVerification must be used within an AgeVerificationProvider",
+      'useAgeVerification must be used within an AgeVerificationProvider',
     );
   }
   return context;

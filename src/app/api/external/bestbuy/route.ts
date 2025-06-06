@@ -17,16 +17,16 @@ export async function GET(request: NextRequest) {
       const cursorMark = searchParams.get('cursorMark');
       const pageSize = searchParams.get('pageSize');
       const page = searchParams.get('page');
-      
-      if (q) params.q = q;
-      if (categoryId) params.categoryId = categoryId;
-      if (format) params.format = format;
-      if (show) params.show = show;
-      if (sort) params.sort = sort;
-      if (facet) params.facet = facet;
-      if (cursorMark) params.cursorMark = cursorMark;
-      if (pageSize) params.pageSize = parseInt(pageSize);
-      if (page) params.page = parseInt(page);
+
+      if (q) {params.q = q;}
+      if (categoryId) {params.categoryId = categoryId;}
+      if (format) {params.format = format;}
+      if (show) {params.show = show;}
+      if (sort) {params.sort = sort;}
+      if (facet) {params.facet = facet;}
+      if (cursorMark) {params.cursorMark = cursorMark;}
+      if (pageSize) {params.pageSize = parseInt(pageSize);}
+      if (page) {params.page = parseInt(page);}
 
       const result = await BestBuyService.searchProducts(params);
       return NextResponse.json({ success: true, data: result });
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       if (!sku) {
         return NextResponse.json(
           { success: false, error: 'SKU is required' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -64,24 +64,24 @@ export async function GET(request: NextRequest) {
     if (action === 'availability') {
       const sku = searchParams.get('sku');
       const storeId = searchParams.get('storeId');
-      
+
       if (!sku || !storeId) {
         return NextResponse.json(
           { success: false, error: 'Both SKU and Store ID are required' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       const availability = await BestBuyService.checkProductAvailability(
         parseInt(sku),
-        parseInt(storeId)
+        parseInt(storeId),
       );
       return NextResponse.json({ success: true, data: availability });
     }
 
     return NextResponse.json(
       { success: false, error: 'Invalid action. Use "products", "product", "stores", or "availability"' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     console.error('Best Buy API error:', error);
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

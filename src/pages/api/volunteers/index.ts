@@ -3,7 +3,7 @@ import { databaseService } from '../../../lib/services/database';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { method } = req;
 
@@ -19,13 +19,13 @@ export default async function handler(
         res.status(200).json({
           success: true,
           data: volunteerData,
-          count: volunteerData.length
+          count: volunteerData.length,
         });
       } catch (error) {
         console.error('Error fetching volunteers:', error);
         res.status(500).json({
           success: false,
-          error: 'Failed to fetch volunteer opportunities'
+          error: 'Failed to fetch volunteer opportunities',
         });
       }
       break;
@@ -34,23 +34,23 @@ export default async function handler(
       try {
         const volunteerData = req.body;
         const id = await databaseService.createVolunteer(volunteerData);
-        
+
         if (id) {
           res.status(201).json({
             success: true,
-            data: { id, ...volunteerData }
+            data: { id, ...volunteerData },
           });
         } else {
           res.status(500).json({
             success: false,
-            error: 'Failed to create volunteer opportunity'
+            error: 'Failed to create volunteer opportunity',
           });
         }
       } catch (error) {
         console.error('Error creating volunteer opportunity:', error);
         res.status(500).json({
           success: false,
-          error: 'Failed to create volunteer opportunity'
+          error: 'Failed to create volunteer opportunity',
         });
       }
       break;

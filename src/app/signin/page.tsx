@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -110,7 +110,7 @@ export default function SignInPage() {
                 Forgot your password?
               </Link>
               <p className="text-sm text-gray-300">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/signup" className="text-otw-gold hover:underline">
                   Sign up
                 </Link>

@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Card } from "../ui/card";
-import { Progress } from "../ui/progress";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import MapSearch from "../maps/MapSearch";
-import { Phone, MessageCircle, AlertCircle } from "lucide-react";
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import { Card } from '../ui/card';
+import { Progress } from '../ui/progress';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import MapSearch from '../maps/MapSearch';
+import { Phone, MessageCircle, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
 
 interface TrackingStatus {
-  status: "preparing" | "picked_up" | "in_transit" | "arrived";
+  status: 'preparing' | 'picked_up' | 'in_transit' | 'arrived';
   estimatedArrival: string;
   currentLocation: {
     lat: number;
@@ -26,26 +26,26 @@ interface TrackingStatus {
 }
 
 const statusSteps = [
-  { id: "preparing", label: "Preparing" },
-  { id: "picked_up", label: "Picked Up" },
-  { id: "in_transit", label: "In Transit" },
-  { id: "arrived", label: "Arrived" },
+  { id: 'preparing', label: 'Preparing' },
+  { id: 'picked_up', label: 'Picked Up' },
+  { id: 'in_transit', label: 'In Transit' },
+  { id: 'arrived', label: 'Arrived' },
 ];
 
 export default function OrderTracking({ orderId }: { orderId: string }) {
   const [trackingStatus, setTrackingStatus] = useState<TrackingStatus>({
-    status: "preparing",
-    estimatedArrival: "30 mins",
+    status: 'preparing',
+    estimatedArrival: '30 mins',
     currentLocation: {
       lat: 40.7128,
       lng: -85.1394,
-      address: "1127 Broadway, Fort Wayne, IN",
+      address: '1127 Broadway, Fort Wayne, IN',
     },
     driver: {
-      name: "Marcus Thompson",
-      phone: "+1 (260) 555-8934",
-      vehicle: "Toyota Camry - OTW156",
-      photo: "/assets/volunteers/marcus.jpg",
+      name: 'Marcus Thompson',
+      phone: '+1 (260) 555-8934',
+      vehicle: 'Toyota Camry - OTW156',
+      photo: '/assets/volunteers/marcus.jpg',
     },
   });
 
@@ -79,7 +79,7 @@ export default function OrderTracking({ orderId }: { orderId: string }) {
           </div>
           <Badge
             variant={
-              trackingStatus.status === "arrived" ? "secondary" : "default"
+              trackingStatus.status === 'arrived' ? 'secondary' : 'default'
             }
           >
             {statusSteps[currentStepIndex]?.label || 'Unknown Status'}
@@ -95,8 +95,8 @@ export default function OrderTracking({ orderId }: { orderId: string }) {
                 key={step.id}
                 className={`text-sm ${
                   index <= currentStepIndex
-                    ? "text-otw-gold-600"
-                    : "text-gray-400"
+                    ? 'text-otw-gold-600'
+                    : 'text-gray-400'
                 }`}
               >
                 {step.label}

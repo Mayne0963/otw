@@ -1,23 +1,19 @@
-"use client";
+'use client';
 
-import React, { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   FaArrowLeft,
   FaUpload,
   FaCheck,
   FaExclamationTriangle,
-  FaPhone,
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaSpinner,
-} from "react-icons/fa";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Label } from "../ui/label";
-import { Alert, AlertDescription } from "../ui/alert";
+} from 'react-icons/fa';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
+import { Label } from '../ui/label';
+import { Alert, AlertDescription } from '../ui/alert';
 
 interface ScreenshotOrderData {
   customerName: string;
@@ -40,13 +36,13 @@ export default function ScreenshotOrderForm() {
   const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<ScreenshotOrderData>({
-    customerName: "",
-    customerPhone: "",
-    customerEmail: "",
-    restaurantName: "",
-    pickupLocation: "",
-    estimatedTotal: "",
-    specialInstructions: "",
+    customerName: '',
+    customerPhone: '',
+    customerEmail: '',
+    restaurantName: '',
+    pickupLocation: '',
+    estimatedTotal: '',
+    specialInstructions: '',
     screenshot: null,
     screenshotPreview: null,
   });
@@ -54,13 +50,13 @@ export default function ScreenshotOrderForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    
+
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -68,14 +64,14 @@ export default function ScreenshotOrderForm() {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith("image/")) {
-        setError("Please select a valid image file");
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file');
         return;
       }
 
       // Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
-        setError("Image file must be less than 10MB");
+        setError('Image file must be less than 10MB');
         return;
       }
 
@@ -100,7 +96,7 @@ export default function ScreenshotOrderForm() {
       screenshotPreview: null,
     }));
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   };
 
@@ -108,37 +104,37 @@ export default function ScreenshotOrderForm() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.customerName.trim()) {
-      newErrors.customerName = "Name is required";
+      newErrors.customerName = 'Name is required';
     }
 
     if (!formData.customerPhone.trim()) {
-      newErrors.customerPhone = "Phone number is required";
+      newErrors.customerPhone = 'Phone number is required';
     } else if (!/^[\d\s\-\(\)\+]{10,}$/.test(formData.customerPhone)) {
-      newErrors.customerPhone = "Please enter a valid phone number";
+      newErrors.customerPhone = 'Please enter a valid phone number';
     }
 
     if (!formData.customerEmail.trim()) {
-      newErrors.customerEmail = "Email is required";
+      newErrors.customerEmail = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.customerEmail)) {
-      newErrors.customerEmail = "Please enter a valid email address";
+      newErrors.customerEmail = 'Please enter a valid email address';
     }
 
     if (!formData.restaurantName.trim()) {
-      newErrors.restaurantName = "Restaurant name is required";
+      newErrors.restaurantName = 'Restaurant name is required';
     }
 
     if (!formData.pickupLocation.trim()) {
-      newErrors.pickupLocation = "Pickup location is required";
+      newErrors.pickupLocation = 'Pickup location is required';
     }
 
     if (!formData.estimatedTotal.trim()) {
-      newErrors.estimatedTotal = "Estimated total is required";
+      newErrors.estimatedTotal = 'Estimated total is required';
     } else if (!/^\$?\d+(\.\d{2})?$/.test(formData.estimatedTotal)) {
-      newErrors.estimatedTotal = "Please enter a valid amount (e.g., $25.99)";
+      newErrors.estimatedTotal = 'Please enter a valid amount (e.g., $25.99)';
     }
 
     if (!formData.screenshot) {
-      newErrors.screenshot = "Screenshot is required";
+      newErrors.screenshot = 'Screenshot is required';
     }
 
     setErrors(newErrors);
@@ -149,7 +145,7 @@ export default function ScreenshotOrderForm() {
     e.preventDefault();
 
     if (!validateForm()) {
-      setError("Please correct the errors in the form");
+      setError('Please correct the errors in the form');
       return;
     }
 
@@ -159,33 +155,33 @@ export default function ScreenshotOrderForm() {
     try {
       // Create FormData for file upload
       const submitData = new FormData();
-      submitData.append("customerName", formData.customerName);
-      submitData.append("customerPhone", formData.customerPhone);
-      submitData.append("customerEmail", formData.customerEmail);
-      submitData.append("restaurantName", formData.restaurantName);
-      submitData.append("pickupLocation", formData.pickupLocation);
-      submitData.append("estimatedTotal", formData.estimatedTotal);
-      submitData.append("specialInstructions", formData.specialInstructions);
+      submitData.append('customerName', formData.customerName);
+      submitData.append('customerPhone', formData.customerPhone);
+      submitData.append('customerEmail', formData.customerEmail);
+      submitData.append('restaurantName', formData.restaurantName);
+      submitData.append('pickupLocation', formData.pickupLocation);
+      submitData.append('estimatedTotal', formData.estimatedTotal);
+      submitData.append('specialInstructions', formData.specialInstructions);
       if (formData.screenshot) {
-        submitData.append("screenshot", formData.screenshot);
+        submitData.append('screenshot', formData.screenshot);
       }
 
       // Submit to API
-      const response = await fetch("/api/orders/screenshot", {
-        method: "POST",
+      const response = await fetch('/api/orders/screenshot', {
+        method: 'POST',
         body: submitData,
       });
 
       if (!response.ok) {
-        throw new Error("Failed to submit order");
+        throw new Error('Failed to submit order');
       }
 
       const result = await response.json();
       setOrderId(result.orderId);
       setOrderComplete(true);
     } catch (err) {
-      console.error("Order submission error:", err);
-      setError("There was an error submitting your order. Please try again.");
+      console.error('Order submission error:', err);
+      setError('There was an error submitting your order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -204,7 +200,7 @@ export default function ScreenshotOrderForm() {
               <p className="text-gray-300 mb-6">
                 Thank you! Your screenshot order has been received. Our team will review your order and contact you shortly to confirm details and arrange pickup.
               </p>
-              
+
               <div className="bg-[#111111] p-6 rounded-lg mb-6">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-bold">Order #{orderId}</h2>
@@ -228,13 +224,13 @@ export default function ScreenshotOrderForm() {
 
               <div className="flex gap-4 justify-center">
                 <Button
-                  onClick={() => router.push("/orders")}
+                  onClick={() => router.push('/orders')}
                   className="btn-primary"
                 >
                   View My Orders
                 </Button>
                 <Button
-                  onClick={() => router.push("/")}
+                  onClick={() => router.push('/')}
                   variant="outline"
                   className="border-[#333333] text-white hover:bg-[#333333]"
                 >
@@ -262,9 +258,9 @@ export default function ScreenshotOrderForm() {
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold mb-4">Screenshot Order Service</h1>
             <p className="text-xl text-gray-300 mb-6">
-              Simply upload a screenshot of your order, and we'll handle everything else!
+              Simply upload a screenshot of your order, and we&apos;ll handle everything else!
             </p>
-            
+
             {/* Process Steps */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-4">
@@ -313,7 +309,7 @@ export default function ScreenshotOrderForm() {
             <Card className="bg-[#1A1A1A] border-[#333333]">
               <CardHeader>
                 <CardTitle className="text-2xl">Order Information</CardTitle>
-                <p className="text-gray-400">Fill out the details below - we'll handle the rest!</p>
+                <p className="text-gray-400">Fill out the details below - we&apos;ll handle the rest!</p>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-8">
@@ -399,7 +395,7 @@ export default function ScreenshotOrderForm() {
                         value={formData.restaurantName}
                         onChange={handleInputChange}
                         className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.restaurantName ? 'border-red-500' : ''}`}
-                        placeholder="McDonald's, Chipotle, etc."
+                        placeholder="McDonald&apos;s, Chipotle, etc."
                       />
                       {errors.restaurantName && (
                         <p className="text-red-500 text-sm mt-1">{errors.restaurantName}</p>
@@ -574,14 +570,14 @@ export default function ScreenshotOrderForm() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="text-yellow-200 text-sm space-y-2">
-                  <p><strong>📞 We'll call you:</strong> Within 15-30 minutes to confirm details</p>
+                  <p><strong>📞 We&apos;ll call you:</strong> Within 15-30 minutes to confirm details</p>
                   <p><strong>💰 Payment:</strong> Collected when we pick up your order</p>
                   <p><strong>🚗 Service fee:</strong> Will be discussed during confirmation call</p>
                   <p><strong>⏰ Processing:</strong> Orders handled Mon-Sun, 10 AM - 10 PM</p>
                 </div>
               </CardContent>
             </Card>
-            
+
             {/* How it Works */}
             <Card className="bg-[#1A1A1A] border-[#333333]">
               <CardHeader>
@@ -620,7 +616,7 @@ export default function ScreenshotOrderForm() {
                 </div>
               </CardContent>
             </Card>
-            
+
             {/* Contact Info */}
             <Card className="bg-[#1A1A1A] border-[#333333]">
               <CardHeader>

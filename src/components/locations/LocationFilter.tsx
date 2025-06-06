@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
 interface LocationFilterProps {
   states: string[];
@@ -18,11 +18,11 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
       <div className="flex space-x-2 min-w-max">
         <button
           className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            selectedState === "all"
-              ? "bg-gold-foil text-black"
-              : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
+            selectedState === 'all'
+              ? 'bg-gold-foil text-black'
+              : 'bg-[#1A1A1A] text-white hover:bg-[#333333]'
           }`}
-          onClick={() => setSelectedState("all")}
+          onClick={() => setSelectedState('all')}
         >
           All States
         </button>
@@ -32,8 +32,8 @@ const LocationFilter: React.FC<LocationFilterProps> = ({
             key={state}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedState === state
-                ? "bg-gold-foil text-black"
-                : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
+                ? 'bg-gold-foil text-black'
+                : 'bg-[#1A1A1A] text-white hover:bg-[#333333]'
             }`}
             onClick={() => setSelectedState(state)}
           >

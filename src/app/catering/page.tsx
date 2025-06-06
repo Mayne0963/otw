@@ -6,9 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../..
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
-import { 
-  Utensils, 
-  Users, 
+import {
+  Utensils,
+  Users,
   Clock,
   Phone,
   Mail,
@@ -25,7 +25,7 @@ import {
   Coffee,
   Pizza,
   Cake,
-  Salad
+  Salad,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -70,8 +70,8 @@ const CATERING_PACKAGES: CateringPackage[] = [
       'Premium coffee and tea service',
       'Orange juice and water',
       'Disposable plates and utensils',
-      'Setup and cleanup included'
-    ]
+      'Setup and cleanup included',
+    ],
   },
   {
     id: 'lunch-deluxe',
@@ -87,9 +87,9 @@ const CATERING_PACKAGES: CateringPackage[] = [
       'Chips and pickles',
       'Dessert selection',
       'Beverages included',
-      'Professional service staff'
+      'Professional service staff',
     ],
-    popular: true
+    popular: true,
   },
   {
     id: 'dinner-premium',
@@ -106,9 +106,9 @@ const CATERING_PACKAGES: CateringPackage[] = [
       'Signature dessert',
       'Wine pairing available',
       'White-glove service',
-      'Linens and centerpieces'
+      'Linens and centerpieces',
     ],
-    premium: true
+    premium: true,
   },
   {
     id: 'dessert-station',
@@ -123,8 +123,8 @@ const CATERING_PACKAGES: CateringPackage[] = [
       'Chocolate fountain',
       'Coffee and tea service',
       'Decorative presentation',
-      'Serving utensils included'
-    ]
+      'Serving utensils included',
+    ],
   },
   {
     id: 'beverage-package',
@@ -140,9 +140,9 @@ const CATERING_PACKAGES: CateringPackage[] = [
       'Signature cocktails',
       'Non-alcoholic options',
       'Professional bartender',
-      'All glassware included'
-    ]
-  }
+      'All glassware included',
+    ],
+  },
 ];
 
 const MENU_ITEMS: MenuItem[] = [
@@ -155,7 +155,7 @@ const MENU_ITEMS: MenuItem[] = [
     dietary: ['Vegetarian Options'],
     image: '/images/catering/sandwich-platter.jpg',
     servingSize: 'Serves 8-10',
-    prepTime: '2 hours notice'
+    prepTime: '2 hours notice',
   },
   {
     id: 'mediterranean-mezze',
@@ -166,7 +166,7 @@ const MENU_ITEMS: MenuItem[] = [
     dietary: ['Vegetarian', 'Gluten-Free Options'],
     image: '/images/catering/mezze-board.jpg',
     servingSize: 'Serves 6-8',
-    prepTime: '4 hours notice'
+    prepTime: '4 hours notice',
   },
   {
     id: 'bbq-platter',
@@ -177,7 +177,7 @@ const MENU_ITEMS: MenuItem[] = [
     dietary: ['Gluten-Free Sides'],
     image: '/images/catering/bbq-platter.jpg',
     servingSize: 'Serves 10-12',
-    prepTime: '24 hours notice'
+    prepTime: '24 hours notice',
   },
   {
     id: 'breakfast-pastry-box',
@@ -188,7 +188,7 @@ const MENU_ITEMS: MenuItem[] = [
     dietary: ['Vegetarian'],
     image: '/images/catering/pastry-box.jpg',
     servingSize: 'Serves 6-8',
-    prepTime: '1 day notice'
+    prepTime: '1 day notice',
   },
   {
     id: 'salad-bar-setup',
@@ -199,7 +199,7 @@ const MENU_ITEMS: MenuItem[] = [
     dietary: ['Vegetarian', 'Vegan', 'Gluten-Free'],
     image: '/images/catering/salad-bar.jpg',
     servingSize: 'Per person',
-    prepTime: '4 hours notice'
+    prepTime: '4 hours notice',
   },
   {
     id: 'dessert-tower',
@@ -210,8 +210,8 @@ const MENU_ITEMS: MenuItem[] = [
     dietary: ['Vegetarian', 'Some Gluten-Free'],
     image: '/images/catering/dessert-tower.jpg',
     servingSize: 'Serves 12-15',
-    prepTime: '48 hours notice'
-  }
+    prepTime: '48 hours notice',
+  },
 ];
 
 export default function CateringPage() {
@@ -227,7 +227,7 @@ export default function CateringPage() {
     eventType: '',
     budget: '',
     dietaryRestrictions: '',
-    additionalRequests: ''
+    additionalRequests: '',
   });
 
   const { addItem } = useCart();
@@ -235,8 +235,8 @@ export default function CateringPage() {
   const categories = ['all', 'breakfast', 'lunch', 'dinner', 'dessert', 'beverages'];
   const menuCategories = ['All', 'Breakfast', 'Lunch', 'Dinner', 'Appetizers', 'Desserts'];
 
-  const filteredPackages = selectedCategory === 'all' 
-    ? CATERING_PACKAGES 
+  const filteredPackages = selectedCategory === 'all'
+    ? CATERING_PACKAGES
     : CATERING_PACKAGES.filter(pkg => pkg.category === selectedCategory);
 
   const [selectedMenuCategory, setSelectedMenuCategory] = useState('All');
@@ -247,21 +247,21 @@ export default function CateringPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmitQuote = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       toast({
-        title: "Catering Quote Requested!",
+        title: 'Catering Quote Requested!',
         description: "We'll contact you within 24 hours with a detailed quote.",
       });
-      
+
       setShowQuoteForm(false);
       setFormData({
         name: '',
@@ -272,13 +272,13 @@ export default function CateringPage() {
         eventType: '',
         budget: '',
         dietaryRestrictions: '',
-        additionalRequests: ''
+        additionalRequests: '',
       });
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to submit quote request. Please try again.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to submit quote request. Please try again.',
+        variant: 'destructive',
       });
     }
   };
@@ -291,11 +291,11 @@ export default function CateringPage() {
       quantity: 1,
       restaurant: 'OTW Catering',
       image: item.image,
-      customizations: []
+      customizations: [],
     });
-    
+
     toast({
-      title: "Added to Cart!",
+      title: 'Added to Cart!',
       description: `${item.name} has been added to your cart.`,
     });
   };
@@ -318,7 +318,7 @@ export default function CateringPage() {
                 Exceptional culinary experiences delivered to your event. From intimate gatherings to large celebrations, we bring restaurant-quality food to you.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
+                <Button
                   onClick={() => setShowQuoteForm(true)}
                   className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300"
                 >
@@ -330,7 +330,7 @@ export default function CateringPage() {
                 </Button>
               </div>
             </div>
-            
+
             <div className="flex-1 max-w-lg">
               <div className="relative h-80 rounded-2xl overflow-hidden">
                 <Image
@@ -366,7 +366,7 @@ export default function CateringPage() {
               <h3 className="text-xl font-semibold text-white mb-2">Delivery & Setup</h3>
               <p className="text-gray-300 text-sm">Full-service delivery with professional setup and presentation</p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-black" />
@@ -374,7 +374,7 @@ export default function CateringPage() {
               <h3 className="text-xl font-semibold text-white mb-2">Event Staffing</h3>
               <p className="text-gray-300 text-sm">Professional servers and bartenders for your event</p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Leaf className="w-8 h-8 text-black" />
@@ -382,7 +382,7 @@ export default function CateringPage() {
               <h3 className="text-xl font-semibold text-white mb-2">Dietary Options</h3>
               <p className="text-gray-300 text-sm">Vegetarian, vegan, gluten-free, and allergy-friendly options</p>
             </div>
-            
+
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-8 h-8 text-black" />
@@ -412,7 +412,7 @@ export default function CateringPage() {
               <Button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                variant={selectedCategory === category ? "default" : "outline"}
+                variant={selectedCategory === category ? 'default' : 'outline'}
                 className={`px-6 py-2 rounded-full transition-all duration-300 ${
                   selectedCategory === category
                     ? 'bg-gradient-to-r from-otw-gold to-yellow-500 text-black'
@@ -426,11 +426,11 @@ export default function CateringPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredPackages.map((pkg) => (
-              <Card 
-                key={pkg.id} 
+              <Card
+                key={pkg.id}
                 className={`bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:shadow-otw-gold/10 relative ${
-                  selectedPackage === pkg.id 
-                    ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20 scale-105' 
+                  selectedPackage === pkg.id
+                    ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20 scale-105'
                     : 'border-otw-gold/20 hover:border-otw-gold/40'
                 }`}
               >
@@ -448,7 +448,7 @@ export default function CateringPage() {
                     </Badge>
                   </div>
                 )}
-                
+
                 <CardHeader className="text-center">
                   <CardTitle className="text-xl text-white mb-2">{pkg.name}</CardTitle>
                   <CardDescription className="text-gray-300 mb-4">
@@ -462,7 +462,7 @@ export default function CateringPage() {
                     Minimum {pkg.minGuests} guests
                   </div>
                 </CardHeader>
-                
+
                 <CardContent>
                   <ul className="space-y-2 mb-6">
                     {pkg.features.map((feature, index) => (
@@ -472,15 +472,15 @@ export default function CateringPage() {
                       </li>
                     ))}
                   </ul>
-                  
-                  <Button 
+
+                  <Button
                     onClick={() => {
                       setSelectedPackage(pkg.id);
                       setFormData(prev => ({ ...prev, eventType: pkg.name }));
                       setShowQuoteForm(true);
                     }}
                     className={`w-full py-3 rounded-xl transition-all duration-300 ${
-                      pkg.premium 
+                      pkg.premium
                         ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
                         : 'bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold hover:shadow-lg hover:shadow-otw-gold/20'
                     }`}
@@ -512,7 +512,7 @@ export default function CateringPage() {
               <Button
                 key={category}
                 onClick={() => setSelectedMenuCategory(category)}
-                variant={selectedMenuCategory === category ? "default" : "outline"}
+                variant={selectedMenuCategory === category ? 'default' : 'outline'}
                 className={`px-6 py-2 rounded-full transition-all duration-300 ${
                   selectedMenuCategory === category
                     ? 'bg-gradient-to-r from-otw-gold to-yellow-500 text-black'
@@ -540,15 +540,15 @@ export default function CateringPage() {
                     </Badge>
                   </div>
                 </div>
-                
+
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-semibold text-white">{item.name}</h3>
                     <span className="text-2xl font-bold text-otw-gold">${item.price}</span>
                   </div>
-                  
+
                   <p className="text-gray-300 text-sm mb-4">{item.description}</p>
-                  
+
                   <div className="flex flex-wrap gap-2 mb-4">
                     {item.dietary.map((diet, index) => (
                       <Badge key={index} variant="outline" className="border-green-400 text-green-400 text-xs">
@@ -556,7 +556,7 @@ export default function CateringPage() {
                       </Badge>
                     ))}
                   </div>
-                  
+
                   <div className="flex justify-between items-center text-sm text-gray-400 mb-4">
                     <span className="flex items-center gap-1">
                       <Users className="w-4 h-4" />
@@ -567,8 +567,8 @@ export default function CateringPage() {
                       {item.prepTime}
                     </span>
                   </div>
-                  
-                  <Button 
+
+                  <Button
                     onClick={() => handleAddToCart(item)}
                     className="w-full bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold py-2 rounded-lg hover:shadow-lg transition-all duration-300"
                   >
@@ -667,8 +667,8 @@ export default function CateringPage() {
             <CardHeader>
               <CardTitle className="text-white flex items-center justify-between">
                 <span>Get Catering Quote</span>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   onClick={() => setShowQuoteForm(false)}
                   className="text-gray-400 hover:text-white"
                 >
@@ -813,7 +813,7 @@ export default function CateringPage() {
             Let our culinary team create an unforgettable dining experience for your guests.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
+            <Button
               onClick={() => setShowQuoteForm(true)}
               className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300"
             >

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -8,21 +8,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  CreditCard, 
-  Clock, 
-  MapPin, 
-  User, 
-  Phone, 
-  Mail, 
-  Package, 
-  Car, 
+import {
+  CreditCard,
+  Clock,
+  MapPin,
+  User,
+  Phone,
+  Mail,
+  Package,
+  Car,
   ShoppingCart,
   CheckCircle,
   AlertCircle,
   ArrowLeft,
   Shield,
-  DollarSign
+  DollarSign,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -55,26 +55,26 @@ export default function OTWCheckoutPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  
+
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState('');
-  
+
   const [serviceDetails, setServiceDetails] = useState<ServiceDetails | null>(null);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
     phone: '',
     email: '',
     address: '',
-    specialInstructions: ''
+    specialInstructions: '',
   });
   const [selectedPayment, setSelectedPayment] = useState<'card' | null>('card');
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
     cvv: '',
-    name: ''
+    name: '',
   });
 
   const paymentMethods: PaymentMethod[] = [
@@ -82,15 +82,15 @@ export default function OTWCheckoutPage() {
       type: 'card',
       label: 'Pay with Card',
       description: 'Secure instant payment with your credit or debit card. Payment processed immediately upon order confirmation.',
-      icon: <CreditCard className="w-6 h-6" />
-    }
+      icon: <CreditCard className="w-6 h-6" />,
+    },
   ];
 
   // Load service details from URL params or localStorage
   useEffect(() => {
     const serviceType = searchParams.get('service');
     const storedDetails = localStorage.getItem('otwServiceDetails');
-    
+
     if (storedDetails) {
       setServiceDetails(JSON.parse(storedDetails));
     } else if (serviceType) {
@@ -101,35 +101,35 @@ export default function OTWCheckoutPage() {
           title: 'Grocery Shop & Drop',
           description: 'Personal grocery shopping and delivery service',
           estimatedPrice: 15.99,
-          serviceDetails: {}
+          serviceDetails: {},
         },
         rides: {
           type: 'rides' as const,
           title: 'Local Rides',
           description: 'Door-to-door transportation service',
           estimatedPrice: 12.50,
-          serviceDetails: {}
+          serviceDetails: {},
         },
         package: {
           type: 'package' as const,
           title: 'Package Delivery',
           description: 'Fast and secure package delivery',
           estimatedPrice: 8.99,
-          serviceDetails: {}
-        }
+          serviceDetails: {},
+        },
       };
-      
+
       if (serviceType in defaultServices) {
         setServiceDetails(defaultServices[serviceType as keyof typeof defaultServices]);
       }
     }
-    
+
     // Pre-fill user info if authenticated
     if (user) {
       setCustomerInfo(prev => ({
         ...prev,
         email: user.email || '',
-        name: user.displayName || ''
+        name: user.displayName || '',
       }));
     }
   }, [searchParams, user]);
@@ -152,16 +152,16 @@ export default function OTWCheckoutPage() {
       setStep(step + 1);
     } else {
       toast({
-        title: "Please complete all required fields",
-        description: "Fill in all the required information before proceeding.",
-        variant: "destructive"
+        title: 'Please complete all required fields',
+        description: 'Fill in all the required information before proceeding.',
+        variant: 'destructive',
       });
     }
   };
 
   const handleSubmitOrder = async () => {
     setIsProcessing(true);
-    
+
     try {
       const orderData = {
         serviceDetails,
@@ -169,7 +169,7 @@ export default function OTWCheckoutPage() {
         paymentMethod: selectedPayment,
         cardDetails: selectedPayment === 'card' ? cardDetails : null,
         timestamp: new Date().toISOString(),
-        userId: user?.uid || null
+        userId: user?.uid || null,
       };
 
       // Process card payment
@@ -177,13 +177,13 @@ export default function OTWCheckoutPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': user ? `Bearer ${await user.getIdToken()}` : ''
+          'Authorization': user ? `Bearer ${await user.getIdToken()}` : '',
         },
         body: JSON.stringify({
           serviceDetails,
           customerInfo,
-          amount: Math.round(serviceDetails?.estimatedPrice * 100) || 0
-        })
+          amount: Math.round(serviceDetails?.estimatedPrice * 100) || 0,
+        }),
       });
 
       if (response.ok) {
@@ -196,9 +196,9 @@ export default function OTWCheckoutPage() {
     } catch (error) {
       console.error('Order submission error:', error);
       toast({
-        title: "Order Submission Failed",
-        description: "There was an error processing your order. Please try again.",
-        variant: "destructive"
+        title: 'Order Submission Failed',
+        description: 'There was an error processing your order. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsProcessing(false);
@@ -217,8 +217,8 @@ export default function OTWCheckoutPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
-              onClick={() => router.push('/otw')} 
+            <Button
+              onClick={() => router.push('/otw')}
               className="w-full bg-otw-red hover:bg-otw-red/80"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -264,29 +264,29 @@ export default function OTWCheckoutPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-otw-red/10 p-4 rounded-lg border border-otw-red/30">
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-otw-red mt-0.5" />
                 <div>
-                  <h4 className="text-white font-semibold mb-1">What's Next?</h4>
+                  <h4 className="text-white font-semibold mb-1">What&apos;s Next?</h4>
                   <p className="text-gray-400 text-sm">
                     Your payment has been processed. A community helper will contact you shortly to arrange service delivery.
                   </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                onClick={() => router.push('/otw')} 
-                variant="outline" 
+              <Button
+                onClick={() => router.push('/otw')}
+                variant="outline"
                 className="flex-1 border-otw-gold/50 text-otw-gold hover:bg-otw-gold/10"
               >
                 Order Another Service
               </Button>
-              <Button 
-                onClick={() => router.push('/orders')} 
+              <Button
+                onClick={() => router.push('/orders')}
                 className="flex-1 bg-otw-red hover:bg-otw-red/80"
               >
                 View My Orders
@@ -317,8 +317,8 @@ export default function OTWCheckoutPage() {
             {[1, 2, 3].map((stepNumber) => (
               <div key={stepNumber} className="flex items-center">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                  step >= stepNumber 
-                    ? 'bg-otw-gold text-black' 
+                  step >= stepNumber
+                    ? 'bg-otw-gold text-black'
                     : 'bg-gray-700 text-gray-400'
                 }`}>
                   {stepNumber}
@@ -372,7 +372,7 @@ export default function OTWCheckoutPage() {
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="email" className="text-gray-300">Email Address *</Label>
                     <Input
@@ -384,7 +384,7 @@ export default function OTWCheckoutPage() {
                       placeholder="your.email@example.com"
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="address" className="text-gray-300">Service Address *</Label>
                     <Input
@@ -395,7 +395,7 @@ export default function OTWCheckoutPage() {
                       placeholder="123 Main St, City, State 12345"
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="instructions" className="text-gray-300">Special Instructions</Label>
                     <Textarea
@@ -489,7 +489,7 @@ export default function OTWCheckoutPage() {
                       placeholder="John Doe"
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="cardNumber" className="text-gray-300">Card Number *</Label>
                     <Input
@@ -501,7 +501,7 @@ export default function OTWCheckoutPage() {
                       maxLength={19}
                     />
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="expiry" className="text-gray-300">Expiry Date *</Label>
@@ -542,7 +542,7 @@ export default function OTWCheckoutPage() {
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 {step > 1 ? 'Previous' : 'Back to Services'}
               </Button>
-              
+
               {step < 3 ? (
                 <Button
                   onClick={handleNextStep}
@@ -595,9 +595,9 @@ export default function OTWCheckoutPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <Separator className="bg-otw-gold/20" />
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400">Service Fee</span>
@@ -613,7 +613,7 @@ export default function OTWCheckoutPage() {
                     <span className="text-otw-gold">${serviceDetails.estimatedPrice}</span>
                   </div>
                 </div>
-                
+
                 <Separator className="bg-otw-gold/20" />
                 <div className="bg-otw-black/50 p-3 rounded-lg">
                   <div className="flex items-center gap-2 mb-1">

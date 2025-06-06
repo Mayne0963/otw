@@ -1,45 +1,45 @@
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { MapPin, Star, Heart } from "lucide-react";
-import Image from "next/image";
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { MapPin, Star, Heart } from 'lucide-react';
+import Image from 'next/image';
 
 const favoriteLocations = [
   {
     id: 1,
-    name: "Home",
-    address: "1234 Coliseum Blvd, Fort Wayne, IN 46805",
-    type: "Residential",
+    name: 'Home',
+    address: '1234 Coliseum Blvd, Fort Wayne, IN 46805',
+    type: 'Residential',
   },
   {
     id: 2,
-    name: "Work",
-    address: "200 E Berry St, Fort Wayne, IN 46802",
-    type: "Commercial",
+    name: 'Work',
+    address: '200 E Berry St, Fort Wayne, IN 46802',
+    type: 'Commercial',
   },
   {
     id: 3,
-    name: "Family",
-    address: "5678 Lima Rd, Fort Wayne, IN 46808",
-    type: "Residential",
+    name: 'Family',
+    address: '5678 Lima Rd, Fort Wayne, IN 46808',
+    type: 'Residential',
   },
 ];
 
 const favoriteReps = [
   {
     id: 1,
-    name: "Marcus T.",
+    name: 'Marcus T.',
     rating: 4.9,
     orders: 47,
-    specialties: ["Food Delivery", "Grocery Shopping"],
-    image: "/assets/team/rep-1.jpg",
+    specialties: ['Food Delivery', 'Grocery Shopping'],
+    image: '/assets/team/rep-1.jpg',
   },
   {
     id: 2,
-    name: "Jessica L.",
+    name: 'Jessica L.',
     rating: 4.8,
     orders: 32,
-    specialties: ["Package Delivery", "Errands"],
-    image: "/assets/team/rep-2.jpg",
+    specialties: ['Package Delivery', 'Errands'],
+    image: '/assets/team/rep-2.jpg',
   },
 ];
 

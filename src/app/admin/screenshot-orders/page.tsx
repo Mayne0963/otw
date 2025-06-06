@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Badge } from "../../../components/ui/badge";
-import { Input } from "../../../components/ui/input";
-import { Textarea } from "../../../components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../../../components/ui/alert-dialog";
-import { Label } from "../../../components/ui/label";
-import { Camera, Phone, Mail, MapPin, DollarSign, Clock, User, FileText, RefreshCw } from "lucide-react";
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Button } from '../../../components/ui/button';
+import { Badge } from '../../../components/ui/badge';
+import { Input } from '../../../components/ui/input';
+import { Textarea } from '../../../components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../../../components/ui/alert-dialog';
+import { Label } from '../../../components/ui/label';
+import { Camera, Phone, Mail, MapPin, DollarSign, Clock, User, FileText, RefreshCw } from 'lucide-react';
+import Image from 'next/image';
 
 interface ScreenshotOrder {
   id: string;
@@ -49,74 +49,74 @@ interface ScreenshotOrder {
 }
 
 const statusColors = {
-  pending_review: "bg-yellow-100 text-yellow-800",
-  confirmed: "bg-blue-100 text-blue-800",
-  order_placed: "bg-purple-100 text-purple-800",
-  picked_up: "bg-orange-100 text-orange-800",
-  out_for_delivery: "bg-indigo-100 text-indigo-800",
-  delivered: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
-  failed: "bg-gray-100 text-gray-800",
+  pending_review: 'bg-yellow-100 text-yellow-800',
+  confirmed: 'bg-blue-100 text-blue-800',
+  order_placed: 'bg-purple-100 text-purple-800',
+  picked_up: 'bg-orange-100 text-orange-800',
+  out_for_delivery: 'bg-indigo-100 text-indigo-800',
+  delivered: 'bg-green-100 text-green-800',
+  cancelled: 'bg-red-100 text-red-800',
+  failed: 'bg-gray-100 text-gray-800',
 };
 
 const statusOptions = [
-  { value: "pending_review", label: "Pending Review" },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "order_placed", label: "Order Placed" },
-  { value: "picked_up", label: "Picked Up" },
-  { value: "out_for_delivery", label: "Out for Delivery" },
-  { value: "delivered", label: "Delivered" },
-  { value: "cancelled", label: "Cancelled" },
-  { value: "failed", label: "Failed" },
+  { value: 'pending_review', label: 'Pending Review' },
+  { value: 'confirmed', label: 'Confirmed' },
+  { value: 'order_placed', label: 'Order Placed' },
+  { value: 'picked_up', label: 'Picked Up' },
+  { value: 'out_for_delivery', label: 'Out for Delivery' },
+  { value: 'delivered', label: 'Delivered' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'failed', label: 'Failed' },
 ];
 
 export default function ScreenshotOrdersAdmin() {
   const [orders, setOrders] = useState<ScreenshotOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<ScreenshotOrder | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [updateStatus, setUpdateStatus] = useState("");
-  const [updateNotes, setUpdateNotes] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [updateStatus, setUpdateStatus] = useState('');
+  const [updateNotes, setUpdateNotes] = useState('');
   const [updating, setUpdating] = useState(false);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (statusFilter !== "all") {
-        params.append("status", statusFilter);
+      if (statusFilter !== 'all') {
+        params.append('status', statusFilter);
       }
-      params.append("limit", "100");
+      params.append('limit', '100');
 
       const response = await fetch(`/api/orders/screenshot?${params}`);
       const data = await response.json();
-      
+
       if (data.orders) {
         setOrders(data.orders);
       }
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error('Error fetching orders:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const updateOrderStatus = async () => {
-    if (!selectedOrder || !updateStatus) return;
+    if (!selectedOrder || !updateStatus) {return;}
 
     try {
       setUpdating(true);
-      const response = await fetch("/api/orders/screenshot", {
-        method: "PUT",
+      const response = await fetch('/api/orders/screenshot', {
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           orderId: selectedOrder.id,
           status: updateStatus,
           notes: updateNotes,
-          adminId: "admin", // In a real app, this would be the logged-in admin's ID
+          adminId: 'admin', // In a real app, this would be the logged-in admin's ID
         }),
       });
 
@@ -124,12 +124,12 @@ export default function ScreenshotOrdersAdmin() {
         // Refresh orders
         await fetchOrders();
         // Reset form
-        setUpdateStatus("");
-        setUpdateNotes("");
+        setUpdateStatus('');
+        setUpdateNotes('');
         setSelectedOrder(null);
       }
     } catch (error) {
-      console.error("Error updating order:", error);
+      console.error('Error updating order:', error);
     } finally {
       setUpdating(false);
     }
@@ -325,7 +325,7 @@ export default function ScreenshotOrdersAdmin() {
                             onClick={() => {
                               setSelectedOrder(order);
                               setUpdateStatus(order.status);
-                              setUpdateNotes(order.adminNotes || "");
+                              setUpdateNotes(order.adminNotes || '');
                             }}
                           >
                             Update Status
@@ -372,7 +372,7 @@ export default function ScreenshotOrdersAdmin() {
                                   onClick={updateOrderStatus}
                                   disabled={updating || !updateStatus}
                                 >
-                                  {updating ? "Updating..." : "Update"}
+                                  {updating ? 'Updating...' : 'Update'}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </div>

@@ -1,17 +1,17 @@
-"use client"
+'use client';
 
-export const dynamic = "force-dynamic"
+export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { useCart } from "../../../lib/context/CartContext"
-import { Star, ChevronLeft, Search, ShoppingBag } from "lucide-react"
-import MenuItemCard from "../../../components/menu/MenuItemCard"
-import CategoryFilter from "../../../components/menu/CategoryFilter"
-import type { Restaurant } from "../../../types/restaurant"
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useCart } from '../../../lib/context/CartContext';
+import { Star, ChevronLeft, Search, ShoppingBag } from 'lucide-react';
+import MenuItemCard from '../../../components/menu/MenuItemCard';
+import CategoryFilter from '../../../components/menu/CategoryFilter';
+import type { Restaurant } from '../../../types/restaurant';
 // TODO: Remove static data import - fetch restaurant images and logos from API instead
-import type { CustomizationOption } from "../../../types"
+import type { CustomizationOption } from '../../../types';
 
 interface RestaurantDetailPageProps {
   restaurant: Restaurant
@@ -19,15 +19,15 @@ interface RestaurantDetailPageProps {
 
 export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPageProps) {
   // Always call hooks at the top level
-  const cartContext = useCart()
-  const { itemCount, addItem } = cartContext || { itemCount: 0, addItem: undefined }
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [menuItems, setMenuItems] = useState<any[]>([])
-  const [filteredItems, setFilteredItems] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [categories, setCategories] = useState<string[]>([])
+  const cartContext = useCart();
+  const { itemCount, addItem } = cartContext || { itemCount: 0, addItem: undefined };
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [filteredItems, setFilteredItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<string[]>([]);
 
   // Fetch menu categories from the menu items
   useEffect(() => {
@@ -41,65 +41,65 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
   useEffect(() => {
     async function fetchMenuItems() {
       try {
-        setLoading(true)
-        const response = await fetch(`/api/restaurants/${restaurant.id}/menu`)
-        const data = await response.json()
-        
+        setLoading(true);
+        const response = await fetch(`/api/restaurants/${restaurant.id}/menu`);
+        const data = await response.json();
+
         if (data.success) {
-          setMenuItems(data.menu || [])
+          setMenuItems(data.menu || []);
         } else {
-          setError('Failed to fetch menu items')
+          setError('Failed to fetch menu items');
         }
       } catch (err) {
-        setError('Error fetching menu items')
-        console.error('Error fetching menu items:', err)
+        setError('Error fetching menu items');
+        console.error('Error fetching menu items:', err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
     if (restaurant?.id) {
-      fetchMenuItems()
+      fetchMenuItems();
     }
-  }, [restaurant?.id])
+  }, [restaurant?.id]);
 
   // TODO: Fetch restaurant images and logos from API instead of static data
   const getRestaurantImage = () => {
-    if (!restaurant || !restaurant.id) return "/placeholder.svg";
-    return restaurant.image || "/placeholder.svg";
-  }
+    if (!restaurant || !restaurant.id) {return '/placeholder.svg';}
+    return restaurant.image || '/placeholder.svg';
+  };
 
   const getRestaurantLogo = () => {
-    if (!restaurant || !restaurant.id) return "/placeholder.svg";
-    return restaurant.logo || "/placeholder.svg";
-  }
+    if (!restaurant || !restaurant.id) {return '/placeholder.svg';}
+    return restaurant.logo || '/placeholder.svg';
+  };
 
   // Filter menu items based on selected category and search query
   useEffect(() => {
-    let filtered = [...menuItems]
+    let filtered = [...menuItems];
 
     // Filter by category
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter((item) => item.category === selectedCategory)
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter((item) => item.category === selectedCategory);
     }
 
     // Filter by search query
     if (searchQuery) {
-      const query = searchQuery.toLowerCase()
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (item) => item.name.toLowerCase().includes(query) || item.description.toLowerCase().includes(query),
-      )
+      );
     }
 
-    setFilteredItems(filtered)
-  }, [selectedCategory, searchQuery, menuItems])
+    setFilteredItems(filtered);
+  }, [selectedCategory, searchQuery, menuItems]);
 
   return (
     <div className="min-h-screen pb-20">
       {/* Restaurant Header */}
       <section className="relative h-[40vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <Image src={getRestaurantImage() || "/placeholder.svg"} alt={restaurant?.name || 'Restaurant'} fill className="object-cover" />
+          <Image src={getRestaurantImage() || '/placeholder.svg'} alt={restaurant?.name || 'Restaurant'} fill className="object-cover" />
           <div className="absolute inset-0 bg-black bg-opacity-60"></div>
         </div>
         <div className="container mx-auto px-4 z-10">
@@ -110,7 +110,7 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 bg-[#111111] rounded-lg overflow-hidden relative border-2 border-[#333333]">
               <Image
-                src={getRestaurantLogo() || "/placeholder.svg"}
+                src={getRestaurantLogo() || '/placeholder.svg'}
                 alt={`${restaurant?.name || 'Restaurant'} logo`}
                 fill
                 className="object-cover"
@@ -187,8 +187,8 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
           ) : error ? (
             <div className="text-center py-12">
               <p className="text-red-500 mb-4">{error}</p>
-              <button 
-                onClick={() => window.location.reload()} 
+              <button
+                onClick={() => window.location.reload()}
                 className="bg-[#C1272D] text-white px-4 py-2 rounded hover:bg-[#A01F24]"
               >
                 Try Again
@@ -223,8 +223,8 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
               <button
                 className="py-2 px-6 bg-[#C1272D] text-white rounded-lg hover:bg-[#A01F24]"
                 onClick={() => {
-                  setSelectedCategory("all")
-                  setSearchQuery("")
+                  setSelectedCategory('all');
+                  setSearchQuery('');
                 }}
               >
                 Reset Filters
@@ -234,5 +234,5 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
         </div>
       </section>
     </div>
-  )
+  );
 }

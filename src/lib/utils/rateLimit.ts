@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createError } from "./apiErrors";
+import { NextRequest, NextResponse } from 'next/server';
+import { createError } from './apiErrors';
 
 interface RateLimitConfig {
   windowMs: number; // Time window in milliseconds
@@ -52,16 +52,16 @@ export const rateLimit = (config: RateLimitConfig) => {
 
     // Set rate limit headers
     const headers = new Headers({
-      "X-RateLimit-Limit": config.max.toString(),
-      "X-RateLimit-Remaining": Math.max(0, config.max - count).toString(),
-      "X-RateLimit-Reset": resetTime.toString(),
+      'X-RateLimit-Limit': config.max.toString(),
+      'X-RateLimit-Remaining': Math.max(0, config.max - count).toString(),
+      'X-RateLimit-Reset': resetTime.toString(),
     });
 
     if (count > config.max) {
       const retryAfter = Math.ceil((resetTime - Date.now()) / 1000);
-      headers.set("Retry-After", retryAfter.toString());
+      headers.set('Retry-After', retryAfter.toString());
 
-      const error = createError.rateLimit("Too many requests", {
+      const error = createError.rateLimit('Too many requests', {
         retryAfter,
         limit: config.max,
         windowMs: config.windowMs,
@@ -92,7 +92,7 @@ export const rateLimits = {
 // Generate a unique key for rate limiting
 function generateKey(req: NextRequest): string {
   // Use IP address as base key
-  const ip = req.ip || req.headers.get("x-forwarded-for") || "unknown";
+  const ip = req.ip || req.headers.get('x-forwarded-for') || 'unknown';
 
   // Add route to make it specific to endpoints
   const route = new URL(req.url).pathname;

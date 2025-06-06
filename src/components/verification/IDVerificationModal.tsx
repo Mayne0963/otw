@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   FaTimes,
   FaIdCard,
   FaCamera,
   FaCheck,
   FaExclamationTriangle,
-} from "react-icons/fa";
-import { useAgeVerification } from "../../lib/context/AgeVerificationContext";
-import { auth } from "../../lib/services/firebase";
-import { onAuthStateChanged, User as FirebaseUser, Auth } from "firebase/auth";
-import Image from "next/image";
+} from 'react-icons/fa';
+import { useAgeVerification } from '../../lib/context/AgeVerificationContext';
+import { auth } from '../../lib/services/firebase';
+import { onAuthStateChanged, User as FirebaseUser, Auth } from 'firebase/auth';
+import Image from 'next/image';
 
 interface IDVerificationModalProps {
   onClose: () => void;
@@ -96,12 +96,12 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
 
   const handleNextStep = useCallback(() => {
     if (step === 1 && !idImage) {
-      setError("Please upload an image of your ID");
+      setError('Please upload an image of your ID');
       return;
     }
 
     if (step === 2 && !selfieImage) {
-      setError("Please take a selfie for verification");
+      setError('Please take a selfie for verification');
       return;
     }
 
@@ -121,7 +121,7 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
 
   const handleVerification = useCallback(async () => {
     if (!idImage || !selfieImage) {
-      setError("Missing required information for verification");
+      setError('Missing required information for verification');
       return;
     }
 
@@ -130,10 +130,10 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
 
     try {
       // Call our API to verify the ID
-      const response = await fetch("/api/verify-id", {
-        method: "POST",
+      const response = await fetch('/api/verify-id', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           idImage,
@@ -168,24 +168,24 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
       } else {
         // Handle different failure reasons
         if (result.isOver21 === false) {
-          setError("Age verification failed. You must be 21 or older.");
+          setError('Age verification failed. You must be 21 or older.');
         } else if (result.isAuthentic === false) {
           setError(
-            "ID verification failed. Please ensure your ID is valid and clearly visible.",
+            'ID verification failed. Please ensure your ID is valid and clearly visible.',
           );
         } else if (result.facesMatch === false) {
           setError(
-            "Face verification failed. Please ensure your selfie clearly matches your ID photo.",
+            'Face verification failed. Please ensure your selfie clearly matches your ID photo.',
           );
         } else {
-          setError(result.message || "Verification failed. Please try again.");
+          setError(result.message || 'Verification failed. Please try again.');
         }
 
         setStep(5); // Failure
       }
     } catch (err) {
-      console.error("Verification error:", err);
-      setError("An error occurred during verification. Please try again.");
+      console.error('Verification error:', err);
+      setError('An error occurred during verification. Please try again.');
       setStep(5); // Failure
     } finally {
       setIsProcessing(false);
@@ -238,10 +238,10 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
               </div>
 
               <div
-                className={`border-2 border-dashed ${idImage ? "border-emerald-green" : "border-[#333333]"} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
+                className={`border-2 border-dashed ${idImage ? 'border-emerald-green' : 'border-[#333333]'} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
                 onClick={triggerFileInput}
                 onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") && triggerFileInput()
+                  (e.key === 'Enter' || e.key === ' ') && triggerFileInput()
                 }
                 role="button"
                 tabIndex={0}
@@ -251,7 +251,7 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
                   <div className="relative">
                     <div className="relative h-48 w-full">
                       <Image
-                        src={idImage || "/placeholder.svg"}
+                        src={idImage || '/placeholder.svg'}
                         alt="ID"
                         className="rounded object-contain"
                         fill
@@ -309,10 +309,10 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
               </div>
 
               <div
-                className={`border-2 border-dashed ${selfieImage ? "border-emerald-green" : "border-[#333333]"} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
+                className={`border-2 border-dashed ${selfieImage ? 'border-emerald-green' : 'border-[#333333]'} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
                 onClick={triggerSelfieInput}
                 onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") && triggerSelfieInput()
+                  (e.key === 'Enter' || e.key === ' ') && triggerSelfieInput()
                 }
                 role="button"
                 tabIndex={0}
@@ -322,7 +322,7 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
                   <div className="relative">
                     <div className="relative h-48 w-full">
                       <Image
-                        src={selfieImage || "/placeholder.svg"}
+                        src={selfieImage || '/placeholder.svg'}
                         alt="Selfie"
                         className="rounded object-contain"
                         fill
@@ -431,7 +431,7 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
                 older.
               </p>
               <p className="text-blood-red mb-6">
-                {error || "Please ensure your ID is valid and clearly visible."}
+                {error || 'Please ensure your ID is valid and clearly visible.'}
               </p>
               <div className="flex gap-3">
                 <button
@@ -499,11 +499,11 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
               type="button"
               aria-label={
                 isProcessing
-                  ? "Verification in progress"
-                  : "Start verification process"
+                  ? 'Verification in progress'
+                  : 'Start verification process'
               }
             >
-              {isProcessing ? "Verifying..." : "Start Verification"}
+              {isProcessing ? 'Verifying...' : 'Start Verification'}
             </button>
           </div>
         )}

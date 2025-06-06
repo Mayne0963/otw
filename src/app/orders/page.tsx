@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useAuth } from "../../contexts/AuthContext";
-import { FaHistory, FaShoppingBag, FaArrowLeft } from "react-icons/fa";
-import Link from "next/link";
-import { useEffect } from "react";
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../contexts/AuthContext';
+import { FaHistory, FaShoppingBag, FaArrowLeft } from 'react-icons/fa';
+import Link from 'next/link';
+import { useEffect } from 'react';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default function OrderHistoryPage() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function OrderHistoryPage() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push("/signin");
+      router.push('/signin');
     }
   }, [isLoading, user, router]);
 
@@ -81,11 +81,11 @@ export default function OrderHistoryPage() {
                     </span>
                     <span
                       className={`ml-4 px-3 py-1 rounded-full text-xs ${
-                        order.status === "Delivered"
-                          ? "bg-emerald-green bg-opacity-20 text-emerald-green"
-                          : order.status === "Processing"
-                            ? "bg-citrus-orange bg-opacity-20 text-citrus-orange"
-                            : "bg-[#333333] text-white"
+                        order.status === 'Delivered'
+                          ? 'bg-emerald-green bg-opacity-20 text-emerald-green'
+                          : order.status === 'Processing'
+                            ? 'bg-citrus-orange bg-opacity-20 text-citrus-orange'
+                            : 'bg-[#333333] text-white'
                       }`}
                     >
                       {order.status}

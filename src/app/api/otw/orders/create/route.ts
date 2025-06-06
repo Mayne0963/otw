@@ -34,14 +34,14 @@ export async function POST(request: NextRequest) {
       console.error('Firebase Admin not initialized');
       return NextResponse.json(
         { error: 'Server configuration error' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Get and verify the authorization token
     const authHeader = request.headers.get('authorization');
     let userId = null;
-    
+
     if (authHeader && authHeader.startsWith('Bearer ')) {
       try {
         const token = authHeader.substring(7);
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     if (!orderData.serviceDetails || !orderData.customerInfo || !orderData.paymentMethod) {
       return NextResponse.json(
         { error: 'Missing required order information' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     if (!name || !phone || !email || !address) {
       return NextResponse.json(
         { error: 'Missing required customer information' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     if (!type || !title || typeof estimatedPrice !== 'number') {
       return NextResponse.json(
         { error: 'Invalid service details' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
         phone: orderData.customerInfo.phone,
         email: orderData.customerInfo.email,
         address: orderData.customerInfo.address,
-        specialInstructions: orderData.customerInfo.specialInstructions || ''
+        specialInstructions: orderData.customerInfo.specialInstructions || '',
       },
       paymentMethod: orderData.paymentMethod,
       paymentStatus: orderData.paymentMethod === 'contact' ? 'pending' : 'processing',
@@ -110,14 +110,14 @@ export async function POST(request: NextRequest) {
       metadata: {
         source: 'otw_web',
         userAgent: request.headers.get('user-agent') || '',
-        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
-      }
+        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+      },
     };
 
     // Save order to Firestore
     try {
       await adminDb.collection('otw_orders').doc(orderId).set(order);
-      
+
       // Also save to user's orders if authenticated
       if (userId) {
         await adminDb.collection('users').doc(userId).collection('otw_orders').doc(orderId).set({
@@ -127,12 +127,12 @@ export async function POST(request: NextRequest) {
           estimatedPrice: orderData.serviceDetails.estimatedPrice,
           paymentMethod: orderData.paymentMethod,
           orderStatus: 'pending',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
       }
 
       console.log(`OTW Order created successfully: ${orderId}`);
-      
+
       return NextResponse.json({
         success: true,
         orderId,
@@ -142,21 +142,21 @@ export async function POST(request: NextRequest) {
           serviceTitle: orderData.serviceDetails.title,
           estimatedPrice: orderData.serviceDetails.estimatedPrice,
           paymentMethod: orderData.paymentMethod,
-          orderStatus: 'pending'
-        }
+          orderStatus: 'pending',
+        },
       });
     } catch (firestoreError) {
       console.error('Firestore error:', firestoreError);
       return NextResponse.json(
         { error: 'Failed to save order' },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (error) {
     console.error('Order creation error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -164,20 +164,20 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function PUT() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }

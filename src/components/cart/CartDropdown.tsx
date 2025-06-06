@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { ShoppingBag, X, ChevronRight, Trash2 } from "lucide-react";
-import { useCart } from "../../lib/context/CartContext";
-import { useOnClickOutside } from "../../hooks/useOnClickOutside";
-import Button from "../Button";
+import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ShoppingBag, X, ChevronRight, Trash2 } from 'lucide-react';
+import { useCart } from '../../lib/context/CartContext';
+import { useOnClickOutside } from '../../hooks/useOnClickOutside';
+import Button from '../Button';
 
 export default function CartDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,13 +19,13 @@ export default function CartDropdown() {
   // Close dropdown when pressing escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, []);
 
   return (
@@ -83,7 +83,7 @@ export default function CartDropdown() {
                   >
                     <div className="relative h-16 w-16 flex-shrink-0 rounded-md overflow-hidden">
                       <Image
-                        src={item.image || "/placeholder.svg"}
+                        src={item.image || '/placeholder.svg'}
                         alt={item.name}
                         fill
                         className="object-cover"

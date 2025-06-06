@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useRef, useEffect } from "react";
-import { FaCrown, FaQrcode } from "react-icons/fa";
-import type { User } from "../../types";
+import { useRef, useEffect } from 'react';
+import { FaCrown, FaQrcode } from 'react-icons/fa';
+import type { User } from '../../types';
 
 interface MembershipCardProps {
   user: User;
@@ -21,21 +21,21 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
 
   // Generate QR code on mount
   useEffect(() => {
-    if (!qrRef.current) return;
+    if (!qrRef.current) {return;}
 
     // This is a placeholder for actual QR code generation
     // In a real implementation, you would use a library like qrcode.react
     const generateQRCode = () => {
-      const canvas = document.createElement("canvas");
+      const canvas = document.createElement('canvas');
       canvas.width = 150;
       canvas.height = 150;
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
 
       if (ctx) {
         // Draw a simple placeholder QR code
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, 150, 150);
-        ctx.fillStyle = "#000000";
+        ctx.fillStyle = '#000000';
 
         // Draw a border
         ctx.fillRect(0, 0, 150, 10);
@@ -59,14 +59,14 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
         ctx.fillRect(20, 100, 30, 30);
 
         // Draw inner white squares
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(30, 30, 10, 10);
         ctx.fillRect(110, 30, 10, 10);
         ctx.fillRect(30, 110, 10, 10);
 
         // Add null check before accessing qrRef.current
         if (qrRef.current) {
-          qrRef.current.innerHTML = "";
+          qrRef.current.innerHTML = '';
           qrRef.current.appendChild(canvas);
         }
       }
@@ -78,12 +78,12 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   // Get tier color
   const getTierColor = () => {
     switch (tier.toLowerCase()) {
-      case "gold":
-        return "from-gold-foil to-[#FFD700]";
-      case "silver":
-        return "from-gray-400 to-[#C0C0C0]";
+      case 'gold':
+        return 'from-gold-foil to-[#FFD700]';
+      case 'silver':
+        return 'from-gray-400 to-[#C0C0C0]';
       default:
-        return "from-[#CD7F32] to-[#E6B87A]";
+        return 'from-[#CD7F32] to-[#E6B87A]';
     }
   };
 
@@ -100,10 +100,10 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
           </div>
           <div className="flex items-center">
             <FaCrown
-              className={`mr-2 ${tier.toLowerCase() === "gold" ? "text-gold-foil" : tier.toLowerCase() === "silver" ? "text-gray-400" : "text-[#CD7F32]"}`}
+              className={`mr-2 ${tier.toLowerCase() === 'gold' ? 'text-gold-foil' : tier.toLowerCase() === 'silver' ? 'text-gray-400' : 'text-[#CD7F32]'}`}
             />
             <span
-              className={`font-bold ${tier.toLowerCase() === "gold" ? "text-gold-foil" : tier.toLowerCase() === "silver" ? "text-gray-400" : "text-[#CD7F32]"}`}
+              className={`font-bold ${tier.toLowerCase() === 'gold' ? 'text-gold-foil' : tier.toLowerCase() === 'silver' ? 'text-gray-400' : 'text-[#CD7F32]'}`}
             >
               {tier}
             </span>

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
-import { Textarea } from "../../../components/ui/textarea";
+import type { Metadata } from 'next';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { Label } from '../../../components/ui/label';
+import { Textarea } from '../../../components/ui/textarea';
 
 import {
   Select,
@@ -15,15 +15,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../components/ui/select";
-import { Separator } from "../../../components/ui/separator";
-import { Badge } from "../../../components/ui/badge";
-import { Calendar } from "../../../components/ui/calendar";
+} from '../../../components/ui/select';
+import { Separator } from '../../../components/ui/separator';
+import { Badge } from '../../../components/ui/badge';
+import { Calendar } from '../../../components/ui/calendar';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "../../../components/ui/popover";
+} from '../../../components/ui/popover';
 import {
   FaTruck,
   FaClock,
@@ -59,7 +59,7 @@ import {
   FaArrowRight,
   FaArrowUp,
   FaArrowDown,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 import {
   CalendarIcon,
   Clock,
@@ -88,11 +88,11 @@ import {
   Phone,
   Mail,
   Upload,
-  X
-} from "lucide-react";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import PlaceAutocomplete from "../../../components/maps/PlaceAutocomplete";
+  X,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import PlaceAutocomplete from '../../../components/maps/PlaceAutocomplete';
 
 interface DeliveryService {
   id: string;
@@ -119,12 +119,12 @@ interface PackageType {
 
 export default function PackagePage() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
-  const [pickupAddress, setPickupAddress] = useState("");
-  const [deliveryAddress, setDeliveryAddress] = useState("");
-  const [packageType, setPackageType] = useState("");
-  const [packageWeight, setPackageWeight] = useState("");
-  const [packageDimensions, setPackageDimensions] = useState("");
-  const [specialInstructions, setSpecialInstructions] = useState("");
+  const [pickupAddress, setPickupAddress] = useState('');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [packageType, setPackageType] = useState('');
+  const [packageWeight, setPackageWeight] = useState('');
+  const [packageDimensions, setPackageDimensions] = useState('');
+  const [specialInstructions, setSpecialInstructions] = useState('');
   const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
   const [deliveryServices, setDeliveryServices] = useState<DeliveryService[]>([]);
   const [packageTypes, setPackageTypes] = useState<PackageType[]>([]);
@@ -136,12 +136,12 @@ export default function PackagePage() {
       try {
         const [servicesResponse, typesResponse] = await Promise.all([
           fetch('/api/packages?type=services'),
-          fetch('/api/packages?type=package-types')
+          fetch('/api/packages?type=package-types'),
         ]);
-        
+
         const servicesData = await servicesResponse.json();
         const typesData = await typesResponse.json();
-        
+
         if (servicesData.success) {
           setDeliveryServices(servicesData.data);
         }
@@ -185,16 +185,16 @@ export default function PackagePage() {
 
   // Get icon for service type
   const getServiceIcon = (serviceName: string) => {
-    if (serviceName.toLowerCase().includes('express') || serviceName.toLowerCase().includes('same')) return Zap;
-    if (serviceName.toLowerCase().includes('standard')) return Truck;
-    if (serviceName.toLowerCase().includes('fragile')) return Shield;
+    if (serviceName.toLowerCase().includes('express') || serviceName.toLowerCase().includes('same')) {return Zap;}
+    if (serviceName.toLowerCase().includes('standard')) {return Truck;}
+    if (serviceName.toLowerCase().includes('fragile')) {return Shield;}
     return Clock;
   };
 
   // Get icon for package type
   const getPackageIcon = (typeName: string) => {
-    if (typeName.toLowerCase().includes('small') || typeName.toLowerCase().includes('document')) return FileText;
-    if (typeName.toLowerCase().includes('medium')) return Box;
+    if (typeName.toLowerCase().includes('small') || typeName.toLowerCase().includes('document')) {return FileText;}
+    if (typeName.toLowerCase().includes('medium')) {return Box;}
     return Package;
   };
 
@@ -213,7 +213,7 @@ export default function PackagePage() {
           <div className="absolute top-40 right-20 w-1 h-1 bg-otw-red rounded-full animate-ping"></div>
           <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-otw-gold-400 rounded-full animate-pulse delay-1000"></div>
         </div>
-        
+
         <div className="container mx-auto px-4 z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left side - Hero content */}
@@ -229,7 +229,7 @@ export default function PackagePage() {
               <p className="text-xl text-gray-300 mb-8 max-w-lg">
                 Send packages anywhere in the city with real-time tracking, secure handling, and guaranteed delivery times.
               </p>
-              
+
               {/* Quick stats */}
               <div className="flex flex-wrap gap-6 mb-8">
                 <div className="flex items-center text-gray-300">
@@ -250,7 +250,7 @@ export default function PackagePage() {
             {/* Right side - Quick quote form */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
               <h3 className="text-2xl font-bold text-white mb-6">Get instant quote</h3>
-              
+
               <div className="space-y-4">
                 <PlaceAutocomplete
                   onPlaceSelect={(place) => {
@@ -260,7 +260,7 @@ export default function PackagePage() {
                   placeholder="Pickup address in Fort Wayne, IN..."
                   className="h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                 />
-                
+
                 <PlaceAutocomplete
                   onPlaceSelect={(place) => {
                     setDeliveryAddress(place.formatted_address || '');
@@ -269,7 +269,7 @@ export default function PackagePage() {
                   placeholder="Delivery address in Fort Wayne, IN..."
                   className="h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                 />
-                
+
                 <Select value={packageType} onValueChange={setPackageType}>
                   <SelectTrigger className="h-14 bg-white/10 border-white/20 text-white">
                     <div className="flex items-center">
@@ -291,9 +291,9 @@ export default function PackagePage() {
                     })}
                   </SelectContent>
                 </Select>
-                
-                <Button 
-                  size="lg" 
+
+                <Button
+                  size="lg"
                   className="w-full h-14 text-lg font-semibold bg-otw-red hover:bg-otw-red/80 text-white"
                   disabled={!pickupAddress || !deliveryAddress}
                 >
@@ -325,8 +325,8 @@ export default function PackagePage() {
                   key={service.id}
                   className={`relative bg-white rounded-2xl overflow-hidden shadow-lg border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
                     selectedService === service.id
-                      ? "border-otw-gold shadow-lg scale-105"
-                      : "border-gray-200 hover:border-gray-300"
+                      ? 'border-otw-gold shadow-lg scale-105'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                   onClick={() => handleServiceSelect(service.id)}
                 >
@@ -335,11 +335,11 @@ export default function PackagePage() {
                       <CheckCircle className="w-5 h-5 text-white" />
                     </div>
                   )}
-                  
+
                   <div className={`h-32 bg-gradient-to-br ${service.color || 'from-otw-gold to-otw-gold-600'} flex items-center justify-center`}>
                     <IconComponent className="w-16 h-16 text-white" />
                   </div>
-                  
+
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-xl font-bold text-gray-900">{service.name}</h3>
@@ -348,9 +348,9 @@ export default function PackagePage() {
                         <div className="text-sm text-gray-500">{service.estimatedTime}</div>
                       </div>
                     </div>
-                    
+
                     <p className="text-gray-600 mb-4">{service.description}</p>
-                    
+
                     <div className="space-y-2">
                       {service.features && service.features.map((feature, index) => (
                         <div key={index} className="flex items-center text-sm text-gray-700">
@@ -392,7 +392,7 @@ export default function PackagePage() {
           <div className="max-w-4xl mx-auto mt-16">
             <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
               <h3 className="text-2xl font-bold text-gray-900 mb-8">Package details</h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <Label className="text-gray-700 font-medium">Package dimensions</Label>
@@ -403,7 +403,7 @@ export default function PackagePage() {
                   </div>
                   <p className="text-xs text-gray-500 mt-1">Dimensions in inches</p>
                 </div>
-                
+
                 <div>
                   <Label className="text-gray-700 font-medium">Weight & Value</Label>
                   <div className="grid grid-cols-2 gap-2 mt-2">
@@ -438,7 +438,7 @@ export default function PackagePage() {
                     </Select>
                   </div>
                 </div>
-                
+
                 <div>
                   <Label className="text-gray-700 font-medium">Delivery details</Label>
                   <div className="space-y-3 mt-2">
@@ -498,16 +498,16 @@ export default function PackagePage() {
                 <Button variant="outline" className="flex-1 h-12">
                   Save as template
                 </Button>
-                <Button 
+                <Button
                   onClick={() => {
                     // Get selected service details
                     const selectedServiceData = deliveryServices.find(s => s.id === selectedService);
-                    
+
                     if (!selectedServiceData) {
                       alert('Please select a delivery service first');
                       return;
                     }
-                    
+
                     // Store service details in localStorage for checkout
                     const serviceDetails = {
                       type: 'package' as const,
@@ -522,22 +522,22 @@ export default function PackagePage() {
                         packageDimensions,
                         specialInstructions,
                         selectedService: selectedServiceData.name,
-                        estimatedDelivery: selectedServiceData.estimatedDelivery
-                      }
+                        estimatedDelivery: selectedServiceData.estimatedDelivery,
+                      },
                     };
-                    
+
                     // Store basic customer info (will be completed in checkout)
                     const customerDetails = {
                       name: '',
                       phone: '',
                       email: '',
                       address: pickupAddress,
-                      specialInstructions: `Pickup: ${pickupAddress}, Delivery: ${deliveryAddress}. Package: ${packageType}. ${specialInstructions}`
+                      specialInstructions: `Pickup: ${pickupAddress}, Delivery: ${deliveryAddress}. Package: ${packageType}. ${specialInstructions}`,
                     };
-                    
+
                     localStorage.setItem('otwServiceDetails', JSON.stringify(serviceDetails));
                     localStorage.setItem('otwCustomerInfo', JSON.stringify(customerDetails));
-                    
+
                     // Navigate to checkout
                     window.location.href = '/otw/checkout?service=package';
                   }}

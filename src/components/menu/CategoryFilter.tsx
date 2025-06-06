@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
 interface CategoryFilterProps {
   categories: { id: string; name: string }[];
@@ -18,11 +18,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
       <div className="flex space-x-2 min-w-max">
         <button
           className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            selectedCategory === "all"
-              ? "bg-gold-foil text-black"
-              : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
+            selectedCategory === 'all'
+              ? 'bg-gold-foil text-black'
+              : 'bg-[#1A1A1A] text-white hover:bg-[#333333]'
           }`}
-          onClick={() => setSelectedCategory("all")}
+          onClick={() => setSelectedCategory('all')}
         >
           All
         </button>
@@ -32,8 +32,8 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
             key={category.id}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               selectedCategory === category.id
-                ? "bg-gold-foil text-black"
-                : "bg-[#1A1A1A] text-white hover:bg-[#333333]"
+                ? 'bg-gold-foil text-black'
+                : 'bg-[#1A1A1A] text-white hover:bg-[#333333]'
             }`}
             onClick={() => setSelectedCategory(category.id)}
           >

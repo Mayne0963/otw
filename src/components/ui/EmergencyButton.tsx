@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-const EMERGENCY_TYPES = ["Medical", "Roadside", "Personal Safety", "Other"];
+const EMERGENCY_TYPES = ['Medical', 'Roadside', 'Personal Safety', 'Other'];
 
 export default function EmergencyButton({
   onClick,
@@ -12,7 +12,7 @@ export default function EmergencyButton({
 
   function handleConfirm() {
     setShowModal(false);
-    if (onClick) onClick(selectedType);
+    if (onClick) {onClick(selectedType);}
   }
 
   return (

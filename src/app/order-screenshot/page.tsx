@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import { Suspense } from "react";
-import ScreenshotOrderForm from "../../components/orders/ScreenshotOrderForm";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { Camera, Clock, MapPin, Phone } from "lucide-react";
+import { Suspense } from 'react';
+import ScreenshotOrderForm from '../../components/orders/ScreenshotOrderForm';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Camera, Clock, MapPin, Phone } from 'lucide-react';
 
 export default function ScreenshotOrderPage() {
   return (
@@ -17,7 +17,7 @@ export default function ScreenshotOrderPage() {
             Screenshot Order Service
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Order your favorite food from any restaurant and we'll pick it up for you! 
+            Order your favorite food from any restaurant and we'll pick it up for you!
             Simply take a screenshot of your order and we'll handle the rest.
           </p>
         </div>

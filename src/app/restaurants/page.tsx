@@ -1,5 +1,5 @@
-import { Metadata } from "next";
-import BroskisOrderPage from "./BroskisOrderPage";
+import { Metadata } from 'next';
+import BroskisOrderPage from './BroskisOrderPage';
 
 export const metadata: Metadata = {
   title: "Broski's Kitchen | OTW",
@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "Order luxury street gourmet cuisine from Broski's Kitchen, delivered by OTW.",
 };
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export default function RestaurantsPage() {
   return <BroskisOrderPage />;

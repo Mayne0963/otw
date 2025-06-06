@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import type { ReactNode } from "react";
-import { Logo } from "./ui/logo";
-import { Button } from "./ui/button";
-import { RefreshCw, Instagram, Twitter, Facebook } from "lucide-react";
+import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
+import { Logo } from './ui/logo';
+import { Button } from './ui/button';
+import { RefreshCw, Instagram, Twitter, Facebook } from 'lucide-react';
 
 interface MaintenanceModeProps {
   children: ReactNode;
@@ -20,7 +20,7 @@ export function MaintenanceMode({ children }: MaintenanceModeProps) {
 
   useEffect(() => {
     // Check if maintenance mode is enabled
-    const maintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true";
+    const maintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true';
     setIsMaintenanceMode(maintenanceMode);
 
     // Set up countdown timer if in maintenance mode
@@ -71,19 +71,19 @@ export function MaintenanceMode({ children }: MaintenanceModeProps) {
           <div className="flex justify-center gap-4 text-center">
             <div className="bg-otw-black-800 rounded-md p-3 w-20">
               <div className="text-2xl font-bold">
-                {timeRemaining.hours.toString().padStart(2, "0")}
+                {timeRemaining.hours.toString().padStart(2, '0')}
               </div>
               <div className="text-xs text-gray-500">HOURS</div>
             </div>
             <div className="bg-otw-black-800 rounded-md p-3 w-20">
               <div className="text-2xl font-bold">
-                {timeRemaining.minutes.toString().padStart(2, "0")}
+                {timeRemaining.minutes.toString().padStart(2, '0')}
               </div>
               <div className="text-xs text-gray-500">MINUTES</div>
             </div>
             <div className="bg-otw-black-800 rounded-md p-3 w-20">
               <div className="text-2xl font-bold">
-                {timeRemaining.seconds.toString().padStart(2, "0")}
+                {timeRemaining.seconds.toString().padStart(2, '0')}
               </div>
               <div className="text-xs text-gray-500">SECONDS</div>
             </div>
@@ -106,14 +106,14 @@ export function MaintenanceMode({ children }: MaintenanceModeProps) {
               href="https://instagram.com/otw"
               className="hover:text-otw-gold transition-colors duration-200"
               style={{
-                transitionProperty: "transform",
-                transitionDuration: "200ms",
+                transitionProperty: 'transform',
+                transitionDuration: '200ms',
               }}
               onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.1)")
+                (e.currentTarget.style.transform = 'scale(1.1)')
               }
               onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
+                (e.currentTarget.style.transform = 'scale(1)')
               }
             >
               <Instagram size={24} />

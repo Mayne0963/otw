@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Button } from "../../components/ui/button";
-import { Card, CardContent } from "../../components/ui/card";
-import { Badge } from "../../components/ui/badge";
-import { Input } from "../../components/ui/input";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent } from '../../components/ui/card';
+import { Badge } from '../../components/ui/badge';
+import { Input } from '../../components/ui/input';
 import {
   Star,
   Clock,
@@ -19,7 +19,7 @@ import {
   Award,
   Users,
   Utensils,
-} from "lucide-react";
+} from 'lucide-react';
 // TODO: Remove static data import - get menu data from API
 
 interface CartItem {
@@ -48,8 +48,8 @@ interface MenuItem {
 }
 
 export default function BroskisOrderPage() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -69,7 +69,7 @@ export default function BroskisOrderPage() {
         const data = await response.json();
         const items = data.data || [];
         setMenuItems(items);
-        
+
         // Extract unique categories
         const uniqueCategories = [...new Set(items.map((item: MenuItem) => item.category).filter(Boolean))];
         setCategories(uniqueCategories as string[]);
@@ -88,7 +88,7 @@ export default function BroskisOrderPage() {
     let filtered = menuItems;
 
     // Filter by category
-    if (selectedCategory !== "all") {
+    if (selectedCategory !== 'all') {
       filtered = filtered.filter((item) => item.category === selectedCategory);
     }
 
@@ -98,7 +98,7 @@ export default function BroskisOrderPage() {
       filtered = filtered.filter(
         (item) =>
           item.name.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query)
+          item.description.toLowerCase().includes(query),
       );
     }
 
@@ -112,7 +112,7 @@ export default function BroskisOrderPage() {
         return prevCart.map((cartItem) =>
           cartItem.id === item.id
             ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
+            : cartItem,
         );
       } else {
         return [
@@ -136,7 +136,7 @@ export default function BroskisOrderPage() {
         return prevCart.map((cartItem) =>
           cartItem.id === itemId
             ? { ...cartItem, quantity: cartItem.quantity - 1 }
-            : cartItem
+            : cartItem,
         );
       } else {
         return prevCart.filter((cartItem) => cartItem.id !== itemId);
@@ -201,7 +201,7 @@ export default function BroskisOrderPage() {
             </h2>
             <p className="text-gray-300 text-lg">Discover premium gourmet creations</p>
           </div>
-          
+
           <div className="flex flex-col md:flex-row gap-6 mb-8">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-otw-gold w-6 h-6" />
@@ -218,12 +218,12 @@ export default function BroskisOrderPage() {
           {/* Category Filter */}
           <div className="flex flex-wrap justify-center gap-3 mb-8">
             <Button
-              variant={selectedCategory === "all" ? "default" : "outline"}
-              onClick={() => setSelectedCategory("all")}
+              variant={selectedCategory === 'all' ? 'default' : 'outline'}
+              onClick={() => setSelectedCategory('all')}
               className={`${
-                selectedCategory === "all"
-                  ? "bg-gradient-to-r from-otw-red to-red-600 text-white shadow-lg transform scale-105 border-otw-gold"
-                  : "border-2 border-gray-600 text-gray-300 hover:border-otw-gold hover:text-otw-gold hover:bg-otw-gold/10 hover:scale-105"
+                selectedCategory === 'all'
+                  ? 'bg-gradient-to-r from-otw-red to-red-600 text-white shadow-lg transform scale-105 border-otw-gold'
+                  : 'border-2 border-gray-600 text-gray-300 hover:border-otw-gold hover:text-otw-gold hover:bg-otw-gold/10 hover:scale-105'
               } px-6 py-3 rounded-full font-semibold transition-all duration-300`}
             >
               🍽️ All Items
@@ -231,12 +231,12 @@ export default function BroskisOrderPage() {
             {categories.map((category: string) => (
               <Button
                 key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
+                variant={selectedCategory === category ? 'default' : 'outline'}
                 onClick={() => setSelectedCategory(category)}
                 className={`${
                   selectedCategory === category
-                    ? "bg-gradient-to-r from-otw-red to-red-600 text-white shadow-lg transform scale-105 border-otw-gold"
-                    : "border-2 border-gray-600 text-gray-300 hover:border-otw-gold hover:text-otw-gold hover:bg-otw-gold/10 hover:scale-105"
+                    ? 'bg-gradient-to-r from-otw-red to-red-600 text-white shadow-lg transform scale-105 border-otw-gold'
+                    : 'border-2 border-gray-600 text-gray-300 hover:border-otw-gold hover:text-otw-gold hover:bg-otw-gold/10 hover:scale-105'
                 } px-6 py-3 rounded-full font-semibold transition-all duration-300`}
               >
                 {category}
@@ -251,10 +251,10 @@ export default function BroskisOrderPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-5xl font-black text-transparent bg-gradient-to-r from-otw-gold via-yellow-300 to-otw-gold bg-clip-text mb-4">
-              {selectedCategory === "all" ? "🍽️ FULL MENU" : `🔥 ${selectedCategory.toUpperCase()}`}
+              {selectedCategory === 'all' ? '🍽️ FULL MENU' : `🔥 ${selectedCategory.toUpperCase()}`}
             </h2>
             <p className="text-gray-300 text-xl font-medium">
-              {filteredItems.length} premium {filteredItems.length === 1 ? "creation" : "creations"} available
+              {filteredItems.length} premium {filteredItems.length === 1 ? 'creation' : 'creations'} available
             </p>
           </div>
 
@@ -291,7 +291,7 @@ export default function BroskisOrderPage() {
                         </span>
                       </div>
                       <p className="text-gray-300 mb-6 text-base leading-relaxed">{item.description}</p>
-                      
+
                       {/* Dietary badges */}
                       <div className="flex flex-wrap gap-2 mb-6">
                         {item.dietary.vegan && (
@@ -374,8 +374,8 @@ export default function BroskisOrderPage() {
               </p>
               <Button
                 onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("all");
+                  setSearchQuery('');
+                  setSelectedCategory('all');
                 }}
                 className="bg-gradient-to-r from-otw-red to-red-600 hover:from-red-600 hover:to-otw-red px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-110 shadow-lg"
               >

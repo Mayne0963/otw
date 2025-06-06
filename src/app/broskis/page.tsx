@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
-import { 
-  Star, 
-  Clock, 
-  MapPin, 
+import {
+  Star,
+  Clock,
+  MapPin,
   Phone,
   Globe,
   Heart,
@@ -16,7 +16,7 @@ import {
   Utensils,
   ChefHat,
   Coffee,
-  Truck
+  Truck,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -44,7 +44,7 @@ const BROSKIS_MENU: MenuItem[] = [
     image: '/images/menu/signature-burger.jpg',
     category: 'Burgers',
     isPopular: true,
-    dietary: ['Gluten-Free Bun Available']
+    dietary: ['Gluten-Free Bun Available'],
   },
   {
     id: 'loaded-fries',
@@ -54,7 +54,7 @@ const BROSKIS_MENU: MenuItem[] = [
     image: '/images/menu/loaded-fries.jpg',
     category: 'Sides',
     isPopular: true,
-    dietary: ['Vegetarian Option']
+    dietary: ['Vegetarian Option'],
   },
   {
     id: 'chicken-sandwich',
@@ -63,7 +63,7 @@ const BROSKIS_MENU: MenuItem[] = [
     price: 12.99,
     image: '/images/menu/chicken-sandwich.jpg',
     category: 'Sandwiches',
-    dietary: []
+    dietary: [],
   },
   {
     id: 'bbq-wings',
@@ -72,7 +72,7 @@ const BROSKIS_MENU: MenuItem[] = [
     price: 11.99,
     image: '/images/menu/bbq-wings.jpg',
     category: 'Wings',
-    dietary: ['Gluten-Free']
+    dietary: ['Gluten-Free'],
   },
   {
     id: 'veggie-burger',
@@ -82,7 +82,7 @@ const BROSKIS_MENU: MenuItem[] = [
     image: '/images/menu/veggie-burger.jpg',
     category: 'Burgers',
     isNew: true,
-    dietary: ['Vegetarian', 'Vegan Option']
+    dietary: ['Vegetarian', 'Vegan Option'],
   },
   {
     id: 'milkshake',
@@ -91,8 +91,8 @@ const BROSKIS_MENU: MenuItem[] = [
     price: 5.99,
     image: '/images/menu/milkshake.jpg',
     category: 'Beverages',
-    dietary: ['Vegetarian']
-  }
+    dietary: ['Vegetarian'],
+  },
 ];
 
 const RESTAURANT_INFO = {
@@ -109,12 +109,12 @@ const RESTAURANT_INFO = {
     'Thursday': '11:00 AM - 10:00 PM',
     'Friday': '11:00 AM - 11:00 PM',
     'Saturday': '11:00 AM - 11:00 PM',
-    'Sunday': '12:00 PM - 9:00 PM'
+    'Sunday': '12:00 PM - 9:00 PM',
   },
   contact: {
     phone: '(260) 555-BROSKI',
     address: '123 Main Street, Fort Wayne, IN 46802',
-    website: 'www.broskiskitchen.com'
+    website: 'www.broskiskitchen.com',
   },
   features: [
     'Dine-in',
@@ -123,8 +123,8 @@ const RESTAURANT_INFO = {
     'Drive-thru',
     'Outdoor Seating',
     'Family Friendly',
-    'Local Favorite'
-  ]
+    'Local Favorite',
+  ],
 };
 
 export default function BroskisPage() {
@@ -149,12 +149,12 @@ export default function BroskisPage() {
       price: item.price,
       quantity: 1,
       image: item.image,
-      restaurant: "Broski's Kitchen"
+      restaurant: "Broski's Kitchen",
     };
-    
+
     addItem(cartItem);
     toast({
-      title: "Added to Cart",
+      title: 'Added to Cart',
       description: `${item.name} has been added to your cart`,
     });
   };
@@ -202,11 +202,11 @@ export default function BroskisPage() {
                   </div>
                 </div>
               </div>
-              
+
               <p className="text-xl text-gray-300 mb-6 max-w-2xl">
                 {RESTAURANT_INFO.description}
               </p>
-              
+
               <div className="flex flex-wrap gap-2 mb-8">
                 {RESTAURANT_INFO.features.map((feature) => (
                   <Badge key={feature} variant="outline" className="border-otw-gold/30 text-otw-gold">
@@ -214,7 +214,7 @@ export default function BroskisPage() {
                   </Badge>
                 ))}
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300">
                   <Truck className="w-5 h-5 mr-2" />
@@ -226,7 +226,7 @@ export default function BroskisPage() {
                 </Button>
               </div>
             </div>
-            
+
             {/* Restaurant Image */}
             <div className="flex-1 max-w-lg">
               <div className="relative h-80 rounded-2xl overflow-hidden">
@@ -334,7 +334,7 @@ export default function BroskisPage() {
             {categories.map((category) => (
               <Button
                 key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
+                variant={selectedCategory === category ? 'default' : 'outline'}
                 onClick={() => setSelectedCategory(category)}
                 className={`px-6 py-3 rounded-full transition-all duration-300 ${
                   selectedCategory === category
@@ -360,7 +360,7 @@ export default function BroskisPage() {
                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  
+
                   {/* Badges */}
                   <div className="absolute top-4 left-4 flex gap-2">
                     {item.isPopular && (

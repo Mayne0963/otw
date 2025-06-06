@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { createContext, useState, useContext, type ReactNode } from "react";
-import type { MediaPlayerContextType, Track } from "../../types";
+import { createContext, useState, useContext, type ReactNode } from 'react';
+import type { MediaPlayerContextType, Track } from '../../types';
 
 // Create the context with a default undefined value
 const MediaPlayerContext = createContext<MediaPlayerContextType | undefined>(
@@ -32,7 +32,7 @@ export const MediaPlayerProvider: React.FC<{ children: ReactNode }> = ({
 
   // Play the next track in the playlist
   const nextTrack = () => {
-    if (!currentTrack || playlist.length === 0) return;
+    if (!currentTrack || playlist.length === 0) {return;}
 
     const currentIndex = playlist.findIndex(
       (track) => track.id === currentTrack.id,
@@ -49,7 +49,7 @@ export const MediaPlayerProvider: React.FC<{ children: ReactNode }> = ({
 
   // Play the previous track in the playlist
   const previousTrack = () => {
-    if (!currentTrack || playlist.length === 0) return;
+    if (!currentTrack || playlist.length === 0) {return;}
 
     const currentIndex = playlist.findIndex(
       (track) => track.id === currentTrack.id,
@@ -119,7 +119,7 @@ export const useMediaPlayer = (): MediaPlayerContextType => {
   const context = useContext(MediaPlayerContext);
 
   if (context === undefined) {
-    throw new Error("useMediaPlayer must be used within a MediaPlayerProvider");
+    throw new Error('useMediaPlayer must be used within a MediaPlayerProvider');
   }
 
   return context;

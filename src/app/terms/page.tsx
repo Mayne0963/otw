@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { 
+import {
   FileText,
   Scale,
   Shield,
@@ -17,13 +17,13 @@ import {
   MapPin,
   ExternalLink,
   Download,
-  Printer
+  Printer,
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function TermsPage() {
-  const lastUpdated = "January 15, 2024";
-  const effectiveDate = "January 1, 2024";
+  const lastUpdated = 'January 15, 2024';
+  const effectiveDate = 'January 1, 2024';
 
   const sections = [
     {
@@ -33,8 +33,8 @@ export default function TermsPage() {
       content: [
         'By accessing and using the OTW platform, you accept and agree to be bound by the terms and provision of this agreement.',
         'If you do not agree to abide by the above, please do not use this service.',
-        'These Terms of Service constitute a legally binding agreement between you and OTW.'
-      ]
+        'These Terms of Service constitute a legally binding agreement between you and OTW.',
+      ],
     },
     {
       id: 'definitions',
@@ -45,8 +45,8 @@ export default function TermsPage() {
         '"User" refers to any individual who accesses or uses our Service.',
         '"Driver" refers to independent contractors who provide delivery services through our platform.',
         '"Restaurant Partner" refers to food establishments that offer their services through our platform.',
-        '"Order" refers to a request for food delivery or pickup placed through our Service.'
-      ]
+        '"Order" refers to a request for food delivery or pickup placed through our Service.',
+      ],
     },
     {
       id: 'eligibility',
@@ -57,8 +57,8 @@ export default function TermsPage() {
         'You must provide accurate, current, and complete information during registration.',
         'You are responsible for maintaining the confidentiality of your account credentials.',
         'You may not use our Service if you have been previously banned or suspended.',
-        'Commercial use of the Service requires prior written consent from OTW.'
-      ]
+        'Commercial use of the Service requires prior written consent from OTW.',
+      ],
     },
     {
       id: 'orders',
@@ -70,8 +70,8 @@ export default function TermsPage() {
         'Payment is processed at the time of order placement.',
         'Delivery fees, service fees, and taxes are additional to menu prices.',
         'Tips for drivers are optional but encouraged.',
-        'Refunds are processed according to our refund policy outlined below.'
-      ]
+        'Refunds are processed according to our refund policy outlined below.',
+      ],
     },
     {
       id: 'delivery',
@@ -82,8 +82,8 @@ export default function TermsPage() {
         'You must be available to receive your order at the specified delivery address.',
         'OTW is not responsible for orders that cannot be delivered due to incorrect address information.',
         'Special delivery instructions should be clearly specified in your order.',
-        'Drivers have the right to refuse delivery to unsafe locations or intoxicated customers.'
-      ]
+        'Drivers have the right to refuse delivery to unsafe locations or intoxicated customers.',
+      ],
     },
     {
       id: 'refunds',
@@ -95,8 +95,8 @@ export default function TermsPage() {
         'Missing items will be refunded or replaced at our discretion.',
         'Refunds are processed to the original payment method within 3-5 business days.',
         'Repeated refund requests may result in account suspension.',
-        'Restaurant partners are responsible for food quality and preparation.'
-      ]
+        'Restaurant partners are responsible for food quality and preparation.',
+      ],
     },
     {
       id: 'prohibited',
@@ -108,8 +108,8 @@ export default function TermsPage() {
         'You may not transmit any worms, viruses, or any code of a destructive nature.',
         'You may not infringe upon or violate our intellectual property rights or the intellectual property rights of others.',
         'You may not harass, abuse, insult, harm, defame, slander, disparage, intimidate, or discriminate.',
-        'You may not submit false or misleading information.'
-      ]
+        'You may not submit false or misleading information.',
+      ],
     },
     {
       id: 'liability',
@@ -120,8 +120,8 @@ export default function TermsPage() {
         'We are not responsible for the quality, safety, or preparation of food items.',
         'Our liability is limited to the amount paid for the specific order in question.',
         'We are not liable for indirect, incidental, special, consequential, or punitive damages.',
-        'Some jurisdictions do not allow the exclusion of certain warranties or the limitation of liability for consequential damages.'
-      ]
+        'Some jurisdictions do not allow the exclusion of certain warranties or the limitation of liability for consequential damages.',
+      ],
     },
     {
       id: 'intellectual',
@@ -132,8 +132,8 @@ export default function TermsPage() {
         'The Service is protected by copyright, trademark, and other laws.',
         'Our trademarks and trade dress may not be used without our prior written consent.',
         'You retain ownership of content you submit, but grant us a license to use it.',
-        'You may not reproduce, distribute, or create derivative works without permission.'
-      ]
+        'You may not reproduce, distribute, or create derivative works without permission.',
+      ],
     },
     {
       id: 'privacy',
@@ -144,8 +144,8 @@ export default function TermsPage() {
         'By using our Service, you agree to the collection and use of information in accordance with our Privacy Policy.',
         'We implement appropriate security measures to protect your personal information.',
         'We do not sell, trade, or rent your personal information to third parties.',
-        'You have the right to access, update, or delete your personal information.'
-      ]
+        'You have the right to access, update, or delete your personal information.',
+      ],
     },
     {
       id: 'termination',
@@ -156,8 +156,8 @@ export default function TermsPage() {
         'Upon termination, your right to use the Service will cease immediately.',
         'You may terminate your account at any time by contacting customer support.',
         'All provisions which by their nature should survive termination shall survive.',
-        'Termination does not relieve you of any obligations incurred prior to termination.'
-      ]
+        'Termination does not relieve you of any obligations incurred prior to termination.',
+      ],
     },
     {
       id: 'changes',
@@ -168,8 +168,8 @@ export default function TermsPage() {
         'Changes will be effective immediately upon posting on this page.',
         'Your continued use of the Service after changes constitutes acceptance.',
         'We will notify users of significant changes via email or in-app notification.',
-        'It is your responsibility to review these terms periodically.'
-      ]
+        'It is your responsibility to review these terms periodically.',
+      ],
     },
     {
       id: 'governing',
@@ -179,9 +179,9 @@ export default function TermsPage() {
         'These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which OTW operates.',
         'Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the courts in that jurisdiction.',
         'If any provision of these Terms is found to be unenforceable, the remaining provisions will remain in effect.',
-        'These Terms constitute the entire agreement between you and OTW regarding the Service.'
-      ]
-    }
+        'These Terms constitute the entire agreement between you and OTW regarding the Service.',
+      ],
+    },
   ];
 
   return (
@@ -200,7 +200,7 @@ export default function TermsPage() {
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               Please read these Terms of Service carefully before using the OTW platform. By using our service, you agree to these terms.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Badge className="bg-otw-gold/20 text-otw-gold border-otw-gold/30 px-4 py-2">
                 <Clock className="w-4 h-4 mr-2" />
@@ -211,7 +211,7 @@ export default function TermsPage() {
                 Effective: {effectiveDate}
               </Badge>
             </div>
-            
+
             <div className="flex flex-wrap justify-center gap-4">
               <Button className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300">
                 <Download className="w-5 h-5 mr-2" />
@@ -267,8 +267,8 @@ export default function TermsPage() {
             {sections.map((section, index) => {
               const IconComponent = section.icon;
               return (
-                <Card 
-                  key={section.id} 
+                <Card
+                  key={section.id}
                   id={section.id}
                   className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20 hover:border-otw-gold/40 transition-all duration-300 hover:shadow-lg hover:shadow-otw-gold/10"
                 >

@@ -7,9 +7,9 @@
  * @typedef {import('react').ReactNode} ReactNode
  */
 
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
 /**
  * Example JavaScript component that works with TypeScript types
@@ -28,7 +28,7 @@ const JSComponent = ({ title, children }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="btn bg-primary text-black px-4 py-2 rounded hover:bg-primary/90 transition-colors mb-4"
       >
-        {isOpen ? "Hide Content" : "Show Content"}
+        {isOpen ? 'Hide Content' : 'Show Content'}
       </button>
 
       {isOpen && <div className="animate-fade-in">{children}</div>}

@@ -1,32 +1,32 @@
-import React from "react";
-import Link from "next/link";
-import { Facebook, Instagram, Twitter } from "lucide-react";
-import { cn } from "../../lib/utils";
+import React from 'react';
+import Link from 'next/link';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
 const navigation = {
   main: [
-    { name: "Menu", href: "/menu" },
-    { name: "Locations", href: "/locations" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
-    { name: "Help", href: "/help" },
-    { name: "Privacy", href: "/privacy" },
-    { name: "Terms", href: "/terms" },
+    { name: 'Menu', href: '/menu' },
+    { name: 'Locations', href: '/locations' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Help', href: '/help' },
+    { name: 'Privacy', href: '/privacy' },
+    { name: 'Terms', href: '/terms' },
   ],
   social: [
     {
-      name: "Facebook",
-      href: "https://facebook.com/otwdelivery",
+      name: 'Facebook',
+      href: 'https://facebook.com/otwdelivery',
       icon: Facebook,
     },
     {
-      name: "Instagram",
-      href: "https://instagram.com/otwdelivery",
+      name: 'Instagram',
+      href: 'https://instagram.com/otwdelivery',
       icon: Instagram,
     },
     {
-      name: "Twitter",
-      href: "https://twitter.com/otwdelivery",
+      name: 'Twitter',
+      href: 'https://twitter.com/otwdelivery',
       icon: Twitter,
     },
   ],
@@ -38,7 +38,7 @@ interface FooterProps {
 
 export function Footer({ className }: FooterProps) {
   return (
-    <footer className={cn("", className)}>
+    <footer className={cn('', className)}>
       <div className="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
         <nav
           className="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12"

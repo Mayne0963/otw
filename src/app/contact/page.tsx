@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type { Metadata } from "next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { useState } from "react";
-import Link from "next/link";
+import type { Metadata } from 'next';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { useState } from 'react';
+import Link from 'next/link';
 import {
   FaMapMarkerAlt,
   FaPhone,
@@ -15,9 +15,9 @@ import {
   FaYoutube,
   FaChevronDown,
   FaChevronUp,
-} from "react-icons/fa";
-import ContactForm from "../../components/contact/ContactForm";
-import ContactMap from "../../components/contact/ContactMap";
+} from 'react-icons/fa';
+import ContactForm from '../../components/contact/ContactForm';
+import ContactMap from '../../components/contact/ContactMap';
 // TODO: Remove static data import - get location data from API
 
 export default function ContactPage() {
@@ -29,39 +29,39 @@ export default function ContactPage() {
 
   const faqs = [
     {
-      question: "What are your hours of operation?",
+      question: 'What are your hours of operation?',
       answer:
-        "Our hours vary by location. Most locations are open from 11 AM to 10 PM Monday through Thursday, 11 AM to 12 AM Friday and Saturday, and 10 AM to 9 PM on Sunday. Please check our Locations page for specific hours.",
+        'Our hours vary by location. Most locations are open from 11 AM to 10 PM Monday through Thursday, 11 AM to 12 AM Friday and Saturday, and 10 AM to 9 PM on Sunday. Please check our Locations page for specific hours.',
     },
     {
-      question: "Do you offer catering services?",
+      question: 'Do you offer catering services?',
       answer:
-        "Yes, we offer catering for events of all sizes. Please fill out our contact form or call our catering line directly at (260) 555-CATER to discuss your needs.",
+        'Yes, we offer catering for events of all sizes. Please fill out our contact form or call our catering line directly at (260) 555-CATER to discuss your needs.',
     },
     {
-      question: "Do you take reservations?",
+      question: 'Do you take reservations?',
       answer:
-        "We do not take reservations. We operate on a first-come, first-served basis at all our locations. For large groups or special events, please contact us about our catering and event services.",
+        'We do not take reservations. We operate on a first-come, first-served basis at all our locations. For large groups or special events, please contact us about our catering and event services.',
     },
     {
-      question: "How does your delivery service work?",
+      question: 'How does your delivery service work?',
       answer:
-        "We offer delivery through our website and mobile app. You can also find us on major delivery platforms. Our delivery radius is typically within 5 miles of each location, and delivery times average 30-45 minutes depending on distance and order volume.",
+        'We offer delivery through our website and mobile app. You can also find us on major delivery platforms. Our delivery radius is typically within 5 miles of each location, and delivery times average 30-45 minutes depending on distance and order volume.',
     },
     {
-      question: "Can you host private events?",
+      question: 'Can you host private events?',
       answer:
-        "Yes, we offer private event services at select locations. We can accommodate various group sizes and customize menus for your specific event. Please contact our events team through the form on this page for more information.",
+        'Yes, we offer private event services at select locations. We can accommodate various group sizes and customize menus for your specific event. Please contact our events team through the form on this page for more information.',
     },
     {
-      question: "Do you accommodate dietary restrictions?",
+      question: 'Do you accommodate dietary restrictions?',
       answer:
-        "Yes, we offer vegetarian, vegan, gluten-free, and dairy-free options. Please inform your server about any allergies or dietary restrictions when ordering.",
+        'Yes, we offer vegetarian, vegan, gluten-free, and dairy-free options. Please inform your server about any allergies or dietary restrictions when ordering.',
     },
     {
       question: "How can I apply for a job at Broski's Kitchen?",
       answer:
-        "You can apply for job openings through the Careers section of our website or by visiting any of our locations and asking for an application form.",
+        'You can apply for job openings through the Careers section of our website or by visiting any of our locations and asking for an application form.',
     },
   ];
 
@@ -275,8 +275,8 @@ export default function ContactPage() {
                 <div
                   className={`px-4 pb-4 transition-all duration-300 ${
                     expandedFaq === index
-                      ? "max-h-96 opacity-100"
-                      : "max-h-0 opacity-0 overflow-hidden"
+                      ? 'max-h-96 opacity-100'
+                      : 'max-h-0 opacity-0 overflow-hidden'
                   }`}
                 >
                   <p className="text-gray-300">{faq.answer}</p>
@@ -292,7 +292,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#D4AF37]/20 to-[#880808]/20 opacity-50"></div>
         <div className="container mx-auto px-4 relative z-10 text-center">
           <h2 className="heading-lg mb-4 gritty-shadow">
-            Ready to Experience Broski's?
+            Ready to Experience Broski&apos;s?
           </h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
             Visit one of our locations or order online to experience our luxury

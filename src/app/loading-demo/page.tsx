@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
-import { useState } from "react";
-import { LoadingAnimation } from "../../components/ui/loading-animation";
-import { LoadingOverlay } from "../../components/ui/loading-overlay";
-import { Button } from "../../components/ui/button";
+import type { Metadata } from 'next';
+import { useState } from 'react';
+import { LoadingAnimation } from '../../components/ui/loading-animation';
+import { LoadingOverlay } from '../../components/ui/loading-overlay';
+import { Button } from '../../components/ui/button';
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
+} from '../../components/ui/card';
 
 export default function LoadingDemoPage() {
   const [isLoading, setIsLoading] = useState(false);

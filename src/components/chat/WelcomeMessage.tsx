@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 import {
   FaUtensils,
   FaMapMarkerAlt,
   FaCalendarAlt,
   FaGift,
-} from "react-icons/fa";
+} from 'react-icons/fa';
 
 interface QuickActionProps {
   icon: React.ReactNode;
@@ -47,25 +47,25 @@ const WelcomeMessage: React.FC<WelcomeMessageProps> = ({
         <QuickAction
           icon={<FaUtensils className="text-gold-foil" />}
           text="Tell me about the menu"
-          onClick={() => onQuickActionClick("Tell me about your menu options")}
+          onClick={() => onQuickActionClick('Tell me about your menu options')}
         />
         <QuickAction
           icon={<FaMapMarkerAlt className="text-gold-foil" />}
           text="Find a location"
-          onClick={() => onQuickActionClick("What locations do you have?")}
+          onClick={() => onQuickActionClick('What locations do you have?')}
         />
         <QuickAction
           icon={<FaCalendarAlt className="text-gold-foil" />}
           text="Upcoming events"
           onClick={() =>
-            onQuickActionClick("What events do you have coming up?")
+            onQuickActionClick('What events do you have coming up?')
           }
         />
         <QuickAction
           icon={<FaGift className="text-gold-foil" />}
           text="Rewards program"
           onClick={() =>
-            onQuickActionClick("Tell me about your rewards program")
+            onQuickActionClick('Tell me about your rewards program')
           }
         />
       </div>

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { createContext, useContext, useState, useEffect } from "react";
-import type { Reward, RewardHistory } from "../../types";
+import type React from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { Reward, RewardHistory } from '../../types';
 
 interface RewardsContextType {
   points: number;
@@ -19,7 +19,7 @@ const RewardsContext = createContext<RewardsContextType | undefined>(undefined);
 export const useRewards = () => {
   const context = useContext(RewardsContext);
   if (context === undefined) {
-    throw new Error("useRewards must be used within a RewardsProvider");
+    throw new Error('useRewards must be used within a RewardsProvider');
   }
   return context;
 };
@@ -32,20 +32,20 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({
   children,
 }) => {
   const [points, setPoints] = useState(0);
-  const [tier, setTier] = useState("Bronze");
+  const [tier, setTier] = useState('Bronze');
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [history, setHistory] = useState<RewardHistory[]>([]);
 
   // Load rewards data from localStorage on mount
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedPoints = localStorage.getItem("rewardsPoints");
-      const savedTier = localStorage.getItem("rewardsTier");
-      const savedHistory = localStorage.getItem("rewardsHistory");
+    if (typeof window !== 'undefined') {
+      const savedPoints = localStorage.getItem('rewardsPoints');
+      const savedTier = localStorage.getItem('rewardsTier');
+      const savedHistory = localStorage.getItem('rewardsHistory');
 
-      if (savedPoints) setPoints(Number.parseInt(savedPoints, 10));
-      if (savedTier) setTier(savedTier);
-      if (savedHistory) setHistory(JSON.parse(savedHistory));
+      if (savedPoints) {setPoints(Number.parseInt(savedPoints, 10));}
+      if (savedTier) {setTier(savedTier);}
+      if (savedHistory) {setHistory(JSON.parse(savedHistory));}
 
       // Fetch rewards from API
       const fetchRewards = async () => {
@@ -68,21 +68,21 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({
 
   // Update localStorage when state changes
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("rewardsPoints", points.toString());
-      localStorage.setItem("rewardsTier", tier);
-      localStorage.setItem("rewardsHistory", JSON.stringify(history));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('rewardsPoints', points.toString());
+      localStorage.setItem('rewardsTier', tier);
+      localStorage.setItem('rewardsHistory', JSON.stringify(history));
     }
   }, [points, tier, history]);
 
   // Update tier based on points
   useEffect(() => {
     if (points >= 1000) {
-      setTier("Gold");
+      setTier('Gold');
     } else if (points >= 500) {
-      setTier("Silver");
+      setTier('Silver');
     } else {
-      setTier("Bronze");
+      setTier('Bronze');
     }
   }, [points]);
 
@@ -93,7 +93,7 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({
     const newHistoryItem: RewardHistory = {
       id: `history-${Date.now()}`,
       date: new Date().toISOString(),
-      type: "earned",
+      type: 'earned',
       points: amount,
       description: `Earned ${amount} points`,
     };
@@ -109,7 +109,7 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({
       const newHistoryItem: RewardHistory = {
         id: `history-${Date.now()}`,
         date: new Date().toISOString(),
-        type: "redeemed",
+        type: 'redeemed',
         points: -reward.points,
         description: `Redeemed ${reward.name}`,
         reward: reward,

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   GoogleMap,
   Marker,
   useLoadScript,
-} from "@react-google-maps/api";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Search, Navigation } from "lucide-react";
-import PlaceAutocomplete from "./PlaceAutocomplete";
+} from '@react-google-maps/api';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Search, Navigation } from 'lucide-react';
+import PlaceAutocomplete from './PlaceAutocomplete';
 
-const libraries: "places"[] = ["places"];
+const libraries: 'places'[] = ['places'];
 
 interface MapSearchProps {
   onLocationSelect?: (location: {
@@ -27,7 +27,7 @@ interface MapSearchProps {
 export default function MapSearch({
   onLocationSelect,
   defaultLocation = { lat: 41.0793, lng: -85.1394 }, // Default to Fort Wayne, IN
-  height = "400px",
+  height = '400px',
   showSearchBar = true,
 }: MapSearchProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -38,7 +38,7 @@ export default function MapSearch({
 
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     libraries,
   });
 
@@ -49,7 +49,7 @@ export default function MapSearch({
       map.panTo(fortWayneLocation);
       map.setZoom(13);
     }
-    
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -62,7 +62,7 @@ export default function MapSearch({
           }
         },
         (error) => {
-          console.error("Error getting location:", error);
+          console.error('Error getting location:', error);
           // If geolocation fails, ensure we stay centered on Fort Wayne
           if (map) {
             const fortWayneLocation = new google.maps.LatLng(41.0793, -85.1394);
@@ -81,20 +81,20 @@ export default function MapSearch({
     if (place && place.geometry && place.geometry.location) {
       const location = new google.maps.LatLng(
         place.geometry.location.lat(),
-        place.geometry.location.lng()
+        place.geometry.location.lng(),
       );
       setSelectedLocation(location);
-      
+
       if (map) {
         map.panTo(location);
         map.setZoom(15);
       }
-      
+
       if (onLocationSelect) {
         onLocationSelect({
           lat: location.lat(),
           lng: location.lng(),
-          address: place.formatted_address || place.name || "",
+          address: place.formatted_address || place.name || '',
         });
       }
     }
@@ -109,7 +109,7 @@ export default function MapSearch({
         onLocationSelect({
           lat: currentLocation.lat(),
           lng: currentLocation.lng(),
-          address: "Current Location",
+          address: 'Current Location',
         });
       }
     }
@@ -150,16 +150,16 @@ export default function MapSearch({
 
       <div className="relative" style={{ height }}>
         <GoogleMap
-          mapContainerStyle={{ width: "100%", height: "100%" }}
+          mapContainerStyle={{ width: '100%', height: '100%' }}
           center={defaultLocation}
           zoom={13}
           onLoad={onMapLoad}
           options={{
             styles: [
               {
-                featureType: "poi",
-                elementType: "labels",
-                stylers: [{ visibility: "off" }],
+                featureType: 'poi',
+                elementType: 'labels',
+                stylers: [{ visibility: 'off' }],
               },
             ],
             disableDefaultUI: true,

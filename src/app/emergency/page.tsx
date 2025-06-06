@@ -1,83 +1,83 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
-import { Card, CardContent } from "../../components/ui/card";
-import { Button } from "../../components/ui/button";
-import { Alert, AlertDescription } from "../../components/ui/alert";
-import { useState } from "react";
-import Link from "next/link";
-import { 
-  Heart, 
-  Phone, 
-  AlertTriangle, 
-  Shield, 
-  Car, 
-  MapPin, 
-  Clock 
-} from "lucide-react";
+import type { Metadata } from 'next';
+import { Card, CardContent } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
+import { Alert, AlertDescription } from '../../components/ui/alert';
+import { useState } from 'react';
+import Link from 'next/link';
+import {
+  Heart,
+  Phone,
+  AlertTriangle,
+  Shield,
+  Car,
+  MapPin,
+  Clock,
+} from 'lucide-react';
 
 const emergencyContacts = [
   {
-    name: "Emergency Services",
-    number: "911",
-    description: "For life-threatening emergencies",
+    name: 'Emergency Services',
+    number: '911',
+    description: 'For life-threatening emergencies',
     icon: <Heart className="w-6 h-6 text-red-500" />,
   },
   {
-    name: "OTW Emergency Line",
-    number: "1-800-OTW-HELP",
-    description: "24/7 support for OTW-related emergencies",
+    name: 'OTW Emergency Line',
+    number: '1-800-OTW-HELP',
+    description: '24/7 support for OTW-related emergencies',
     icon: <Phone className="w-6 h-6 text-red-500" />,
   },
   {
-    name: "Roadside Assistance",
-    number: "1-800-ROAD-HELP",
-    description: "For vehicle breakdowns and accidents",
+    name: 'Roadside Assistance',
+    number: '1-800-ROAD-HELP',
+    description: 'For vehicle breakdowns and accidents',
     icon: <Car className="w-6 h-6 text-red-500" />,
   },
 ];
 
 const safetyResources = [
   {
-    title: "Driver Safety",
-    description: "Essential safety guidelines for drivers",
+    title: 'Driver Safety',
+    description: 'Essential safety guidelines for drivers',
     icon: <Shield className="w-6 h-6 text-blue-500" />,
-    link: "/emergency/driver-safety",
+    link: '/emergency/driver-safety',
   },
   {
-    title: "Customer Safety",
-    description: "Safety tips for customers",
+    title: 'Customer Safety',
+    description: 'Safety tips for customers',
     icon: <Shield className="w-6 h-6 text-blue-500" />,
-    link: "/emergency/customer-safety",
+    link: '/emergency/customer-safety',
   },
   {
-    title: "Emergency Procedures",
-    description: "Step-by-step emergency response procedures",
+    title: 'Emergency Procedures',
+    description: 'Step-by-step emergency response procedures',
     icon: <AlertTriangle className="w-6 h-6 text-yellow-500" />,
-    link: "/emergency/procedures",
+    link: '/emergency/procedures',
   },
 ];
 
 const nearbyHospitals = [
   {
-    name: "Fort Wayne Police Department",
-    phone: "(260) 427-1222",
-    address: "1 E Main St, Fort Wayne, IN 46802",
-    type: "police",
+    name: 'Fort Wayne Police Department',
+    phone: '(260) 427-1222',
+    address: '1 E Main St, Fort Wayne, IN 46802',
+    type: 'police',
   },
   {
-    name: "Fort Wayne Fire Department",
-    phone: "(260) 427-1234",
-    address: "226 E Berry St, Fort Wayne, IN 46802",
-    type: "fire",
+    name: 'Fort Wayne Fire Department',
+    phone: '(260) 427-1234',
+    address: '226 E Berry St, Fort Wayne, IN 46802',
+    type: 'fire',
   },
   {
-    name: "Parkview Regional Medical Center",
-    phone: "(260) 266-1000",
-    address: "11109 Parkview Plaza Dr, Fort Wayne, IN 46845",
-    type: "medical",
+    name: 'Parkview Regional Medical Center',
+    phone: '(260) 266-1000',
+    address: '11109 Parkview Plaza Dr, Fort Wayne, IN 46845',
+    type: 'medical',
   },
 ];
 
@@ -206,7 +206,7 @@ export default function EmergencyPage() {
         {/* Additional Information */}
         <div className="mt-8 text-center">
           <p className="text-lg text-gray-600">
-            For non-emergency assistance, please visit our{" "}
+            For non-emergency assistance, please visit our{' '}
             <Link href="/help" className="text-blue-600 hover:underline">
               Help Center
             </Link>

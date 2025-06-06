@@ -1,7 +1,7 @@
-import * as React from "react";
-import Link from "next/link";
+import * as React from 'react';
+import Link from 'next/link';
 
-import { cn } from "../../lib/utils";
+import { cn } from '../../lib/utils';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -10,42 +10,42 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "./navigation-menu";
+} from './navigation-menu';
 
 const components: { title: string; href: string; description: string }[] = [
   {
-    title: "Alert Dialog",
-    href: "/docs/components/alert-dialog",
+    title: 'Alert Dialog',
+    href: '/docs/components/alert-dialog',
     description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+      'A modal dialog that interrupts the user with important content and expects a response.',
   },
   {
-    title: "Hover Card",
-    href: "/docs/components/hover-card",
+    title: 'Hover Card',
+    href: '/docs/components/hover-card',
     description:
-      "For sighted users to preview content available behind a link.",
+      'For sighted users to preview content available behind a link.',
   },
   {
-    title: "Progress",
-    href: "/docs/components/progress",
-    description: "Displays the progress of a task towards completion. ",
+    title: 'Progress',
+    href: '/docs/components/progress',
+    description: 'Displays the progress of a task towards completion. ',
   },
   {
-    title: "Scroll-area",
-    href: "/docs/components/scroll-area",
-    description: "Visually or semantically separates content.",
+    title: 'Scroll-area',
+    href: '/docs/components/scroll-area',
+    description: 'Visually or semantically separates content.',
   },
   {
-    title: "Tabs",
-    href: "/docs/components/tabs",
+    title: 'Tabs',
+    href: '/docs/components/tabs',
     description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+      'A set of layered sections of content—known as tab panels—that are displayed one at a time.',
   },
   {
-    title: "Tooltip",
-    href: "/docs/components/tooltip",
+    title: 'Tooltip',
+    href: '/docs/components/tooltip',
     description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+      'A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.',
   },
 ];
 
@@ -121,8 +121,8 @@ export function NavigationMenuDemo() {
 }
 
 const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutKeyof<"a", keyof React.HTMLAttributes<HTMLElement>>
+  React.ElementRef<'a'>,
+  React.ComponentPropsWithoutKeyof<'a', keyof React.HTMLAttributes<HTMLElement>>
 >(({ className, title, children, ...props }, ref) => {
   return (
     <li>
@@ -132,7 +132,7 @@ const ListItem = React.forwardRef<
           {...props}
           ref={ref}
           className={cn(
-            "group flex h-[100px] w-full select-none flex-col justify-end rounded-md bg-muted p-6 no-underline outline-none focus:shadow-md",
+            'group flex h-[100px] w-full select-none flex-col justify-end rounded-md bg-muted p-6 no-underline outline-none focus:shadow-md',
             className,
           )}
         >
@@ -145,4 +145,4 @@ const ListItem = React.forwardRef<
     </li>
   );
 });
-ListItem.displayName = "ListItem";
+ListItem.displayName = 'ListItem';

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import { FaCheckCircle, FaMoneyBillWave } from "react-icons/fa";
-import { useCart } from "../../../lib/context/CartContext";
+import { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { FaCheckCircle, FaMoneyBillWave } from 'react-icons/fa';
+import { useCart } from '../../../lib/context/CartContext';
 
 export default function CashOrderSuccess() {
   const searchParams = useSearchParams();
@@ -14,11 +14,11 @@ export default function CashOrderSuccess() {
 
   useEffect(() => {
     // Get order data from URL params or localStorage
-    const orderId = searchParams.get("orderId");
-    
+    const orderId = searchParams.get('orderId');
+
     if (!orderId) {
       // If no order ID, redirect to home
-      router.push("/");
+      router.push('/');
       return;
     }
 
@@ -99,8 +99,8 @@ export default function CashOrderSuccess() {
                   <div className="flex justify-between">
                     <span className="text-gray-400">Delivery Time:</span>
                     <span className="capitalize">
-                      {orderData.deliveryTime === 'asap' 
-                        ? 'As Soon As Possible' 
+                      {orderData.deliveryTime === 'asap'
+                        ? 'As Soon As Possible'
                         : orderData.scheduledTime || 'ASAP'
                       }
                     </span>
@@ -136,7 +136,7 @@ export default function CashOrderSuccess() {
                       </p>
                     </div>
                   ))}
-                  
+
                   <div className="border-t border-[#333333] pt-3 mt-4 space-y-2">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
@@ -170,13 +170,13 @@ export default function CashOrderSuccess() {
                   <li>• You'll receive a receipt with your order</li>
                 </ul>
               </div>
-              
+
               <div className="bg-[#111111] p-4 rounded-lg mt-4">
-                <h4 className="font-bold mb-2">What's Next?</h4>
+                <h4 className="font-bold mb-2">What&apos;s Next?</h4>
                 <ul className="text-sm text-gray-400 space-y-1">
-                  <li>• We're preparing your order now</li>
+                  <li>• We&apos;re preparing your order now</li>
                   <li>• Estimated delivery/pickup time: 30-45 minutes</li>
-                  <li>• We'll call you when your order is ready</li>
+                  <li>• We&apos;ll call you when your order is ready</li>
                   <li>• Keep your phone nearby for updates</li>
                 </ul>
               </div>

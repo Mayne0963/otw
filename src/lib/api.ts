@@ -1,8 +1,8 @@
-import { initializeApp, getApps } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-import { Stripe } from "stripe";
+import { initializeApp, getApps } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+import { Stripe } from 'stripe';
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -26,12 +26,12 @@ export const storage = getStorage();
 
 // Stripe Client (if needed)
 export const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" })
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' })
   : null;
 
 // API Helper Functions
 export const uploadFile = async (file: File, path: string): Promise<string> => {
-  const { ref, uploadBytes, getDownloadURL } = await import("firebase/storage");
+  const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
   const fileRef = ref(storage, path);
   await uploadBytes(fileRef, file);
   return await getDownloadURL(fileRef);
@@ -39,14 +39,14 @@ export const uploadFile = async (file: File, path: string): Promise<string> => {
 
 // Firebase Firestore helpers
 export const createService = async (serviceData: any) => {
-  const { collection, addDoc } = await import("firebase/firestore");
-  const docRef = await addDoc(collection(db, "services"), serviceData);
+  const { collection, addDoc } = await import('firebase/firestore');
+  const docRef = await addDoc(collection(db, 'services'), serviceData);
   return { id: docRef.id, ...serviceData };
 };
 
 export const createOrder = async (orderData: any) => {
-  const { collection, addDoc } = await import("firebase/firestore");
-  const docRef = await addDoc(collection(db, "orders"), orderData);
+  const { collection, addDoc } = await import('firebase/firestore');
+  const docRef = await addDoc(collection(db, 'orders'), orderData);
   return { id: docRef.id, ...orderData };
 };
 
@@ -54,8 +54,8 @@ export const updateServiceStatus = async (
   serviceId: string,
   status: string,
 ) => {
-  const { doc, updateDoc, getDoc } = await import("firebase/firestore");
-  const serviceRef = doc(db, "services", serviceId);
+  const { doc, updateDoc, getDoc } = await import('firebase/firestore');
+  const serviceRef = doc(db, 'services', serviceId);
   await updateDoc(serviceRef, { status });
   const updatedDoc = await getDoc(serviceRef);
   return { id: serviceId, ...updatedDoc.data() };
@@ -63,22 +63,22 @@ export const updateServiceStatus = async (
 
 export const getTierMembership = async (userId: string) => {
   const { collection, query, where, getDocs } = await import(
-    "firebase/firestore"
+    'firebase/firestore'
   );
   const q = query(
-    collection(db, "tier_memberships"),
-    where("userId", "==", userId),
+    collection(db, 'tier_memberships'),
+    where('userId', '==', userId),
   );
   const querySnapshot = await getDocs(q);
-  if (querySnapshot.empty) return null;
+  if (querySnapshot.empty) {return null;}
   const doc = querySnapshot.docs[0];
   return { id: doc.id, ...doc.data() };
 };
 
 export const createTierMembership = async (membershipData: any) => {
-  const { collection, addDoc } = await import("firebase/firestore");
+  const { collection, addDoc } = await import('firebase/firestore');
   const docRef = await addDoc(
-    collection(db, "tier_memberships"),
+    collection(db, 'tier_memberships'),
     membershipData,
   );
   return { id: docRef.id, ...membershipData };
@@ -86,11 +86,11 @@ export const createTierMembership = async (membershipData: any) => {
 
 export const getVolunteerHours = async (volunteerId: string) => {
   const { collection, query, where, getDocs } = await import(
-    "firebase/firestore"
+    'firebase/firestore'
   );
   const q = query(
-    collection(db, "volunteer_hours"),
-    where("volunteerId", "==", volunteerId),
+    collection(db, 'volunteer_hours'),
+    where('volunteerId', '==', volunteerId),
   );
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -100,11 +100,11 @@ export const updateVolunteerHours = async (
   volunteerId: string,
   hours: number,
 ) => {
-  const { doc, updateDoc, getDoc } = await import("firebase/firestore");
-  const volunteerRef = doc(db, "volunteers", volunteerId);
+  const { doc, updateDoc, getDoc } = await import('firebase/firestore');
+  const volunteerRef = doc(db, 'volunteers', volunteerId);
   await updateDoc(volunteerRef, { hoursServed: hours });
   const updatedDoc = await getDoc(volunteerRef);
   return { id: volunteerId, ...updatedDoc.data() };
 };
 
-export const runtime = "nodejs";
+export const runtime = 'nodejs';

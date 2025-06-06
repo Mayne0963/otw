@@ -1,5 +1,5 @@
-import type React from "react";
-import { Providers } from "../../lib/context/Providers";
+import type React from 'react';
+import { Providers } from '../../lib/context/Providers';
 
 export default function RestaurantsLayout({
   children,

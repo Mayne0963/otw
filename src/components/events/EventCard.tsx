@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { FaClock, FaMapMarkerAlt, FaTicketAlt, FaLock } from "react-icons/fa";
-import type { Event } from "../../types/event";
+import { FaClock, FaMapMarkerAlt, FaTicketAlt, FaLock } from 'react-icons/fa';
+import type { Event } from '../../types/event';
 
 interface EventCardProps {
   event: Event;
@@ -23,10 +23,10 @@ const EventCard: React.FC<EventCardProps> = ({
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
     });
   };
 
@@ -93,7 +93,7 @@ const EventCard: React.FC<EventCardProps> = ({
               <FaTicketAlt className="mr-2 text-gold-foil flex-shrink-0" />
               <span>
                 {isSoldOut
-                  ? "Sold Out"
+                  ? 'Sold Out'
                   : `${event.registered}/${event.capacity} registered`}
               </span>
             </div>
@@ -123,7 +123,7 @@ const EventCard: React.FC<EventCardProps> = ({
               onClick={() => onRegister(event)}
               disabled={isSoldOut}
             >
-              {isSoldOut ? "Sold Out" : "Register"}
+              {isSoldOut ? 'Sold Out' : 'Register'}
             </button>
           )}
         </div>

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react"; // Added React import
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Badge } from "../ui/badge";
-import AvatarUpload from "./AvatarUpload";
+import React, { useEffect, useState } from 'react'; // Added React import
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Badge } from '../ui/badge';
+import AvatarUpload from './AvatarUpload';
 
 // Define interfaces for better type safety
 interface User {
@@ -54,7 +54,7 @@ export default function UserProfile() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // const [firebase] = useState<FirebaseApp>(() => ({} as FirebaseApp)); // Unused, (window as any).firebase is used instead
@@ -67,10 +67,10 @@ export default function UserProfile() {
       try {
         const firebaseAuth = (window as any).firebase?.auth();
         if (!firebaseAuth || !firebaseAuth.currentUser) {
-          throw new Error("Firebase user not available.");
+          throw new Error('Firebase user not available.');
         }
         const token = await firebaseAuth.currentUser.getIdToken();
-        const res = await fetch("/api/user-profile", {
+        const res = await fetch('/api/user-profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {
@@ -81,12 +81,12 @@ export default function UserProfile() {
         }
         const data: ProfileData = await res.json();
         setProfile(data);
-        setName(data.user?.name || "");
+        setName(data.user?.name || '');
       } catch (err: unknown) {
         setError(
           err instanceof Error
             ? err.message
-            : "An unknown error occurred while fetching profile.",
+            : 'An unknown error occurred while fetching profile.',
         );
         setProfile(null);
       } finally {
@@ -97,26 +97,26 @@ export default function UserProfile() {
   }, []);
 
   const handleSave = async () => {
-    if (!profile) return;
+    if (!profile) {return;}
     setSaving(true);
     setError(null);
     try {
       const firebaseAuth = (window as any).firebase?.auth();
       if (!firebaseAuth || !firebaseAuth.currentUser) {
-        throw new Error("Firebase user not available.");
+        throw new Error('Firebase user not available.');
       }
       const token = await firebaseAuth.currentUser.getIdToken();
-      const res = await fetch("/api/user-profile", {
-        method: "PATCH",
+      const res = await fetch('/api/user-profile', {
+        method: 'PATCH',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ name }),
       });
       const data = await res.json(); // Assuming API returns { success: boolean, error?: string, user?: User }
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Failed to update name");
+        throw new Error(data.error || 'Failed to update name');
       }
       // Assuming the API returns the updated user object or we update it locally
       setProfile((prevProfile) =>
@@ -132,7 +132,7 @@ export default function UserProfile() {
       setError(
         e instanceof Error
           ? e.message
-          : "An unknown error occurred while saving.",
+          : 'An unknown error occurred while saving.',
       );
     } finally {
       setSaving(false);
@@ -140,33 +140,33 @@ export default function UserProfile() {
   };
 
   if (loading)
-    return <div className="text-center py-12">Loading profile...</div>;
+    {return <div className="text-center py-12">Loading profile...</div>;}
   if (error)
-    return <div className="text-center py-12 text-red-500">Error: {error}</div>;
+    {return <div className="text-center py-12 text-red-500">Error: {error}</div>;}
   if (!profile)
-    return (
+    {return (
       <div className="text-center py-12 text-red-500">
         Could not load profile.
       </div>
-    );
+    );}
 
   const { user, orders } = profile;
 
   interface BadgeInfo {
     label: string;
     color:
-      | "destructive"
-      | "default"
-      | "secondary"
-      | "outline"
+      | 'destructive'
+      | 'default'
+      | 'secondary'
+      | 'outline'
       | null
       | undefined;
   }
 
   const badges: BadgeInfo[] = [
-    user.role === "admin" && { label: "Admin", color: "destructive" },
-    user.rewardPoints > 100 && { label: "VIP", color: "secondary" },
-    orders && orders.length > 0 && { label: "First Order", color: "default" },
+    user.role === 'admin' && { label: 'Admin', color: 'destructive' },
+    user.rewardPoints > 100 && { label: 'VIP', color: 'secondary' },
+    orders && orders.length > 0 && { label: 'First Order', color: 'default' },
   ].filter(Boolean) as BadgeInfo[];
 
   return (
@@ -205,7 +205,7 @@ export default function UserProfile() {
                 onClick={async () => await handleSave()}
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Save"}
+                {saving ? 'Saving...' : 'Save'}
               </Button>
               <Button variant="ghost" onClick={() => setEditing(false)}>
                 Cancel
@@ -258,14 +258,14 @@ export default function UserProfile() {
                   Order #{order.stripeId?.slice(-6) || i + 1}
                 </span>
                 <span className="text-xs text-gray-400">
-                  {typeof order.createdAt === "string"
+                  {typeof order.createdAt === 'string'
                     ? new Date(order.createdAt).toLocaleString()
                     : order.createdAt?.toDate
                       ? order.createdAt.toDate().toLocaleString()
-                      : "N/A"}
+                      : 'N/A'}
                 </span>
                 <span className="text-sm">
-                  ${order.total?.toFixed(2) || "0.00"}
+                  ${order.total?.toFixed(2) || '0.00'}
                 </span>
                 <span className="text-xs capitalize">{order.status}</span>
               </li>

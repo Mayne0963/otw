@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "../../../lib/firebase";
-import { collection, getDocs, addDoc, query, where, orderBy } from "firebase/firestore";
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '../../../lib/firebase';
+import { collection, getDocs, addDoc, query, where, orderBy } from 'firebase/firestore';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 interface MembershipTier {
   id: string;
@@ -38,17 +38,17 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const type = searchParams.get('type');
-    
+
     if (type === 'tiers') {
       // Fetch membership tiers from database
       const tiersRef = collection(db, 'membershipTiers');
       const tiersSnapshot = await getDocs(query(tiersRef, where('active', '==', true), orderBy('minPoints')));
-      
+
       const tiers: MembershipTier[] = [];
       tiersSnapshot.forEach((doc) => {
         tiers.push({ id: doc.id, ...doc.data() } as MembershipTier);
       });
-      
+
       // If no tiers in database, return default data
       if (tiers.length === 0) {
         const defaultTiers: MembershipTier[] = [
@@ -60,11 +60,11 @@ export async function GET(req: NextRequest) {
             benefits: [
               '5% cashback on orders',
               'Free delivery on orders over $25',
-              'Birthday discount'
+              'Birthday discount',
             ],
             color: '#CD7F32',
             icon: '🥉',
-            active: true
+            active: true,
           },
           {
             id: '2',
@@ -75,11 +75,11 @@ export async function GET(req: NextRequest) {
               '8% cashback on orders',
               'Free delivery on orders over $15',
               'Priority customer support',
-              'Monthly exclusive offers'
+              'Monthly exclusive offers',
             ],
             color: '#C0C0C0',
             icon: '🥈',
-            active: true
+            active: true,
           },
           {
             id: '3',
@@ -91,11 +91,11 @@ export async function GET(req: NextRequest) {
               'Free delivery on all orders',
               'Priority customer support',
               'Weekly exclusive offers',
-              'Early access to new features'
+              'Early access to new features',
             ],
             color: '#FFD700',
             icon: '🥇',
-            active: true
+            active: true,
           },
           {
             id: '4',
@@ -108,29 +108,29 @@ export async function GET(req: NextRequest) {
               'Dedicated VIP support',
               'Daily exclusive offers',
               'Early access to new features',
-              'Personal account manager'
+              'Personal account manager',
             ],
             color: '#E5E4E2',
             icon: '💎',
-            active: true
-          }
+            active: true,
+          },
         ];
         return NextResponse.json({ success: true, data: defaultTiers });
       }
-      
+
       return NextResponse.json({ success: true, data: tiers });
     }
-    
+
     if (type === 'testimonials') {
       // Fetch testimonials from database
       const testimonialsRef = collection(db, 'testimonials');
       const testimonialsSnapshot = await getDocs(query(testimonialsRef, where('verified', '==', true), orderBy('date', 'desc')));
-      
+
       const testimonials: Testimonial[] = [];
       testimonialsSnapshot.forEach((doc) => {
         testimonials.push({ id: doc.id, ...doc.data() } as Testimonial);
       });
-      
+
       // If no testimonials in database, return default data
       if (testimonials.length === 0) {
         const defaultTestimonials: Testimonial[] = [
@@ -142,7 +142,7 @@ export async function GET(req: NextRequest) {
             comment: 'The loyalty program is amazing! I\'ve saved so much money with the cashback rewards.',
             membershipTier: 'Gold',
             date: '2024-01-15',
-            verified: true
+            verified: true,
           },
           {
             id: '2',
@@ -152,7 +152,7 @@ export async function GET(req: NextRequest) {
             comment: 'Being a Platinum member has completely changed my experience. The VIP support is incredible!',
             membershipTier: 'Platinum',
             date: '2024-01-10',
-            verified: true
+            verified: true,
           },
           {
             id: '3',
@@ -162,7 +162,7 @@ export async function GET(req: NextRequest) {
             comment: 'Love the exclusive offers I get as a Silver member. Great value for money!',
             membershipTier: 'Silver',
             date: '2024-01-08',
-            verified: true
+            verified: true,
           },
           {
             id: '4',
@@ -172,31 +172,31 @@ export async function GET(req: NextRequest) {
             comment: 'The Bronze tier benefits are perfect for someone just starting out. Highly recommend!',
             membershipTier: 'Bronze',
             date: '2024-01-05',
-            verified: true
-          }
+            verified: true,
+          },
         ];
         return NextResponse.json({ success: true, data: defaultTestimonials });
       }
-      
+
       return NextResponse.json({ success: true, data: testimonials });
     }
-    
+
     // Default: return all loyalty data
     const loyaltyRef = collection(db, 'loyaltyProgram');
     const loyaltySnapshot = await getDocs(query(loyaltyRef, orderBy('createdAt', 'desc')));
-    
+
     const loyaltyData: any[] = [];
     loyaltySnapshot.forEach((doc) => {
       loyaltyData.push({ id: doc.id, ...doc.data() });
     });
-    
+
     return NextResponse.json({ success: true, data: loyaltyData });
-    
+
   } catch (error) {
     console.error('Error fetching loyalty data:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch loyalty data' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -206,70 +206,70 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { type, ...data } = body;
-    
+
     if (type === 'loyalty-update') {
       const loyaltyUpdate: LoyaltyUpdate = data;
-      
+
       // Validate required fields
       if (!loyaltyUpdate.userId || !loyaltyUpdate.points || !loyaltyUpdate.action) {
         return NextResponse.json(
           { success: false, error: 'Missing required fields for loyalty update' },
-          { status: 400 }
+          { status: 400 },
         );
       }
-      
+
       // Create loyalty update record
       const updateData = {
         ...loyaltyUpdate,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-      
+
       const loyaltyRef = collection(db, 'loyaltyProgram');
       const docRef = await addDoc(loyaltyRef, updateData);
-      
+
       return NextResponse.json({
         success: true,
-        data: { id: docRef.id, ...updateData }
+        data: { id: docRef.id, ...updateData },
       });
     }
-    
+
     if (type === 'testimonial') {
       const testimonial: Omit<Testimonial, 'id'> = data;
-      
+
       // Validate required fields
       if (!testimonial.name || !testimonial.comment || !testimonial.rating) {
         return NextResponse.json(
           { success: false, error: 'Missing required fields for testimonial' },
-          { status: 400 }
+          { status: 400 },
         );
       }
-      
+
       // Create testimonial
       const testimonialData = {
         ...testimonial,
         date: new Date().toISOString().split('T')[0],
-        verified: false // Testimonials need to be verified before showing
+        verified: false, // Testimonials need to be verified before showing
       };
-      
+
       const testimonialsRef = collection(db, 'testimonials');
       const docRef = await addDoc(testimonialsRef, testimonialData);
-      
+
       return NextResponse.json({
         success: true,
-        data: { id: docRef.id, ...testimonialData }
+        data: { id: docRef.id, ...testimonialData },
       });
     }
-    
+
     return NextResponse.json(
       { success: false, error: 'Invalid request type' },
-      { status: 400 }
+      { status: 400 },
     );
-    
+
   } catch (error) {
     console.error('Error processing loyalty request:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to process loyalty request' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

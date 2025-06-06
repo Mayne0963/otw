@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { 
+import {
   Shield,
   Eye,
   Lock,
@@ -21,13 +21,13 @@ import {
   AlertTriangle,
   Clock,
   Globe,
-  Settings
+  Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PrivacyPage() {
-  const lastUpdated = "January 15, 2024";
-  const effectiveDate = "January 1, 2024";
+  const lastUpdated = 'January 15, 2024';
+  const effectiveDate = 'January 1, 2024';
 
   const sections = [
     {
@@ -38,8 +38,8 @@ export default function PrivacyPage() {
         'At OTW, we are committed to protecting your privacy and ensuring the security of your personal information.',
         'This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform.',
         'By using our Service, you consent to the data practices described in this policy.',
-        'We encourage you to read this policy carefully and contact us if you have any questions.'
-      ]
+        'We encourage you to read this policy carefully and contact us if you have any questions.',
+      ],
     },
     {
       id: 'information-collection',
@@ -51,8 +51,8 @@ export default function PrivacyPage() {
         'Location Data: GPS coordinates and delivery addresses to facilitate order delivery.',
         'Device Information: Device type, operating system, browser type, and IP address.',
         'Usage Data: How you interact with our platform, including pages visited and features used.',
-        'Communication Data: Messages, reviews, and feedback you provide through our platform.'
-      ]
+        'Communication Data: Messages, reviews, and feedback you provide through our platform.',
+      ],
     },
     {
       id: 'how-we-use',
@@ -65,8 +65,8 @@ export default function PrivacyPage() {
         'To personalize your experience and provide relevant recommendations.',
         'To prevent fraud and ensure the security of our platform.',
         'To comply with legal obligations and resolve disputes.',
-        'To send you marketing communications (with your consent).'
-      ]
+        'To send you marketing communications (with your consent).',
+      ],
     },
     {
       id: 'information-sharing',
@@ -79,8 +79,8 @@ export default function PrivacyPage() {
         'Service Providers: We may share information with trusted third-party service providers.',
         'Legal Requirements: We may disclose information when required by law or to protect our rights.',
         'Business Transfers: Information may be transferred in connection with mergers or acquisitions.',
-        'We do not sell your personal information to third parties for marketing purposes.'
-      ]
+        'We do not sell your personal information to third parties for marketing purposes.',
+      ],
     },
     {
       id: 'data-security',
@@ -93,8 +93,8 @@ export default function PrivacyPage() {
         'Access to personal information is restricted to authorized personnel only.',
         'We conduct regular security audits and assessments.',
         'In the event of a data breach, we will notify affected users promptly.',
-        'However, no method of transmission over the internet is 100% secure.'
-      ]
+        'However, no method of transmission over the internet is 100% secure.',
+      ],
     },
     {
       id: 'cookies',
@@ -107,8 +107,8 @@ export default function PrivacyPage() {
         'Marketing cookies are used to deliver relevant advertisements.',
         'You can control cookie preferences through your browser settings.',
         'Disabling certain cookies may limit the functionality of our platform.',
-        'We also use web beacons and pixel tags for analytics and marketing purposes.'
-      ]
+        'We also use web beacons and pixel tags for analytics and marketing purposes.',
+      ],
     },
     {
       id: 'user-rights',
@@ -121,8 +121,8 @@ export default function PrivacyPage() {
         'Portability: You can request a copy of your data in a structured, machine-readable format.',
         'Opt-out: You can opt out of marketing communications at any time.',
         'Location Services: You can disable location tracking through your device settings.',
-        'Account Deletion: You can delete your account through the app or by contacting support.'
-      ]
+        'Account Deletion: You can delete your account through the app or by contacting support.',
+      ],
     },
     {
       id: 'data-retention',
@@ -135,8 +135,8 @@ export default function PrivacyPage() {
         'Payment information is retained according to payment processor requirements.',
         'Marketing data is retained until you opt out of communications.',
         'Some information may be retained longer if required by law.',
-        'We regularly review and delete information that is no longer necessary.'
-      ]
+        'We regularly review and delete information that is no longer necessary.',
+      ],
     },
     {
       id: 'international',
@@ -148,8 +148,8 @@ export default function PrivacyPage() {
         'We comply with applicable data protection laws in all jurisdictions where we operate.',
         'Standard contractual clauses are used to protect data transferred outside the EU.',
         'You consent to the transfer of your information to countries with different privacy laws.',
-        'We will notify you of any significant changes to our international transfer practices.'
-      ]
+        'We will notify you of any significant changes to our international transfer practices.',
+      ],
     },
     {
       id: 'children',
@@ -161,8 +161,8 @@ export default function PrivacyPage() {
         'If we become aware that we have collected information from a child under 13, we will delete it.',
         'Parents or guardians who believe their child has provided information should contact us.',
         'Users between 13 and 18 should have parental consent before using our Service.',
-        'We encourage parents to monitor their children\'s online activities.'
-      ]
+        'We encourage parents to monitor their children\'s online activities.',
+      ],
     },
     {
       id: 'third-party',
@@ -174,8 +174,8 @@ export default function PrivacyPage() {
         'We are not responsible for the privacy practices of third-party services.',
         'We encourage you to read the privacy policies of any third-party services you use.',
         'Social media plugins may collect information about your visit to our platform.',
-        'Third-party analytics services help us understand platform usage.'
-      ]
+        'Third-party analytics services help us understand platform usage.',
+      ],
     },
     {
       id: 'california',
@@ -187,8 +187,8 @@ export default function PrivacyPage() {
         'You have the right to delete personal information we have collected about you.',
         'You have the right to opt out of the sale of personal information (we do not sell personal information).',
         'You have the right to non-discrimination for exercising your privacy rights.',
-        'To exercise these rights, please contact us using the information provided below.'
-      ]
+        'To exercise these rights, please contact us using the information provided below.',
+      ],
     },
     {
       id: 'changes',
@@ -200,9 +200,9 @@ export default function PrivacyPage() {
         'We will also notify you via email or in-app notification for significant changes.',
         'Your continued use of our Service after changes constitutes acceptance of the new policy.',
         'We encourage you to review this policy periodically for any updates.',
-        'The "Last Updated" date at the top of this policy indicates when it was last revised.'
-      ]
-    }
+        'The "Last Updated" date at the top of this policy indicates when it was last revised.',
+      ],
+    },
   ];
 
   return (
@@ -221,7 +221,7 @@ export default function PrivacyPage() {
             <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
               Your privacy is important to us. This policy explains how we collect, use, and protect your personal information.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <Badge className="bg-otw-gold/20 text-otw-gold border-otw-gold/30 px-4 py-2">
                 <Clock className="w-4 h-4 mr-2" />
@@ -232,7 +232,7 @@ export default function PrivacyPage() {
                 Effective: {effectiveDate}
               </Badge>
             </div>
-            
+
             <div className="flex flex-wrap justify-center gap-4">
               <Button className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold px-6 py-3 rounded-full hover:shadow-lg transition-all duration-300">
                 <Download className="w-5 h-5 mr-2" />
@@ -288,8 +288,8 @@ export default function PrivacyPage() {
             {sections.map((section, index) => {
               const IconComponent = section.icon;
               return (
-                <Card 
-                  key={section.id} 
+                <Card
+                  key={section.id}
                   id={section.id}
                   className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20 hover:border-otw-gold/40 transition-all duration-300 hover:shadow-lg hover:shadow-otw-gold/10"
                 >

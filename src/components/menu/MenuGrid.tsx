@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { MenuItem } from "../../lib/firestoreModels";
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { motion } from "framer-motion";
-import Image from "next/image";
+import React from 'react';
+import { MenuItem } from '../../lib/firestoreModels';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface MenuGridProps {
   items: MenuItem[];
@@ -26,9 +26,9 @@ export default function MenuGrid({ items }: MenuGridProps) {
           key={item.id || item.name + i}
           whileHover={{
             scale: 1.04,
-            boxShadow: "0 8px 32px 0 rgba(212,175,55,0.15)",
+            boxShadow: '0 8px 32px 0 rgba(212,175,55,0.15)',
           }}
-          transition={{ type: "spring", stiffness: 300 }}
+          transition={{ type: 'spring', stiffness: 300 }}
         >
           <Card className="flex flex-col h-full bg-otw-black-900 border-otw-gold-600/20 shadow-otw-md hover:border-otw-gold-600 transition-all">
             {item.image && (

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import type React from "react";
-import Image from "next/image";
+import type React from 'react';
+import Image from 'next/image';
 
 import {
   FaCalendarAlt,
@@ -13,8 +13,8 @@ import {
   FaUtensils,
   FaGlassMartiniAlt,
   FaMusic,
-} from "react-icons/fa";
-import type { Event } from "../../types/event";
+} from 'react-icons/fa';
+import type { Event } from '../../types/event';
 
 interface EventDetailModalProps {
   event: Event;
@@ -32,11 +32,11 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
     });
   };
 
@@ -125,7 +125,7 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
                 <FaUserFriends className="mr-2 text-gold-foil flex-shrink-0" />
                 <span>
                   {isSoldOut
-                    ? "Sold Out"
+                    ? 'Sold Out'
                     : `${event.registered}/${event.capacity} registered`}
                 </span>
               </div>
@@ -134,18 +134,18 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
             <div className="space-y-3">
               {event.features.map((feature, index) => (
                 <div key={index} className="flex items-center text-gray-300">
-                  {feature.includes("Food") && (
+                  {feature.includes('Food') && (
                     <FaUtensils className="mr-2 text-gold-foil flex-shrink-0" />
                   )}
-                  {feature.includes("Drink") && (
+                  {feature.includes('Drink') && (
                     <FaGlassMartiniAlt className="mr-2 text-gold-foil flex-shrink-0" />
                   )}
-                  {feature.includes("Music") && (
+                  {feature.includes('Music') && (
                     <FaMusic className="mr-2 text-gold-foil flex-shrink-0" />
                   )}
-                  {!feature.includes("Food") &&
-                    !feature.includes("Drink") &&
-                    !feature.includes("Music") && (
+                  {!feature.includes('Food') &&
+                    !feature.includes('Drink') &&
+                    !feature.includes('Music') && (
                       <span className="w-2 h-2 bg-gold-foil rounded-full mr-2 flex-shrink-0"></span>
                     )}
                   <span>{feature}</span>
@@ -184,7 +184,7 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
                 <div className="w-12 h-12 rounded-full bg-[#333333] overflow-hidden mr-3">
                   {event.host.image && (
                     <Image
-                      src={event.host.image || "/placeholder.svg"}
+                      src={event.host.image || '/placeholder.svg'}
                       alt={event.host.name}
                       fill
                       className="object-cover"
@@ -212,7 +212,7 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
                 onClick={onRegister}
                 disabled={isSoldOut}
               >
-                {isSoldOut ? "Sold Out" : "Register Now"}
+                {isSoldOut ? 'Sold Out' : 'Register Now'}
               </button>
             )}
           </div>

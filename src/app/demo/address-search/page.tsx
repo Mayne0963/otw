@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
@@ -13,17 +13,17 @@ import { Badge } from '../../../components/ui/badge';
 import { Separator } from '../../../components/ui/separator';
 import { Alert, AlertDescription } from '../../../components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { 
-  MapPin, 
-  Calculator, 
-  Clock, 
-  DollarSign, 
-  Route, 
+import {
+  MapPin,
+  Calculator,
+  Clock,
+  DollarSign,
+  Route,
   AlertCircle,
   CheckCircle,
   Truck,
   Zap,
-  Timer
+  Timer,
 } from 'lucide-react';
 import AddressSearch from '../../../components/maps/AddressSearch';
 import MapSearch from '../../../components/maps/MapSearch';
@@ -36,20 +36,20 @@ export default function AddressSearchDemo() {
     lng: number;
     place_id?: string;
   } | null>(null);
-  
+
   const [selectedDestination, setSelectedDestination] = useState<{
     formatted_address: string;
     lat: number;
     lng: number;
     place_id?: string;
   } | null>(null);
-  
+
   const [deliveryEstimate, setDeliveryEstimate] = useState<DeliveryEstimate | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [priority, setPriority] = useState<'standard' | 'express' | 'rush'>('standard');
   const [orderTotal, setOrderTotal] = useState<number>(25.99);
-  
+
   // Manual address inputs
   const [manualOrigin, setManualOrigin] = useState('');
   const [manualDestination, setManualDestination] = useState('');
@@ -85,7 +85,7 @@ export default function AddressSearchDemo() {
         manualOrigin,
         manualDestination,
         priority,
-        orderTotal
+        orderTotal,
       );
       setDeliveryEstimate(estimate);
     } catch (err) {
@@ -365,7 +365,7 @@ export default function AddressSearchDemo() {
                           <span>{formatCurrency(deliveryEstimate.priorityFee)}</span>
                         </div>
                       </div>
-                      
+
                       {deliveryEstimate.isFreeDelivery && (
                         <Alert>
                           <CheckCircle className="h-4 w-4" />

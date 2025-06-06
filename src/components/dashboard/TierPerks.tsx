@@ -1,48 +1,48 @@
-import { Card } from "../ui/card";
-import { Button } from "../ui/button";
-import { Crown, Shield, Star } from "lucide-react";
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import { Crown, Shield, Star } from 'lucide-react';
 
 const tiers = [
   {
-    name: "Bronze",
+    name: 'Bronze',
     icon: Star,
-    color: "text-orange-400",
+    color: 'text-orange-400',
     perks: [
-      "Priority support during peak hours",
-      "5% off all services",
-      "Access to community events",
+      'Priority support during peak hours',
+      '5% off all services',
+      'Access to community events',
     ],
     price: 9.99,
   },
   {
-    name: "Silver",
+    name: 'Silver',
     icon: Shield,
-    color: "text-gray-400",
+    color: 'text-gray-400',
     perks: [
-      "All Bronze perks",
-      "15% off all services",
-      "Free monthly service credit",
-      "Exclusive rep selection",
+      'All Bronze perks',
+      '15% off all services',
+      'Free monthly service credit',
+      'Exclusive rep selection',
     ],
     price: 19.99,
   },
   {
-    name: "Gold",
+    name: 'Gold',
     icon: Crown,
-    color: "text-otw-gold",
+    color: 'text-otw-gold',
     perks: [
-      "All Silver perks",
-      "25% off all services",
-      "Priority emergency service",
-      "Monthly rewards bonus",
-      "VIP community status",
+      'All Silver perks',
+      '25% off all services',
+      'Priority emergency service',
+      'Monthly rewards bonus',
+      'VIP community status',
     ],
     price: 29.99,
   },
 ];
 
 export default function TierPerks() {
-  const currentTier = "Bronze"; // This would come from user data
+  const currentTier = 'Bronze'; // This would come from user data
 
   return (
     <div className="space-y-8">
@@ -63,7 +63,7 @@ export default function TierPerks() {
           return (
             <Card
               key={tier.name}
-              className={`p-6 relative ${isCurrentTier ? "border-2 border-otw-gold" : ""}`}
+              className={`p-6 relative ${isCurrentTier ? 'border-2 border-otw-gold' : ''}`}
             >
               {isCurrentTier && (
                 <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-otw-gold text-black text-xs px-2 py-1 rounded-full">
@@ -96,12 +96,12 @@ export default function TierPerks() {
               <Button
                 className={`w-full ${
                   isCurrentTier
-                    ? "bg-gray-700 cursor-not-allowed"
-                    : "bg-otw-red hover:bg-otw-gold hover:text-black"
+                    ? 'bg-gray-700 cursor-not-allowed'
+                    : 'bg-otw-red hover:bg-otw-gold hover:text-black'
                 }`}
                 disabled={isCurrentTier}
               >
-                {isCurrentTier ? "Current Plan" : "Upgrade"}
+                {isCurrentTier ? 'Current Plan' : 'Upgrade'}
               </Button>
             </Card>
           );

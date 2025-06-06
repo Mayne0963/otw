@@ -1,4 +1,4 @@
-import { calculateRoute, geocodeAddress } from "../maps";
+import { calculateRoute, geocodeAddress } from '../maps';
 
 export interface FeeCalculationOptions {
   baseFee?: number;
@@ -77,7 +77,7 @@ export class FeeCalculatorService {
   async validateAddress(address: string): Promise<AddressValidationResult> {
     try {
       const geocodeResult = await geocodeAddress(address);
-      
+
       if (!geocodeResult) {
         return {
           isValid: false,
@@ -86,7 +86,7 @@ export class FeeCalculatorService {
           address_components: {},
         };
       }
-      
+
       // Parse address components
       const addressComponents: AddressValidationResult['address_components'] = {};
       geocodeResult.address_components.forEach(component => {
@@ -109,7 +109,7 @@ export class FeeCalculatorService {
           addressComponents.country = component.long_name;
         }
       });
-      
+
       return {
         isValid: true,
         formatted_address: geocodeResult.formatted_address,
@@ -136,8 +136,8 @@ export class FeeCalculatorService {
   async calculateDeliveryFee(
     originAddress: string,
     destinationAddress: string,
-    priority: keyof typeof DEFAULT_OPTIONS.priorityMultipliers = "standard",
-    orderTotal?: number
+    priority: keyof typeof DEFAULT_OPTIONS.priorityMultipliers = 'standard',
+    orderTotal?: number,
   ): Promise<DeliveryEstimate> {
     try {
       // Geocode addresses
@@ -147,13 +147,13 @@ export class FeeCalculatorService {
       ]);
 
       if (!originResult || !destinationResult) {
-        throw new Error("Unable to geocode one or both addresses");
+        throw new Error('Unable to geocode one or both addresses');
       }
 
       // Calculate route
       const route = await calculateRoute(
         { lat: originResult.geometry.location.lat, lng: originResult.geometry.location.lng },
-        { lat: destinationResult.geometry.location.lat, lng: destinationResult.geometry.location.lng }
+        { lat: destinationResult.geometry.location.lat, lng: destinationResult.geometry.location.lng },
       );
 
       // Calculate fees
@@ -164,7 +164,7 @@ export class FeeCalculatorService {
       const distanceFee = distanceInMiles * this.options.perMileRate;
       const timeFee = durationInMinutes * this.options.perMinuteRate;
       const priorityMultiplier = this.options.priorityMultipliers[priority];
-      
+
       let totalFee = (baseFee + distanceFee + timeFee) * priorityMultiplier;
       const priorityFee = (baseFee + distanceFee + timeFee) * (priorityMultiplier - 1);
 
@@ -193,17 +193,17 @@ export class FeeCalculatorService {
         route: route.polyline,
       };
     } catch (error) {
-      console.error("Error calculating delivery fee:", error);
-      throw new Error("Unable to calculate delivery fee. Please check the addresses and try again.");
+      console.error('Error calculating delivery fee:', error);
+      throw new Error('Unable to calculate delivery fee. Please check the addresses and try again.');
     }
   }
 
   /**
    * Get estimated delivery time based on distance and current traffic
    */
-  getEstimatedDeliveryTime(durationInSeconds: number, priority: keyof typeof DEFAULT_OPTIONS.priorityMultipliers = "standard"): string {
+  getEstimatedDeliveryTime(durationInSeconds: number, priority: keyof typeof DEFAULT_OPTIONS.priorityMultipliers = 'standard'): string {
     const baseMinutes = Math.ceil(durationInSeconds / 60);
-    
+
     // Add preparation time based on priority
     const preparationTime = {
       standard: 15,
@@ -212,7 +212,7 @@ export class FeeCalculatorService {
     };
 
     const totalMinutes = baseMinutes + preparationTime[priority];
-    
+
     if (totalMinutes < 60) {
       return `${totalMinutes} minutes`;
     } else {

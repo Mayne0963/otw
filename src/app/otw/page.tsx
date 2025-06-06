@@ -4,12 +4,12 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  ShoppingCart, 
-  Car, 
-  Package, 
-  Clock, 
-  MapPin, 
+import {
+  ShoppingCart,
+  Car,
+  Package,
+  Clock,
+  MapPin,
   Star,
   ArrowRight,
   CheckCircle,
@@ -18,7 +18,7 @@ import {
   Shield,
   Phone,
   Mail,
-  Calendar
+  Calendar,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,78 +26,78 @@ export default function OTWServicesPage() {
   const services = [
     {
       icon: ShoppingCart,
-      title: "Grocery Shop & Drop",
+      title: 'Grocery Shop & Drop',
       description: "We'll shop for your groceries and deliver them to your door",
-      features: ["Receipt upload", "Custom shopping lists", "Same-day delivery", "Store selection"],
-      price: "Starting at $4.99",
+      features: ['Receipt upload', 'Custom shopping lists', 'Same-day delivery', 'Store selection'],
+      price: 'Starting at $4.99',
       popular: true,
-      href: "/grocery-delivery",
-      color: "otw-red"
+      href: '/grocery-delivery',
+      color: 'otw-red',
     },
     {
       icon: Car,
-      title: "Local Rides",
-      description: "Quick and reliable transportation around your neighborhood",
-      features: ["Door-to-door service", "Local drivers", "Affordable rates", "Real-time tracking"],
-      price: "Starting at $3.99",
+      title: 'Local Rides',
+      description: 'Quick and reliable transportation around your neighborhood',
+      features: ['Door-to-door service', 'Local drivers', 'Affordable rates', 'Real-time tracking'],
+      price: 'Starting at $3.99',
       popular: false,
-      href: "/otw/rides",
-      color: "otw-gold"
+      href: '/otw/rides',
+      color: 'otw-gold',
     },
     {
       icon: Package,
-      title: "Package Delivery",
-      description: "Fast and secure delivery for your packages and documents",
-      features: ["Same-day delivery", "Package tracking", "Secure handling", "Photo confirmation"],
-      price: "Starting at $2.99",
+      title: 'Package Delivery',
+      description: 'Fast and secure delivery for your packages and documents',
+      features: ['Same-day delivery', 'Package tracking', 'Secure handling', 'Photo confirmation'],
+      price: 'Starting at $2.99',
       popular: false,
-      href: "/otw/package",
-      color: "otw-red"
-    }
+      href: '/otw/package',
+      color: 'otw-red',
+    },
   ];
 
   const howItWorks = [
     {
       step: 1,
-      title: "Choose Your Service",
-      description: "Select from grocery delivery, local rides, or package delivery"
+      title: 'Choose Your Service',
+      description: 'Select from grocery delivery, local rides, or package delivery',
     },
     {
       step: 2,
-      title: "Provide Details",
-      description: "Share your requirements, location, and preferences"
+      title: 'Provide Details',
+      description: 'Share your requirements, location, and preferences',
     },
     {
       step: 3,
-      title: "Get Matched",
-      description: "We connect you with a nearby community helper"
+      title: 'Get Matched',
+      description: 'We connect you with a nearby community helper',
     },
     {
       step: 4,
-      title: "Track & Receive",
-      description: "Monitor progress and receive your service with a smile"
-    }
+      title: 'Track & Receive',
+      description: 'Monitor progress and receive your service with a smile',
+    },
   ];
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      role: "Busy Parent",
-      quote: "OTW grocery delivery saved me hours every week. The service is reliable and the helpers are so friendly!",
-      rating: 5
+      name: 'Sarah Johnson',
+      role: 'Busy Parent',
+      quote: 'OTW grocery delivery saved me hours every week. The service is reliable and the helpers are so friendly!',
+      rating: 5,
     },
     {
-      name: "Mike Chen",
-      role: "Senior Citizen",
+      name: 'Mike Chen',
+      role: 'Senior Citizen',
       quote: "I love that it's community-driven. The local drivers know the area well and always provide excellent service.",
-      rating: 5
+      rating: 5,
     },
     {
-      name: "Emma Davis",
-      role: "College Student",
+      name: 'Emma Davis',
+      role: 'College Student',
       quote: "Perfect for when I need groceries but don't have a car. Quick, affordable, and convenient!",
-      rating: 5
-    }
+      rating: 5,
+    },
   ];
 
   return (
@@ -120,7 +120,7 @@ export default function OTWServicesPage() {
               </span>
             </h1>
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Your neighborhood helpers for grocery delivery, local rides, and package delivery. 
+              Your neighborhood helpers for grocery delivery, local rides, and package delivery.
               <span className="text-otw-gold font-semibold">Fast, reliable, and powered by the community.</span>
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -136,7 +136,7 @@ export default function OTWServicesPage() {
                 Become a Helper
               </Button>
             </div>
-            
+
             {/* Quick Service Access */}
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
               <Link href="/otw/package">
@@ -182,7 +182,7 @@ export default function OTWServicesPage() {
               Choose from our range of community-powered services designed to make your life easier.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, index) => {
               const IconComponent = service.icon;
@@ -235,7 +235,7 @@ export default function OTWServicesPage() {
               Getting help from your community is simple and straightforward.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-4 gap-8">
             {howItWorks.map((step, index) => (
               <div key={index} className="text-center">
@@ -259,7 +259,7 @@ export default function OTWServicesPage() {
               Real stories from real people in our community.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <Card key={index} className="transition-all duration-300 hover:shadow-lg bg-otw-black/50 border-otw-red/30 hover:border-otw-gold/50">

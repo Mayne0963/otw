@@ -1,49 +1,49 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState } from "react";
-import { Card } from "../ui/card";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { CheckCircle, Clock, MapPin, User } from "lucide-react";
+import { useState } from 'react';
+import { Card } from '../ui/card';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { CheckCircle, Clock, MapPin, User } from 'lucide-react';
 
 const statusSteps = [
   {
-    id: "received",
-    title: "Request Received",
+    id: 'received',
+    title: 'Request Received',
     icon: Clock,
     description: "We've got your request",
   },
   {
-    id: "assigned",
-    title: "Rep Assigned",
+    id: 'assigned',
+    title: 'Rep Assigned',
     icon: User,
-    description: "A trusted OTW rep is on the way",
+    description: 'A trusted OTW rep is on the way',
   },
   {
-    id: "in_motion",
-    title: "In Motion",
+    id: 'in_motion',
+    title: 'In Motion',
     icon: MapPin,
-    description: "Your request is being fulfilled",
+    description: 'Your request is being fulfilled',
   },
   {
-    id: "delivered",
-    title: "Delivered",
+    id: 'delivered',
+    title: 'Delivered',
     icon: CheckCircle,
-    description: "Service completed successfully",
+    description: 'Service completed successfully',
   },
 ];
 
 export default function OrderTracker() {
-  const [orderId, setOrderId] = useState("");
-  const [currentStatus] = useState("received"); // Removed setCurrentStatus as it's unused
+  const [orderId, setOrderId] = useState('');
+  const [currentStatus] = useState('received'); // Removed setCurrentStatus as it's unused
 
   const handleTrack = (e: React.FormEvent) => {
     // Removed async
     e.preventDefault();
     // TODO: Implement tracking lookup
-    console.log("Tracking order:", orderId); // Added console log for now
+    console.log('Tracking order:', orderId); // Added console log for now
   };
 
   return (
@@ -79,7 +79,7 @@ export default function OrderTracker() {
                 <div
                   className={`
                   relative z-10 rounded-full p-2
-                  ${isActive ? "bg-otw-gold text-black" : "bg-gray-800 text-gray-400"}
+                  ${isActive ? 'bg-otw-gold text-black' : 'bg-gray-800 text-gray-400'}
                 `}
                 >
                   <step.icon className="w-4 h-4" />
@@ -87,7 +87,7 @@ export default function OrderTracker() {
 
                 <div>
                   <h3
-                    className={`font-semibold ${isActive ? "text-otw-gold" : "text-gray-400"}`}
+                    className={`font-semibold ${isActive ? 'text-otw-gold' : 'text-gray-400'}`}
                   >
                     {step.title}
                   </h3>

@@ -1,30 +1,30 @@
-import { loadStripe } from "@stripe/stripe-js";
-import Stripe from "stripe";
+import { loadStripe } from '@stripe/stripe-js';
+import Stripe from 'stripe';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { buffer } from "micro";
+import { buffer } from 'micro';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { NextApiRequest } from "next";
-import { prisma } from "./db"; // Correct import path
+import type { NextApiRequest } from 'next';
+import { prisma } from './db'; // Correct import path
 
 // Client-side Stripe instance
 export const getStripe = () => {
   const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
+    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
   );
   return stripePromise;
 };
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error("STRIPE_SECRET_KEY is not set in environment variables");
+  throw new Error('STRIPE_SECRET_KEY is not set in environment variables');
 }
 
 // Server-side Stripe instance
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2023-10-16",
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+  apiVersion: '2023-10-16',
   typescript: true,
 });
 
-export async function createPaymentIntent(amount: number, currency = "usd") {
+export async function createPaymentIntent(amount: number, currency = 'usd') {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
@@ -35,25 +35,25 @@ export async function createPaymentIntent(amount: number, currency = "usd") {
     });
     return { clientSecret: paymentIntent.client_secret };
   } catch (error) {
-    console.error("Error creating payment intent:", error);
-    throw new Error("Payment initialization failed");
+    console.error('Error creating payment intent:', error);
+    throw new Error('Payment initialization failed');
   }
 }
 
 export async function handleWebhook(event: Stripe.Event) {
   switch (event.type) {
-    case "payment_intent.succeeded":
+    case 'payment_intent.succeeded':
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       await prisma.order.create({
         data: {
-          userId: paymentIntent.metadata?.userId || "",
+          userId: paymentIntent.metadata?.userId || '',
           status: paymentIntent.status,
           total: paymentIntent.amount_received / 100, // Stripe uses cents
           // Add more fields if needed based on your schema
         },
       });
       break;
-    case "payment_intent.payment_failed":
+    case 'payment_intent.payment_failed':
       // Handle failed payment
       break;
   }
@@ -66,7 +66,7 @@ export async function constructEvent(payload: string, sig: string) {
   return stripe.webhooks.constructEvent(
     payload,
     sig,
-    process.env.STRIPE_WEBHOOK_SECRET || "",
+    process.env.STRIPE_WEBHOOK_SECRET || '',
   );
 }
 
@@ -86,7 +86,7 @@ export async function createCheckoutSession({
 }) {
   const lineItems = items.map((item) => ({
     price_data: {
-      currency: "usd",
+      currency: 'usd',
       product_data: {
         name: item.name,
         description: item.description,
@@ -97,9 +97,9 @@ export async function createCheckoutSession({
   }));
 
   return stripe.checkout.sessions.create({
-    payment_method_types: ["card"],
+    payment_method_types: ['card'],
     line_items: lineItems,
-    mode: "payment",
+    mode: 'payment',
     success_url: `${process.env.NEXTAUTH_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.NEXTAUTH_URL}/cart`,
     metadata: {
@@ -116,7 +116,7 @@ export async function getSession(sessionId: string) {
 export async function listTransactions(userId: string, limit = 10) {
   const sessions = await stripe.checkout.sessions.list({
     limit,
-    expand: ["data.line_items"],
+    expand: ['data.line_items'],
   });
   return sessions.data.filter((session) => session.metadata?.userId === userId);
 }

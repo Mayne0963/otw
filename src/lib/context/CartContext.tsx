@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
 import {
   createContext,
@@ -8,9 +8,9 @@ import {
   useContext,
   useEffect,
   type ReactNode,
-} from "react";
-import type { CartContextType, CartItem } from "../../types";
-import { toast } from "../../components/ui/use-toast";
+} from 'react';
+import type { CartContextType, CartItem } from '../../types';
+import { toast } from '../../components/ui/use-toast';
 
 // Create the context with a default undefined value
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -44,7 +44,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
           newItem.customizations &&
           Object.keys(newItem.customizations).length > 0
         ) {
-          toast({ title: "Success", description: `${newItem.name} added to your cart` });
+          toast({ title: 'Success', description: `${newItem.name} added to your cart` });
           return [...currentItems, newItem];
         }
 
@@ -61,19 +61,19 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
           const updatedItems = [...currentItems];
           updatedItems[existingItemIndex].quantity += newItem.quantity;
 
-          toast({ title: "Success", description: `${newItem.name} quantity increased to ${updatedItems[existingItemIndex].quantity}` });
+          toast({ title: 'Success', description: `${newItem.name} quantity increased to ${updatedItems[existingItemIndex].quantity}` });
 
           return updatedItems;
         } else {
           // Add new item if it doesn't exist
-          toast({ title: "Success", description: `${newItem.name} added to your cart` });
+          toast({ title: 'Success', description: `${newItem.name} added to your cart` });
           return [...currentItems, newItem];
         }
       });
     } catch (err) {
-      console.error("Failed to add item to cart:", err);
-      setError("Failed to add item to cart. Please try again.");
-      toast({ title: "Error", description: "Failed to add item to cart. Please try again.", variant: "destructive" });
+      console.error('Failed to add item to cart:', err);
+      setError('Failed to add item to cart. Please try again.');
+      toast({ title: 'Error', description: 'Failed to add item to cart. Please try again.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -88,14 +88,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
       setItems((currentItems) => {
         const itemToRemove = currentItems.find((item) => item.id === id);
         if (itemToRemove) {
-          toast({ title: "Removed", description: `${itemToRemove.name} removed from your cart`, variant: "destructive" });
+          toast({ title: 'Removed', description: `${itemToRemove.name} removed from your cart`, variant: 'destructive' });
         }
         return currentItems.filter((item) => item.id !== id);
       });
     } catch (err) {
-      console.error("Failed to remove item from cart:", err);
-      setError("Failed to remove item from cart. Please try again.");
-      toast({ title: "Error", description: "Failed to remove item from cart. Please try again.", variant: "destructive" });
+      console.error('Failed to remove item from cart:', err);
+      setError('Failed to remove item from cart. Please try again.');
+      toast({ title: 'Error', description: 'Failed to remove item from cart. Please try again.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -118,9 +118,9 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
         ),
       );
     } catch (err) {
-      console.error("Failed to update item quantity:", err);
-      setError("Failed to update item quantity. Please try again.");
-      toast({ title: "Error", description: "Failed to update item quantity. Please try again.", variant: "destructive" });
+      console.error('Failed to update item quantity:', err);
+      setError('Failed to update item quantity. Please try again.');
+      toast({ title: 'Error', description: 'Failed to update item quantity. Please try again.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -133,11 +133,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
 
     try {
       setItems([]);
-      toast.info("All items have been removed from your cart", 3000);
+      toast.info('All items have been removed from your cart', 3000);
     } catch (err) {
-      console.error("Failed to clear cart:", err);
-      setError("Failed to clear cart. Please try again.");
-      toast.error("Failed to clear cart. Please try again.");
+      console.error('Failed to clear cart:', err);
+      setError('Failed to clear cart. Please try again.');
+      toast.error('Failed to clear cart. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -147,14 +147,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     setLoading(true);
     try {
-      const savedCart = localStorage.getItem("cart");
+      const savedCart = localStorage.getItem('cart');
       if (savedCart) {
         setItems(JSON.parse(savedCart));
       }
     } catch (err) {
-      console.error("Failed to load cart from localStorage:", err);
-      setError("Failed to load your cart. Please refresh the page.");
-      toast.error("Failed to load your cart. Please refresh the page.");
+      console.error('Failed to load cart from localStorage:', err);
+      setError('Failed to load your cart. Please refresh the page.');
+      toast.error('Failed to load your cart. Please refresh the page.');
     } finally {
       setLoading(false);
     }
@@ -163,14 +163,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
   // Save cart to localStorage when it changes
   useEffect(() => {
     try {
-      localStorage.setItem("cart", JSON.stringify(items));
+      localStorage.setItem('cart', JSON.stringify(items));
     } catch (err) {
-      console.error("Failed to save cart to localStorage:", err);
+      console.error('Failed to save cart to localStorage:', err);
       setError(
-        "Failed to save your cart. Some changes might not persist if you refresh the page.",
+        'Failed to save your cart. Some changes might not persist if you refresh the page.',
       );
       toast.error(
-        "Failed to save your cart. Some changes might not persist if you refresh the page.",
+        'Failed to save your cart. Some changes might not persist if you refresh the page.',
       );
     }
   }, [items]);
@@ -201,7 +201,7 @@ export const useCart = (): CartContextType => {
   const context = useContext(CartContext);
 
   if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider");
+    throw new Error('useCart must be used within a CartProvider');
   }
 
   return context;

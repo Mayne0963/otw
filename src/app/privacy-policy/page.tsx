@@ -3,24 +3,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
-import { 
-  Shield, 
-  Lock, 
-  Eye, 
-  FileText, 
-  Mail, 
+import {
+  Shield,
+  Lock,
+  Eye,
+  FileText,
+  Mail,
   Phone,
   MapPin,
   Calendar,
   Users,
   Database,
   Globe,
-  AlertTriangle
+  AlertTriangle,
 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PrivacyPolicyPage() {
-  const lastUpdated = "December 15, 2024";
+  const lastUpdated = 'December 15, 2024';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-otw-black via-otw-black-800 to-otw-black-900">
@@ -89,7 +89,7 @@ export default function PrivacyPolicyPage() {
       {/* Main Content */}
       <div className="py-16 px-4">
         <div className="container mx-auto max-w-4xl space-y-12">
-          
+
           {/* Information We Collect */}
           <section id="information-collection">
             <Card className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20">
@@ -110,7 +110,7 @@ export default function PrivacyPolicyPage() {
                     <li>Profile photos and user-generated content</li>
                   </ul>
                 </div>
-                
+
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3">Usage Information</h3>
                   <ul className="space-y-2 list-disc list-inside">
@@ -121,7 +121,7 @@ export default function PrivacyPolicyPage() {
                     <li>Communication records with customer support</li>
                   </ul>
                 </div>
-                
+
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3">Automatically Collected Data</h3>
                   <ul className="space-y-2 list-disc list-inside">
@@ -155,7 +155,7 @@ export default function PrivacyPolicyPage() {
                       <li>Send order updates and notifications</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-xl font-semibold text-white mb-3">Personalization</h3>
                     <ul className="space-y-2 list-disc list-inside">
@@ -165,7 +165,7 @@ export default function PrivacyPolicyPage() {
                       <li>Provide relevant promotions</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-xl font-semibold text-white mb-3">Business Operations</h3>
                     <ul className="space-y-2 list-disc list-inside">
@@ -175,7 +175,7 @@ export default function PrivacyPolicyPage() {
                       <li>Comply with legal obligations</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-xl font-semibold text-white mb-3">Communication</h3>
                     <ul className="space-y-2 list-disc list-inside">
@@ -209,7 +209,7 @@ export default function PrivacyPolicyPage() {
                     We never sell your personal information to third parties. We only share data as described below.
                   </p>
                 </div>
-                
+
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3">Service Partners</h3>
                   <ul className="space-y-2 list-disc list-inside">
@@ -219,7 +219,7 @@ export default function PrivacyPolicyPage() {
                     <li>Technology providers for app functionality</li>
                   </ul>
                 </div>
-                
+
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3">Legal Requirements</h3>
                   <ul className="space-y-2 list-disc list-inside">
@@ -229,7 +229,7 @@ export default function PrivacyPolicyPage() {
                     <li>In connection with business transfers</li>
                   </ul>
                 </div>
-                
+
                 <div>
                   <h3 className="text-xl font-semibold text-white mb-3">With Your Consent</h3>
                   <ul className="space-y-2 list-disc list-inside">
@@ -255,7 +255,7 @@ export default function PrivacyPolicyPage() {
                 <p className="text-lg">
                   We implement industry-standard security measures to protect your personal information:
                 </p>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-xl font-semibold text-white mb-3">Technical Safeguards</h3>
@@ -266,7 +266,7 @@ export default function PrivacyPolicyPage() {
                       <li>Secure payment processing</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-xl font-semibold text-white mb-3">Operational Safeguards</h3>
                     <ul className="space-y-2 list-disc list-inside">
@@ -277,7 +277,7 @@ export default function PrivacyPolicyPage() {
                     </ul>
                   </div>
                 </div>
-                
+
                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
                   <p className="text-gray-300">
                     <strong className="text-blue-400">Data Retention:</strong> We retain your personal information only as long as necessary to provide our services and comply with legal obligations. You can request deletion of your account and data at any time.
@@ -300,24 +300,24 @@ export default function PrivacyPolicyPage() {
                 <p>
                   We use cookies and similar technologies to enhance your experience and analyze usage patterns.
                 </p>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-3">Essential Cookies</h3>
                     <p className="text-sm">Required for basic app functionality, security, and user authentication.</p>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-3">Analytics Cookies</h3>
                     <p className="text-sm">Help us understand how users interact with our app to improve performance.</p>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-3">Marketing Cookies</h3>
                     <p className="text-sm">Used to deliver relevant advertisements and measure campaign effectiveness.</p>
                   </div>
                 </div>
-                
+
                 <p className="text-sm">
                   You can manage your cookie preferences through your browser settings or our cookie consent banner.
                 </p>
@@ -338,7 +338,7 @@ export default function PrivacyPolicyPage() {
                 <p>
                   You have several rights regarding your personal information:
                 </p>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-3">Access & Portability</h3>
@@ -348,7 +348,7 @@ export default function PrivacyPolicyPage() {
                       <li>View your account information anytime</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-3">Control & Correction</h3>
                     <ul className="space-y-2 list-disc list-inside text-sm">
@@ -357,7 +357,7 @@ export default function PrivacyPolicyPage() {
                       <li>Opt-out of marketing communications</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-3">Restriction & Objection</h3>
                     <ul className="space-y-2 list-disc list-inside text-sm">
@@ -366,7 +366,7 @@ export default function PrivacyPolicyPage() {
                       <li>Withdraw consent at any time</li>
                     </ul>
                   </div>
-                  
+
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-3">Complaints</h3>
                     <ul className="space-y-2 list-disc list-inside text-sm">
@@ -416,7 +416,7 @@ export default function PrivacyPolicyPage() {
                 <p>
                   If you have questions about this Privacy Policy or our data practices, please contact us:
                 </p>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="flex items-center gap-3">
                     <Mail className="w-5 h-5 text-otw-gold" />
@@ -425,7 +425,7 @@ export default function PrivacyPolicyPage() {
                       <p className="text-sm">privacy@ezydelivery.com</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
                     <Phone className="w-5 h-5 text-otw-gold" />
                     <div>
@@ -433,7 +433,7 @@ export default function PrivacyPolicyPage() {
                       <p className="text-sm">(260) 555-PRIVACY</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-otw-gold" />
                     <div>
@@ -442,7 +442,7 @@ export default function PrivacyPolicyPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-otw-gold/10 border border-otw-gold/20 rounded-lg p-4">
                   <p className="text-sm">
                     <strong className="text-otw-gold">Response Time:</strong> We will respond to privacy-related inquiries within 30 days of receipt.

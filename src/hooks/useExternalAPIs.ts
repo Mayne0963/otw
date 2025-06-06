@@ -34,14 +34,14 @@ export function useExternalAPIs() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch(url);
       const result: APIResponse<T> = await response.json();
-      
+
       if (!result.success) {
         throw new Error(result.error || 'API call failed');
       }
-      
+
       return result.data || null;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
@@ -69,10 +69,10 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<DocumenuRestaurant[]>(`/api/external/documenu?${searchParams}`);
   }, [makeAPICall]);
 
@@ -81,7 +81,7 @@ export function useExternalAPIs() {
       action: 'menu',
       restaurantId,
     });
-    
+
     return makeAPICall<DocumenuRestaurant>(`/api/external/documenu?${searchParams}`);
   }, [makeAPICall]);
 
@@ -107,10 +107,10 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<ZomatoRestaurant[]>(`/api/external/zomato?${searchParams}`);
   }, [makeAPICall]);
 
@@ -119,7 +119,7 @@ export function useExternalAPIs() {
       action: 'details',
       restaurantId,
     });
-    
+
     return makeAPICall<ZomatoRestaurant>(`/api/external/zomato?${searchParams}`);
   }, [makeAPICall]);
 
@@ -145,12 +145,12 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<{ businesses: YelpBusiness[]; total: number; region: any }>(
-      `/api/external/yelp?${searchParams}`
+      `/api/external/yelp?${searchParams}`,
     );
   }, [makeAPICall]);
 
@@ -159,7 +159,7 @@ export function useExternalAPIs() {
       action: 'details',
       businessId,
     });
-    
+
     return makeAPICall<YelpBusiness>(`/api/external/yelp?${searchParams}`);
   }, [makeAPICall]);
 
@@ -169,7 +169,7 @@ export function useExternalAPIs() {
       businessId,
       ...(locale && { locale }),
     });
-    
+
     return makeAPICall<{
       reviews: Array<{
         id: string;
@@ -204,10 +204,10 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<{ data: KrogerProduct[]; meta: any }>(`/api/external/kroger?${searchParams}`);
   }, [makeAPICall]);
 
@@ -223,10 +223,10 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<{ data: any[]; meta: any }>(`/api/external/kroger?${searchParams}`);
   }, [makeAPICall]);
 
@@ -247,12 +247,12 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<{ products: BestBuyProduct[]; total: number; totalPages: number }>(
-      `/api/external/bestbuy?${searchParams}`
+      `/api/external/bestbuy?${searchParams}`,
     );
   }, [makeAPICall]);
 
@@ -261,7 +261,7 @@ export function useExternalAPIs() {
       action: 'product',
       sku: String(sku),
     });
-    
+
     return makeAPICall<BestBuyProduct>(`/api/external/bestbuy?${searchParams}`);
   }, [makeAPICall]);
 
@@ -280,12 +280,12 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<{ stores: any[]; total: number; totalPages: number }>(
-      `/api/external/bestbuy?${searchParams}`
+      `/api/external/bestbuy?${searchParams}`,
     );
   }, [makeAPICall]);
 
@@ -295,7 +295,7 @@ export function useExternalAPIs() {
       sku: String(sku),
       storeId: String(storeId),
     });
-    
+
     return makeAPICall<{
       sku: number;
       storeId: number;
@@ -319,10 +319,10 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<UnifiedRestaurantResults>(`/api/external/unified-search?${searchParams}`);
   }, [makeAPICall]);
 
@@ -336,10 +336,10 @@ export function useExternalAPIs() {
       ...Object.fromEntries(
         Object.entries(params)
           .filter(([, v]) => v !== undefined)
-          .map(([k, v]) => [k, String(v)])
+          .map(([k, v]) => [k, String(v)]),
       ),
     });
-    
+
     return makeAPICall<UnifiedProductResults>(`/api/external/unified-search?${searchParams}`);
   }, [makeAPICall]);
 

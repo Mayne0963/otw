@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  CheckCircle, 
-  AlertCircle, 
-  ArrowLeft, 
-  Clock, 
-  User, 
-  Phone, 
-  Mail, 
+import {
+  CheckCircle,
+  AlertCircle,
+  ArrowLeft,
+  Clock,
+  User,
+  Phone,
+  Mail,
   MapPin,
   CreditCard,
   Package,
   Car,
-  ShoppingCart
+  ShoppingCart,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../../../contexts/AuthContext';
@@ -47,11 +47,11 @@ export default function CheckoutSuccessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  
+
   const [loading, setLoading] = useState(true);
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   const sessionId = searchParams.get('session_id');
   const orderId = searchParams.get('order_id');
 
@@ -69,21 +69,21 @@ export default function CheckoutSuccessPage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': user ? `Bearer ${await user.getIdToken()}` : ''
+            'Authorization': user ? `Bearer ${await user.getIdToken()}` : '',
           },
           body: JSON.stringify({
             sessionId,
-            orderId
-          })
+            orderId,
+          }),
         });
 
         if (response.ok) {
           const data = await response.json();
           setOrderDetails(data.order);
-          
+
           toast({
-            title: "Payment Successful!",
-            description: "Your order has been confirmed and will be processed shortly."
+            title: 'Payment Successful!',
+            description: 'Your order has been confirmed and will be processed shortly.',
           });
         } else {
           const errorData = await response.json();
@@ -126,15 +126,15 @@ export default function CheckoutSuccessPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button 
-              onClick={() => router.push('/otw')} 
+            <Button
+              onClick={() => router.push('/otw')}
               className="w-full bg-otw-red hover:bg-otw-red/80"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Services
             </Button>
-            <Button 
-              onClick={() => window.location.reload()} 
+            <Button
+              onClick={() => window.location.reload()}
               variant="outline"
               className="w-full border-otw-gold/50 text-otw-gold hover:bg-otw-gold/10"
             >
@@ -158,8 +158,8 @@ export default function CheckoutSuccessPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
-              onClick={() => router.push('/otw')} 
+            <Button
+              onClick={() => router.push('/otw')}
               className="w-full bg-otw-red hover:bg-otw-red/80"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -223,17 +223,17 @@ export default function CheckoutSuccessPage() {
                     {orderDetails.serviceDetails.description}
                   </p>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
-                  <Badge 
-                    variant="outline" 
+                  <Badge
+                    variant="outline"
                     className="border-otw-gold/50 text-otw-gold"
                   >
                     <CreditCard className="w-3 h-3 mr-1" />
                     Paid
                   </Badge>
-                  <Badge 
-                    variant="outline" 
+                  <Badge
+                    variant="outline"
                     className="border-otw-red/50 text-otw-red"
                   >
                     <Clock className="w-3 h-3 mr-1" />
@@ -241,9 +241,9 @@ export default function CheckoutSuccessPage() {
                   </Badge>
                 </div>
               </div>
-              
+
               <Separator className="bg-otw-gold/20" />
-              
+
               {/* Payment Information */}
               <div className="space-y-2">
                 <h4 className="text-white font-semibold">Payment Summary</h4>
@@ -285,7 +285,7 @@ export default function CheckoutSuccessPage() {
                     <p className="text-gray-400 text-sm">Customer</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 text-otw-gold" />
                   <div>
@@ -293,7 +293,7 @@ export default function CheckoutSuccessPage() {
                     <p className="text-gray-400 text-sm">Phone Number</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-otw-gold" />
                   <div>
@@ -301,7 +301,7 @@ export default function CheckoutSuccessPage() {
                     <p className="text-gray-400 text-sm">Email Address</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <MapPin className="w-4 h-4 text-otw-gold mt-1" />
                   <div>
@@ -309,7 +309,7 @@ export default function CheckoutSuccessPage() {
                     <p className="text-gray-400 text-sm">Service Address</p>
                   </div>
                 </div>
-                
+
                 {orderDetails.customerInfo.specialInstructions && (
                   <div className="bg-otw-black/50 p-3 rounded-lg border border-otw-gold/20">
                     <h5 className="text-white font-semibold text-sm mb-1">Special Instructions</h5>
@@ -341,7 +341,7 @@ export default function CheckoutSuccessPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-otw-gold rounded-full" />
-                    <span>You'll receive a call/text to confirm details and timing</span>
+                    <span>You&apos;ll receive a call/text to confirm details and timing</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-otw-gold rounded-full" />
@@ -355,22 +355,22 @@ export default function CheckoutSuccessPage() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
-          <Button 
-            onClick={() => router.push('/otw')} 
-            variant="outline" 
+          <Button
+            onClick={() => router.push('/otw')}
+            variant="outline"
             className="border-otw-gold/50 text-otw-gold hover:bg-otw-gold/10"
           >
             Order Another Service
           </Button>
-          <Button 
-            onClick={() => router.push('/orders')} 
+          <Button
+            onClick={() => router.push('/orders')}
             className="bg-otw-red hover:bg-otw-red/80"
           >
             View My Orders
           </Button>
-          <Button 
-            onClick={() => router.push('/')} 
-            variant="outline" 
+          <Button
+            onClick={() => router.push('/')}
+            variant="outline"
             className="border-gray-600 text-gray-400 hover:bg-gray-800"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

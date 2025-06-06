@@ -8,18 +8,18 @@ import { Textarea } from '@/components/ui/textarea';
 import PlaceAutocomplete from '../../../components/maps/PlaceAutocomplete';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  ShoppingCart, 
-  Camera, 
-  Upload, 
-  Clock, 
+import {
+  ShoppingCart,
+  Camera,
+  Upload,
+  Clock,
   DollarSign,
   Plus,
   X,
   CheckCircle,
   User,
   CreditCard,
-  Package
+  Package,
 } from 'lucide-react';
 
 interface CustomerInfo {
@@ -39,7 +39,7 @@ export default function GroceryDeliveryPage() {
     phone: '',
     email: '',
     address: '',
-    deliveryInstructions: ''
+    deliveryInstructions: '',
   });
   const [selectedStore, setSelectedStore] = useState('');
   const [deliveryTime, setDeliveryTime] = useState('');
@@ -53,13 +53,13 @@ export default function GroceryDeliveryPage() {
     { value: 'supermart', label: 'SuperMart', deliveryFee: '$3.99' },
     { value: 'organic-foods', label: 'Organic Foods Co.', deliveryFee: '$5.99' },
     { value: 'quick-stop', label: 'Quick Stop Grocery', deliveryFee: '$2.99' },
-    { value: 'whole-foods', label: 'Whole Foods Market', deliveryFee: '$6.99' }
+    { value: 'whole-foods', label: 'Whole Foods Market', deliveryFee: '$6.99' },
   ];
 
   const timeSlots = [
     'ASAP',
     '1 Hour',
-    'Specific Time'
+    'Specific Time',
   ];
 
 
@@ -80,10 +80,10 @@ export default function GroceryDeliveryPage() {
 
   const handleSubmitOrder = async () => {
     setIsSubmitting(true);
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     setOrderSubmitted(true);
     setIsSubmitting(false);
   };
@@ -187,12 +187,12 @@ export default function GroceryDeliveryPage() {
                       <p className="text-xs text-gray-400 mt-1">PNG, JPG up to 10MB</p>
                     </label>
                   </div>
-                  
+
                   {receiptPreview && (
                     <div className="relative">
-                      <img 
-                        src={receiptPreview} 
-                        alt="Receipt" 
+                      <img
+                        src={receiptPreview}
+                        alt="Receipt"
                         className="w-full h-48 object-cover rounded-lg border border-otw-gold/30"
                       />
                       <Button
@@ -271,7 +271,7 @@ export default function GroceryDeliveryPage() {
                     id="customer-name"
                     placeholder="John Doe"
                     value={customerInfo.name}
-                    onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
                     className="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
                   />
                 </div>
@@ -281,7 +281,7 @@ export default function GroceryDeliveryPage() {
                     id="customer-phone"
                     placeholder="(555) 123-4567"
                     value={customerInfo.phone}
-                    onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
                     className="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
                   />
                 </div>
@@ -292,7 +292,7 @@ export default function GroceryDeliveryPage() {
                     type="email"
                     placeholder="john@example.com"
                     value={customerInfo.email}
-                    onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
                     className="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
                   />
                 </div>
@@ -300,7 +300,7 @@ export default function GroceryDeliveryPage() {
                   <Label htmlFor="delivery-address" className="text-gray-300">Delivery Address</Label>
                   <PlaceAutocomplete
                     onPlaceSelect={(place) => {
-                      setCustomerInfo({...customerInfo, address: place.formatted_address || ''});
+                      setCustomerInfo({ ...customerInfo, address: place.formatted_address || '' });
                       console.log('Selected delivery address:', place);
                     }}
                     placeholder="Enter delivery address in Fort Wayne, IN..."
@@ -313,7 +313,7 @@ export default function GroceryDeliveryPage() {
                     id="delivery-instructions"
                     placeholder="Leave at front door, ring doorbell, etc."
                     value={customerInfo.deliveryInstructions}
-                    onChange={(e) => setCustomerInfo({...customerInfo, deliveryInstructions: e.target.value})}
+                    onChange={(e) => setCustomerInfo({ ...customerInfo, deliveryInstructions: e.target.value })}
                     rows={2}
                     className="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
                   />
@@ -342,7 +342,7 @@ export default function GroceryDeliveryPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                
+
                 {deliveryTime === 'Specific Time' && (
                   <div>
                     <Label htmlFor="specific-time" className="text-gray-300">Specific Time</Label>
@@ -373,29 +373,29 @@ export default function GroceryDeliveryPage() {
                     <span className="font-medium text-gray-300">Store:</span>
                     <span className="text-white">{selectedStore || 'Not selected'}</span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-300">Items:</span>
                     <span className="text-white">
-                      {receiptPreview ? 'Receipt uploaded' : 
+                      {receiptPreview ? 'Receipt uploaded' :
                        groceryList ? 'Grocery list provided' : 'No items specified'}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-300">Delivery Time:</span>
                     <span className="text-white">
-                      {deliveryTime === 'Specific Time' && specificTime 
+                      {deliveryTime === 'Specific Time' && specificTime
                         ? new Date(specificTime).toLocaleString()
                         : deliveryTime || 'Not selected'}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-300">Customer:</span>
                     <span className="text-white">{customerInfo.name || 'Not provided'}</span>
                   </div>
-                  
+
                   <div className="border-t border-otw-gold/20 pt-3">
                     <p className="text-sm text-gray-400">
                       Final pricing will be calculated based on actual items purchased and store prices.
@@ -407,7 +407,7 @@ export default function GroceryDeliveryPage() {
             </Card>
 
             {/* Submit Button */}
-            <Button 
+            <Button
               className="w-full h-12 text-lg bg-otw-red hover:bg-otw-red/80 text-white disabled:bg-gray-600 disabled:text-gray-400"
               onClick={() => {
                 // Store service details in localStorage for checkout
@@ -420,21 +420,21 @@ export default function GroceryDeliveryPage() {
                     selectedStore,
                     deliveryTime,
                     receipt: receipt ? 'uploaded' : null,
-                    groceryList: groceryList || null
-                  }
+                    groceryList: groceryList || null,
+                  },
                 };
-                
+
                 const customerDetails = {
                   name: customerInfo.name,
                   phone: customerInfo.phone,
                   email: customerInfo.email,
                   address: customerInfo.address,
-                  specialInstructions: `Store: ${selectedStore}, Delivery: ${deliveryTime}. ${receipt ? 'Receipt uploaded.' : ''} ${groceryList ? 'Grocery list provided.' : ''}`
+                  specialInstructions: `Store: ${selectedStore}, Delivery: ${deliveryTime}. ${receipt ? 'Receipt uploaded.' : ''} ${groceryList ? 'Grocery list provided.' : ''}`,
                 };
-                
+
                 localStorage.setItem('otwServiceDetails', JSON.stringify(serviceDetails));
                 localStorage.setItem('otwCustomerInfo', JSON.stringify(customerDetails));
-                
+
                 // Navigate to checkout
                 window.location.href = '/otw/checkout?service=grocery';
               }}

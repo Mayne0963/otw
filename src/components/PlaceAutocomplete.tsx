@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useJsApiLoader } from '@react-google-maps/api';
 
-const libraries: "places"[] = ["places"];
+const libraries: 'places'[] = ['places'];
 
 export type PlaceSuggestion = {
   formatted_address: string;
@@ -20,8 +20,8 @@ interface PlaceAutocompleteProps {
 
 export default function PlaceAutocomplete({
   onSelectAddress,
-  placeholder = "Type an address…",
-  className = "",
+  placeholder = 'Type an address…',
+  className = '',
   disabled = false,
 }: PlaceAutocompleteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ export default function PlaceAutocomplete({
     try {
       // Create the new PlaceAutocompleteElement
       const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
-        types: ['address']
+        types: ['address'],
       });
 
       // Configure the element
@@ -137,8 +137,8 @@ export default function PlaceAutocomplete({
 
   return (
     <div className={`w-full ${className}`}>
-      <div 
-        ref={containerRef} 
+      <div
+        ref={containerRef}
         className="w-full"
         style={{
           minHeight: '40px',

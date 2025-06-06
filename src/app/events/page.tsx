@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type { Metadata } from "next";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
-import { useState, useEffect } from "react";
+import type { Metadata } from 'next';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { useState, useEffect } from 'react';
 import {
   FaSearch,
   FaCalendarAlt,
@@ -10,19 +10,19 @@ import {
   FaMapMarkerAlt,
   FaClock,
   FaTicketAlt,
-} from "react-icons/fa";
-import EventCard from "../../components/events/EventCard";
-import EventFilter from "../../components/events/EventFilter";
-import EventDetailModal from "../../components/events/EventDetailModal";
-import RegistrationModal from "../../components/events/RegistrationModal";
+} from 'react-icons/fa';
+import EventCard from '../../components/events/EventCard';
+import EventFilter from '../../components/events/EventFilter';
+import EventDetailModal from '../../components/events/EventDetailModal';
+import RegistrationModal from '../../components/events/RegistrationModal';
 // TODO: Remove static data import - fetch event categories and locations from API instead
-import type { Event } from "../../types/event";
+import type { Event } from '../../types/event';
 
 export default function EventsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [selectedLocation, setSelectedLocation] = useState("all");
-  const [timeFrame, setTimeFrame] = useState("upcoming");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLocation, setSelectedLocation] = useState('all');
+  const [timeFrame, setTimeFrame] = useState('upcoming');
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -46,11 +46,11 @@ export default function EventsPage() {
         const data = await response.json();
         const eventsData = data.data || [];
         setEvents(eventsData);
-        
+
         // Extract unique categories and locations from events
         const uniqueCategories = [...new Set(eventsData.map((event: Event) => event.category).filter(Boolean))];
         const uniqueLocations = [...new Set(eventsData.map((event: Event) => event.location.name).filter(Boolean))];
-        
+
         setCategories(uniqueCategories as string[]);
         setLocations(uniqueLocations as string[]);
       } catch (err) {
@@ -79,14 +79,14 @@ export default function EventsPage() {
     }
 
     // Filter by category
-    if (selectedCategory !== "all") {
+    if (selectedCategory !== 'all') {
       filtered = filtered.filter(
         (event) => event.category === selectedCategory,
       );
     }
 
     // Filter by location
-    if (selectedLocation !== "all") {
+    if (selectedLocation !== 'all') {
       filtered = filtered.filter(
         (event) => event.location.id === selectedLocation,
       );
@@ -94,9 +94,9 @@ export default function EventsPage() {
 
     // Filter by time frame
     const now = new Date();
-    if (timeFrame === "upcoming") {
+    if (timeFrame === 'upcoming') {
       filtered = filtered.filter((event) => new Date(event.date) >= now);
-    } else if (timeFrame === "past") {
+    } else if (timeFrame === 'past') {
       filtered = filtered.filter((event) => new Date(event.date) < now);
     }
 
@@ -104,7 +104,7 @@ export default function EventsPage() {
     filtered.sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
-      return timeFrame === "upcoming"
+      return timeFrame === 'upcoming'
         ? dateA.getTime() - dateB.getTime()
         : dateB.getTime() - dateA.getTime();
     });
@@ -168,21 +168,21 @@ export default function EventsPage() {
             <div className="flex rounded-full bg-otw-black-800 p-1">
               <button
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  timeFrame === "upcoming"
-                    ? "bg-otw-gold text-otw-black"
-                    : "text-white hover:bg-otw-black-700"
+                  timeFrame === 'upcoming'
+                    ? 'bg-otw-gold text-otw-black'
+                    : 'text-white hover:bg-otw-black-700'
                 }`}
-                onClick={() => setTimeFrame("upcoming")}
+                onClick={() => setTimeFrame('upcoming')}
               >
                 Upcoming
               </button>
               <button
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  timeFrame === "past"
-                    ? "bg-otw-gold text-otw-black"
-                    : "text-white hover:bg-otw-black-700"
+                  timeFrame === 'past'
+                    ? 'bg-otw-gold text-otw-black'
+                    : 'text-white hover:bg-otw-black-700'
                 }`}
-                onClick={() => setTimeFrame("past")}
+                onClick={() => setTimeFrame('past')}
               >
                 Past Events
               </button>
@@ -195,7 +195,7 @@ export default function EventsPage() {
               aria-expanded={showFilters}
               aria-controls="advanced-filters"
             >
-              <FaFilter /> {showFilters ? "Hide Filters" : "Show Filters"}
+              <FaFilter /> {showFilters ? 'Hide Filters' : 'Show Filters'}
             </button>
           </div>
 
@@ -232,7 +232,7 @@ export default function EventsPage() {
       </section>
 
       {/* Featured Event Section (only show for upcoming events) */}
-      {timeFrame === "upcoming" &&
+      {timeFrame === 'upcoming' &&
         events.filter(
           (event) => event.featured && new Date(event.date) >= new Date(),
         ).length > 0 && (
@@ -265,7 +265,7 @@ export default function EventsPage() {
                               FEATURED
                             </span>
                             <span className="bg-otw-black-700 text-white text-xs px-3 py-1 rounded-full">
-                              {event.category || "Event"}
+                              {event.category || 'Event'}
                             </span>
                           </div>
                           <h3 className="text-2xl font-bold mb-2">
@@ -275,12 +275,12 @@ export default function EventsPage() {
                             <FaCalendarAlt className="mr-2 text-otw-gold" />
                             <span>
                               {new Date(event.date).toLocaleDateString(
-                                "en-US",
+                                'en-US',
                                 {
-                                  weekday: "long",
-                                  month: "long",
-                                  day: "numeric",
-                                  year: "numeric",
+                                  weekday: 'long',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  year: 'numeric',
                                 },
                               )}
                             </span>
@@ -324,11 +324,11 @@ export default function EventsPage() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl font-bold">
-              {timeFrame === "upcoming" ? "Upcoming Events" : "Past Events"}
+              {timeFrame === 'upcoming' ? 'Upcoming Events' : 'Past Events'}
             </h2>
             <div className="text-sm text-white/70">
-              {filteredEvents.length}{" "}
-              {filteredEvents.length === 1 ? "Event" : "Events"} Found
+              {filteredEvents.length}{' '}
+              {filteredEvents.length === 1 ? 'Event' : 'Events'} Found
             </div>
           </div>
 
@@ -354,8 +354,8 @@ export default function EventsPage() {
                   event={event}
                   onSelect={handleEventSelect}
                   onRegister={handleRegister}
-                  categoryName={event.category || ""}
-                  isPast={timeFrame === "past"}
+                  categoryName={event.category || ''}
+                  isPast={timeFrame === 'past'}
                 />
               ))}
             </div>
@@ -369,9 +369,9 @@ export default function EventsPage() {
               <button
                 className="btn-primary"
                 onClick={() => {
-                  setSearchQuery("");
-                  setSelectedCategory("all");
-                  setSelectedLocation("all");
+                  setSearchQuery('');
+                  setSelectedCategory('all');
+                  setSelectedLocation('all');
                 }}
               >
                 Reset Filters
@@ -435,7 +435,7 @@ export default function EventsPage() {
       {selectedEvent && showDetailModal && (
         <EventDetailModal
           event={selectedEvent}
-          categoryName={selectedEvent.category || ""}
+          categoryName={selectedEvent.category || ''}
           onClose={() => setShowDetailModal(false)}
           onRegister={() => {
             setShowDetailModal(false);

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import Image from "next/image";
-import { FaStar } from "react-icons/fa";
+import Image from 'next/image';
+import { FaStar } from 'react-icons/fa';
 
 interface Testimonial {
   name: string;
@@ -21,12 +21,12 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   // Get tier color
   const getTierColor = () => {
     switch (testimonial.tier.toLowerCase()) {
-      case "gold":
-        return "text-gold-foil";
-      case "silver":
-        return "text-gray-400";
+      case 'gold':
+        return 'text-gold-foil';
+      case 'silver':
+        return 'text-gray-400';
       default:
-        return "text-[#CD7F32]";
+        return 'text-[#CD7F32]';
     }
   };
 
@@ -35,7 +35,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
       <div className="flex items-center mb-4">
         <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
           <Image
-            src={testimonial.image || "/placeholder.svg"}
+            src={testimonial.image || '/placeholder.svg'}
             alt={testimonial.name}
             width={48}
             height={48}
@@ -57,7 +57,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
             <FaStar
               key={i}
               className={
-                i < testimonial.rating ? "text-gold-foil" : "text-gray-600"
+                i < testimonial.rating ? 'text-gold-foil' : 'text-gray-600'
               }
               size={16}
             />

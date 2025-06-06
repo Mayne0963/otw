@@ -1,47 +1,47 @@
-import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
-import "./globals.css";
-import { Providers } from "./providers";
-import Navbar from "../components/layout/Navbar";
-import { Footer } from "../components/layout/Footer";
-import { CartProvider } from "../lib/context/CartContext";
-import { ToastContainer } from "../components/ui/toast";
-import { ScrollToTop } from "../components/ui/scroll-to-top";
-import { cn } from "../lib/utils";
+import type { Metadata } from 'next';
+import { Poppins } from 'next/font/google';
+import './globals.css';
+import { Providers } from './providers';
+import Navbar from '../components/layout/Navbar';
+import { Footer } from '../components/layout/Footer';
+import { CartProvider } from '../lib/context/CartContext';
+import { ToastContainer } from '../components/ui/toast';
+import { ScrollToTop } from '../components/ui/scroll-to-top';
+import { cn } from '../lib/utils';
 
 const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-poppins",
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-poppins',
 });
 
 export const metadata: Metadata = {
-  title: "On The Way Delivery",
+  title: 'On The Way Delivery',
   description:
     "Fort Wayne's all-in-one platform for food, groceries, and rides",
   icons: {
-    icon: "/assets/logos/favicon.ico",
+    icon: '/assets/logos/favicon.ico',
   },
   keywords: [
-    "delivery",
-    "food delivery",
-    "grocery delivery",
-    "rides",
-    "Fort Wayne",
-    "OTW",
-    "On The Way",
+    'delivery',
+    'food delivery',
+    'grocery delivery',
+    'rides',
+    'Fort Wayne',
+    'OTW',
+    'On The Way',
   ],
-  authors: [{ name: "On The Way Delivery" }],
+  authors: [{ name: 'On The Way Delivery' }],
   openGraph: {
-    type: "website",
-    title: "On The Way Delivery",
+    type: 'website',
+    title: 'On The Way Delivery',
     description:
       "Fort Wayne's all-in-one platform for food, groceries, and rides",
-    siteName: "On The Way Delivery",
+    siteName: 'On The Way Delivery',
   },
   twitter: {
-    card: "summary_large_image",
-    title: "On The Way Delivery",
+    card: 'summary_large_image',
+    title: 'On The Way Delivery',
     description:
       "Fort Wayne's all-in-one platform for food, groceries, and rides",
   },
@@ -57,13 +57,13 @@ export default function RootLayout({
       <body
         className={cn(
           poppins.variable,
-          "font-sans antialiased bg-otw-black text-white min-h-screen flex flex-col",
+          'font-sans antialiased bg-otw-black text-white min-h-screen flex flex-col',
         )}
       >
         <CartProvider>
           <Providers>
             {/* Background with OTW logo */}
-            <div 
+            <div
               className="fixed inset-0 pointer-events-none z-0"
               style={{
                 backgroundImage: 'url(/images/otw-logo.png)',
@@ -72,7 +72,7 @@ export default function RootLayout({
                 backgroundSize: 'cover',
                 opacity: 0.4,
                 imageRendering: 'crisp-edges',
-                filter: 'contrast(1.1) brightness(1.05)'
+                filter: 'contrast(1.1) brightness(1.05)',
               }}
             />
             {/* Tint overlay */}

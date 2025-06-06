@@ -1,11 +1,12 @@
 import { GeocodingService } from '../geocoding-service';
+import { Client } from '@googlemaps/google-maps-services-js';
 
 // Mock the Google Maps client
 jest.mock('@googlemaps/google-maps-services-js', () => ({
   Client: jest.fn().mockImplementation(() => ({
     geocode: jest.fn(),
-    reverseGeocode: jest.fn()
-  }))
+    reverseGeocode: jest.fn(),
+  })),
 }));
 
 describe('GeocodingService', () => {
@@ -15,7 +16,7 @@ describe('GeocodingService', () => {
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     // Create service instance with test configuration
     geocodingService = new GeocodingService({
       apiKey: 'test-api-key',
@@ -23,11 +24,10 @@ describe('GeocodingService', () => {
       cacheTimeout: 1000, // 1 second for testing
       rateLimitPerMinute: 10,
       defaultLanguage: 'en',
-      defaultRegion: 'US'
+      defaultRegion: 'US',
     });
-    
+
     // Get the mocked client
-    const { Client } = require('@googlemaps/google-maps-services-js');
     mockClient = new Client();
   });
 
@@ -46,8 +46,8 @@ describe('GeocodingService', () => {
             location_type: 'ROOFTOP',
             viewport: {
               northeast: { lat: 37.4238253802915, lng: -122.0829009197085 },
-              southwest: { lat: 37.4211274197085, lng: -122.0855988802915 }
-            }
+              southwest: { lat: 37.4211274197085, lng: -122.0855988802915 },
+            },
           },
           place_id: 'ChIJ2eUgeAK6j4ARbn5u_wAGqWA',
           types: ['street_address'],
@@ -55,17 +55,17 @@ describe('GeocodingService', () => {
             {
               long_name: '1600',
               short_name: '1600',
-              types: ['street_number']
+              types: ['street_number'],
             },
             {
               long_name: 'Amphitheatre Parkway',
               short_name: 'Amphitheatre Pkwy',
-              types: ['route']
-            }
+              types: ['route'],
+            },
           ],
-          partial_match: false
-        }]
-      }
+          partial_match: false,
+        }],
+      },
     };
 
     it('should geocode an address successfully', async () => {
@@ -93,7 +93,7 @@ describe('GeocodingService', () => {
 
       // First request
       const result1 = await geocodingService.geocode('1600 Amphitheatre Parkway');
-      
+
       // Second request (should use cache)
       const result2 = await geocodingService.geocode('1600 Amphitheatre Parkway');
 
@@ -121,14 +121,14 @@ describe('GeocodingService', () => {
       await geocodingService.geocode('Test Address', {
         componentRestrictions: {
           country: 'US',
-          locality: 'Mountain View'
-        }
+          locality: 'Mountain View',
+        },
       });
 
       expect(mockClient.geocode).toHaveBeenCalledWith({
         params: expect.objectContaining({
-          components: 'country:US|locality:Mountain View'
-        })
+          components: 'country:US|locality:Mountain View',
+        }),
       });
     });
   });
@@ -140,13 +140,13 @@ describe('GeocodingService', () => {
           formatted_address: '1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA',
           geometry: {
             location: { lat: 37.4224764, lng: -122.0842499 },
-            location_type: 'ROOFTOP'
+            location_type: 'ROOFTOP',
           },
           place_id: 'ChIJ2eUgeAK6j4ARbn5u_wAGqWA',
           types: ['street_address'],
-          address_components: []
-        }]
-      }
+          address_components: [],
+        }],
+      },
     };
 
     it('should reverse geocode coordinates successfully', async () => {
@@ -172,14 +172,14 @@ describe('GeocodingService', () => {
 
       await geocodingService.reverseGeocode(37.4224764, -122.0842499, {
         resultTypes: ['street_address'],
-        locationTypes: ['ROOFTOP']
+        locationTypes: ['ROOFTOP'],
       });
 
       expect(mockClient.reverseGeocode).toHaveBeenCalledWith({
         params: expect.objectContaining({
           result_type: 'street_address',
-          location_type: 'ROOFTOP'
-        })
+          location_type: 'ROOFTOP',
+        }),
       });
     });
   });
@@ -191,7 +191,7 @@ describe('GeocodingService', () => {
           formatted_address: '1600 Amphitheatre Pkwy, Mountain View, CA 94043, USA',
           geometry: {
             location: { lat: 37.4224764, lng: -122.0842499 },
-            location_type: 'ROOFTOP'
+            location_type: 'ROOFTOP',
           },
           place_id: 'ChIJ2eUgeAK6j4ARbn5u_wAGqWA',
           types: ['street_address'],
@@ -199,22 +199,22 @@ describe('GeocodingService', () => {
             {
               long_name: '1600',
               short_name: '1600',
-              types: ['street_number']
+              types: ['street_number'],
             },
             {
               long_name: 'Amphitheatre Parkway',
               short_name: 'Amphitheatre Pkwy',
-              types: ['route']
+              types: ['route'],
             },
             {
               long_name: 'Mountain View',
               short_name: 'Mountain View',
-              types: ['locality']
-            }
+              types: ['locality'],
+            },
           ],
-          partial_match: false
-        }]
-      }
+          partial_match: false,
+        }],
+      },
     };
 
     it('should validate a valid address', async () => {
@@ -234,11 +234,11 @@ describe('GeocodingService', () => {
         data: {
           results: [{
             ...mockValidGeocodeResponse.data.results[0],
-            partial_match: true
-          }]
-        }
+            partial_match: true,
+          }],
+        },
       };
-      
+
       mockClient.geocode.mockResolvedValue(partialMatchResponse);
 
       const result = await geocodingService.validateAddress('Partial Address');
@@ -258,17 +258,17 @@ describe('GeocodingService', () => {
               {
                 long_name: 'Amphitheatre Parkway',
                 short_name: 'Amphitheatre Pkwy',
-                types: ['route']
-              }
-            ]
-          }]
-        }
+                types: ['route'],
+              },
+            ],
+          }],
+        },
       };
-      
+
       mockClient.geocode.mockResolvedValue(noStreetNumberResponse);
 
       const result = await geocodingService.validateAddress('Amphitheatre Parkway', {
-        checkDeliverability: true
+        checkDeliverability: true,
       });
 
       expect(result.isValid).toBe(true);
@@ -282,15 +282,15 @@ describe('GeocodingService', () => {
         data: {
           results: [{
             ...mockValidGeocodeResponse.data.results[0],
-            formatted_address: 'PO Box 123, Mountain View, CA 94043, USA'
-          }]
-        }
+            formatted_address: 'PO Box 123, Mountain View, CA 94043, USA',
+          }],
+        },
       };
-      
+
       mockClient.geocode.mockResolvedValue(poBoxResponse);
 
       const result = await geocodingService.validateAddress('PO Box 123', {
-        allowPOBoxes: false
+        allowPOBoxes: false,
       });
 
       expect(result.isValid).toBe(true);
@@ -302,7 +302,7 @@ describe('GeocodingService', () => {
       mockClient.geocode.mockResolvedValue(mockValidGeocodeResponse);
 
       const result = await geocodingService.validateAddress('Test Address', {
-        requiredComponents: ['street_number', 'route', 'locality', 'postal_code']
+        requiredComponents: ['street_number', 'route', 'locality', 'postal_code'],
       });
 
       expect(result.isValid).toBe(true);
@@ -320,16 +320,16 @@ describe('GeocodingService', () => {
             geometry: { location: { lat: 37.4224764, lng: -122.0842499 }, location_type: 'ROOFTOP' },
             place_id: 'test-place-id',
             types: ['street_address'],
-            address_components: []
-          }]
-        }
+            address_components: [],
+          }],
+        },
       };
-      
+
       mockClient.geocode.mockResolvedValue(mockResponse);
 
       const result = await geocodingService.batchGeocode({
         addresses: ['Address 1', 'Address 2'],
-        options: { validateDelivery: false }
+        options: { validateDelivery: false },
       });
 
       expect(result.summary.total).toBe(2);
@@ -348,14 +348,14 @@ describe('GeocodingService', () => {
               geometry: { location: { lat: 37.4224764, lng: -122.0842499 }, location_type: 'ROOFTOP' },
               place_id: 'test-place-id',
               types: ['street_address'],
-              address_components: []
-            }]
-          }
+              address_components: [],
+            }],
+          },
         })
         .mockResolvedValueOnce({ data: { results: [] } }); // No results for second address
 
       const result = await geocodingService.batchGeocode({
-        addresses: ['Valid Address', 'Invalid Address']
+        addresses: ['Valid Address', 'Invalid Address'],
       });
 
       expect(result.summary.total).toBe(2);
@@ -370,7 +370,7 @@ describe('GeocodingService', () => {
   describe('rate limiting', () => {
     it('should track rate limit usage', () => {
       const stats = geocodingService.getStats();
-      
+
       expect(stats.rateLimitPerMinute).toBe(10);
       expect(stats.remainingRequests).toBeLessThanOrEqual(10);
     });
@@ -381,9 +381,9 @@ describe('GeocodingService', () => {
       for (let i = 0; i < 15; i++) {
         promises.push(geocodingService.geocode(`Address ${i}`).catch(() => {}));
       }
-      
+
       await Promise.all(promises);
-      
+
       // This should fail due to rate limit
       await expect(geocodingService.geocode('Test Address'))
         .rejects.toThrow('Rate limit exceeded');
@@ -399,21 +399,21 @@ describe('GeocodingService', () => {
             geometry: { location: { lat: 37.4224764, lng: -122.0842499 }, location_type: 'ROOFTOP' },
             place_id: 'cached-place-id',
             types: ['street_address'],
-            address_components: []
-          }]
-        }
+            address_components: [],
+          }],
+        },
       };
-      
+
       mockClient.geocode.mockResolvedValue(mockResponse);
 
       // First call
       await geocodingService.geocode('Test Address');
-      
+
       // Second call should use cache
       await geocodingService.geocode('Test Address');
-      
+
       expect(mockClient.geocode).toHaveBeenCalledTimes(1);
-      
+
       const stats = geocodingService.getStats();
       expect(stats.cacheSize).toBeGreaterThan(0);
     });
@@ -426,16 +426,16 @@ describe('GeocodingService', () => {
             geometry: { location: { lat: 37.4224764, lng: -122.0842499 }, location_type: 'ROOFTOP' },
             place_id: 'test-place-id',
             types: ['street_address'],
-            address_components: []
-          }]
-        }
+            address_components: [],
+          }],
+        },
       };
-      
+
       mockClient.geocode.mockResolvedValue(mockResponse);
 
       await geocodingService.geocode('Test Address');
       expect(geocodingService.getStats().cacheSize).toBeGreaterThan(0);
-      
+
       geocodingService.clearCache();
       expect(geocodingService.getStats().cacheSize).toBe(0);
     });
@@ -450,13 +450,13 @@ describe('GeocodingService', () => {
             geometry: { location: { lat: 37.4224764, lng: -122.0842499 }, location_type: 'ROOFTOP' },
             place_id: 'test',
             types: ['street_address'],
-            address_components: []
-          }]
-        }
+            address_components: [],
+          }],
+        },
       });
 
       const health = await geocodingService.healthCheck();
-      
+
       expect(health.status).toBe('healthy');
       expect(health.apiKeyConfigured).toBe(true);
       expect(health.cacheEnabled).toBe(true);
@@ -464,9 +464,9 @@ describe('GeocodingService', () => {
 
     it('should return unhealthy status when API key is missing', async () => {
       const serviceWithoutKey = new GeocodingService({ apiKey: '' });
-      
+
       const health = await serviceWithoutKey.healthCheck();
-      
+
       expect(health.status).toBe('unhealthy');
       expect(health.apiKeyConfigured).toBe(false);
     });

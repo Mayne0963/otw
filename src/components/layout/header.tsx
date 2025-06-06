@@ -1,8 +1,8 @@
-"use client";
-import React from "react";
+'use client';
+import React from 'react';
 
-import { useEffect, useState } from "react";
-import { cn } from "../../lib/utils";
+import { useEffect, useState } from 'react';
+import { cn } from '../../lib/utils';
 
 export function Header() {
   const [isVisible, setIsVisible] = useState(false);
@@ -15,7 +15,7 @@ export function Header() {
       setHasScrolled(scrolled);
 
       if (scrolled) {
-        if (timer) clearTimeout(timer);
+        if (timer) {clearTimeout(timer);}
         const newTimer = setTimeout(() => {
           setIsVisible(true);
         }, 3000);
@@ -25,19 +25,19 @@ export function Header() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (timer) clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+      if (timer) {clearTimeout(timer);}
     };
   }, [timer]);
 
   return (
     <header
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-500",
-        hasScrolled ? "bg-background/80 backdrop-blur-md border-b" : "",
-        isVisible ? "opacity-100" : "opacity-0",
+        'fixed top-0 w-full z-50 transition-all duration-500',
+        hasScrolled ? 'bg-background/80 backdrop-blur-md border-b' : '',
+        isVisible ? 'opacity-100' : 'opacity-0',
       )}
     >
       {/* Header content */}

@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "../../../../lib/firebaseAdmin";
-import { db } from "../../../../lib/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { NextRequest, NextResponse } from 'next/server';
+import { adminAuth } from '../../../../lib/firebaseAdmin';
+import { db } from '../../../../lib/firebase';
+import { addDoc, collection } from 'firebase/firestore';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,21 +18,21 @@ export async function POST(req: NextRequest) {
       paymentMethod,
       subtotal,
       tax,
-      total
+      total,
     } = body;
 
     // Validate required fields
     if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
         { error: 'Items are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (!orderType || !contactInfo || !paymentMethod) {
       return NextResponse.json(
         { error: 'Missing required order information' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       total,
       status: 'pending',
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // Save order to Firestore
@@ -71,32 +71,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       orderId,
-      message: 'Order created successfully'
+      message: 'Order created successfully',
     });
 
   } catch (error) {
     console.error('Error creating order:', error);
     return NextResponse.json(
       { error: 'Failed to create order' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function GET(req: NextRequest) {
-  return NextResponse.json({ 
-    error: "Method not allowed" 
+  return NextResponse.json({
+    error: 'Method not allowed',
   }, { status: 405 });
 }
 
 export async function PUT(req: NextRequest) {
-  return NextResponse.json({ 
-    error: "Method not allowed" 
+  return NextResponse.json({
+    error: 'Method not allowed',
   }, { status: 405 });
 }
 
 export async function DELETE(req: NextRequest) {
-  return NextResponse.json({ 
-    error: "Method not allowed" 
+  return NextResponse.json({
+    error: 'Method not allowed',
   }, { status: 405 });
 }

@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       console.error('Firebase Admin not initialized');
       return NextResponse.json(
         { error: 'Server configuration error' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -39,14 +39,14 @@ export async function POST(request: NextRequest) {
       console.error('Stripe secret key not configured');
       return NextResponse.json(
         { error: 'Payment processing not configured' },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     // Get and verify the authorization token
     const authHeader = request.headers.get('authorization');
     let userId = null;
-    
+
     if (authHeader && authHeader.startsWith('Bearer ')) {
       try {
         const token = authHeader.substring(7);
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     if (!serviceDetails || !customerInfo || !amount) {
       return NextResponse.json(
         { error: 'Missing required checkout information' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     if (typeof amount !== 'number' || amount <= 0) {
       return NextResponse.json(
         { error: 'Invalid amount' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     if (!name || !phone || !email || !address) {
       return NextResponse.json(
         { error: 'Missing required customer information' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -105,8 +105,8 @@ export async function POST(request: NextRequest) {
               description: serviceDetails.description,
               metadata: {
                 service_type: serviceDetails.type,
-                order_id: orderId
-              }
+                order_id: orderId,
+              },
             },
             unit_amount: amount,
           },
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
         customer_phone: customerInfo.phone,
         customer_address: customerInfo.address,
         special_instructions: customerInfo.specialInstructions || '',
-        source: 'otw_web'
+        source: 'otw_web',
       },
       billing_address_collection: 'auto',
       shipping_address_collection: {
@@ -144,10 +144,10 @@ export async function POST(request: NextRequest) {
           },
           type: 'text',
           text: {
-            default_value: customerInfo.address
-          }
-        }
-      ]
+            default_value: customerInfo.address,
+          },
+        },
+      ],
     });
 
     // Create pending order record
@@ -170,14 +170,14 @@ export async function POST(request: NextRequest) {
       metadata: {
         source: 'otw_web',
         userAgent: request.headers.get('user-agent') || '',
-        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
-      }
+        ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+      },
     };
 
     // Save pending order to Firestore
     try {
       await adminDb.collection('otw_orders').doc(orderId).set(orderData);
-      
+
       // Also save to user's orders if authenticated
       if (userId) {
         await adminDb.collection('users').doc(userId).collection('otw_orders').doc(orderId).set({
@@ -188,29 +188,29 @@ export async function POST(request: NextRequest) {
           paymentMethod: 'card',
           orderStatus: 'pending_payment',
           stripeSessionId: session.id,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
       }
 
       console.log(`OTW Stripe session created: ${session.id} for order: ${orderId}`);
-      
+
       return NextResponse.json({
         sessionId: session.id,
         url: session.url,
-        orderId
+        orderId,
       });
     } catch (firestoreError) {
       console.error('Firestore error:', firestoreError);
       return NextResponse.json(
         { error: 'Failed to create order record' },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (error) {
     console.error('Stripe checkout session creation error:', error);
     return NextResponse.json(
       { error: 'Failed to create checkout session' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -218,20 +218,20 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function PUT() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }
 
 export async function DELETE() {
   return NextResponse.json(
     { error: 'Method not allowed' },
-    { status: 405 }
+    { status: 405 },
   );
 }

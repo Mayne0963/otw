@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       if (!restaurantId) {
         return NextResponse.json(
           { success: false, error: 'Restaurant ID is required' },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       { success: false, error: 'Invalid action. Use "search" or "details"' },
-      { status: 400 }
+      { status: 400 },
     );
   } catch (error) {
     console.error('Zomato API error:', error);
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
