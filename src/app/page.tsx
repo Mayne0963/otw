@@ -173,7 +173,6 @@ export default function Home() {
               />
               <div className="md:w-64">
                 <AddressSearch
-                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
                   onPlaceSelect={handleAddressSelect}
                   placeholder="Enter your address in Fort Wayne, IN..."
                   className="px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"

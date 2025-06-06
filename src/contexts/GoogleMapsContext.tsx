@@ -30,7 +30,7 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
   const [isLoaded, setIsLoaded] = useState(isGoogleMapsLoaded);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [googleMaps, setGoogleMaps] = useState<typeof google.maps | null>(
-    typeof window !== 'undefined' && window.google?.maps ? window.google.maps : null
+    typeof window !== 'undefined' && window.google?.maps ? window.google.maps : null,
   );
 
   useEffect(() => {
@@ -92,13 +92,13 @@ export function useGoogleMaps(): GoogleMapsContextType {
 // Helper hook for components that need to wait for Google Maps to load
 export function useGoogleMapsReady(): boolean {
   const { isLoaded, loadError } = useGoogleMaps();
-  
+
   useEffect(() => {
     if (loadError) {
       console.error('Google Maps loading error:', loadError);
     }
   }, [loadError]);
-  
+
   return isLoaded && !loadError;
 }
 

@@ -76,7 +76,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   const [isFocused, setIsFocused] = useState(false);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentId = id || `address-autocomplete-${Math.random().toString(36).substr(2, 9)}`;
-  
+
   // Use centralized Google Maps context
   const { isLoaded: isGoogleMapsLoaded, loadError: googleMapsError } = useGoogleMaps();
   const dropdownId = `${componentId}-dropdown`;
@@ -100,7 +100,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
         console.error('Google Maps services initialization error:', err);
       }
     }
-    
+
     // Handle Google Maps loading errors
     if (googleMapsError) {
       setError(googleMapsError);

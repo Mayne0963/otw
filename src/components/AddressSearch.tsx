@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useEffect } from 'react';
-import { Wrapper, Status } from '@googlemaps/react-wrapper';
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 
 interface PlaceDetails {
   formatted_address: string;
@@ -30,7 +30,6 @@ interface AddressSearchProps {
   onPlaceSelect: (place: PlaceDetails) => void;
   placeholder?: string;
   className?: string;
-  apiKey: string;
   theme?: ThemeVariant;
   size?: SizeVariant;
   disabled?: boolean;
@@ -84,7 +83,7 @@ const getBorderRadiusStyles = (borderRadius: AddressSearchProps['borderRadius'] 
   return radiusMap[borderRadius];
 };
 
-const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
+const AutocompleteInput: React.FC<Omit<AddressSearchProps, never>> = ({
   onPlaceSelect,
   placeholder = 'Enter an address...',
   className = '',
@@ -99,8 +98,10 @@ const AutocompleteInput: React.FC<Omit<AddressSearchProps, 'apiKey'>> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteRef = useRef<any>(null);
 
+  const { isLoaded } = useGoogleMaps();
+
   useEffect(() => {
-    if (!containerRef.current || !window.google) {
+    if (!containerRef.current || !isLoaded || !window.google) {
       return;
     }
 
@@ -191,7 +192,6 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
   onPlaceSelect,
   placeholder,
   className,
-  apiKey,
   theme,
   size,
   disabled,
@@ -202,54 +202,46 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
   errorMessage,
   loadingText,
 }) => {
-  const render = (status: Status) => {
-    if (status === Status.LOADING) {
-      const loadingStyles = [
-        'flex items-center justify-center p-4',
-        customStyles?.loading || '',
-      ].filter(Boolean).join(' ');
+  const { isLoaded, loadError } = useGoogleMaps();
 
-      return (
-        <div className={loadingStyles}>
-          <p>{loadingText || 'Loading Google Maps...'}</p>
-        </div>
-      );
-    }
-
-    if (status === Status.FAILURE) {
-      const errorStyles = [
-        'flex items-center justify-center p-4 text-red-600',
-        customStyles?.error || '',
-      ].filter(Boolean).join(' ');
-
-      return (
-        <div className={errorStyles}>
-          <p>{errorMessage || 'Failed to load Google Maps. Please check your API key.'}</p>
-        </div>
-      );
-    }
+  if (!isLoaded) {
+    const loadingStyles = [
+      'flex items-center justify-center p-4',
+      customStyles?.loading || '',
+    ].filter(Boolean).join(' ');
 
     return (
-      <AutocompleteInput
-        onPlaceSelect={onPlaceSelect}
-        placeholder={placeholder}
-        className={className}
-        theme={theme}
-        size={size}
-        disabled={disabled}
-        showIcon={showIcon}
-        customStyles={customStyles}
-        borderRadius={borderRadius}
-        focusColor={focusColor}
-      />
+      <div className={loadingStyles}>
+        <p>{loadingText || 'Loading Google Maps...'}</p>
+      </div>
     );
-  };
+  }
+
+  if (loadError) {
+    const errorStyles = [
+      'flex items-center justify-center p-4 text-red-600',
+      customStyles?.error || '',
+    ].filter(Boolean).join(' ');
+
+    return (
+      <div className={errorStyles}>
+        <p>{errorMessage || 'Failed to load Google Maps. Please check your API key.'}</p>
+      </div>
+    );
+  }
 
   return (
-    <Wrapper
-      apiKey={apiKey}
-      libraries={['places']}
-      render={render}
+    <AutocompleteInput
+      onPlaceSelect={onPlaceSelect}
+      placeholder={placeholder}
+      className={className}
+      theme={theme}
+      size={size}
+      disabled={disabled}
+      showIcon={showIcon}
+      customStyles={customStyles}
+      borderRadius={borderRadius}
+      focusColor={focusColor}
     />
   );
 };

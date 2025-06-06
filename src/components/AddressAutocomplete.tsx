@@ -26,7 +26,7 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [placeDetails, setPlaceDetails] = useState<PlaceDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Use centralized Google Maps context
   const { isLoaded: isGoogleMapsLoaded, loadError: googleMapsError } = useGoogleMaps();
 
@@ -67,7 +67,7 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
         setError('Failed to initialize address autocomplete. Please try again.');
       }
     }
-    
+
     // Handle Google Maps loading errors
     if (googleMapsError) {
       setError(googleMapsError);

@@ -3,22 +3,10 @@ import AddressSearch, { PlaceDetails } from './AddressSearch';
 
 const AddressSearchStylesExample: React.FC = () => {
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetails | null>(null);
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
-
   const handlePlaceSelect = (place: PlaceDetails) => {
     setSelectedPlace(place);
     console.log('Selected place:', place);
   };
-
-  if (!apiKey) {
-    return (
-      <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <p className="text-yellow-800">
-          Please add your Google Maps API key to the .env.local file as NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -32,7 +20,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Default Theme</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Default theme..."
               theme="default"
@@ -42,7 +29,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Modern Theme</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Modern theme..."
               theme="modern"
@@ -62,7 +48,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2 bg-gradient-to-r from-blue-400 to-purple-500 p-4 rounded-lg">
             <label className="block text-sm font-medium text-white">Glassmorphism Theme</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Glassmorphism theme..."
               theme="glassmorphism"
@@ -73,7 +58,6 @@ const AddressSearchStylesExample: React.FC = () => {
         <div className="bg-gray-900 p-4 rounded-lg">
           <label className="block text-sm font-medium text-white mb-2">Dark Theme</label>
           <AddressSearch
-            apiKey={apiKey}
             onPlaceSelect={handlePlaceSelect}
             placeholder="Dark theme..."
             theme="dark"
@@ -89,7 +73,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Small</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Small size..."
               size="sm"
@@ -99,7 +82,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Medium (Default)</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Medium size..."
               size="md"
@@ -109,7 +91,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Large</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Large size..."
               size="lg"
@@ -119,7 +100,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Extra Large</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Extra large size..."
               size="xl"
@@ -136,7 +116,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">No Radius</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="No border radius..."
               borderRadius="none"
@@ -146,7 +125,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Large Radius</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Large border radius..."
               borderRadius="lg"
@@ -156,7 +134,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Full Radius</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Full border radius..."
               borderRadius="full"
@@ -173,7 +150,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Purple Focus</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Purple focus color..."
               focusColor="#8B5CF6"
@@ -183,7 +159,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Green Focus</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Green focus color..."
               focusColor="#10B981"
@@ -200,7 +175,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">With Icon (Default)</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="With location icon..."
               showIcon={true}
@@ -210,7 +184,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Without Icon</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="No location icon..."
               showIcon={false}
@@ -227,7 +200,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Custom Container & Input Styles</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Custom styled input..."
               customStyles={{
@@ -241,7 +213,6 @@ const AddressSearchStylesExample: React.FC = () => {
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Disabled State</label>
             <AddressSearch
-              apiKey={apiKey}
               onPlaceSelect={handlePlaceSelect}
               placeholder="Disabled input..."
               disabled={true}
@@ -259,7 +230,6 @@ const AddressSearchStylesExample: React.FC = () => {
             Large Modern Theme with Custom Focus Color
           </label>
           <AddressSearch
-            apiKey={apiKey}
             onPlaceSelect={handlePlaceSelect}
             placeholder="Enter your delivery address..."
             theme="modern"

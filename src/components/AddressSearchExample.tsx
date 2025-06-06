@@ -4,8 +4,7 @@ import AddressSearch, { PlaceDetails } from './AddressSearch';
 const AddressSearchExample: React.FC = () => {
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetails | null>(null);
 
-  // You'll need to replace this with your actual Google Maps API key
-  const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+
 
   const handlePlaceSelect = (place: PlaceDetails) => {
     console.log('Selected place:', place);
@@ -21,7 +20,6 @@ const AddressSearchExample: React.FC = () => {
           Search for an address:
         </label>
         <AddressSearch
-          apiKey={GOOGLE_MAPS_API_KEY}
           onPlaceSelect={handlePlaceSelect}
           placeholder="Type an address..."
           className="shadow-sm"
@@ -59,14 +57,7 @@ const AddressSearchExample: React.FC = () => {
         </div>
       )}
 
-      {!GOOGLE_MAPS_API_KEY && (
-        <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-yellow-800 text-sm">
-            <strong>Note:</strong> You need to set your Google Maps API key in the environment variable
-            <code className="bg-yellow-100 px-1 rounded">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code>
-          </p>
-        </div>
-      )}
+
     </div>
   );
 };
