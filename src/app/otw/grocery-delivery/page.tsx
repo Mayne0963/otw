@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
 import {
   ShoppingCart,
   Camera,
@@ -45,6 +46,8 @@ export default function GroceryDeliveryPage() {
     address: '',
     deliveryInstructions: '',
   });
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [selectedPlace, setSelectedPlace] = useState<PlaceDetails | null>(null);
   const [selectedStore, setSelectedStore] = useState('');
   const [deliveryTime, setDeliveryTime] = useState('');
   const [specificTime, setSpecificTime] = useState('');
@@ -301,14 +304,21 @@ export default function GroceryDeliveryPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="delivery-address" className="text-gray-300">Delivery Address</Label>
-                  <Textarea
-                    id="delivery-address"
-                    placeholder="123 Main St, Apt 4B, City, State 12345"
-                    value={customerInfo.address}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, address: e.target.value })}
-                    rows={3}
-                    className="bg-otw-black/50 border-otw-gold/30 text-white placeholder:text-gray-500 focus:border-otw-gold"
+                  <AdvancedAddressAutocomplete
+                    label="Delivery Address"
+                    value={deliveryAddress}
+                    onChange={setDeliveryAddress}
+                    onPlaceSelect={(place) => {
+                      setSelectedPlace(place);
+                      setDeliveryAddress(place.address);
+                      setCustomerInfo({ ...customerInfo, address: place.address });
+                    }}
+                    placeholder="Where should we deliver your groceries?"
+                    required
+                    restrictToCountry={['US']}
+                    types={['address']}
+                    maxSuggestions={5}
+                    debounceMs={300}
                   />
                 </div>
                 <div>

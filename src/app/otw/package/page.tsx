@@ -85,12 +85,15 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
 
 export default function PackagePage() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [pickupAddress, setPickupAddress] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [packageType, setPackageType] = useState('');
+  const [selectedPickupPlace, setSelectedPickupPlace] = useState<PlaceDetails | null>(null);
+  const [selectedDeliveryPlace, setSelectedDeliveryPlace] = useState<PlaceDetails | null>(null);
 
   const deliveryServices = [
     {
@@ -186,25 +189,37 @@ export default function PackagePage() {
               <h3 className="text-2xl font-bold text-white mb-6">Get instant quote</h3>
 
               <div className="space-y-4">
-                <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <Input
-                    placeholder="Pickup address"
-                    value={pickupAddress}
-                    onChange={(e) => setPickupAddress(e.target.value)}
-                    className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
-                  />
-                </div>
+                <AdvancedAddressAutocomplete
+                  label="Pickup Address"
+                  value={pickupAddress}
+                  onChange={setPickupAddress}
+                  onPlaceSelect={(place) => {
+                    setSelectedPickupPlace(place);
+                    setPickupAddress(place.address);
+                  }}
+                  placeholder="Where should we pick up your package?"
+                  required
+                  restrictToCountry={['US']}
+                  types={['address']}
+                  maxSuggestions={5}
+                  debounceMs={300}
+                />
 
-                <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <Input
-                    placeholder="Delivery address"
-                    value={deliveryAddress}
-                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                    className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
-                  />
-                </div>
+                <AdvancedAddressAutocomplete
+                  label="Delivery Address"
+                  value={deliveryAddress}
+                  onChange={setDeliveryAddress}
+                  onPlaceSelect={(place) => {
+                    setSelectedDeliveryPlace(place);
+                    setDeliveryAddress(place.address);
+                  }}
+                  placeholder="Where should we deliver your package?"
+                  required
+                  restrictToCountry={['US']}
+                  types={['address']}
+                  maxSuggestions={5}
+                  debounceMs={300}
+                />
 
                 <Select value={packageType} onValueChange={setPackageType}>
                   <SelectTrigger className="h-14 bg-white/10 border-white/20 text-white">

@@ -65,12 +65,17 @@ import {
 } from 'react-icons/fa';
 import Link from 'next/link';
 import { useState } from 'react';
+import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
 
 export default function RidesPage() {
   const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
   const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
   const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+  const [pickupAddress, setPickupAddress] = useState('');
+  const [destinationAddress, setDestinationAddress] = useState('');
+  const [selectedPickupPlace, setSelectedPickupPlace] = useState<PlaceDetails | null>(null);
+  const [selectedDestinationPlace, setSelectedDestinationPlace] = useState<PlaceDetails | null>(null);
 
   const vehicleTypes = [
     {
@@ -158,21 +163,43 @@ export default function RidesPage() {
 
               <div className="space-y-4">
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full"></div>
-                  <Input
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full z-10"></div>
+                  <AdvancedAddressAutocomplete
+                    label=""
+                    value={pickupAddress}
+                    onChange={setPickupAddress}
+                    onPlaceSelect={(place) => {
+                      setSelectedPickupPlace(place);
+                      setPickupAddress(place.address);
+                      setPickup(place.address);
+                    }}
                     placeholder="Pickup location"
-                    value={pickup}
-                    onChange={(e) => setPickup(e.target.value)}
+                    required
+                    restrictToCountry={['US']}
+                    types={['address']}
+                    maxSuggestions={5}
+                    debounceMs={300}
                     className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
 
                 <div className="relative">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full"></div>
-                  <Input
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full z-10"></div>
+                  <AdvancedAddressAutocomplete
+                    label=""
+                    value={destinationAddress}
+                    onChange={setDestinationAddress}
+                    onPlaceSelect={(place) => {
+                      setSelectedDestinationPlace(place);
+                      setDestinationAddress(place.address);
+                      setDestination(place.address);
+                    }}
                     placeholder="Where to?"
-                    value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
+                    required
+                    restrictToCountry={['US']}
+                    types={['address']}
+                    maxSuggestions={5}
+                    debounceMs={300}
                     className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                   />
                 </div>
