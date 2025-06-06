@@ -191,70 +191,71 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Restaurants */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Featured Restaurants
-            </h2>
-            <p className="text-xl text-white/80">
-              Top-rated spots loved by Fort Wayne
-            </p>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {['All', 'Pizza', 'Asian', 'Mexican', 'American', 'Healthy'].map((category) => (
-              <Link key={category} href={`/restaurants?category=${category.toLowerCase()}`}>
-                <button
-                  className="px-6 py-3 bg-white/10 hover:bg-otw-gold/20 border border-white/20 hover:border-otw-gold/50 rounded-full text-white hover:text-otw-gold transition-all duration-300"
-                >
-                  {category}
-                </button>
-              </Link>
-            ))}
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'Broskis',
-                cuisine: 'American',
-                rating: 4.9,
-                deliveryTime: '15-25 min',
-                image: '/restaurants/broskis.jpg',
-              },
-            ].map((restaurant, index) => (
-              <div key={index} className="otw-card group cursor-pointer">
-                <div className="relative h-48 mb-4 overflow-hidden rounded-xl">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                  <div className="absolute top-4 right-4 z-20 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {restaurant.deliveryTime}
-                  </div>
-                  <div className="w-full h-full bg-gradient-to-br from-otw-red/20 to-otw-gold/20 flex items-center justify-center">
-                    <span className="text-6xl opacity-50">🍽️</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-2">{restaurant.name}</h3>
-                  <p className="text-white/70 mb-3">{restaurant.cuisine}</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <span className="text-yellow-400 mr-1">⭐</span>
-                      <span className="text-white font-semibold">{restaurant.rating}</span>
-                    </div>
-                    <Link href={`/restaurant/${restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
-                      <Button variant="primary" className="text-sm px-4 py-2">
-                        Order Now
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Featured Restaurants Section */}
+{/**   <section className="py-24">
+*        <div className="max-w-7xl mx-auto px-4">
+*          <div className="text-center mb-16">
+*            <h2 className="text-4xl font-bold text-white mb-4">
+*              Featured Restaurants
+*            </h2>
+*            <p className="text-xl text-white/80">
+*              Top-rated spots loved by Fort Wayne
+*            </p>
+*          </div>
+*
+*          <div className="flex flex-wrap justify-center gap-4 mb-12">
+*            {['All', 'Pizza', 'Asian', 'Mexican', 'American', 'Healthy'].map((category) => (
+*              <Link key={category} href={`/restaurants?category=${category.toLowerCase()}`}>
+*                <button
+*                  className="px-6 py-3 bg-white/10 hover:bg-otw-gold/20 border border-white/20 hover:border-otw-gold/50 rounded-full text-white hover:text-otw-gold transition-all duration-300"
+*                >
+*                  {category}
+*                </button>
+*              </Link>
+*            ))}
+*          </div>
+*
+*          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+*            {[
+*              {
+*                name: 'Broskis',
+*                cuisine: 'American',
+*                rating: 4.9,
+*                deliveryTime: '15-25 min',
+*                image: '/restaurants/broskis.jpg',
+*              },
+*            ].map((restaurant, index) => (
+*              <div key={index} className="otw-card group cursor-pointer">
+*                <div className="relative h-48 mb-4 overflow-hidden rounded-xl">
+*                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+*                  <div className="absolute top-4 right-4 z-20 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+*                    {restaurant.deliveryTime}
+*                  </div>
+*                  <div className="w-full h-full bg-gradient-to-br from-otw-red/20 to-otw-gold/20 flex items-center justify-center">
+*                    <span className="text-6xl opacity-50">🍽️</span>
+*                  </div>
+*                </div>
+*                <div className="p-6">
+*                  <h3 className="text-xl font-bold text-white mb-2">{restaurant.name}</h3>
+*                  <p className="text-white/70 mb-3">{restaurant.cuisine}</p>
+*                  <div className="flex items-center justify-between">
+*                    <div className="flex items-center">
+*                      <span className="text-yellow-400 mr-1">⭐</span>
+*                      <span className="text-white font-semibold">{restaurant.rating}</span>
+*                    </div>
+*                    <Link href={`/restaurant/${restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
+*                      <Button variant="primary" className="text-sm px-4 py-2">
+*                        Order Now
+*                      </Button>
+*                    </Link>
+*                  </div>
+*                </div>
+*              </div>
+*            ))}
+*          </div>
+*        </div>
+*      </section>
+*/}
 
        {/* Customer Testimonials */}
       <section className="py-24 bg-gradient-to-r from-gray-900/50 to-black/50">
