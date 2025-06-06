@@ -3,7 +3,10 @@
 import type React from "react";
 
 import { useEffect, useRef, useState } from "react";
+import { useJsApiLoader } from '@react-google-maps/api';
 import type { Location } from "../../types/location";
+
+const libraries: "places"[] = ["places"];
 
 interface ContactMapProps {
   locations: Location[];
@@ -15,40 +18,37 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
     null,
   );
 
+  // Use the Google Maps API loader hook
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    libraries: libraries,
+  });
+
+  // Calculate center point of all locations
+  const calculateCenter = () => {
+    if (locations.length === 0) return { lat: 37.0902, lng: -95.7129 }; // Default to US center
+
+    const totalLat = locations.reduce(
+      (sum, loc) => sum + loc.coordinates.lat,
+      0,
+    );
+    const totalLng = locations.reduce(
+      (sum, loc) => sum + loc.coordinates.lng,
+      0,
+    );
+
+    return {
+      lat: totalLat / locations.length,
+      lng: totalLng / locations.length,
+    };
+  };
+
   useEffect(() => {
-    // Calculate center point of all locations
-    const calculateCenter = () => {
-      if (locations.length === 0) return { lat: 37.0902, lng: -95.7129 }; // Default to US center
-
-      const totalLat = locations.reduce(
-        (sum, loc) => sum + loc.coordinates.lat,
-        0,
-      );
-      const totalLng = locations.reduce(
-        (sum, loc) => sum + loc.coordinates.lng,
-        0,
-      );
-
-      return {
-        lat: totalLat / locations.length,
-        lng: totalLng / locations.length,
-      };
-    };
-
-    // Load Google Maps script
-    const loadGoogleMapsScript = () => {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = initializeMap;
-      document.head.appendChild(script);
-    };
+    if (!isLoaded || !mapRef.current) return;
 
     // Initialize map
     const initializeMap = () => {
-      if (!mapRef.current) return;
-
       const center = calculateCenter();
 
       // Create map instance
@@ -189,13 +189,24 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
       });
     };
 
-    // Check if Google Maps script is already loaded
-    if (window.google && window.google.maps) {
-      initializeMap();
-    } else {
-      loadGoogleMapsScript();
-    }
-  }, [locations, setSelectedLocation]);
+    initializeMap();
+  }, [isLoaded, locations, setSelectedLocation, calculateCenter]);
+
+  if (loadError) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-red-500">
+        Error loading Google Maps
+      </div>
+    );
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        Loading map...
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full">

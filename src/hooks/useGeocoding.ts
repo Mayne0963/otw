@@ -4,8 +4,7 @@ import {
   reverseGeocodeCoordinates,
   validateAddress,
   GeocodingError,
-  GeocodingErrorType,
-  debounce
+  GeocodingErrorType
 } from '../lib/utils/geocoding-utils';
 import type {
   GeocodeResult,
@@ -38,7 +37,6 @@ interface UseGeocodingOptions {
 export function useGeocoding(options: UseGeocodingOptions = {}) {
   const {
     debounceMs = 300,
-    autoValidate = false,
     retries = 3,
     timeout = 10000
   } = options;
@@ -53,9 +51,10 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
 
   // Cleanup on unmount
   useEffect(() => {
+    const controller = abortControllerRef.current;
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+      if (controller) {
+        controller.abort();
       }
     };
   }, []);
@@ -86,8 +85,9 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
    */
   const clearState = useCallback(() => {
     setState({ loading: false, error: null, result: null });
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+    const controller = abortControllerRef.current;
+    if (controller) {
+      controller.abort();
     }
   }, []);
 
@@ -101,8 +101,9 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
     }
 
     // Cancel previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+    const controller = abortControllerRef.current;
+    if (controller) {
+      controller.abort();
     }
 
     setLoading(true);
@@ -152,8 +153,9 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
     }
 
     // Cancel previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+    const controller = abortControllerRef.current;
+    if (controller) {
+      controller.abort();
     }
 
     setLoading(true);
@@ -195,8 +197,9 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
     }
 
     // Cancel previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+    const controller = abortControllerRef.current;
+    if (controller) {
+      controller.abort();
     }
 
     setLoading(true);
@@ -232,11 +235,14 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
    * Debounced geocode function
    */
   const debouncedGeocode = useCallback(
-    debounce((address: string) => {
-      if (address.trim()) {
-        geocode(address);
-      }
-    }, debounceMs),
+    (address: string) => {
+      const timeoutId = setTimeout(() => {
+        if (address.trim()) {
+          geocode(address);
+        }
+      }, debounceMs);
+      return () => clearTimeout(timeoutId);
+    },
     [geocode, debounceMs]
   );
 
@@ -244,11 +250,14 @@ export function useGeocoding(options: UseGeocodingOptions = {}) {
    * Debounced validate function
    */
   const debouncedValidate = useCallback(
-    debounce((address: string) => {
-      if (address.trim()) {
-        validate(address);
-      }
-    }, debounceMs),
+    (address: string) => {
+      const timeoutId = setTimeout(() => {
+        if (address.trim()) {
+          validate(address);
+        }
+      }, debounceMs);
+      return () => clearTimeout(timeoutId);
+    },
     [validate, debounceMs]
   );
 

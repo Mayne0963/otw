@@ -6,14 +6,12 @@ import {
   useLoadScript,
   GoogleMap,
   Marker,
-  Autocomplete,
 } from "@react-google-maps/api";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import PlaceAutocomplete from "./PlaceAutocomplete";
 
 const libraries: "places"[] = ["places"];
 
@@ -62,10 +60,6 @@ export default function AddressSearch({
     useState<google.maps.DirectionsService | null>(null);
   const [directionsRenderer, setDirectionsRenderer] =
     useState<google.maps.DirectionsRenderer | null>(null);
-  const [autocompleteOrigin, setAutocompleteOrigin] =
-    useState<google.maps.places.Autocomplete | null>(null);
-  const [autocompleteDestination, setAutocompleteDestination] =
-    useState<google.maps.places.Autocomplete | null>(null);
   
   const [originLocation, setOriginLocation] = useState<google.maps.LatLng | null>(null);
   const [destinationLocation, setDestinationLocation] = useState<google.maps.LatLng | null>(null);
@@ -73,8 +67,7 @@ export default function AddressSearch({
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   
-  const originInputRef = useRef<HTMLInputElement>(null);
-  const destinationInputRef = useRef<HTMLInputElement>(null);
+
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -117,13 +110,7 @@ export default function AddressSearch({
     setDirectionsRenderer(directionsRenderer);
   }, []);
 
-  const onOriginLoad = useCallback((autocomplete: google.maps.places.Autocomplete) => {
-    setAutocompleteOrigin(autocomplete);
-  }, []);
 
-  const onDestinationLoad = useCallback((autocomplete: google.maps.places.Autocomplete) => {
-    setAutocompleteDestination(autocomplete);
-  }, []);
 
   const calculateFee = useCallback((distanceInMeters: number): number => {
     const distanceInMiles = distanceInMeters / 1609.34;
@@ -200,48 +187,48 @@ export default function AddressSearch({
     }
   }, [directionsService, directionsRenderer, originLocation, destinationLocation, calculateFee, onDistanceCalculated]);
 
-  const onOriginPlaceChanged = useCallback(() => {
-    if (autocompleteOrigin) {
-      const place = autocompleteOrigin.getPlace();
-      if (place && place.geometry && place.geometry.location) {
-        const location = place.geometry.location;
-        setOriginLocation(location);
-        
-        if (onAddressSelect) {
-          const addressData: any = {
-            formatted_address: place.formatted_address || "",
-            lat: location.lat(),
-            lng: location.lng(),
-          };
-          if (place.place_id) {
-            addressData.place_id = place.place_id;
-          }
-          onAddressSelect(addressData);
+  const onOriginPlaceSelect = useCallback((place: any) => {
+    if (place && place.geometry && place.geometry.location) {
+      const location = new google.maps.LatLng(
+        place.geometry.location.lat(),
+        place.geometry.location.lng()
+      );
+      setOriginLocation(location);
+      
+      if (onAddressSelect) {
+        const addressData: any = {
+          formatted_address: place.formatted_address || "",
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        };
+        if (place.place_id) {
+          addressData.place_id = place.place_id;
         }
-        
-        if (map) {
-          map.panTo(location);
-        }
+        onAddressSelect(addressData);
+      }
+      
+      if (map) {
+        map.panTo(location);
       }
     }
-  }, [autocompleteOrigin, onAddressSelect, map]);
+  }, [onAddressSelect, map]);
 
-  const onDestinationPlaceChanged = useCallback(() => {
-    if (autocompleteDestination) {
-      const place = autocompleteDestination.getPlace();
-      if (place && place.geometry && place.geometry.location) {
-        const location = place.geometry.location;
-        setDestinationLocation(location);
-        
-        if (map) {
-          const bounds = new google.maps.LatLngBounds();
-          if (originLocation) bounds.extend(originLocation);
-          bounds.extend(location);
-          map.fitBounds(bounds);
-        }
+  const onDestinationPlaceSelect = useCallback((place: any) => {
+    if (place && place.geometry && place.geometry.location) {
+      const location = new google.maps.LatLng(
+        place.geometry.location.lat(),
+        place.geometry.location.lng()
+      );
+      setDestinationLocation(location);
+      
+      if (map) {
+        const bounds = new google.maps.LatLngBounds();
+        if (originLocation) bounds.extend(originLocation);
+        bounds.extend(location);
+        map.fitBounds(bounds);
       }
     }
-  }, [autocompleteDestination, map, originLocation]);
+  }, [map, originLocation]);
 
   const handleCurrentLocation = useCallback(() => {
     if (currentLocation && map) {
@@ -249,9 +236,7 @@ export default function AddressSearch({
       map.setZoom(15);
       setOriginLocation(currentLocation);
       
-      if (originInputRef.current) {
-        originInputRef.current.value = "Current Location";
-      }
+      // Note: PlaceAutocomplete will handle the display value internally
       
       if (onAddressSelect) {
         onAddressSelect({
@@ -270,8 +255,7 @@ export default function AddressSearch({
     setRouteInfo(null);
     setOriginLocation(null);
     setDestinationLocation(null);
-    if (originInputRef.current) originInputRef.current.value = "";
-    if (destinationInputRef.current) destinationInputRef.current.value = "";
+    // Note: PlaceAutocomplete components will handle clearing internally
   }, [directionsRenderer]);
 
   // Auto-calculate route when both locations are set
@@ -317,22 +301,13 @@ export default function AddressSearch({
         <div className="space-y-2">
           <Label htmlFor="origin">From (Origin)</Label>
           <div className="relative">
-            <Autocomplete
-              onLoad={onOriginLoad}
-              onPlaceChanged={onOriginPlaceChanged}
-              options={{
-                types: ['address'],
-                componentRestrictions: { country: 'us' },
-              }}
-            >
-              <Input
-                ref={originInputRef}
-                id="origin"
-                type="text"
-                placeholder="Enter pickup address..."
-                className="pl-10"
-              />
-            </Autocomplete>
+            <PlaceAutocomplete
+              onPlaceSelect={onOriginPlaceSelect}
+              placeholder="Enter pickup address..."
+              className="pl-10"
+              types={['address']}
+              componentRestrictions={{ country: 'us' }}
+            />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Button
               type="button"
@@ -350,22 +325,13 @@ export default function AddressSearch({
         <div className="space-y-2">
           <Label htmlFor="destination">To (Destination)</Label>
           <div className="relative">
-            <Autocomplete
-              onLoad={onDestinationLoad}
-              onPlaceChanged={onDestinationPlaceChanged}
-              options={{
-                types: ['address'],
-                componentRestrictions: { country: 'us' },
-              }}
-            >
-              <Input
-                ref={destinationInputRef}
-                id="destination"
-                type="text"
-                placeholder="Enter delivery address..."
-                className="pl-10"
-              />
-            </Autocomplete>
+            <PlaceAutocomplete
+              onPlaceSelect={onDestinationPlaceSelect}
+              placeholder="Enter delivery address..."
+              className="pl-10"
+              types={['address']}
+              componentRestrictions={{ country: 'us' }}
+            />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           </div>
         </div>

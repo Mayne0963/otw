@@ -185,35 +185,28 @@ For a complete list, see [Google's Place Types documentation](https://developers
 
 ## Migration Guide
 
-### From Deprecated Autocomplete
+### From Legacy @react-google-maps/api Autocomplete
 
-If you're migrating from the old `google.maps.places.Autocomplete`:
+This project has been fully migrated from the legacy `@react-google-maps/api` Autocomplete to the new Google Places API (New) using `PlaceAutocompleteElement`.
 
-#### Before (Deprecated)
-
-```tsx
-// Old implementation
-const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-  types: ['address'],
-  fields: ['formatted_address', 'geometry', 'place_id']
-});
-
-autocomplete.addListener('place_changed', () => {
-  const place = autocomplete.getPlace();
-  onPlaceSelect(place);
-});
-```
-
-#### After (New)
+#### Current Implementation
 
 ```tsx
-// New implementation
+// Current implementation using PlaceAutocomplete
 <PlaceAutocomplete
   onPlaceSelect={onPlaceSelect}
   types={['address']}
-  fields={['formattedAddress', 'geometry', 'id']}
+  componentRestrictions={{ country: 'us' }}
+  placeholder="Enter address..."
 />
 ```
+
+#### Benefits of New Implementation
+
+- **Better Performance**: Uses the latest Google Places API
+- **Improved UX**: Better autocomplete suggestions and faster responses
+- **Modern Architecture**: Element-based approach with better error handling
+- **No Legacy Dependencies**: Removed dependency on `@react-google-maps/api` Autocomplete
 
 ### Key Changes
 

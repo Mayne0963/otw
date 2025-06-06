@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { Search, Navigation } from "lucide-react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
-  useLoadScript,
   GoogleMap,
   Marker,
-  Autocomplete,
+  useLoadScript,
 } from "@react-google-maps/api";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Card } from "../ui/card";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Search, Navigation } from "lucide-react";
+import PlaceAutocomplete from "./PlaceAutocomplete";
 
 const libraries: "places"[] = ["places"];
 
@@ -32,13 +31,11 @@ export default function MapSearch({
   showSearchBar = true,
 }: MapSearchProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [searchBox, setSearchBox] =
-    useState<google.maps.places.Autocomplete | null>(null);
   const [selectedLocation, setSelectedLocation] =
     useState<google.maps.LatLng | null>(null);
   const [currentLocation, setCurrentLocation] =
     useState<google.maps.LatLng | null>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
+
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -80,37 +77,28 @@ export default function MapSearch({
     setMap(map);
   };
 
-  const onSearchBoxLoad = (ref: google.maps.places.Autocomplete) => {
-    setSearchBox(ref);
-  };
-
-  const onPlacesChanged = () => {
-    if (searchBox) {
-      const place = searchBox.getPlace();
-      if (place && place.geometry && place.geometry.location) {
-        const location = place.geometry.location;
-        setSelectedLocation(location);
-        
-        // Update the visible input field
-        if (searchInputRef.current) {
-          searchInputRef.current.value = place.formatted_address || place.name || "";
-        }
-        
-        if (map) {
-          map.panTo(location);
-          map.setZoom(15);
-        }
-        
-        if (onLocationSelect) {
-          onLocationSelect({
-            lat: location.lat(),
-            lng: location.lng(),
-            address: place.formatted_address || place.name || "",
-          });
-        }
+  const onPlaceSelect = useCallback((place: google.maps.places.PlaceResult) => {
+    if (place && place.geometry && place.geometry.location) {
+      const location = new google.maps.LatLng(
+        place.geometry.location.lat(),
+        place.geometry.location.lng()
+      );
+      setSelectedLocation(location);
+      
+      if (map) {
+        map.panTo(location);
+        map.setZoom(15);
+      }
+      
+      if (onLocationSelect) {
+        onLocationSelect({
+          lat: location.lat(),
+          lng: location.lng(),
+          address: place.formatted_address || place.name || "",
+        });
       }
     }
-  };
+  }, [map, onLocationSelect]);
 
   const handleCurrentLocation = () => {
     if (currentLocation && map) {
@@ -140,26 +128,11 @@ export default function MapSearch({
       {showSearchBar && (
         <div className="p-4 border-b">
           <div className="relative">
-            <Autocomplete
-              onLoad={onSearchBoxLoad}
-              onPlaceChanged={onPlacesChanged}
-              options={{
-                types: ['address', 'establishment', 'geocode'],
-                componentRestrictions: { country: 'us' },
-                bounds: new google.maps.LatLngBounds(
-                  new google.maps.LatLng(40.9, -85.3), // Southwest corner
-                  new google.maps.LatLng(41.2, -85.0)  // Northeast corner
-                ),
-                strictBounds: false,
-              }}
-            >
-              <Input
-                ref={searchInputRef}
-                type="text"
-                placeholder="Enter address in Fort Wayne, IN..."
-                className="pl-10 pr-12 py-2 w-full"
-              />
-            </Autocomplete>
+            <PlaceAutocomplete
+              onPlaceSelect={onPlaceSelect}
+              placeholder="Enter address in Fort Wayne, IN..."
+              className="pl-10 pr-12 py-2 w-full"
+            />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <Button
               type="button"

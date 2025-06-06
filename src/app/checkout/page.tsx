@@ -17,6 +17,7 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 import { getAuth } from "firebase/auth";
+import PlaceAutocomplete, { PlaceSuggestion } from "../../components/PlaceAutocomplete";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -27,6 +28,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<PlaceSuggestion | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -595,15 +597,27 @@ export default function CheckoutPage() {
                             <label htmlFor="address" className="block text-sm font-medium mb-1">
                               Street Address *
                             </label>
-                            <input
-                              type="text"
-                              id="address"
-                              name="address"
-                              value={formData.address}
-                              onChange={handleChange}
-                              className="input w-full"
-                              required
+                            <PlaceAutocomplete
+                              onSelectAddress={(s) => {
+                                console.log("Selected address:", s);
+                                setSelected(s);
+                                // Update form data with selected address
+                                setFormData(prev => ({
+                                  ...prev,
+                                  address: s.formatted_address,
+                                  // Optionally parse city, state, zip from address components
+                                }));
+                                // Optionally send s.lat, s.lng, or s.place_id to your backend/Firebase.
+                              }}
+                              placeholder="123 Main St, Chicago, IL…"
                             />
+                            {selected && (
+                              <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+                                <p><strong>Address:</strong> {selected.formatted_address}</p>
+                                <p><strong>Lat/Lng:</strong> {selected.lat.toFixed(6)}, {selected.lng.toFixed(6)}</p>
+                                <p><strong>Place ID:</strong> {selected.place_id}</p>
+                              </div>
+                            )}
                           </div>
 
                           <div className="mt-4">

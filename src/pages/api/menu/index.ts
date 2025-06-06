@@ -15,7 +15,8 @@ export default async function handler(
         // Try to get from database first
         let menuData = await databaseService.getMenuItems(
           restaurantId as string,
-          category as string
+          category as string,
+          popular === 'true' // Pass popular filter to database service
         );
 
         // TODO: Remove static data fallback - all data should come from database

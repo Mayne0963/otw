@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useJsApiLoader } from '@react-google-maps/api';
 import { MapPin } from 'lucide-react';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
@@ -49,54 +50,13 @@ export default function PlaceAutocomplete({
 }: PlaceAutocompleteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteElementRef = useRef<any>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Load Google Maps API if not already loaded
-  useEffect(() => {
-    const loadGoogleMapsAPI = async () => {
-      // Check if Google Maps API is already loaded
-      if (window.google && window.google.maps && window.google.maps.places) {
-        setIsLoaded(true);
-        return;
-      }
-
-      // Check if script is already being loaded
-      const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
-      if (existingScript) {
-        existingScript.addEventListener('load', () => setIsLoaded(true));
-        existingScript.addEventListener('error', () => setLoadError('Failed to load Google Maps API'));
-        return;
-      }
-
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-      if (!apiKey) {
-        setLoadError('Google Maps API key not found');
-        return;
-      }
-
-      try {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
-        script.async = true;
-        script.defer = true;
-        
-        script.onload = () => {
-          setIsLoaded(true);
-        };
-        
-        script.onerror = () => {
-          setLoadError('Failed to load Google Maps API');
-        };
-        
-        document.head.appendChild(script);
-      } catch (error) {
-        setLoadError('Error loading Google Maps API');
-      }
-    };
-
-    loadGoogleMapsAPI();
-  }, []);
+  // Use the Google Maps API loader hook
+  const { isLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    libraries: libraries,
+  });
 
   // Initialize PlaceAutocompleteElement when API is loaded
   useEffect(() => {
@@ -181,9 +141,8 @@ export default function PlaceAutocomplete({
       };
     } catch (error) {
       console.error('Error initializing PlaceAutocompleteElement:', error);
-      setLoadError('Failed to initialize autocomplete');
     }
-  }, [isLoaded, onPlaceSelect, placeholder, disabled, types, componentRestrictions, bounds, strictBounds, fields, className, showIcon, onChange]);
+  }, [isLoaded, onPlaceSelect, placeholder, disabled, types, componentRestrictions, bounds, strictBounds, className, showIcon, onChange, value]);
 
   // Update value when prop changes
   useEffect(() => {
