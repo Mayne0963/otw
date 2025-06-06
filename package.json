@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "fix-all": "npm run lint && npm run format && npm run typecheck",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0",
+    "setup:google-maps": "node scripts/setup-google-maps.js"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.17.3",

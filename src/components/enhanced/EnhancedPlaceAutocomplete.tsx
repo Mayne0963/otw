@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import { MapPin, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { MapPin, AlertCircle, CheckCircle2, Loader2, X } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useGoogleMaps } from '../../contexts/GoogleMapsContext';
 
@@ -57,6 +57,8 @@ interface EnhancedPlaceAutocompleteProps {
   'aria-label'?: string;
   'aria-describedby'?: string;
   autoComplete?: string;
+  showClearButton?: boolean;
+  theme?: 'light' | 'dark';
 }
 
 interface Suggestion {
@@ -65,6 +67,10 @@ interface Suggestion {
   mainText: string;
   secondaryText: string;
   types: string[];
+  structuredFormatting: {
+    mainText: string;
+    secondaryText?: string;
+  };
 }
 
 const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
@@ -93,6 +99,8 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
   autoComplete = 'off',
+  showClearButton = true,
+  theme = 'dark',
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -106,44 +114,55 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [validation, setValidation] = useState<ValidationResult | null>(null);
   const [isFocused, setIsFocused] = useState(false);
-  const [autocompleteService, setAutocompleteService] = useState<google.maps.places.AutocompleteService | null>(null);
-  const [placesService, setPlacesService] = useState<google.maps.places.PlacesService | null>(null);
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
 
-  const { isLoaded, loadError } = useGoogleMaps();
+  const { isLoaded, loadError, autocompleteService, placesService } = useGoogleMaps();
 
   const dropdownId = `${componentId}-dropdown`;
   const errorId = `${componentId}-error`;
   const labelId = `${componentId}-label`;
 
-  // Initialize Google Maps services
-  useEffect(() => {
-    if (isLoaded && !autocompleteService && !placesService) {
-      try {
-        const autoService = new google.maps.places.AutocompleteService();
-        const placesServiceDiv = document.createElement('div');
-        const placesServiceInstance = new google.maps.places.PlacesService(placesServiceDiv);
-
-        setAutocompleteService(autoService);
-        setPlacesService(placesServiceInstance);
-      } catch (error) {
-        console.error('Failed to initialize Google Maps services:', error);
-        setValidation({
-          isValid: false,
-          message: 'Failed to initialize address search',
-          type: 'error',
-        });
-      }
+  // Theme-based styles
+  const themeStyles = useMemo(() => {
+    if (theme === 'light') {
+      return {
+        container: 'bg-white border-gray-300',
+        input: 'bg-white text-gray-900 placeholder-gray-500',
+        dropdown: 'bg-white border-gray-200 shadow-lg',
+        suggestion: 'hover:bg-gray-50 text-gray-900',
+        suggestionActive: 'bg-blue-50 text-blue-900',
+        icon: 'text-gray-400',
+        error: 'text-red-600',
+        success: 'text-green-600',
+      };
     }
-  }, [isLoaded, autocompleteService, placesService]);
+    return {
+      container: 'bg-gray-800 border-gray-700',
+      input: 'bg-gray-800 text-white placeholder-gray-400',
+      dropdown: 'bg-gray-800 border-gray-700 shadow-2xl',
+      suggestion: 'hover:bg-gray-700 text-white',
+      suggestionActive: 'bg-yellow-400/20 text-yellow-400',
+      icon: 'text-gray-400',
+      error: 'text-red-400',
+      success: 'text-green-400',
+    };
+  }, [theme]);
+
+  // Sync external value changes
+  useEffect(() => {
+    if (value !== inputValue && !hasUserInteracted) {
+      setInputValue(value);
+    }
+  }, [value, inputValue, hasUserInteracted]);
 
   // Validate address within service area
   const validateServiceArea = useCallback(
     (lat: number, lng: number): boolean => {
-      if (!serviceArea) return true;
+      if (!serviceArea || !window.google?.maps?.geometry) return true;
 
-      const distance = google.maps.geometry.spherical.computeDistanceBetween(
-        new google.maps.LatLng(lat, lng),
-        new google.maps.LatLng(serviceArea.center.lat, serviceArea.center.lng),
+      const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
+        new window.google.maps.LatLng(lat, lng),
+        new window.google.maps.LatLng(serviceArea.center.lat, serviceArea.center.lng),
       );
 
       return distance <= serviceArea.radius * 1000; // Convert km to meters
@@ -151,7 +170,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
     [serviceArea],
   );
 
-  // Debounced search function
+  // Debounced search function with improved error handling
   const debouncedSearch = useCallback(
     (query: string) => {
       if (debounceTimeoutRef.current) {
@@ -163,7 +182,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
           setIsLoading(true);
 
           const request: google.maps.places.AutocompletionRequest = {
-            input: query,
+            input: query.trim(),
             types,
             componentRestrictions,
             bounds,
@@ -182,15 +201,23 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
                   mainText: prediction.structured_formatting.main_text,
                   secondaryText: prediction.structured_formatting.secondary_text || '',
                   types: prediction.types,
+                  structuredFormatting: {
+                    mainText: prediction.structured_formatting.main_text,
+                    secondaryText: prediction.structured_formatting.secondary_text,
+                  },
                 }));
 
               setSuggestions(formattedSuggestions);
               setShowDropdown(true);
               setSelectedIndex(-1);
+              
+              if (validateAddress) {
+                setValidation(null); // Clear previous validation errors
+              }
             } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
               setSuggestions([]);
               setShowDropdown(false);
-              if (validateAddress) {
+              if (validateAddress && query.trim().length > 0) {
                 setValidation({
                   isValid: false,
                   message: 'No addresses found. Please try a different search.',
@@ -201,10 +228,19 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
               console.warn('Autocomplete service error:', status);
               setSuggestions([]);
               setShowDropdown(false);
+              
               if (validateAddress) {
+                let errorMessage = 'Address search temporarily unavailable.';
+                
+                if (status === google.maps.places.PlacesServiceStatus.REQUEST_DENIED) {
+                  errorMessage = 'Address search access denied. Please check API configuration.';
+                } else if (status === google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
+                  errorMessage = 'Search limit exceeded. Please try again later.';
+                }
+                
                 setValidation({
                   isValid: false,
-                  message: 'Address search temporarily unavailable. Please try again.',
+                  message: errorMessage,
                   type: 'error',
                 });
               }
@@ -214,18 +250,31 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
           setSuggestions([]);
           setShowDropdown(false);
           setIsLoading(false);
+          
+          if (validateAddress && query.trim().length === 0) {
+            setValidation(null);
+          }
         }
       }, debounceMs);
     },
     [autocompleteService, isLoaded, maxSuggestions, debounceMs, types, componentRestrictions, bounds, strictBounds, validateAddress],
   );
 
-  // Handle place selection
+  // Handle place selection with improved validation
   const handlePlaceSelect = useCallback(
     (suggestion: Suggestion) => {
-      if (!placesService) return;
+      if (!placesService) {
+        setValidation({
+          isValid: false,
+          message: 'Places service not available. Please try again.',
+          type: 'error',
+        });
+        return;
+      }
 
       setIsLoading(true);
+      setShowDropdown(false);
+      setInputValue(suggestion.description);
 
       const request: google.maps.places.PlaceDetailsRequest = {
         placeId: suggestion.placeId,
@@ -252,8 +301,8 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
           if (serviceArea && !validateServiceArea(lat, lng)) {
             setValidation({
               isValid: false,
-              message: 'Address is outside our service area.',
-              type: 'error',
+              message: `Address is outside service area (${serviceArea.radius}km radius).`,
+              type: 'warning',
             });
             return;
           }
@@ -289,151 +338,152 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
             types: place.types,
           };
 
-          setInputValue(place.formatted_address);
-          setSuggestions([]);
-          setShowDropdown(false);
-          setSelectedIndex(-1);
+          // Set success validation
+          if (validateAddress) {
+            setValidation({
+              isValid: true,
+              message: 'Address validated successfully',
+              type: 'success',
+            });
+          }
 
-          const validationResult: ValidationResult = {
-            isValid: true,
-            message: 'Address validated successfully',
-            type: 'success',
-          };
-          setValidation(validationResult);
-
+          // Call callbacks
+          onPlaceSelect(placeDetails);
           if (onChange) {
             onChange(place.formatted_address);
           }
-
-          onPlaceSelect(placeDetails);
-
-          if (onValidationChange) {
-            onValidationChange(validationResult);
-          }
-
-          // Announce selection to screen readers
-          const announcement = `Address selected: ${place.formatted_address}`;
-          const ariaLiveRegion = document.createElement('div');
-          ariaLiveRegion.setAttribute('aria-live', 'polite');
-          ariaLiveRegion.setAttribute('aria-atomic', 'true');
-          ariaLiveRegion.style.position = 'absolute';
-          ariaLiveRegion.style.left = '-10000px';
-          ariaLiveRegion.textContent = announcement;
-          document.body.appendChild(ariaLiveRegion);
-          setTimeout(() => document.body.removeChild(ariaLiveRegion), 1000);
         } else {
-          const errorValidation: ValidationResult = {
-            isValid: false,
-            message: 'Failed to get address details. Please try again.',
-            type: 'error',
-          };
-          setValidation(errorValidation);
-          if (onValidationChange) {
-            onValidationChange(errorValidation);
+          let errorMessage = 'Failed to get address details.';
+          
+          if (status === google.maps.places.PlacesServiceStatus.NOT_FOUND) {
+            errorMessage = 'Address not found. Please try a different address.';
+          } else if (status === google.maps.places.PlacesServiceStatus.REQUEST_DENIED) {
+            errorMessage = 'Access denied. Please check API configuration.';
           }
-          console.error('Place details error:', status);
+          
+          setValidation({
+            isValid: false,
+            message: errorMessage,
+            type: 'error',
+          });
         }
       });
     },
-    [placesService, onChange, onPlaceSelect, onValidationChange, serviceArea, validateServiceArea],
+    [placesService, serviceArea, validateServiceArea, validateAddress, onPlaceSelect, onChange],
   );
 
-  // Handle input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setInputValue(newValue);
-
-    if (onChange) {
-      onChange(newValue);
-    }
-
-    // Clear validation when user starts typing
-    if (validation && validation.type !== 'success') {
-      setValidation(null);
-      if (onValidationChange) {
-        onValidationChange({ isValid: true, type: 'success' });
+  // Handle input changes
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;
+      setInputValue(newValue);
+      setHasUserInteracted(true);
+      
+      if (onChange) {
+        onChange(newValue);
       }
-    }
 
-    if (newValue.trim().length > 0) {
+      // Clear validation when user starts typing
+      if (validation && newValue !== value) {
+        setValidation(null);
+      }
+
+      // Trigger search
       debouncedSearch(newValue);
-    } else {
-      setSuggestions([]);
-      setShowDropdown(false);
-      setIsLoading(false);
-    }
-  };
+    },
+    [onChange, validation, value, debouncedSearch],
+  );
 
   // Handle keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showDropdown || suggestions.length === 0) return;
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!showDropdown || suggestions.length === 0) return;
 
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
-          handlePlaceSelect(suggestions[selectedIndex]);
-        }
-        break;
-      case 'Escape':
-        setSuggestions([]);
-        setShowDropdown(false);
-        setSelectedIndex(-1);
-        inputRef.current?.blur();
-        break;
-      case 'Tab':
-        setSuggestions([]);
-        setShowDropdown(false);
-        setSelectedIndex(-1);
-        break;
-    }
-  };
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+          break;
+        case 'Enter':
+          e.preventDefault();
+          if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+            handlePlaceSelect(suggestions[selectedIndex]);
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          setShowDropdown(false);
+          setSelectedIndex(-1);
+          inputRef.current?.blur();
+          break;
+        case 'Tab':
+          setShowDropdown(false);
+          setSelectedIndex(-1);
+          break;
+      }
+    },
+    [showDropdown, suggestions, selectedIndex, handlePlaceSelect],
+  );
 
   // Handle focus
-  const handleFocus = () => {
+  const handleFocus = useCallback(() => {
     setIsFocused(true);
-    if (onFocus) {
-      onFocus();
-    }
-    if (inputValue.trim().length > 2 && suggestions.length > 0) {
+    setHasUserInteracted(true);
+    if (onFocus) onFocus();
+    
+    // Show dropdown if there are suggestions
+    if (suggestions.length > 0) {
       setShowDropdown(true);
     }
-  };
+  }, [onFocus, suggestions.length]);
 
   // Handle blur
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Delay hiding dropdown to allow for click events
-    setTimeout(() => {
-      if (!dropdownRef.current?.contains(document.activeElement)) {
+  const handleBlur = useCallback(
+    (e: React.FocusEvent<HTMLInputElement>) => {
+      // Delay hiding dropdown to allow for suggestion clicks
+      setTimeout(() => {
         setIsFocused(false);
         setShowDropdown(false);
         setSelectedIndex(-1);
-        if (onBlur) {
-          onBlur();
-        }
-      }
-    }, 150);
-  };
+        if (onBlur) onBlur();
+      }, 150);
+    },
+    [onBlur],
+  );
+
+  // Handle clear button
+  const handleClear = useCallback(() => {
+    setInputValue('');
+    setSuggestions([]);
+    setShowDropdown(false);
+    setValidation(null);
+    setHasUserInteracted(true);
+    
+    if (onChange) {
+      onChange('');
+    }
+    
+    inputRef.current?.focus();
+  }, [onChange]);
 
   // Handle suggestion click
-  const handleSuggestionClick = (suggestion: Suggestion) => {
-    handlePlaceSelect(suggestion);
-  };
+  const handleSuggestionClick = useCallback(
+    (suggestion: Suggestion) => {
+      handlePlaceSelect(suggestion);
+    },
+    [handlePlaceSelect],
+  );
 
-  // Update input value when prop changes
+  // Update validation callback
   useEffect(() => {
-    if (value !== inputValue) {
-      setInputValue(value);
+    if (onValidationChange && validation) {
+      onValidationChange(validation);
     }
-  }, [value]);
+  }, [validation, onValidationChange]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -444,178 +494,152 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
     };
   }, []);
 
-  // Memoized validation icon
-  const validationIcon = useMemo(() => {
-    if (!validation) return null;
-
-    switch (validation.type) {
-      case 'success':
-        return <CheckCircle2 className="w-4 h-4 text-green-500" />;
-      case 'error':
-        return <AlertCircle className="w-4 h-4 text-red-500" />;
-      case 'warning':
-        return <AlertCircle className="w-4 h-4 text-yellow-500" />;
-      default:
-        return null;
-    }
-  }, [validation]);
-
+  // Show loading error if Google Maps failed to load
   if (loadError) {
     return (
-      <div className={cn('space-y-2', className)}>
+      <div className={cn('relative', className)}>
         {label && (
-          <label htmlFor={componentId} className="text-sm font-medium text-gray-700">
+          <label htmlFor={componentId} className={cn('block text-sm font-medium mb-2', themeStyles.error)}>
             {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
           </label>
         )}
-        <div className="relative">
-          <input
-            id={componentId}
-            type="text"
-            placeholder={`Error: ${loadError}`}
-            disabled
-            className={cn(
-              'flex h-10 w-full rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-600',
-              showIcon ? 'pl-10' : '',
-              inputClassName,
-            )}
-            aria-label={ariaLabel || label}
-            aria-describedby={ariaDescribedBy}
-          />
-          {showIcon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <AlertCircle className="w-4 h-4 text-red-500" />
-            </div>
-          )}
+        <div className={cn(
+          'flex items-center px-4 py-3 rounded-lg border',
+          themeStyles.container,
+          'border-red-500'
+        )}>
+          <AlertCircle className={cn('w-5 h-5 mr-3', themeStyles.error)} />
+          <span className={cn('text-sm', themeStyles.error)}>Address search unavailable</span>
         </div>
-      </div>
-    );
-  }
-
-  if (!isLoaded) {
-    return (
-      <div className={cn('space-y-2', className)}>
-        {label && (
-          <label htmlFor={componentId} className="text-sm font-medium text-gray-700">
-            {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
-          </label>
-        )}
-        <div className="relative">
-          <input
-            id={componentId}
-            type="text"
-            placeholder="Loading address search..."
-            disabled
-            className={cn(
-              'flex h-10 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600',
-              showIcon ? 'pl-10' : '',
-              inputClassName,
-            )}
-            aria-label={ariaLabel || label}
-            aria-describedby={ariaDescribedBy}
-          />
-          {showIcon && (
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
-            </div>
-          )}
-        </div>
+        <p className={cn('text-xs mt-1', themeStyles.error)}>{loadError}</p>
       </div>
     );
   }
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn('relative', className)}>
       {label && (
-        <label htmlFor={componentId} id={labelId} className="text-sm font-medium text-gray-700">
+        <label
+          htmlFor={componentId}
+          id={labelId}
+          className={cn('block text-sm font-medium mb-2', theme === 'dark' ? 'text-gray-300' : 'text-gray-700')}
+        >
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className={themeStyles.error}> *</span>}
         </label>
       )}
+      
       <div className="relative">
-        <input
-          ref={inputRef}
-          id={componentId}
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          placeholder={placeholder}
-          disabled={disabled}
-          required={required}
-          autoComplete={autoComplete}
-          className={cn(
-            'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-            showIcon ? 'pl-10' : '',
-            validation?.type === 'error' ? 'border-red-500 focus-visible:ring-red-500' : '',
-            validation?.type === 'success' ? 'border-green-500 focus-visible:ring-green-500' : '',
-            validation?.type === 'warning' ? 'border-yellow-500 focus-visible:ring-yellow-500' : '',
-            inputClassName,
+        <div className={cn(
+          'flex items-center rounded-lg border transition-all duration-200',
+          themeStyles.container,
+          isFocused ? 'ring-2 ring-yellow-400 border-yellow-400' : '',
+          validation?.type === 'error' ? 'border-red-500' : '',
+          validation?.type === 'success' ? 'border-green-500' : '',
+          disabled ? 'opacity-50 cursor-not-allowed' : '',
+        )}>
+          {showIcon && (
+            <div className="flex items-center justify-center w-12 h-12">
+              {isLoading ? (
+                <Loader2 className={cn('w-5 h-5 animate-spin', themeStyles.icon)} />
+              ) : (
+                <MapPin className={cn('w-5 h-5', themeStyles.icon)} />
+              )}
+            </div>
           )}
-          aria-label={ariaLabel || label}
-          aria-describedby={cn(
-            ariaDescribedBy,
-            validation ? errorId : undefined,
-            showDropdown ? dropdownId : undefined,
-          )}
-          aria-expanded={showDropdown}
-          aria-autocomplete="list"
-          aria-haspopup="listbox"
-          role="combobox"
-        />
-        
-        {/* Icon */}
-        {showIcon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
-            ) : (
-              <MapPin className="w-4 h-4 text-muted-foreground" />
+          
+          <input
+            ref={inputRef}
+            type="text"
+            id={componentId}
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            disabled={disabled || !isLoaded}
+            required={required}
+            autoComplete={autoComplete}
+            aria-label={ariaLabel || label}
+            aria-describedby={cn(
+              ariaDescribedBy,
+              validation ? errorId : undefined,
+              showDropdown ? dropdownId : undefined
+            ).trim() || undefined}
+            aria-expanded={showDropdown}
+            aria-autocomplete="list"
+            aria-activedescendant={selectedIndex >= 0 ? `${componentId}-option-${selectedIndex}` : undefined}
+            role="combobox"
+            className={cn(
+              'flex-1 px-4 py-3 text-base bg-transparent border-0 outline-none',
+              'placeholder:text-center focus:placeholder:text-left transition-all duration-200',
+              themeStyles.input,
+              showIcon ? 'pl-0' : 'px-4',
+              showClearButton && inputValue ? 'pr-12' : 'pr-4',
+              inputClassName
             )}
-          </div>
-        )}
-        
-        {/* Validation icon */}
-        {validationIcon && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-            {validationIcon}
-          </div>
-        )}
-        
+          />
+          
+          {showClearButton && inputValue && !disabled && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className={cn(
+                'flex items-center justify-center w-8 h-8 mr-2 rounded-full',
+                'hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors',
+                themeStyles.icon
+              )}
+              aria-label="Clear address"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+          
+          {validation && (
+            <div className="flex items-center justify-center w-8 h-8 mr-2">
+              {validation.type === 'success' ? (
+                <CheckCircle2 className={cn('w-5 h-5', themeStyles.success)} />
+              ) : (
+                <AlertCircle className={cn('w-5 h-5', themeStyles.error)} />
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Dropdown */}
         {showDropdown && suggestions.length > 0 && (
           <div
             ref={dropdownRef}
             id={dropdownId}
-            className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto"
             role="listbox"
             aria-label="Address suggestions"
+            className={cn(
+              'absolute z-50 w-full mt-1 rounded-lg border overflow-hidden',
+              themeStyles.dropdown
+            )}
           >
             {suggestions.map((suggestion, index) => (
               <div
                 key={suggestion.placeId}
-                className={cn(
-                  'px-4 py-3 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-gray-50',
-                  selectedIndex === index ? 'bg-blue-50 border-blue-200' : '',
-                )}
-                onClick={() => handleSuggestionClick(suggestion)}
+                id={`${componentId}-option-${index}`}
                 role="option"
-                aria-selected={selectedIndex === index}
-                tabIndex={-1}
+                aria-selected={index === selectedIndex}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className={cn(
+                  'px-4 py-3 cursor-pointer transition-colors border-b border-gray-200 dark:border-gray-700 last:border-b-0',
+                  index === selectedIndex ? themeStyles.suggestionActive : themeStyles.suggestion
+                )}
               >
                 <div className="flex items-start space-x-3">
-                  <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                  <MapPin className={cn('w-4 h-4 mt-0.5 flex-shrink-0', themeStyles.icon)} />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-gray-900 truncate">
-                      {suggestion.mainText}
+                    <div className="font-medium truncate">
+                      {suggestion.structuredFormatting.mainText}
                     </div>
-                    {suggestion.secondaryText && (
-                      <div className="text-sm text-gray-500 truncate">
-                        {suggestion.secondaryText}
+                    {suggestion.structuredFormatting.secondaryText && (
+                      <div className={cn('text-sm opacity-75 truncate')}>
+                        {suggestion.structuredFormatting.secondaryText}
                       </div>
                     )}
                   </div>
@@ -625,22 +649,23 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
           </div>
         )}
       </div>
-      
+
       {/* Validation message */}
-      {validation && validation.message && (
-        <div
+      {validation && (
+        <p
           id={errorId}
           className={cn(
-            'text-sm',
-            validation.type === 'error' ? 'text-red-600' : '',
-            validation.type === 'success' ? 'text-green-600' : '',
-            validation.type === 'warning' ? 'text-yellow-600' : '',
+            'text-xs mt-1 flex items-center space-x-1',
+            validation.type === 'success' ? themeStyles.success : themeStyles.error
           )}
-          role={validation.type === 'error' ? 'alert' : 'status'}
-          aria-live={validation.type === 'error' ? 'assertive' : 'polite'}
         >
-          {validation.message}
-        </div>
+          {validation.type === 'success' ? (
+            <CheckCircle2 className="w-3 h-3" />
+          ) : (
+            <AlertCircle className="w-3 h-3" />
+          )}
+          <span>{validation.message}</span>
+        </p>
       )}
     </div>
   );

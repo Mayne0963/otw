@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Calendar, Clock, Users, MapPin, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EnhancedPlaceAutocomplete, { PlaceDetails, ValidationResult } from './EnhancedPlaceAutocomplete';
+import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
 
 interface BookingFormData {
   pickupLocation: PlaceDetails | null;
@@ -74,6 +75,7 @@ const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const { isLoaded, loadError } = useGoogleMaps();
 
   // Get minimum date (today + minimum advance booking)
   const getMinDate = useCallback(() => {
@@ -87,7 +89,7 @@ const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
     const now = new Date();
     const selected = new Date(selectedDate);
     const today = new Date().toISOString().split('T')[0];
-    
+
     if (selectedDate === today) {
       now.setHours(now.getHours() + minAdvanceBooking);
       return now.toTimeString().slice(0, 5);
@@ -198,15 +200,15 @@ const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
   // Check if form is valid
   const isFormValid = useCallback(() => {
     const requiredFields = ['pickupLocation', 'pickupDate', 'pickupTime', 'passengers'] as const;
-    
+
     // Check required fields
     for (const field of requiredFields) {
       if (field === 'pickupLocation') {
-        if (!formData.pickupLocation) return false;
+        if (!formData.pickupLocation) {return false;}
       } else if (field === 'pickupDate' || field === 'pickupTime') {
-        if (!formData[field]) return false;
+        if (!formData[field]) {return false;}
       } else if (field === 'passengers') {
-        if (formData.passengers < 1) return false;
+        if (formData.passengers < 1) {return false;}
       }
     }
 
@@ -224,7 +226,17 @@ const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isLoaded) {
+      setSubmitError('Google Maps is still loading. Please wait a moment.');
+      return;
+    }
     
+    if (loadError) {
+      setSubmitError('Google Maps failed to load. Please refresh the page and try again.');
+      return;
+    }
+
     if (!isFormValid()) {
       setSubmitError('Please fix all validation errors before submitting');
       return;
@@ -261,6 +273,34 @@ const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
       }));
     }
   }, []);
+
+  // Show loading state while Google Maps is loading
+  if (!isLoaded && !loadError) {
+    return (
+      <div className={cn('w-full max-w-2xl mx-auto', className)}>
+        <div className="flex items-center justify-center space-x-2 py-8">
+          <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <span className="text-gray-600">Loading Google Maps...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if Google Maps failed to load
+  if (loadError) {
+    return (
+      <div className={cn('w-full max-w-2xl mx-auto', className)}>
+        <div className="flex items-center space-x-2 p-4 bg-red-50 border border-red-200 rounded-md" role="alert">
+          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+          <div>
+            <h3 className="text-sm font-medium text-red-800">Google Maps Error</h3>
+            <p className="text-sm text-red-700 mt-1">{loadError}</p>
+            <p className="text-xs text-red-600 mt-2">Please refresh the page to try again.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn('w-full max-w-2xl mx-auto', className)}>
@@ -497,7 +537,7 @@ const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={disabled || isSubmitting || !isFormValid()}
+          disabled={disabled || isSubmitting || !isFormValid() || !isLoaded}
           className={cn(
             'w-full flex items-center justify-center space-x-2 h-12 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-medium rounded-md transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
             isSubmitting ? 'cursor-wait' : '',

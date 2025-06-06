@@ -67,7 +67,10 @@ import {
 } from 'react-icons/fa';
 import Link from 'next/link';
 import { useState } from 'react';
-import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
+import { EnhancedPlaceAutocomplete } from '../../../components/enhanced/EnhancedPlaceAutocomplete';
+import { EnhancedBookingForm } from '../../../components/enhanced/EnhancedBookingForm';
+import { GoogleMapsProvider } from '../../../contexts/GoogleMapsContext';
+import type { PlaceDetails } from '../../../components/enhanced/EnhancedPlaceAutocomplete';
 
 export default function RidesPage() {
   const [pickup, setPickup] = useState('');
@@ -80,19 +83,24 @@ export default function RidesPage() {
   const [selectedDestinationPlace, setSelectedDestinationPlace] = useState<PlaceDetails | null>(null);
   const [selectedService, setSelectedService] = useState<string>('');
 
+  const handleBookingSubmit = async (formData: any) => {
+    console.log('Booking submitted:', formData);
+    // Handle booking submission logic here
+  };
+
   const services = [
     {
       id: 'ride',
       name: 'Ride Service',
       description: 'Professional transportation service',
-      price: '$15.00'
+      price: '$15.00',
     },
     {
       id: 'delivery',
-      name: 'Delivery Service', 
+      name: 'Delivery Service',
       description: 'Package and item delivery',
-      price: '$10.00'
-    }
+      price: '$10.00',
+    },
   ];
 
   const vehicleTypes = [
@@ -126,7 +134,8 @@ export default function RidesPage() {
   ];
 
   return (
-    <div className="min-h-screen pb-20 pt-16">
+    <GoogleMapsProvider>
+      <div className="min-h-screen pb-20 pt-16">
       {/* Enhanced Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900">
         <div className="absolute inset-0 z-0">
@@ -182,43 +191,39 @@ export default function RidesPage() {
               <div className="space-y-4">
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full z-10"></div>
-                  <AdvancedAddressAutocomplete
+                  <EnhancedPlaceAutocomplete
                     label=""
-                    value={pickupAddress}
-                    onChange={setPickupAddress}
+                    placeholder="Pickup location"
                     onPlaceSelect={(place) => {
                       setSelectedPickupPlace(place);
                       setPickupAddress(place.address);
                       setPickup(place.address);
                     }}
-                    placeholder="Pickup location"
-                    required
-                    restrictToCountry={['US']}
-                    types={['address']}
-                    maxSuggestions={5}
-                    debounceMs={300}
-                    className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
+                    className="w-full"
+                    inputClassName="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
+                    serviceArea={{
+                      center: { lat: 41.0793, lng: -85.1394 },
+                      radius: 50000
+                    }}
                   />
                 </div>
 
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full z-10"></div>
-                  <AdvancedAddressAutocomplete
+                  <EnhancedPlaceAutocomplete
                     label=""
-                    value={destinationAddress}
-                    onChange={setDestinationAddress}
+                    placeholder="Where to?"
                     onPlaceSelect={(place) => {
                       setSelectedDestinationPlace(place);
                       setDestinationAddress(place.address);
                       setDestination(place.address);
                     }}
-                    placeholder="Where to?"
-                    required
-                    restrictToCountry={['US']}
-                    types={['address']}
-                    maxSuggestions={5}
-                    debounceMs={300}
-                    className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
+                    className="w-full"
+                    inputClassName="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
+                    serviceArea={{
+                      center: { lat: 41.0793, lng: -85.1394 },
+                      radius: 50000
+                    }}
                   />
                 </div>
 
@@ -471,6 +476,7 @@ export default function RidesPage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </GoogleMapsProvider>
   );
 }
