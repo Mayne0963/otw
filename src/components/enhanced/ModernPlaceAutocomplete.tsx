@@ -112,7 +112,9 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
 
   // Sync external value changes
   useEffect(() => {
-    if (value !== inputValue) {
+    // Only update if the external value is different and not empty
+    // This prevents clearing the input during typing
+    if (value !== inputValue && value !== undefined) {
       setInputValue(value);
       if (!value) {
         setSuggestions([]);
@@ -120,7 +122,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
         setValidation({ isValid: false, message: '', severity: 'success' });
       }
     }
-  }, [value, inputValue]);
+  }, [value]);
 
   // Validate service area if configured
   const validateServiceArea = useCallback((location: { lat: number; lng: number }): boolean => {
@@ -215,7 +217,8 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
 
   // Handle place selection
   const handlePlaceSelect = useCallback(async (suggestion: AutocompleteSuggestion) => {
-    setInputValue(suggestion.displayName);
+    const displayName = suggestion.displayName;
+    setInputValue(displayName);
     setSuggestions([]);
     setIsDropdownOpen(false);
     setSelectedIndex(-1);
@@ -348,8 +351,19 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     setSelectedIndex(-1);
     setValidation({ isValid: false, message: '', severity: 'success' });
     onValidationChange?.({ isValid: false, message: '', severity: 'success' });
+    
+    // Notify parent component of the clear action
+    onPlaceSelect?.({
+      placeId: '',
+      formattedAddress: '',
+      displayName: '',
+      location: { lat: 0, lng: 0 },
+      addressComponents: [],
+      types: [],
+    });
+    
     inputRef.current?.focus();
-  }, [onValidationChange]);
+  }, [onValidationChange, onPlaceSelect]);
 
   // Scroll selected item into view
   useEffect(() => {

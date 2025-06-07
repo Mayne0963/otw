@@ -141,10 +141,7 @@ export default function PackagePage() {
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent z-10"></div>
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-40"
-            style={{ backgroundImage: "url('/images/package-hero.jpg')" }}
-          ></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-800/50 to-purple-800/50 opacity-60"></div>
           {/* Animated background elements */}
           <div className="absolute top-20 left-10 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
           <div className="absolute top-40 right-20 w-1 h-1 bg-otw-gold rounded-full animate-ping"></div>

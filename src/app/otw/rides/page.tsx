@@ -152,10 +152,7 @@ export default function RidesPage() {
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent z-10"></div>
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-40"
-            style={{ backgroundImage: "url('/images/rides-hero.jpg')" }}
-          ></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-black/50 opacity-60"></div>
           {/* Animated background elements */}
           <div className="absolute top-20 left-10 w-2 h-2 bg-otw-gold rounded-full animate-pulse"></div>
           <div className="absolute top-40 right-20 w-1 h-1 bg-otw-red rounded-full animate-ping"></div>
@@ -206,10 +203,18 @@ export default function RidesPage() {
                   <ModernPlaceAutocomplete
                     label=""
                     placeholder="Pickup location"
+                    value={pickup}
                     onPlaceSelect={(place) => {
-                      setSelectedPickupPlace(place);
-                      setPickupAddress(place.address);
-                      setPickup(place.address);
+                      if (place.placeId) {
+                        setSelectedPickupPlace(place);
+                        setPickupAddress(place.formattedAddress);
+                        setPickup(place.displayName);
+                      } else {
+                        // Handle clear action
+                        setSelectedPickupPlace(null);
+                        setPickupAddress('');
+                        setPickup('');
+                      }
                     }}
                     className="w-full"
                     inputClassName="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
@@ -217,6 +222,7 @@ export default function RidesPage() {
                       center: { lat: 41.0793, lng: -85.1394 },
                       radius: 50000,
                     }}
+                    debounceMs={300}
                   />
                 </div>
 
@@ -225,10 +231,18 @@ export default function RidesPage() {
                   <ModernPlaceAutocomplete
                     label=""
                     placeholder="Where to?"
+                    value={destination}
                     onPlaceSelect={(place) => {
-                      setSelectedDestinationPlace(place);
-                      setDestinationAddress(place.address);
-                      setDestination(place.address);
+                      if (place.placeId) {
+                        setSelectedDestinationPlace(place);
+                        setDestinationAddress(place.formattedAddress);
+                        setDestination(place.displayName);
+                      } else {
+                        // Handle clear action
+                        setSelectedDestinationPlace(null);
+                        setDestinationAddress('');
+                        setDestination('');
+                      }
                     }}
                     className="w-full"
                     inputClassName="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
@@ -236,6 +250,7 @@ export default function RidesPage() {
                       center: { lat: 41.0793, lng: -85.1394 },
                       radius: 50000,
                     }}
+                    debounceMs={300}
                   />
                 </div>
 
