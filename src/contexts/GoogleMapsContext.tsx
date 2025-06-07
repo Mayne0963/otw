@@ -8,7 +8,7 @@ interface GoogleMapsContextType {
   loadError: string | null;
   googleMaps: typeof google.maps | null;
   placesService: google.maps.places.PlacesService | null;
-  autocompleteService: google.maps.places.AutocompleteService | null;
+  // Note: autocompleteService removed - use PlaceAutocompleteElement instead
 }
 
 const GoogleMapsContext = createContext<GoogleMapsContextType | undefined>(undefined);
@@ -28,7 +28,7 @@ const GOOGLE_MAPS_CONFIG = {
 let loaderPromise: Promise<typeof google> | null = null;
 let isGoogleMapsLoaded = false;
 let globalPlacesService: google.maps.places.PlacesService | null = null;
-let globalAutocompleteService: google.maps.places.AutocompleteService | null = null;
+// globalAutocompleteService removed - using PlaceAutocompleteElement instead
 
 export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
   const [isLoaded, setIsLoaded] = useState(isGoogleMapsLoaded);
@@ -37,7 +37,7 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
     typeof window !== 'undefined' && window.google?.maps ? window.google.maps : null,
   );
   const [placesService, setPlacesService] = useState<google.maps.places.PlacesService | null>(globalPlacesService);
-  const [autocompleteService, setAutocompleteService] = useState<google.maps.places.AutocompleteService | null>(globalAutocompleteService);
+  // autocompleteService state removed - using PlaceAutocompleteElement instead
 
   useEffect(() => {
     // If already loaded, set state immediately
@@ -45,7 +45,7 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
       setIsLoaded(true);
       setGoogleMaps(window.google.maps);
       if (globalPlacesService) {setPlacesService(globalPlacesService);}
-      if (globalAutocompleteService) {setAutocompleteService(globalAutocompleteService);}
+      // AutocompleteService initialization removed
       return;
     }
 
@@ -80,10 +80,9 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
           // Create a dummy div for PlacesService
           const serviceDiv = document.createElement('div');
           globalPlacesService = new google.maps.places.PlacesService(serviceDiv);
-          globalAutocompleteService = new google.maps.places.AutocompleteService();
+          // AutocompleteService initialization removed - using PlaceAutocompleteElement
 
           setPlacesService(globalPlacesService);
-          setAutocompleteService(globalAutocompleteService);
         } catch (error) {
           console.error('Failed to initialize Google Places services:', error);
           setLoadError('Failed to initialize Google Places services. Please check your API key permissions.');
@@ -117,7 +116,7 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
     loadError,
     googleMaps,
     placesService,
-    autocompleteService,
+    // autocompleteService removed - use PlaceAutocompleteElement instead
   };
 
   return (

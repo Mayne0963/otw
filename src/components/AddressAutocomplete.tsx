@@ -48,7 +48,7 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
   return (
     <div className={`relative rounded-xl shadow-lg overflow-hidden ${className}`}>
       <label className="text-sm font-semibold text-gray-300 mb-1 block">{label}</label>
-      
+
       <PlaceAutocompleteElement
         placeholder={placeholder || 'Enter your address...'}
         disabled={disabled}

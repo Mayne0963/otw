@@ -68,12 +68,12 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
       address: modernPlace.address,
       lat: modernPlace.lat,
       lng: modernPlace.lng,
-      addressComponents: modernPlace.addressComponents
+      addressComponents: modernPlace.addressComponents,
     };
-    
+
     setPlaceDetails(legacyPlace);
     setError(null);
-    
+
     if (onPlaceSelect) {
       onPlaceSelect(legacyPlace);
     }
@@ -86,7 +86,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
           {label}
         </label>
       )}
-      
+
       <PlaceAutocompleteElement
         placeholder={placeholder}
         disabled={disabled}
@@ -98,7 +98,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
         fields={fields}
         debounceMs={debounceMs}
       />
-      
+
       {/* Success indicator */}
       {placeDetails && !error && (
         <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-md">

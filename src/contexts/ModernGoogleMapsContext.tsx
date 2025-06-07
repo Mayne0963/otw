@@ -8,20 +8,12 @@ interface GoogleMapsContextType {
   loadError: string | null;
   googleMaps: typeof google.maps | null;
   placesService: google.maps.places.PlacesService | null;
-  autocompleteService: google.maps.places.AutocompleteService | null;
   // Modern Places API methods
   searchPlaces: (request: google.maps.places.SearchByTextRequest) => Promise<google.maps.places.SearchByTextResponse | null>;
   getPlaceDetails: (placeId: string) => Promise<google.maps.places.Place | null>;
-  getAutocompleteSuggestions: (input: string, options?: AutocompleteOptions) => Promise<google.maps.places.AutocompleteSuggestion[]>;
 }
 
-interface AutocompleteOptions {
-  types?: string[];
-  componentRestrictions?: { country?: string | string[] };
-  bounds?: google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral;
-  strictBounds?: boolean;
-  maxSuggestions?: number;
-}
+// Note: AutocompleteOptions removed as we now use PlaceAutocompleteElement
 
 const GoogleMapsContext = createContext<GoogleMapsContextType | undefined>(undefined);
 
@@ -41,7 +33,6 @@ const GOOGLE_MAPS_CONFIG = {
 let loaderPromise: Promise<typeof google> | null = null;
 let isGoogleMapsLoaded = false;
 let globalPlacesService: google.maps.places.PlacesService | null = null;
-let globalAutocompleteService: google.maps.places.AutocompleteService | null = null;
 
 export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) {
   const [isLoaded, setIsLoaded] = useState(isGoogleMapsLoaded);
@@ -50,7 +41,7 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
     typeof window !== 'undefined' && window.google?.maps ? window.google.maps : null,
   );
   const [placesService, setPlacesService] = useState<google.maps.places.PlacesService | null>(globalPlacesService);
-  const [autocompleteService, setAutocompleteService] = useState<google.maps.places.AutocompleteService | null>(globalAutocompleteService);
+  // AutocompleteService removed - using PlaceAutocompleteElement instead
 
   // Modern Places API: Search places by text
   const searchPlaces = useCallback(async (request: google.maps.places.SearchByTextRequest): Promise<google.maps.places.SearchByTextResponse | null> => {
@@ -89,34 +80,7 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
     }
   }, [isLoaded]);
 
-  // Modern Places API: Get autocomplete suggestions
-  const getAutocompleteSuggestions = useCallback(async (
-    input: string,
-    options: AutocompleteOptions = {},
-  ): Promise<google.maps.places.AutocompleteSuggestion[]> => {
-    if (!isLoaded || !window.google?.maps?.places?.AutocompleteSuggestion) {
-      console.warn('Google Maps AutocompleteSuggestion API not loaded');
-      return [];
-    }
-
-    if (input.trim().length < 2) {
-      return [];
-    }
-
-    try {
-      const { AutocompleteSuggestion } = window.google.maps.places;
-      const request: google.maps.places.AutocompleteSuggestionRequest = {
-        input: input.trim(),
-        ...options,
-      };
-
-      const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
-      return suggestions.slice(0, options.maxSuggestions || 5);
-    } catch (error) {
-      console.error('Error fetching autocomplete suggestions:', error);
-      return [];
-    }
-  }, [isLoaded]);
+  // getAutocompleteSuggestions removed - use PlaceAutocompleteElement instead
 
   useEffect(() => {
     // If already loaded, set state immediately
@@ -124,7 +88,7 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
       setIsLoaded(true);
       setGoogleMaps(window.google.maps);
       if (globalPlacesService) {setPlacesService(globalPlacesService);}
-      if (globalAutocompleteService) {setAutocompleteService(globalAutocompleteService);}
+      // AutocompleteService initialization removed
       return;
     }
 
@@ -157,10 +121,9 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
         try {
           const serviceDiv = document.createElement('div');
           globalPlacesService = new google.maps.places.PlacesService(serviceDiv);
-          globalAutocompleteService = new google.maps.places.AutocompleteService();
+          // AutocompleteService initialization removed - using PlaceAutocompleteElement
 
           setPlacesService(globalPlacesService);
-          setAutocompleteService(globalAutocompleteService);
         } catch (error) {
           console.error('Failed to initialize Google Places services:', error);
           setLoadError('Failed to initialize Google Places services. Please check your API key permissions.');
@@ -196,10 +159,8 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
     loadError,
     googleMaps,
     placesService,
-    autocompleteService,
     searchPlaces,
     getPlaceDetails,
-    getAutocompleteSuggestions,
   };
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 import React, { useRef, useEffect } from 'react';
-import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 
 interface PlaceDetails {
   formatted_address: string;
@@ -98,7 +98,7 @@ const AutocompleteInput: React.FC<Omit<AddressSearchProps, never>> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteRef = useRef<any>(null);
 
-  const { isLoaded } = useGoogleMaps();
+  const { isLoaded } = useModernGoogleMaps();
 
   useEffect(() => {
     if (!containerRef.current || !isLoaded || !window.google) {
@@ -202,7 +202,7 @@ const AddressSearch: React.FC<AddressSearchProps> = ({
   errorMessage,
   loadingText,
 }) => {
-  const { isLoaded, loadError } = useGoogleMaps();
+  const { isLoaded, loadError } = useModernGoogleMaps();
 
   if (!isLoaded) {
     const loadingStyles = [

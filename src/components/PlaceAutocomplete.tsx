@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 
 export type PlaceSuggestion = {
   formatted_address: string;
@@ -25,8 +25,8 @@ export default function PlaceAutocomplete({
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteElementRef = useRef<any>(null);
 
-  // Use the centralized Google Maps context
-  const { isLoaded, loadError } = useGoogleMaps();
+  // Use the modern Google Maps context
+  const { isLoaded, loadError } = useModernGoogleMaps();
 
   // Initialize PlaceAutocompleteElement when API is loaded
   useEffect(() => {

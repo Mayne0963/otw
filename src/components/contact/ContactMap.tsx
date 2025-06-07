@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useEffect, useRef, useState } from 'react';
-import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 import type { Location } from '../../types/location';
 
 interface ContactMapProps {
@@ -16,8 +16,8 @@ const ContactMap: React.FC<ContactMapProps> = ({ locations }) => {
     null,
   );
 
-  // Use the Google Maps API loader hook
-  const { isLoaded, loadError } = useGoogleMaps();
+  // Use the modern Google Maps API loader hook
+  const { isLoaded, loadError } = useModernGoogleMaps();
 
   // Calculate center point of all locations
   const calculateCenter = () => {

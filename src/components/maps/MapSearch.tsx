@@ -8,7 +8,7 @@ import {
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Search, Navigation } from 'lucide-react';
-import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 import PlaceAutocomplete from './PlaceAutocomplete';
 
 interface MapSearchProps {
@@ -35,7 +35,7 @@ export default function MapSearch({
     useState<google.maps.LatLng | null>(null);
 
 
-  const { isLoaded, loadError } = useGoogleMaps();
+  const { isLoaded, loadError } = useModernGoogleMaps();
 
   useEffect(() => {
     // Set Fort Wayne as the initial center when map loads

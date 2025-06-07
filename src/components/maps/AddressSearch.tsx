@@ -10,7 +10,7 @@ import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Label } from '../ui/label';
 import { Separator } from '../ui/separator';
-import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 import PlaceAutocomplete from './PlaceAutocomplete';
 
 interface AddressSearchProps {
@@ -67,7 +67,7 @@ export default function AddressSearch({
 
 
 
-  const { isLoaded, loadError } = useGoogleMaps();
+  const { isLoaded, loadError } = useModernGoogleMaps();
 
   // Get user's current location
   useEffect(() => {

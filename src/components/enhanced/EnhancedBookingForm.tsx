@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Calendar, Clock, Users, MapPin, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import EnhancedPlaceAutocomplete, { PlaceDetails, ValidationResult } from './EnhancedPlaceAutocomplete';
-import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 
 interface BookingFormData {
   pickupLocation: PlaceDetails | null;
@@ -75,7 +75,7 @@ const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const { isLoaded, loadError } = useGoogleMaps();
+  const { isLoaded, loadError } = useModernGoogleMaps();
 
   // Get minimum date (today + minimum advance booking)
   const getMinDate = useCallback(() => {

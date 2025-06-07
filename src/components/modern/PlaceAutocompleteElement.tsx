@@ -70,7 +70,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
 
   // Check if Google Maps API is loaded
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {return;}
 
     const checkApiLoaded = () => {
       if (window.google?.maps?.places?.PlaceAutocompleteElement) {
@@ -135,11 +135,11 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
 
   // Handle place selection
   const handlePlaceChange = useCallback(() => {
-    if (!autocompleteRef.current) return;
+    if (!autocompleteRef.current) {return;}
 
     try {
       const place = autocompleteRef.current.getPlace();
-      
+
       if (!place || !place.place_id) {
         console.warn('No valid place selected');
         return;
@@ -179,7 +179,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
 
   // Set up event listeners when API is loaded
   useEffect(() => {
-    if (!isApiLoaded || !autocompleteRef.current) return;
+    if (!isApiLoaded || !autocompleteRef.current) {return;}
 
     const element = autocompleteRef.current;
 
@@ -206,14 +206,14 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
 
   // Configure the autocomplete element
   useEffect(() => {
-    if (!isApiLoaded || !autocompleteRef.current) return;
+    if (!isApiLoaded || !autocompleteRef.current) {return;}
 
     const element = autocompleteRef.current;
 
     // Set component restrictions
     if (componentRestrictions?.country) {
-      const countries = Array.isArray(componentRestrictions.country) 
-        ? componentRestrictions.country 
+      const countries = Array.isArray(componentRestrictions.country)
+        ? componentRestrictions.country
         : [componentRestrictions.country];
       element.componentRestrictions = { country: countries };
     }
@@ -263,7 +263,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
         aria-describedby={ariaDescribedBy}
         required={required}
       />
-      
+
       {error && (
         <div className="mt-1 flex items-center space-x-1">
           <ExclamationTriangleIcon className="h-4 w-4 text-red-500" />

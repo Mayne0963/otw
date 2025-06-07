@@ -131,7 +131,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
       const legacyPlace = convertToLegacyFormat(modernPlace);
       setInputValue(legacyPlace.formattedAddress);
       setHasUserInteracted(true);
-      
+
       // Validate service area if configured
       if (serviceArea && !validateServiceArea(legacyPlace.lat, legacyPlace.lng)) {
         const validationResult: ValidationResult = {
@@ -143,7 +143,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
         onValidationChange?.(validationResult);
         return;
       }
-      
+
       // Set success validation
       const validationResult: ValidationResult = {
         isValid: true,
@@ -152,10 +152,10 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
       };
       setValidation(validationResult);
       onValidationChange?.(validationResult);
-      
+
       onPlaceSelect(legacyPlace);
     },
-    [onPlaceSelect, onValidationChange, serviceArea, validateServiceArea]
+    [onPlaceSelect, onValidationChange, serviceArea, validateServiceArea],
   );
 
   // Handle input changes
@@ -164,7 +164,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
       setInputValue(newValue);
       setHasUserInteracted(true);
       onChange?.(newValue);
-      
+
       // Clear validation when user starts typing
       if (validation) {
         setValidation(null);
@@ -174,7 +174,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
         });
       }
     },
-    [onChange, onValidationChange, validation]
+    [onChange, onValidationChange, validation],
   );
 
   // Theme-based styles
