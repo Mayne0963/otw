@@ -1,59 +1,49 @@
 'use client';
 
 import React from 'react';
-import { GoogleMapsProvider } from '@/contexts/GoogleMapsContext';
-import EnhancedBookingForm from '@/components/enhanced/EnhancedBookingForm';
+import { ModernGoogleMapsProvider } from '@/contexts/ModernGoogleMapsContext';
+import ModernBookingForm from '@/components/enhanced/ModernBookingForm';
+import { BookingFormData } from '@/components/enhanced/ModernBookingForm';
 
-export default function BookingPage() {
-  const handleBookingSubmit = (bookingData: any) => {
-    console.log('Enhanced booking submitted:', bookingData);
-    // Handle the enhanced booking form submission
+const BookingPage: React.FC = () => {
+  const handleBookingSubmit = async (data: BookingFormData) => {
+    console.log('Booking submitted:', data);
+    
+    try {
+      // Here you would typically send the data to your backend API
+      // For now, we'll just simulate a successful submission
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Show success message or redirect
+      alert('Booking submitted successfully! We will contact you shortly to confirm your ride.');
+    } catch (error) {
+      console.error('Booking submission error:', error);
+      throw new Error('Failed to submit booking. Please try again.');
+    }
   };
 
   return (
-    <GoogleMapsProvider>
-      <div className="min-h-screen bg-gray-50 py-8">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white mb-8">
-          <div className="container mx-auto px-4 py-12">
-            <div className="text-center">
-              <h1 className="text-4xl font-bold mb-2">
-                Book Your Ride
-              </h1>
-              <p className="text-xl text-blue-100">
-                Professional transportation services in Fort Wayne
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
+    <ModernGoogleMapsProvider>
+      <div className="min-h-screen bg-gray-900 py-8">
         <div className="container mx-auto px-4">
-          <EnhancedBookingForm
-             onSubmit={handleBookingSubmit}
-             serviceArea={{
-               center: { lat: 41.0793, lng: -85.1394 },
-               radius: 50000,
-             }}
-             maxPassengers={6}
-             minAdvanceBookingHours={1}
-             showDeliveryOption={true}
-             showDestinationOption={true}
-           />
-         </div>
-
-         {/* Footer */}
-         <div className="bg-gray-800 text-white mt-16">
-           <div className="container mx-auto px-4 py-8">
-             <div className="text-center">
-               <p>© 2024 OTW Services. All rights reserved.</p>
-               <p className="mt-2 text-sm text-gray-300">
-                 Need help? Contact us at support@otwservices.com
-               </p>
-             </div>
-           </div>
-         </div>
+          <h1 className="text-3xl font-bold text-white text-center mb-8">
+            Book Your Ride
+          </h1>
+          <ModernBookingForm
+            onSubmit={handleBookingSubmit}
+            serviceArea={{
+              center: { lat: 41.0858, lng: -85.1394 }, // Fort Wayne, IN
+              radius: 50000, // 50km radius
+            }}
+            maxPassengers={8}
+            minAdvanceBookingHours={2}
+            enableDestinationField={true}
+            enableDeliveryField={false}
+          />
+        </div>
       </div>
-    </GoogleMapsProvider>
+    </ModernGoogleMapsProvider>
   );
-}
+};
+
+export default BookingPage;

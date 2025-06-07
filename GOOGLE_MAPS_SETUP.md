@@ -1,5 +1,14 @@
 # Google Maps API Setup Guide
 
+This comprehensive guide will help you properly configure Google Maps API to resolve common issues like `REQUEST_DENIED` and `ApiTargetBlockedMapError`, and ensure successful deployment.
+
+## 🚨 Critical: API Key Separation
+
+**NEVER use the same API key for Firebase and Google Maps!** This is the #1 cause of `REQUEST_DENIED` errors.
+
+- ✅ **Correct**: Separate API keys for Firebase and Google Maps
+- ❌ **Wrong**: Using Firebase API key for Google Maps
+
 This guide will help you set up Google Maps API keys for the OTW application's address search functionality.
 
 ## Prerequisites

@@ -67,10 +67,11 @@ import {
 } from 'react-icons/fa';
 import Link from 'next/link';
 import { useState } from 'react';
-import EnhancedPlaceAutocomplete from '../../../components/enhanced/EnhancedPlaceAutocomplete';
-import EnhancedBookingForm from '../../../components/enhanced/EnhancedBookingForm';
-import { GoogleMapsProvider } from '../../../contexts/GoogleMapsContext';
-import type { PlaceDetails } from '../../../components/enhanced/EnhancedPlaceAutocomplete';
+import ModernPlaceAutocomplete from '../../../components/enhanced/ModernPlaceAutocomplete';
+import ModernBookingForm from '../../../components/enhanced/ModernBookingForm';
+import { ModernGoogleMapsProvider } from '../../../contexts/ModernGoogleMapsContext';
+import type { PlaceDetails } from '../../../components/enhanced/ModernPlaceAutocomplete';
+import { BookingFormData } from '../../../components/enhanced/ModernBookingForm';
 
 export default function RidesPage() {
   const [pickup, setPickup] = useState('');
@@ -83,9 +84,20 @@ export default function RidesPage() {
   const [selectedDestinationPlace, setSelectedDestinationPlace] = useState<PlaceDetails | null>(null);
   const [selectedService, setSelectedService] = useState<string>('');
 
-  const handleBookingSubmit = async (formData: any) => {
+  const handleBookingSubmit = async (formData: BookingFormData) => {
     console.log('Booking submitted:', formData);
-    // Handle booking submission logic here
+    
+    try {
+      // Here you would typically send the data to your backend API
+      // For now, we'll just simulate a successful submission
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Show success message or redirect
+      alert('Ride booking submitted successfully! We will contact you shortly to confirm your ride.');
+    } catch (error) {
+      console.error('Ride booking submission error:', error);
+      throw new Error('Failed to submit ride booking. Please try again.');
+    }
   };
 
   const services = [
@@ -134,7 +146,7 @@ export default function RidesPage() {
   ];
 
   return (
-    <GoogleMapsProvider>
+    <ModernGoogleMapsProvider>
       <div className="min-h-screen pb-20 pt-16">
       {/* Enhanced Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -191,7 +203,7 @@ export default function RidesPage() {
               <div className="space-y-4">
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-gold rounded-full z-10"></div>
-                  <EnhancedPlaceAutocomplete
+                  <ModernPlaceAutocomplete
                     label=""
                     placeholder="Pickup location"
                     onPlaceSelect={(place) => {
@@ -210,7 +222,7 @@ export default function RidesPage() {
 
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full z-10"></div>
-                  <EnhancedPlaceAutocomplete
+                  <ModernPlaceAutocomplete
                     label=""
                     placeholder="Where to?"
                     onPlaceSelect={(place) => {
@@ -477,6 +489,6 @@ export default function RidesPage() {
         </div>
       </section>
       </div>
-    </GoogleMapsProvider>
+    </ModernGoogleMapsProvider>
   );
 }
