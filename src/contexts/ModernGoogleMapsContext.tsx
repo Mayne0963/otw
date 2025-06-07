@@ -80,7 +80,7 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
       const { Place } = window.google.maps.places;
       const place = new Place({ id: placeId });
       await place.fetchFields({
-        fields: ['displayName', 'formattedAddress', 'location', 'addressComponents', 'types', 'id']
+        fields: ['displayName', 'formattedAddress', 'location', 'addressComponents', 'types', 'id'],
       });
       return place;
     } catch (error) {
@@ -91,8 +91,8 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
 
   // Modern Places API: Get autocomplete suggestions
   const getAutocompleteSuggestions = useCallback(async (
-    input: string, 
-    options: AutocompleteOptions = {}
+    input: string,
+    options: AutocompleteOptions = {},
   ): Promise<google.maps.places.AutocompleteSuggestion[]> => {
     if (!isLoaded || !window.google?.maps?.places?.AutocompleteSuggestion) {
       console.warn('Google Maps AutocompleteSuggestion API not loaded');
@@ -107,7 +107,7 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
       const { AutocompleteSuggestion } = window.google.maps.places;
       const request: google.maps.places.AutocompleteSuggestionRequest = {
         input: input.trim(),
-        ...options
+        ...options,
       };
 
       const { suggestions } = await AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
@@ -123,8 +123,8 @@ export function ModernGoogleMapsProvider({ children }: GoogleMapsProviderProps) 
     if (isGoogleMapsLoaded && window.google?.maps) {
       setIsLoaded(true);
       setGoogleMaps(window.google.maps);
-      if (globalPlacesService) setPlacesService(globalPlacesService);
-      if (globalAutocompleteService) setAutocompleteService(globalAutocompleteService);
+      if (globalPlacesService) {setPlacesService(globalPlacesService);}
+      if (globalAutocompleteService) {setAutocompleteService(globalAutocompleteService);}
       return;
     }
 

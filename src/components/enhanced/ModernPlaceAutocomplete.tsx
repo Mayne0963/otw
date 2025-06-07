@@ -86,7 +86,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   'aria-describedby': ariaDescribedBy,
 }) => {
   const { isLoaded, loadError, getAutocompleteSuggestions, getPlaceDetails } = useModernGoogleMaps();
-  
+
   const [inputValue, setInputValue] = useState(value);
   const [suggestions, setSuggestions] = useState<AutocompleteSuggestion[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -95,15 +95,15 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   const [validation, setValidation] = useState<ValidationResult>({
     isValid: false,
     message: '',
-    severity: 'success'
+    severity: 'success',
   });
-  
+
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const suggestionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
-  
+
   // Generate unique IDs for accessibility
   const componentId = useMemo(() => id || `place-autocomplete-${Math.random().toString(36).substr(2, 9)}`, [id]);
   const listboxId = `${componentId}-listbox`;
@@ -131,7 +131,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     const center = new window.google.maps.LatLng(serviceAreaCenter.lat, serviceAreaCenter.lng);
     const placeLocation = new window.google.maps.LatLng(location.lat, location.lng);
     const distance = window.google.maps.geometry.spherical.computeDistanceBetween(center, placeLocation);
-    
+
     return distance <= serviceAreaRadius;
   }, [serviceAreaCenter, serviceAreaRadius]);
 
@@ -157,7 +157,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
         componentRestrictions,
         bounds,
         strictBounds,
-        maxSuggestions
+        maxSuggestions,
       });
 
       if (!abortControllerRef.current?.signal.aborted) {
@@ -165,7 +165,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
           placeId: suggestion.placePrediction?.placeId || '',
           displayName: suggestion.placePrediction?.structuredFormat?.mainText?.text || '',
           formattedAddress: suggestion.placePrediction?.structuredFormat?.secondaryText?.text || '',
-          types: suggestion.placePrediction?.types || []
+          types: suggestion.placePrediction?.types || [],
         })).filter(s => s.placeId);
 
         setSuggestions(formattedSuggestions);
@@ -177,12 +177,12 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
         console.error('Autocomplete search error:', error);
         setSuggestions([]);
         setIsDropdownOpen(false);
-        
+
         // Update validation with error
         setValidation({
           isValid: false,
           message: 'Unable to search addresses. Please try again.',
-          severity: 'error'
+          severity: 'error',
         });
       }
     } finally {
@@ -196,17 +196,17 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
-    
+
     // Clear previous timeout
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current);
     }
-    
+
     // Reset validation when typing
     if (validation.isValid) {
       setValidation({ isValid: false, message: '', severity: 'success' });
     }
-    
+
     // Set new timeout for debounced search
     debounceTimeoutRef.current = setTimeout(() => {
       debouncedSearch(newValue);
@@ -223,7 +223,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
 
     try {
       const place = await getPlaceDetails(suggestion.placeId);
-      
+
       if (place && place.location) {
         const placeDetails: PlaceDetails = {
           placeId: suggestion.placeId,
@@ -231,14 +231,14 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
           displayName: place.displayName?.text || suggestion.displayName,
           location: {
             lat: place.location.lat(),
-            lng: place.location.lng()
+            lng: place.location.lng(),
           },
           addressComponents: place.addressComponents?.map(component => ({
             longName: component.longName,
             shortName: component.shortName,
-            types: component.types
+            types: component.types,
           })) || [],
-          types: place.types || suggestion.types
+          types: place.types || suggestion.types,
         };
 
         // Validate service area if enabled
@@ -249,20 +249,20 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
             validationResult = {
               isValid: true,
               message: 'Address verified and within service area',
-              severity: 'success'
+              severity: 'success',
             };
           } else {
             validationResult = {
               isValid: false,
               message: 'Address is outside our service area',
-              severity: 'warning'
+              severity: 'warning',
             };
           }
         } else {
           validationResult = {
             isValid: true,
             message: 'Address verified',
-            severity: 'success'
+            severity: 'success',
           };
         }
 
@@ -277,7 +277,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
       const errorValidation: ValidationResult = {
         isValid: false,
         message: 'Unable to verify address. Please try again.',
-        severity: 'error'
+        severity: 'error',
       };
       setValidation(errorValidation);
       onValidationChange?.(errorValidation);
@@ -356,7 +356,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     if (selectedIndex >= 0 && suggestionRefs.current[selectedIndex]) {
       suggestionRefs.current[selectedIndex]?.scrollIntoView({
         block: 'nearest',
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   }, [selectedIndex]);
@@ -380,7 +380,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
         <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-500 rounded-full" />
       );
     }
-    
+
     if (validation.message) {
       switch (validation.severity) {
         case 'success':
@@ -391,12 +391,12 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
           return <XMarkIcon className="h-4 w-4 text-red-500" />;
       }
     }
-    
+
     return null;
   };
 
   const getInputBorderClass = () => {
-    if (error) return 'border-red-500 focus:border-red-500 focus:ring-red-500';
+    if (error) {return 'border-red-500 focus:border-red-500 focus:ring-red-500';}
     if (validation.message) {
       switch (validation.severity) {
         case 'success':
@@ -428,7 +428,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <MapPinIcon className="h-5 w-5 text-gray-400" />
         </div>
-        
+
         <input
           ref={inputRef}
           id={componentId}
@@ -458,7 +458,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
           aria-activedescendant={selectedIndex >= 0 ? `${componentId}-option-${selectedIndex}` : undefined}
           role="combobox"
         />
-        
+
         {/* Right side icons */}
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center space-x-2">
           {getValidationIcon()}
@@ -497,8 +497,8 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
               className={`
                 px-4 py-3 cursor-pointer transition-colors
                 border-b border-gray-700 last:border-b-0
-                ${index === selectedIndex 
-                  ? 'bg-blue-600 text-white' 
+                ${index === selectedIndex
+                  ? 'bg-blue-600 text-white'
                   : 'text-gray-300 hover:bg-gray-700'
                 }
               `}

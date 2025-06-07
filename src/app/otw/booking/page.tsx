@@ -8,12 +8,12 @@ import { BookingFormData } from '@/components/enhanced/ModernBookingForm';
 const BookingPage: React.FC = () => {
   const handleBookingSubmit = async (data: BookingFormData) => {
     console.log('Booking submitted:', data);
-    
+
     try {
       // Here you would typically send the data to your backend API
       // For now, we'll just simulate a successful submission
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Show success message or redirect
       alert('Booking submitted successfully! We will contact you shortly to confirm your ride.');
     } catch (error) {

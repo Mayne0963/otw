@@ -86,12 +86,12 @@ export default function RidesPage() {
 
   const handleBookingSubmit = async (formData: BookingFormData) => {
     console.log('Booking submitted:', formData);
-    
+
     try {
       // Here you would typically send the data to your backend API
       // For now, we'll just simulate a successful submission
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Show success message or redirect
       alert('Ride booking submitted successfully! We will contact you shortly to confirm your ride.');
     } catch (error) {
