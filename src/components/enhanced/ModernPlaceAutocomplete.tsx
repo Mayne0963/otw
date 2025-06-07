@@ -351,7 +351,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     setSelectedIndex(-1);
     setValidation({ isValid: false, message: '', severity: 'success' });
     onValidationChange?.({ isValid: false, message: '', severity: 'success' });
-    
+
     // Notify parent component of the clear action
     onPlaceSelect?.({
       placeId: '',
@@ -361,7 +361,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
       addressComponents: [],
       types: [],
     });
-    
+
     inputRef.current?.focus();
   }, [onValidationChange, onPlaceSelect]);
 

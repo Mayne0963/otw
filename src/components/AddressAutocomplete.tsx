@@ -1,6 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+'use client';
+import React, { useState } from 'react';
+import PlaceAutocompleteElement, { PlaceDetails as ModernPlaceDetails } from '@/components/modern/PlaceAutocompleteElement';
 
+// Legacy interface for backward compatibility
 interface PlaceDetails {
   placeId: string;
   address: string;
@@ -23,101 +25,40 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
   className = '',
   disabled = false,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [placeDetails, setPlaceDetails] = useState<PlaceDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Use centralized Google Maps context
-  const { isLoaded: isGoogleMapsLoaded, loadError: googleMapsError } = useGoogleMaps();
+  // Convert modern place details to legacy format
+  const handlePlaceSelect = (modernPlace: ModernPlaceDetails) => {
+    try {
+      const legacyPlace: PlaceDetails = {
+        placeId: modernPlace.placeId,
+        address: modernPlace.formattedAddress,
+        lat: modernPlace.location.lat,
+        lng: modernPlace.location.lng,
+      };
 
-  useEffect(() => {
-    // Initialize autocomplete when Google Maps is loaded
-    if (isGoogleMapsLoaded && inputRef.current) {
-      try {
-        const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-          types: ['address'],
-          fields: ['place_id', 'formatted_address', 'geometry'],
-        });
-
-        autocomplete.addListener('place_changed', () => {
-          const place = autocomplete.getPlace();
-
-          if (!place.geometry || !place.formatted_address || !place.place_id) {
-            setError('Please select a valid address from the suggestions');
-            return;
-          }
-
-          const placeData: PlaceDetails = {
-            placeId: place.place_id,
-            address: place.formatted_address,
-            lat: place.geometry.location!.lat(),
-            lng: place.geometry.location!.lng(),
-          };
-
-          setPlaceDetails(placeData);
-          setError(null);
-
-          if (onPlaceSelect) {
-            onPlaceSelect(placeData);
-          }
-        });
-
-      } catch (err) {
-        console.error('Error initializing Google Maps autocomplete:', err);
-        setError('Failed to initialize address autocomplete. Please try again.');
-      }
+      setError(null);
+      onPlaceSelect?.(legacyPlace);
+    } catch (err) {
+      console.error('Error processing place selection:', err);
+      setError('Failed to process selected address. Please try again.');
     }
-
-    // Handle Google Maps loading errors
-    if (googleMapsError) {
-      setError(googleMapsError);
-    }
-  }, [isGoogleMapsLoaded, googleMapsError, onPlaceSelect]);
-
-  if (!isGoogleMapsLoaded && !googleMapsError) {
-    return (
-      <div className={`relative rounded-xl shadow-lg overflow-hidden ${className}`}>
-        <label className="text-sm font-semibold text-gray-300 mb-1 block">{label}</label>
-        <div className="w-full bg-gray-800 text-white rounded-lg px-4 py-2 flex items-center">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-500 mr-2"></div>
-          <span className="text-gray-400">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={`relative rounded-xl shadow-lg overflow-hidden ${className}`}>
-        <label className="text-sm font-semibold text-gray-300 mb-1 block">{label}</label>
-        <div className="w-full bg-red-900 text-red-200 rounded-lg px-4 py-2">
-          <span className="text-sm">{error}</span>
-        </div>
-      </div>
-    );
-  }
+  };
 
   return (
     <div className={`relative rounded-xl shadow-lg overflow-hidden ${className}`}>
       <label className="text-sm font-semibold text-gray-300 mb-1 block">{label}</label>
-      <div className="relative">
-        <input
-          ref={inputRef}
-          className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 pl-10 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 border border-gray-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          placeholder={placeholder || `Enter ${label.toLowerCase()}`}
-          disabled={disabled}
-        />
-        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-          </svg>
-        </div>
-      </div>
-      {placeDetails && (
-        <div className="mt-2 p-2 bg-gray-700 rounded-md">
-          <p className="text-xs text-gray-300 truncate">{placeDetails.address}</p>
-        </div>
-      )}
+      
+      <PlaceAutocompleteElement
+        placeholder={placeholder || 'Enter your address...'}
+        disabled={disabled}
+        onPlaceSelect={handlePlaceSelect}
+        error={error}
+        className="w-full"
+        inputClassName="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+        componentRestrictions={{ country: 'us' }}
+        fields={['place_id', 'formatted_address', 'geometry']}
+      />
     </div>
   );
 };
