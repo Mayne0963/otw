@@ -231,7 +231,7 @@ const EnhancedBookingForm: React.FC<EnhancedBookingFormProps> = ({
       setSubmitError('Google Maps is still loading. Please wait a moment.');
       return;
     }
-    
+
     if (loadError) {
       setSubmitError('Google Maps failed to load. Please refresh the page and try again.');
       return;

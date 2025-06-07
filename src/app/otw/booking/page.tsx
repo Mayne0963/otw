@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { GoogleMapsProvider } from '@/components/GoogleMapsContext';
-import { EnhancedBookingForm } from '@/components/EnhancedBookingForm';
+import { GoogleMapsProvider } from '@/contexts/GoogleMapsContext';
+import EnhancedBookingForm from '@/components/enhanced/EnhancedBookingForm';
 
 export default function BookingPage() {
   const handleBookingSubmit = (bookingData: any) => {
@@ -33,7 +33,7 @@ export default function BookingPage() {
              onSubmit={handleBookingSubmit}
              serviceArea={{
                center: { lat: 41.0793, lng: -85.1394 },
-               radius: 50000
+               radius: 50000,
              }}
              maxPassengers={6}
              minAdvanceBookingHours={1}

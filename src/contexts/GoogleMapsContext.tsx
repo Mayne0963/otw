@@ -44,8 +44,8 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
     if (isGoogleMapsLoaded && window.google?.maps) {
       setIsLoaded(true);
       setGoogleMaps(window.google.maps);
-      if (globalPlacesService) setPlacesService(globalPlacesService);
-      if (globalAutocompleteService) setAutocompleteService(globalAutocompleteService);
+      if (globalPlacesService) {setPlacesService(globalPlacesService);}
+      if (globalAutocompleteService) {setAutocompleteService(globalAutocompleteService);}
       return;
     }
 
@@ -81,7 +81,7 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
           const serviceDiv = document.createElement('div');
           globalPlacesService = new google.maps.places.PlacesService(serviceDiv);
           globalAutocompleteService = new google.maps.places.AutocompleteService();
-          
+
           setPlacesService(globalPlacesService);
           setAutocompleteService(globalAutocompleteService);
         } catch (error) {
@@ -91,10 +91,10 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
       })
       .catch((error) => {
         console.error('Failed to load Google Maps API:', error);
-        
+
         // Provide specific error messages based on common issues
         let errorMessage = 'Failed to load Google Maps API';
-        
+
         if (error.message?.includes('ApiTargetBlockedMapError')) {
           errorMessage = 'Google Maps API access blocked. Please check your API key restrictions and enable Places API.';
         } else if (error.message?.includes('REQUEST_DENIED')) {
@@ -106,7 +106,7 @@ export function GoogleMapsProvider({ children }: GoogleMapsProviderProps) {
         } else {
           errorMessage = `Google Maps API error: ${error.message}`;
         }
-        
+
         setLoadError(errorMessage);
         setIsLoaded(false);
       });

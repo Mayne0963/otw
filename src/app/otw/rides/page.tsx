@@ -67,8 +67,8 @@ import {
 } from 'react-icons/fa';
 import Link from 'next/link';
 import { useState } from 'react';
-import { EnhancedPlaceAutocomplete } from '../../../components/enhanced/EnhancedPlaceAutocomplete';
-import { EnhancedBookingForm } from '../../../components/enhanced/EnhancedBookingForm';
+import EnhancedPlaceAutocomplete from '../../../components/enhanced/EnhancedPlaceAutocomplete';
+import EnhancedBookingForm from '../../../components/enhanced/EnhancedBookingForm';
 import { GoogleMapsProvider } from '../../../contexts/GoogleMapsContext';
 import type { PlaceDetails } from '../../../components/enhanced/EnhancedPlaceAutocomplete';
 
@@ -203,7 +203,7 @@ export default function RidesPage() {
                     inputClassName="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                     serviceArea={{
                       center: { lat: 41.0793, lng: -85.1394 },
-                      radius: 50000
+                      radius: 50000,
                     }}
                   />
                 </div>
@@ -222,7 +222,7 @@ export default function RidesPage() {
                     inputClassName="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-gray-400 text-lg"
                     serviceArea={{
                       center: { lat: 41.0793, lng: -85.1394 },
-                      radius: 50000
+                      radius: 50000,
                     }}
                   />
                 </div>

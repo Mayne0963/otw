@@ -158,7 +158,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
   // Validate address within service area
   const validateServiceArea = useCallback(
     (lat: number, lng: number): boolean => {
-      if (!serviceArea || !window.google?.maps?.geometry) return true;
+      if (!serviceArea || !window.google?.maps?.geometry) {return true;}
 
       const distance = window.google.maps.geometry.spherical.computeDistanceBetween(
         new window.google.maps.LatLng(lat, lng),
@@ -210,7 +210,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
               setSuggestions(formattedSuggestions);
               setShowDropdown(true);
               setSelectedIndex(-1);
-              
+
               if (validateAddress) {
                 setValidation(null); // Clear previous validation errors
               }
@@ -228,16 +228,16 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
               console.warn('Autocomplete service error:', status);
               setSuggestions([]);
               setShowDropdown(false);
-              
+
               if (validateAddress) {
                 let errorMessage = 'Address search temporarily unavailable.';
-                
+
                 if (status === google.maps.places.PlacesServiceStatus.REQUEST_DENIED) {
                   errorMessage = 'Address search access denied. Please check API configuration.';
                 } else if (status === google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT) {
                   errorMessage = 'Search limit exceeded. Please try again later.';
                 }
-                
+
                 setValidation({
                   isValid: false,
                   message: errorMessage,
@@ -250,7 +250,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
           setSuggestions([]);
           setShowDropdown(false);
           setIsLoading(false);
-          
+
           if (validateAddress && query.trim().length === 0) {
             setValidation(null);
           }
@@ -354,13 +354,13 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
           }
         } else {
           let errorMessage = 'Failed to get address details.';
-          
+
           if (status === google.maps.places.PlacesServiceStatus.NOT_FOUND) {
             errorMessage = 'Address not found. Please try a different address.';
           } else if (status === google.maps.places.PlacesServiceStatus.REQUEST_DENIED) {
             errorMessage = 'Access denied. Please check API configuration.';
           }
-          
+
           setValidation({
             isValid: false,
             message: errorMessage,
@@ -378,7 +378,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
       const newValue = e.target.value;
       setInputValue(newValue);
       setHasUserInteracted(true);
-      
+
       if (onChange) {
         onChange(newValue);
       }
@@ -397,7 +397,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (!showDropdown || suggestions.length === 0) return;
+      if (!showDropdown || suggestions.length === 0) {return;}
 
       switch (e.key) {
         case 'ArrowDown':
@@ -433,8 +433,8 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
   const handleFocus = useCallback(() => {
     setIsFocused(true);
     setHasUserInteracted(true);
-    if (onFocus) onFocus();
-    
+    if (onFocus) {onFocus();}
+
     // Show dropdown if there are suggestions
     if (suggestions.length > 0) {
       setShowDropdown(true);
@@ -449,7 +449,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
         setIsFocused(false);
         setShowDropdown(false);
         setSelectedIndex(-1);
-        if (onBlur) onBlur();
+        if (onBlur) {onBlur();}
       }, 150);
     },
     [onBlur],
@@ -462,11 +462,11 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
     setShowDropdown(false);
     setValidation(null);
     setHasUserInteracted(true);
-    
+
     if (onChange) {
       onChange('');
     }
-    
+
     inputRef.current?.focus();
   }, [onChange]);
 
@@ -506,7 +506,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
         <div className={cn(
           'flex items-center px-4 py-3 rounded-lg border',
           themeStyles.container,
-          'border-red-500'
+          'border-red-500',
         )}>
           <AlertCircle className={cn('w-5 h-5 mr-3', themeStyles.error)} />
           <span className={cn('text-sm', themeStyles.error)}>Address search unavailable</span>
@@ -528,7 +528,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
           {required && <span className={themeStyles.error}> *</span>}
         </label>
       )}
-      
+
       <div className="relative">
         <div className={cn(
           'flex items-center rounded-lg border transition-all duration-200',
@@ -547,7 +547,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
               )}
             </div>
           )}
-          
+
           <input
             ref={inputRef}
             type="text"
@@ -565,7 +565,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
             aria-describedby={cn(
               ariaDescribedBy,
               validation ? errorId : undefined,
-              showDropdown ? dropdownId : undefined
+              showDropdown ? dropdownId : undefined,
             ).trim() || undefined}
             aria-expanded={showDropdown}
             aria-autocomplete="list"
@@ -577,10 +577,10 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
               themeStyles.input,
               showIcon ? 'pl-0' : 'px-4',
               showClearButton && inputValue ? 'pr-12' : 'pr-4',
-              inputClassName
+              inputClassName,
             )}
           />
-          
+
           {showClearButton && inputValue && !disabled && (
             <button
               type="button"
@@ -588,14 +588,14 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
               className={cn(
                 'flex items-center justify-center w-8 h-8 mr-2 rounded-full',
                 'hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors',
-                themeStyles.icon
+                themeStyles.icon,
               )}
               aria-label="Clear address"
             >
               <X className="w-4 h-4" />
             </button>
           )}
-          
+
           {validation && (
             <div className="flex items-center justify-center w-8 h-8 mr-2">
               {validation.type === 'success' ? (
@@ -616,7 +616,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
             aria-label="Address suggestions"
             className={cn(
               'absolute z-50 w-full mt-1 rounded-lg border overflow-hidden',
-              themeStyles.dropdown
+              themeStyles.dropdown,
             )}
           >
             {suggestions.map((suggestion, index) => (
@@ -628,7 +628,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
                 onClick={() => handleSuggestionClick(suggestion)}
                 className={cn(
                   'px-4 py-3 cursor-pointer transition-colors border-b border-gray-200 dark:border-gray-700 last:border-b-0',
-                  index === selectedIndex ? themeStyles.suggestionActive : themeStyles.suggestion
+                  index === selectedIndex ? themeStyles.suggestionActive : themeStyles.suggestion,
                 )}
               >
                 <div className="flex items-start space-x-3">
@@ -656,7 +656,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
           id={errorId}
           className={cn(
             'text-xs mt-1 flex items-center space-x-1',
-            validation.type === 'success' ? themeStyles.success : themeStyles.error
+            validation.type === 'success' ? themeStyles.success : themeStyles.error,
           )}
         >
           {validation.type === 'success' ? (
