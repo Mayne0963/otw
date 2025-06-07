@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from 'next-themes';
 import { AuthProvider } from '../contexts/AuthContext';
-import { GoogleMapsProvider } from '../contexts/GoogleMapsContext';
+import { ModernGoogleMapsProvider } from '../contexts/ModernGoogleMapsContext';
 import { Toaster } from '../components/ui/toaster';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -13,12 +13,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <GoogleMapsProvider>
+      <ModernGoogleMapsProvider>
         <AuthProvider>
           {children}
           <Toaster />
         </AuthProvider>
-      </GoogleMapsProvider>
+      </ModernGoogleMapsProvider>
     </ThemeProvider>
   );
 }

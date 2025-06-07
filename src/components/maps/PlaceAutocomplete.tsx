@@ -4,7 +4,7 @@ import React, { useRef, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
-import { useGoogleMaps } from '@/contexts/GoogleMapsContext';
+import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 
 interface PlaceDetails {
   formatted_address: string;
@@ -50,7 +50,7 @@ export default function PlaceAutocomplete({
   const autocompleteElementRef = useRef<any>(null);
 
   // Use the centralized Google Maps context
-  const { isLoaded, loadError } = useGoogleMaps();
+  const { isLoaded, loadError } = useModernGoogleMaps();
 
   // Initialize PlaceAutocompleteElement when API is loaded
   useEffect(() => {
