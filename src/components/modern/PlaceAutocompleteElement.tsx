@@ -151,30 +151,30 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
       if (countryFilter && place.address_components) {
         const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
         const countryComponent = place.address_components.find(
-          (component: any) => component.types.includes('country')
+          (component: any) => component.types.includes('country'),
         );
-        
+
         if (countryComponent) {
           const countryCode = countryComponent.short_name.toLowerCase();
           const countryName = countryComponent.long_name.toLowerCase();
-          const isValidCountry = countries.some(filter => 
-            filter.toLowerCase() === countryCode || 
-            filter.toLowerCase() === countryName
+          const isValidCountry = countries.some(filter =>
+            filter.toLowerCase() === countryCode ||
+            filter.toLowerCase() === countryName,
           );
-          
+
           if (!isValidCountry) {
             console.log('Place filtered out due to country restriction:', countryComponent);
             return;
           }
         }
       }
-      
+
       // Apply client-side type filtering if specified
       if (typeFilter && typeFilter.length > 0) {
-        const hasValidType = typeFilter.some(filterType => 
-          place.types && place.types.includes(filterType)
+        const hasValidType = typeFilter.some(filterType =>
+          place.types && place.types.includes(filterType),
         );
-        
+
         if (!hasValidType) {
           console.log('Place filtered out due to type restriction:', place.types);
           return;

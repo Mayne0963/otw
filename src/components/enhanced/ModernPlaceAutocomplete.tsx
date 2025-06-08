@@ -231,17 +231,17 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     if (countryFilter && place.address_components) {
       const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
       const countryComponent = place.address_components.find(
-        (component) => component.types.includes('country')
+        (component) => component.types.includes('country'),
       );
-      
+
       if (countryComponent) {
         const countryCode = countryComponent.short_name.toLowerCase();
         const countryName = countryComponent.long_name.toLowerCase();
-        const isValidCountry = countries.some(filter => 
-          filter.toLowerCase() === countryCode || 
-          filter.toLowerCase() === countryName
+        const isValidCountry = countries.some(filter =>
+          filter.toLowerCase() === countryCode ||
+          filter.toLowerCase() === countryName,
         );
-        
+
         if (!isValidCountry) {
           console.log('Place filtered out due to country restriction:', countryComponent);
           return;
@@ -286,7 +286,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
 
     // Update input value
     setInputValue(placeDetails.displayName);
-    
+
     // Set validation
     const validationResult: ValidationResult = {
       isValid: true,
@@ -485,7 +485,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <MapPinIcon className="h-5 w-5 text-gray-400" />
       </div>
-      
+
       {/* Right side icons */}
       <div className="absolute inset-y-0 right-0 pr-3 flex items-center space-x-2">
         {getValidationIcon()}
