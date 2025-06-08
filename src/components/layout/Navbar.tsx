@@ -56,6 +56,7 @@ const mainNavItems = [
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const { user, logout } = useAuth();
   const { items: cartItems } = useCart();
   const pathname = usePathname();
@@ -70,6 +71,7 @@ const Navbar = () => {
       if (e.key === 'Escape') {
         setMobileMenuOpen(false);
         setServicesDropdownOpen(false);
+        setMobileServicesOpen(false);
       }
     };
 
@@ -344,22 +346,100 @@ const Navbar = () => {
           <div className="mt-8 flow-root">
             <div className="-my-6 divide-y divide-otw-gold-500/20">
               <div className="space-y-3 py-6">
-                {mainNavItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={cn(
-                      '-mx-3 flex items-center rounded-xl px-4 py-4 text-base font-semibold leading-7 transition-all duration-300 border',
-                      pathname === item.href
-                        ? 'text-otw-gold-400 bg-otw-gold-500/15 border-otw-gold-500/40 shadow-lg shadow-otw-gold-500/10'
-                        : 'text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 border-transparent hover:border-otw-gold-500/30 hover:shadow-md',
-                    )}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <span className="flex-shrink-0">{item.icon}</span>
-                    <span className="ml-1">{item.name}</span>
-                  </Link>
-                ))}
+                {mainNavItems.map((item) => {
+                  if (item.name === 'Services') {
+                    return (
+                      <div key={item.name} className="space-y-2">
+                        <button
+                          className={cn(
+                            '-mx-3 flex items-center justify-between rounded-xl px-4 py-4 text-base font-semibold leading-7 transition-all duration-300 border w-full',
+                            pathname === item.href
+                              ? 'text-otw-gold-400 bg-otw-gold-500/15 border-otw-gold-500/40 shadow-lg shadow-otw-gold-500/10'
+                              : 'text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 border-transparent hover:border-otw-gold-500/30 hover:shadow-md',
+                          )}
+                          onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                        >
+                          <div className="flex items-center">
+                            <span className="flex-shrink-0">{item.icon}</span>
+                            <span className="ml-1">{item.name}</span>
+                          </div>
+                          <ChevronDown className={cn(
+                            'h-4 w-4 transition-transform duration-200',
+                            mobileServicesOpen ? 'rotate-180' : '',
+                          )} />
+                        </button>
+                        
+                        {/* Mobile Services Submenu */}
+                        <div className={cn(
+                          'overflow-hidden transition-all duration-300',
+                          mobileServicesOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                        )}>
+                          <div className="ml-6 space-y-2 border-l border-otw-gold-500/20 pl-4">
+                            <Link
+                              href="/otw/rides"
+                              className="flex items-center px-3 py-3 text-sm text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 rounded-lg transition-all duration-200"
+                              onClick={() => {
+                                setMobileMenuOpen(false);
+                                setMobileServicesOpen(false);
+                              }}
+                            >
+                              <Car className="mr-3 h-4 w-4" />
+                              <div>
+                                <div className="font-medium">Ride Services</div>
+                                <div className="text-xs text-white/60">Quick & reliable rides</div>
+                              </div>
+                            </Link>
+                            <Link
+                              href="/otw/grocery-delivery"
+                              className="flex items-center px-3 py-3 text-sm text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 rounded-lg transition-all duration-200"
+                              onClick={() => {
+                                setMobileMenuOpen(false);
+                                setMobileServicesOpen(false);
+                              }}
+                            >
+                              <ShoppingBag className="mr-3 h-4 w-4" />
+                              <div>
+                                <div className="font-medium">Grocery Delivery</div>
+                                <div className="text-xs text-white/60">Fresh groceries delivered</div>
+                              </div>
+                            </Link>
+                            <Link
+                              href="/otw/package"
+                              className="flex items-center px-3 py-3 text-sm text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 rounded-lg transition-all duration-200"
+                              onClick={() => {
+                                setMobileMenuOpen(false);
+                                setMobileServicesOpen(false);
+                              }}
+                            >
+                              <MapPin className="mr-3 h-4 w-4" />
+                              <div>
+                                <div className="font-medium">Package Delivery</div>
+                                <div className="text-xs text-white/60">Same-day package delivery</div>
+                              </div>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={cn(
+                        '-mx-3 flex items-center rounded-xl px-4 py-4 text-base font-semibold leading-7 transition-all duration-300 border',
+                        pathname === item.href
+                          ? 'text-otw-gold-400 bg-otw-gold-500/15 border-otw-gold-500/40 shadow-lg shadow-otw-gold-500/10'
+                          : 'text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 border-transparent hover:border-otw-gold-500/30 hover:shadow-md',
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <span className="flex-shrink-0">{item.icon}</span>
+                      <span className="ml-1">{item.name}</span>
+                    </Link>
+                  );
+                })}
               </div>
               <div className="py-6">
                 {user ? (

@@ -16,7 +16,7 @@ const ComingSoonOverlay: React.FC<ComingSoonOverlayProps> = ({ onClose }) => {
         </div>
 
         <h2 className="text-3xl font-bold mb-4">Coming Soon</h2>
-        <p className="text-xl text-gray-300 mb-6">
+        <p className="text-xl text-white/80 mb-6">
           Our infused menu will be available starting July 1st, 2024 in legal
           locations
         </p>
@@ -26,13 +26,13 @@ const ComingSoonOverlay: React.FC<ComingSoonOverlayProps> = ({ onClose }) => {
             <FaCalendarAlt className="text-gold-foil mr-2" />
             <span className="text-gold-foil font-bold">Stay Tuned</span>
           </div>
-          <p className="text-gray-400 mb-4">
+          <p className="text-white/70 mb-4">
             We&apos;re excited to bring you our premium infused culinary creations
             soon. Check back for updates!
           </p>
         </div>
 
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-white/60">
           You must be 21 or older to access our infused menu when available.
           Available only in locations where legal.
         </p>

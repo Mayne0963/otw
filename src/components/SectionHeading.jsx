@@ -20,7 +20,7 @@ export default function SectionHeading({
       <div
         className={`w-24 h-1 ${colorClass} ${centered ? 'mx-auto' : ''} mb-6`}
       ></div>
-      {subtitle && <p className="text-xl text-gray-300">{subtitle}</p>}
+      {subtitle && <p className="text-xl text-white/80">{subtitle}</p>}
     </div>
   );
 }

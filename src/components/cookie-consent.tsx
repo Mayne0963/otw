@@ -39,7 +39,7 @@ export function CookieConsent() {
             <h3 className="text-lg font-semibold mb-2">
               We value your privacy
             </h3>
-            <p className="text-sm text-gray-400 mb-2">
+            <p className="text-sm text-white/70 mb-2">
               We use cookies to enhance your browsing experience, serve
               personalized ads or content, and analyze our traffic. By clicking
               &quot;Accept All&quot;, you consent to our use of cookies.

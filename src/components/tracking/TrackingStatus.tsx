@@ -33,7 +33,7 @@ export default function TrackingStatus({
   return (
     <Card className="p-6 space-y-6">
       <div className="relative">
-        <div className="absolute left-0 top-1/2 w-full h-1 bg-gray-200 -translate-y-1/2">
+        <div className="absolute left-0 top-1/2 w-full h-1 bg-otw-black-600 -translate-y-1/2">
           <div
             className="h-full bg-otw-gold transition-all duration-500"
             style={{
@@ -51,15 +51,15 @@ export default function TrackingStatus({
               <div key={step.key} className="flex flex-col items-center">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
-                    isActive ? 'bg-otw-gold' : 'bg-gray-200'
+                    isActive ? 'bg-otw-gold' : 'bg-otw-black-600'
                   }`}
                 >
                   <Icon
-                    className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400'}`}
+                    className={`w-5 h-5 ${isActive ? 'text-white' : 'text-white/40'}`}
                   />
                 </div>
                 <span
-                  className={`mt-2 text-sm ${isActive ? 'text-otw-gold' : 'text-gray-400'}`}
+                  className={`mt-2 text-sm ${isActive ? 'text-otw-gold' : 'text-white/60'}`}
                 >
                   {step.label}
                 </span>
@@ -70,7 +70,7 @@ export default function TrackingStatus({
       </div>
 
       {rep && status !== 'received' && (
-        <div className="mt-6 flex items-center gap-4 p-4 bg-gray-50 rounded-lg animate-fadeIn">
+        <div className="mt-6 flex items-center gap-4 p-4 bg-otw-black-800/50 rounded-lg animate-fadeIn">
           <Image
             src={rep.photo}
             alt={rep.name}
@@ -93,7 +93,7 @@ export default function TrackingStatus({
           </div>
           {estimatedTime && (
             <div className="text-right">
-              <span className="text-sm text-gray-500">Estimated Time</span>
+              <span className="text-sm text-white/60">Estimated Time</span>
               <p className="font-semibold">{estimatedTime}</p>
             </div>
           )}

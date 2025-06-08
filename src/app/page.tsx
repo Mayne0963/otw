@@ -59,42 +59,54 @@ export default function Home() {
     <main className="min-h-screen overflow-hidden">
         {/* Hero Section */}
         <section className="relative min-h-screen flex flex-col justify-center items-center px-4">
-          {/* Animated Background */}
+          {/* Enhanced Animated Background */}
           <div className="absolute inset-0">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-otw-gold/10 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-otw-red/10 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-otw-gold/15 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-otw-red/15 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-otw-gold/5 rounded-full blur-3xl animate-pulse" />
             <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+            {/* Radial gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-radial from-transparent via-otw-black/20 to-otw-black/40" />
           </div>
 
           <div className="relative z-10 max-w-6xl mx-auto text-center">
-            {/* Top Text */}
-            <div className="mb-8">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4">
-                <span className="bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent animate-gradient-text">
-                  OTW
-                </span>
-              </h1>
+            {/* Enhanced OTW Branding */}
+            <div className="mb-12">
+              {/* OTW Logo/Brand */}
+              <div className="mb-8">
+                <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold mb-6 tracking-wider">
+                  <span className="bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent animate-gradient-text drop-shadow-2xl">
+                    OTW
+                  </span>
+                </h1>
+                <div className="w-32 h-1 bg-gradient-to-r from-transparent via-otw-gold to-transparent mx-auto mb-6" />
+              </div>
 
-              <p className="text-xl md:text-2xl lg:text-3xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-                Experience lightning-fast delivery from Fort Wayne&apos;s
-              </p>
             </div>
 
-            {/* Service Buttons */}
+            {/* Enhanced Service Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <Button href="/restaurants" variant="primary" className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300 bg-otw-red hover:bg-otw-red/80">
-                Order Broskis = Free Delivery
+              <Button 
+                href="/restaurants" 
+                variant="primary" 
+                className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300 bg-gradient-to-r from-otw-red to-otw-red/80 hover:from-otw-red/90 hover:to-otw-red/70 shadow-2xl hover:shadow-otw-red/30 border border-otw-red/50"
+              >
+                🍕 Order Broski's = Free Delivery
               </Button>
-              <Button href="/otw/grocery-delivery" variant="secondary" className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300">
-                Order Groceries
+              <Button 
+                href="/otw/grocery-delivery" 
+                variant="secondary" 
+                className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300 bg-gradient-to-r from-otw-gold to-otw-gold/80 text-otw-black hover:from-otw-gold/90 hover:to-otw-gold/70 shadow-2xl hover:shadow-otw-gold/30 border border-otw-gold/50 font-semibold"
+              >
+                🛒 Order Groceries
               </Button>
             </div>
           </div>
 
-        {/* Scroll Indicator */}
+        {/* Enhanced Scroll Indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse" />
+          <div className="w-6 h-10 border-2 border-otw-gold/50 rounded-full flex justify-center bg-otw-black/30 backdrop-blur-sm">
+            <div className="w-1 h-3 bg-otw-gold rounded-full mt-2 animate-pulse" />
           </div>
         </div>
       </section>

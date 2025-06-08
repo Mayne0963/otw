@@ -67,7 +67,7 @@ const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           {item.image ? (
             <Image src={item.image || '/placeholder.svg'} alt={item.name} fill className="object-cover" />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-800 text-gray-500">No Image</div>
+            <div className="absolute inset-0 flex items-center justify-center bg-otw-black-800 text-white/60">No Image</div>
           )}
 
           {/* Badges */}
@@ -101,7 +101,7 @@ const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
             <span className="text-gold-foil font-bold">${item.price.toFixed(2)}</span>
           </div>
 
-          <p className={`text-gray-400 text-sm mb-4 ${isExpanded ? '' : 'line-clamp-2'}`}>{item.description}</p>
+          <p className={`text-white/70 text-sm mb-4 ${isExpanded ? '' : 'line-clamp-2'}`}>{item.description}</p>
 
           {item.description.length > 100 && (
             <button className="text-gold-foil text-xs mb-4 hover:underline" onClick={() => setIsExpanded(!isExpanded)}>

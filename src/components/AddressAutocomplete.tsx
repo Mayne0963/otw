@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import PlaceAutocompleteElement, { PlaceDetails as ModernPlaceDetails } from '@/components/modern/PlaceAutocompleteElement';
+import PlaceAutocompleteElement, { PlaceDetails as ModernPlaceDetails, OTWPlaceAutocompleteElement } from '@/components/modern/PlaceAutocompleteElement';
 
 // Legacy interface for backward compatibility
 interface PlaceDetails {
@@ -46,18 +46,18 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
   };
 
   return (
-    <div className={`relative rounded-xl shadow-lg overflow-hidden ${className}`}>
-      <label className="text-sm font-semibold text-gray-300 mb-1 block">{label}</label>
-
-      <PlaceAutocompleteElement
+    <div className={`relative ${className}`}>
+      <OTWPlaceAutocompleteElement
+        label={label}
         placeholder={placeholder || 'Enter your address...'}
         disabled={disabled}
         onPlaceSelect={handlePlaceSelect}
         error={error}
         className="w-full"
-        inputClassName="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-        countryFilter="us"
+        countryFilter={['us']}
         fields={['place_id', 'formatted_address', 'geometry']}
+        size="md"
+        showIcon={true}
       />
     </div>
   );

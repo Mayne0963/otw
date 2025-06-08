@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import PlaceAutocompleteElement, { PlaceDetails as ModernPlaceDetails } from '@/components/modern/PlaceAutocompleteElement';
+import PlaceAutocompleteElement, { PlaceDetails as ModernPlaceDetails, OTWPlaceAutocompleteElement } from '@/components/modern/PlaceAutocompleteElement';
 
 // Legacy interface for backward compatibility
 interface PlaceDetails {
@@ -52,12 +52,10 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   className = '',
   disabled = false,
   label = 'Address',
-  showIcon = true,
-  allowClear = true,
+  required = false,
   debounceMs = 300,
   restrictToCountry,
   types,
-  fields = ['place_id', 'formatted_address', 'geometry'],
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [placeDetails, setPlaceDetails] = useState<PlaceDetails | null>(null);
@@ -83,33 +81,39 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   return (
     <div className={`relative ${className}`}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-semibold text-white/95 mb-2 tracking-wide drop-shadow-sm">
           {label}
+          {required && <span className="text-otw-red-400 ml-1">*</span>}
         </label>
       )}
-
-      <PlaceAutocompleteElement
+      <OTWPlaceAutocompleteElement
         placeholder={placeholder}
         disabled={disabled}
         onPlaceSelect={handlePlaceSelect}
         error={error}
-        className="w-full"
-        inputClassName="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+        className="w-full px-5 py-4 border-2 rounded-xl transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-offset-0 bg-black/50 backdrop-blur-xl border-white/15 text-white/95 placeholder-white/65 focus:border-otw-gold-400/70 focus:ring-2 focus:ring-otw-gold-400/40 focus:bg-black/60 hover:border-white/25 hover:bg-black/55 hover:shadow-2xl hover:shadow-otw-gold-400/15 focus:shadow-3xl focus:shadow-otw-gold-400/25 hover:scale-[1.01] focus:scale-[1.02] transition-all duration-300 ease-out font-medium text-base"
         countryFilter={restrictToCountry}
-        fields={fields}
-        debounceMs={debounceMs}
+        size="md"
+        showIcon={true}
       />
 
-      {/* Success indicator */}
+      {error && (
+        <div className="mt-2 flex items-start space-x-2 p-3 bg-otw-red-500/10 border border-otw-red-500/20 rounded-lg backdrop-blur-sm">
+          <span className="text-sm text-otw-red-300 font-medium">{error}</span>
+        </div>
+      )}
+
+      {/* Success indicator with OTW styling */}
       {placeDetails && !error && (
-        <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-md">
+        <div className="mt-3 p-3 bg-otw-gold-500/10 border border-otw-gold-500/20 rounded-xl shadow-sm backdrop-blur-sm">
           <div className="flex items-center">
-            {showIcon && (
-              <svg className="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            )}
-            <span className="text-sm text-green-700">Address selected: {placeDetails.address}</span>
+            <svg className="w-5 h-5 text-otw-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <div>
+              <p className="text-sm font-medium text-white/90">Address Confirmed</p>
+              <p className="text-xs text-white/70 mt-0.5">{placeDetails.address}</p>
+            </div>
           </div>
         </div>
       )}

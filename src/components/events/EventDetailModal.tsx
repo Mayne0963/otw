@@ -99,29 +99,29 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div className="space-y-3">
-              <div className="flex items-center text-gray-300">
+              <div className="flex items-center text-white/80">
                 <FaCalendarAlt className="mr-2 text-gold-foil flex-shrink-0" />
                 <span>{formatDate(event.date)}</span>
               </div>
 
-              <div className="flex items-center text-gray-300">
+              <div className="flex items-center text-white/80">
                 <FaClock className="mr-2 text-gold-foil flex-shrink-0" />
                 <span>{event.time}</span>
               </div>
 
-              <div className="flex items-center text-gray-300">
+              <div className="flex items-center text-white/80">
                 <FaMapMarkerAlt className="mr-2 text-gold-foil flex-shrink-0" />
                 <span>{event.location.name}</span>
               </div>
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-center text-gray-300">
+              <div className="flex items-center text-white/80">
                 <FaTicketAlt className="mr-2 text-gold-foil flex-shrink-0" />
                 <span>${event.price.toFixed(2)} per person</span>
               </div>
 
-              <div className="flex items-center text-gray-300">
+              <div className="flex items-center text-white/80">
                 <FaUserFriends className="mr-2 text-gold-foil flex-shrink-0" />
                 <span>
                   {isSoldOut
@@ -156,7 +156,7 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
 
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">About This Event</h3>
-            <p className="text-gray-300 whitespace-pre-line">
+            <p className="text-white/80 whitespace-pre-line">
               {event.description}
             </p>
           </div>
@@ -170,7 +170,7 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
                     <span className="text-gold-foil font-medium mr-3">
                       {item.time}
                     </span>
-                    <span className="text-gray-300">{item.activity}</span>
+                    <span className="text-white/80">{item.activity}</span>
                   </li>
                 ))}
               </ul>
@@ -193,7 +193,7 @@ const EventDetailModal: React.FC<EventDetailModalProps> = ({
                 </div>
                 <div>
                   <p className="font-medium">{event.host.name}</p>
-                  <p className="text-sm text-gray-400">{event.host.title}</p>
+                  <p className="text-sm text-white/60">{event.host.title}</p>
                 </div>
               </div>
             </div>

@@ -50,7 +50,7 @@ export default function CartDropdown() {
             <h3 className="font-medium">Your Cart ({itemCount})</h3>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-gray-400 hover:text-white"
+              className="text-white/60 hover:text-white"
               aria-label="Close cart"
             >
               <X className="h-4 w-4" />
@@ -60,9 +60,9 @@ export default function CartDropdown() {
           {items.length === 0 ? (
             <div className="p-6 text-center">
               <div className="flex justify-center mb-4">
-                <ShoppingBag className="h-12 w-12 text-gray-500" />
+                <ShoppingBag className="h-12 w-12 text-white/50" />
               </div>
-              <p className="text-gray-400 mb-4">Your cart is empty</p>
+              <p className="text-white/70 mb-4">Your cart is empty</p>
               <Link
                 href="/restaurants"
                 className="inline-block w-full"
@@ -93,7 +93,7 @@ export default function CartDropdown() {
                       <h4 className="font-medium text-sm truncate">
                         {item.name}
                       </h4>
-                      <p className="text-gray-400 text-xs">
+                      <p className="text-white/60 text-xs">
                         ${item.price.toFixed(2)}
                       </p>
                       <div className="flex items-center mt-1">
@@ -123,7 +123,7 @@ export default function CartDropdown() {
                     </div>
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="text-gray-400 hover:text-otw-red-600 transition-colors"
+                      className="text-white/60 hover:text-otw-red-600 transition-colors"
                       aria-label={`Remove ${item.name} from cart`}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -134,7 +134,7 @@ export default function CartDropdown() {
 
               <div className="p-4 border-t border-otw-black-800">
                 <div className="flex justify-between mb-4">
-                  <span className="text-gray-400">Subtotal</span>
+                  <span className="text-white/60">Subtotal</span>
                   <span className="font-medium">${total.toFixed(2)}</span>
                 </div>
                 <Link
@@ -146,7 +146,7 @@ export default function CartDropdown() {
                   <ChevronRight className="h-4 w-4" />
                 </Link>
                 <button
-                  className="w-full text-center mt-2 text-sm text-gray-400 hover:text-white transition-colors"
+                  className="w-full text-center mt-2 text-sm text-white/60 hover:text-white transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   Continue Shopping

@@ -30,11 +30,11 @@ export default function QRTipComponent({
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg p-6">
+    <div className="bg-otw-black-900 rounded-lg p-6">
       <div className="flex flex-col md:flex-row items-center">
         <div className="md:w-2/3 mb-6 md:mb-0 md:pr-6">
           <h3 className="text-xl font-bold mb-2">Tip {repName} Directly</h3>
-          <p className="text-gray-400 mb-4">
+          <p className="text-white/70 mb-4">
             Scan the QR code to tip your representative directly and view their community story. 100% of tips go to your
             rep.
           </p>
@@ -52,7 +52,7 @@ export default function QRTipComponent({
       </div>
 
       {/* Rep Storyline */}
-      <div className="mt-6 pt-6 border-t border-gray-800">
+      <div className="mt-6 pt-6 border-t border-otw-black-700">
         <h3 className="text-xl font-bold mb-4">Rep Storyline</h3>
         <div className="flex items-start">
           <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4 flex-shrink-0">
@@ -60,7 +60,7 @@ export default function QRTipComponent({
           </div>
           <div>
             <h4 className="font-bold">{repName}</h4>
-            <p className="text-gray-400 mb-2">
+            <p className="text-white/70 mb-2">
               {repName} has been with OTW for over a year, serving the community with dedication and excellence. Your
               tips help support their commitment to our mission.
             </p>
@@ -74,7 +74,7 @@ export default function QRTipComponent({
       {/* Tip Modal */}
       {showTipModal && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 rounded-lg max-w-md w-full p-6">
+          <div className="bg-otw-black-900 rounded-lg max-w-md w-full p-6">
             {tipSent ? (
               <div className="text-center">
                 <div className="h-16 w-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -89,7 +89,7 @@ export default function QRTipComponent({
                   </svg>
                 </div>
                 <h3 className="text-xl font-bold mb-2">Thank You!</h3>
-                <p className="text-gray-400 mb-6">
+                <p className="text-white/70 mb-6">
                   Your ${tipAmount} tip has been sent to {repName}. 100% of your tip goes directly to your rep.
                 </p>
                 <button className="btn-primary w-full" onClick={handleCloseModal}>
@@ -100,7 +100,7 @@ export default function QRTipComponent({
               <>
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-xl font-bold">Tip {repName}</h3>
-                  <button className="text-gray-400 hover:text-white" onClick={handleCloseModal}>
+                  <button className="text-white/60 hover:text-white" onClick={handleCloseModal}>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-6 w-6"
@@ -119,12 +119,12 @@ export default function QRTipComponent({
                   </div>
                   <div>
                     <p className="font-bold">{repName}</p>
-                    <p className="text-sm text-gray-400">Rep #{repId}</p>
+                    <p className="text-sm text-white/60">Rep #{repId}</p>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-gray-400 mb-2">Tip Amount</label>
+                  <label className="block text-white/70 mb-2">Tip Amount</label>
                   <div className="grid grid-cols-5 gap-2 mb-4">
                     {predefinedAmounts.map((amount) => (
                       <button
@@ -132,7 +132,7 @@ export default function QRTipComponent({
                         className={`py-2 rounded-lg font-bold ${
                           tipAmount === amount
                             ? 'bg-accent-gold text-black'
-                            : 'bg-gray-800 text-white hover:bg-gray-700'
+                            : 'bg-otw-black-800 text-white hover:bg-otw-black-700'
                         }`}
                         onClick={() => setTipAmount(amount)}
                       >
@@ -141,12 +141,12 @@ export default function QRTipComponent({
                     ))}
                   </div>
                   <div className="flex items-center">
-                    <span className="text-gray-400 mr-2">Custom:</span>
+                    <span className="text-white/60 mr-2">Custom:</span>
                     <div className="relative flex-grow">
-                      <span className="absolute left-3 top-2 text-gray-400">$</span>
+                      <span className="absolute left-3 top-2 text-white/60">$</span>
                       <input
                         type="number"
-                        className="w-full pl-8 pr-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-primary-red"
+                        className="w-full pl-8 pr-4 py-2 bg-otw-black-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-otw-red"
                         value={tipAmount}
                         onChange={(e) => setTipAmount(Number(e.target.value))}
                         min="1"
@@ -156,7 +156,7 @@ export default function QRTipComponent({
                 </div>
 
                 <div className="bg-black p-4 rounded-lg mb-6">
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-white/60">
                     <span className="text-accent-gold font-bold">100% to Your Rep:</span> All tips go directly to your
                     representative to support their work in the community.
                   </p>
@@ -181,7 +181,7 @@ export function EmergencyModeButton({ onActivate }) {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-xl font-bold mb-1">Emergency Mode</h3>
-          <p className="text-sm text-gray-300">
+          <p className="text-sm text-white/80">
             Activates highest priority matching for urgent needs like formula, medications, or roadside assistance.
           </p>
         </div>
@@ -230,7 +230,7 @@ export function RoleApplicationComponent() {
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg p-6">
+    <div className="bg-otw-black-900 rounded-lg p-6">
       <h3 className="text-2xl font-bold mb-4">Role Application</h3>
 
       {isSubmitted ? (
@@ -247,7 +247,7 @@ export function RoleApplicationComponent() {
             </svg>
           </div>
           <h4 className="text-xl font-bold mb-2">Application Submitted!</h4>
-          <p className="text-gray-400 mb-6">
+          <p className="text-white/70 mb-6">
             Your application for the {roles.find((r) => r.id === role)?.name} role has been submitted for review. We&apos;ll
             notify you once it&apos;s been processed.
           </p>
@@ -267,14 +267,14 @@ export function RoleApplicationComponent() {
       ) : (
         <form onSubmit={handleSubmit}>
           <div className="mb-6">
-            <label className="block text-gray-400 mb-2">Select Role</label>
+            <label className="block text-white/70 mb-2">Select Role</label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {roles.map((r) => (
                 <button
                   key={r.id}
                   type="button"
                   className={`p-4 rounded-lg text-center transition-all ${
-                    role === r.id ? 'bg-primary-red text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    role === r.id ? 'bg-otw-red text-white' : 'bg-otw-black-800 text-white/80 hover:bg-otw-black-700'
                   }`}
                   onClick={() => setRole(r.id)}
                 >
@@ -287,7 +287,7 @@ export function RoleApplicationComponent() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-gray-400 mb-2" htmlFor="name">
+              <label className="block text-white/70 mb-2" htmlFor="name">
                 Full Name*
               </label>
               <input
@@ -296,12 +296,12 @@ export function RoleApplicationComponent() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-primary-red"
+                className="w-full px-4 py-2 bg-otw-black-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-otw-red"
                 required
               />
             </div>
             <div>
-              <label className="block text-gray-400 mb-2" htmlFor="email">
+              <label className="block text-white/70 mb-2" htmlFor="email">
                 Email Address*
               </label>
               <input
@@ -310,14 +310,14 @@ export function RoleApplicationComponent() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-primary-red"
+                className="w-full px-4 py-2 bg-otw-black-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-otw-red"
                 required
               />
             </div>
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-400 mb-2" htmlFor="phone">
+            <label className="block text-white/70 mb-2" htmlFor="phone">
               Phone Number*
             </label>
             <input
@@ -326,13 +326,13 @@ export function RoleApplicationComponent() {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-primary-red"
+              className="w-full px-4 py-2 bg-otw-black-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-otw-red"
               required
             />
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-400 mb-2" htmlFor="experience">
+            <label className="block text-white/70 mb-2" htmlFor="experience">
               Relevant Experience*
             </label>
             <textarea
@@ -340,13 +340,13 @@ export function RoleApplicationComponent() {
               name="experience"
               value={formData.experience}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-primary-red h-24"
+              className="w-full px-4 py-2 bg-otw-black-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-otw-red h-24"
               required
             ></textarea>
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-400 mb-2" htmlFor="reason">
+            <label className="block text-white/70 mb-2" htmlFor="reason">
               Why do you want this role?*
             </label>
             <textarea
@@ -354,7 +354,7 @@ export function RoleApplicationComponent() {
               name="reason"
               value={formData.reason}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-primary-red h-24"
+              className="w-full px-4 py-2 bg-otw-black-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-otw-red h-24"
               required
             ></textarea>
           </div>
@@ -460,15 +460,15 @@ export function AgeVerificationComponent({ onVerified }) {
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg p-6">
+    <div className="bg-otw-black-900 rounded-lg p-6">
       <h3 className="text-2xl font-bold mb-4">Age Verification Required</h3>
-      <p className="text-gray-400 mb-6">
+      <p className="text-white/70 mb-6">
         You must be 21 years or older to access the cannabis-infused menu. Please verify your age below.
       </p>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-gray-400 mb-2" htmlFor="name">
+          <label className="block text-white/70 mb-2" htmlFor="name">
             Full Name (as it appears on ID)*
           </label>
           <input
@@ -477,13 +477,13 @@ export function AgeVerificationComponent({ onVerified }) {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 ${errors.name ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-primary-red'}`}
+            className={`w-full px-4 py-2 bg-otw-black-800 text-white rounded focus:outline-none focus:ring-2 ${errors.name ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-otw-red'}`}
           />
           {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
         </div>
 
         <div className="mb-6">
-          <label className="block text-gray-400 mb-2" htmlFor="dob">
+          <label className="block text-white/70 mb-2" htmlFor="dob">
             Date of Birth*
           </label>
           <input
@@ -492,13 +492,13 @@ export function AgeVerificationComponent({ onVerified }) {
             name="dob"
             value={formData.dob}
             onChange={handleChange}
-            className={`w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 ${errors.dob ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-primary-red'}`}
+            className={`w-full px-4 py-2 bg-otw-black-800 text-white rounded focus:outline-none focus:ring-2 ${errors.dob ? 'border border-red-500 focus:ring-red-500' : 'focus:ring-otw-red'}`}
           />
           {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
         </div>
 
         <div className="mb-6">
-          <label className={`flex items-start ${errors.agreeToTerms ? 'text-red-500' : 'text-gray-400'}`}>
+          <label className={`flex items-start ${errors.agreeToTerms ? 'text-red-500' : 'text-white/70'}`}>
             <input
               type="checkbox"
               name="agreeToTerms"

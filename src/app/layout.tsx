@@ -57,35 +57,50 @@ export default function RootLayout({
       <body
         className={cn(
           poppins.variable,
-          'font-sans antialiased bg-otw-black text-white min-h-screen flex flex-col',
+          'font-sans antialiased bg-gradient-to-br from-otw-black via-otw-black-900 to-otw-black text-white min-h-screen flex flex-col',
         )}
       >
         <CartProvider>
           <Providers>
-            {/* Background with OTW logo */}
-            <div
-              className="fixed inset-0 pointer-events-none z-0"
-              style={{
-                backgroundImage: 'url(/images/otw-logo.png)',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
-                opacity: 0.4,
-                imageRendering: 'crisp-edges',
-                filter: 'contrast(1.1) brightness(1.05)',
-              }}
-            />
-            {/* Tint overlay */}
-            <div className="fixed inset-0 bg-otw-black/40 pointer-events-none z-1" />
-
-            {/* Main content */}
-            <div className="relative z-10 flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-grow pt-20">{children}</main>
-              <Footer className="bg-otw-black/80 border-t border-otw-gold/10" />
+            {/* Enhanced Background with OTW branding */}
+            <div className="fixed inset-0 pointer-events-none z-0">
+              {/* Gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-otw-black via-otw-black-900 to-otw-black-950" />
+              
+              {/* Subtle pattern overlay */}
+              <div 
+                className="absolute inset-0 opacity-5"
+                style={{
+                  backgroundImage: `radial-gradient(circle at 25% 25%, #d4af37 1px, transparent 1px)`,
+                  backgroundSize: '50px 50px',
+                }}
+              />
+              
+              {/* OTW logo full background */}
+              <div
+                className="absolute inset-0 opacity-5"
+                style={{
+                  backgroundImage: 'url(/images/otw-logo.png)',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: 'cover',
+                  filter: 'brightness(0.4) contrast(1.5)',
+                }}
+              />
             </div>
 
-            {/* UI Components */}
+            {/* Main content with enhanced styling */}
+            <div className="relative z-10 flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow pt-20 relative">
+                {/* Content backdrop for better readability */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-otw-black/20 to-transparent pointer-events-none" />
+                <div className="relative z-10">{children}</div>
+              </main>
+              <Footer className="bg-gradient-to-r from-otw-black/90 via-otw-black-900/90 to-otw-black/90 border-t border-otw-gold/20 backdrop-blur-sm" />
+            </div>
+
+            {/* Enhanced UI Components */}
             <ScrollToTop />
             <ToastContainer />
           </Providers>

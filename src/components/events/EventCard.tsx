@@ -78,18 +78,18 @@ const EventCard: React.FC<EventCardProps> = ({
         <h3 className="text-xl font-bold mb-3 line-clamp-2">{event.title}</h3>
 
         <div className="space-y-2 mb-4">
-          <div className="flex items-center text-gray-400">
+          <div className="flex items-center text-white/60">
             <FaClock className="mr-2 text-gold-foil flex-shrink-0" />
             <span>{event.time}</span>
           </div>
 
-          <div className="flex items-center text-gray-400">
+          <div className="flex items-center text-white/60">
             <FaMapMarkerAlt className="mr-2 text-gold-foil flex-shrink-0" />
             <span>{event.location.name}</span>
           </div>
 
           {!isPast && (
-            <div className="flex items-center text-gray-400">
+            <div className="flex items-center text-white/60">
               <FaTicketAlt className="mr-2 text-gold-foil flex-shrink-0" />
               <span>
                 {isSoldOut
@@ -100,7 +100,7 @@ const EventCard: React.FC<EventCardProps> = ({
           )}
         </div>
 
-        <p className="text-gray-300 mb-4 line-clamp-2">{event.description}</p>
+        <p className="text-white/80 mb-4 line-clamp-2">{event.description}</p>
 
         <div className="flex gap-2">
           <button
