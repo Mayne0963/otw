@@ -316,7 +316,6 @@ export default function GroceryDeliveryPage() {
                     placeholder="Where should we deliver your groceries?"
                     required
                     restrictToCountry={['US']}
-                    types={['address']}
                     maxSuggestions={5}
                     debounceMs={300}
                   />

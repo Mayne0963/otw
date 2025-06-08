@@ -55,7 +55,8 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   showIcon = true,
   allowClear = true,
   debounceMs = 300,
-  componentRestrictions,
+  restrictToCountry,
+  types,
   fields = ['place_id', 'formatted_address', 'geometry'],
 }) => {
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +95,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
         error={error}
         className="w-full"
         inputClassName="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-        componentRestrictions={componentRestrictions}
+        countryFilter={restrictToCountry}
         fields={fields}
         debounceMs={debounceMs}
       />

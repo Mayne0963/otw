@@ -206,7 +206,7 @@ export default function BookingForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     if (!validateForm()) {
       setSubmitError('Please fix all validation errors before submitting');
       return;
@@ -218,10 +218,10 @@ export default function BookingForm() {
     try {
       // TODO: Implement actual form submission
       console.log('Form submitted', formData);
-
+      
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-
+      
       // Reset form on success
       setFormData({
         selectedService: '',
@@ -232,7 +232,7 @@ export default function BookingForm() {
         instructions: '',
         isEmergency: false,
       });
-
+      
       alert('Booking submitted successfully!');
     } catch (error) {
       setSubmitError('Failed to submit booking. Please try again.');

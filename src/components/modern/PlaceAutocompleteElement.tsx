@@ -39,7 +39,8 @@ export interface PlaceAutocompleteElementProps {
   required?: boolean;
   error?: string;
   // API Configuration
-  componentRestrictions?: { country?: string | string[] };
+  countryFilter?: string | string[];
+  typeFilter?: string[];
   fields?: string[];
   // Accessibility
   id?: string;
@@ -57,7 +58,8 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
   disabled = false,
   required = false,
   error,
-  componentRestrictions = { country: 'us' },
+  countryFilter,
+  typeFilter,
   fields = ['place_id', 'formatted_address', 'name', 'geometry', 'address_components', 'types'],
   id,
   'aria-label': ariaLabel,
@@ -145,6 +147,40 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
         return;
       }
 
+      // Apply client-side country filtering if specified
+      if (countryFilter && place.address_components) {
+        const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
+        const countryComponent = place.address_components.find(
+          (component: any) => component.types.includes('country')
+        );
+        
+        if (countryComponent) {
+          const countryCode = countryComponent.short_name.toLowerCase();
+          const countryName = countryComponent.long_name.toLowerCase();
+          const isValidCountry = countries.some(filter => 
+            filter.toLowerCase() === countryCode || 
+            filter.toLowerCase() === countryName
+          );
+          
+          if (!isValidCountry) {
+            console.log('Place filtered out due to country restriction:', countryComponent);
+            return;
+          }
+        }
+      }
+      
+      // Apply client-side type filtering if specified
+      if (typeFilter && typeFilter.length > 0) {
+        const hasValidType = typeFilter.some(filterType => 
+          place.types && place.types.includes(filterType)
+        );
+        
+        if (!hasValidType) {
+          console.log('Place filtered out due to type restriction:', place.types);
+          return;
+        }
+      }
+
       // Convert to our PlaceDetails interface
       const placeDetails: PlaceDetails = {
         placeId: place.place_id,
@@ -167,7 +203,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
     } catch (error) {
       console.error('Error handling place selection:', error);
     }
-  }, [onPlaceSelect]);
+  }, [onPlaceSelect, countryFilter, typeFilter]);
 
   // Handle input changes
   const handleInputChange = useCallback((event: Event) => {
@@ -210,13 +246,8 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
 
     const element = autocompleteRef.current;
 
-    // Set component restrictions
-    if (componentRestrictions?.country) {
-      const countries = Array.isArray(componentRestrictions.country)
-        ? componentRestrictions.country
-        : [componentRestrictions.country];
-      element.componentRestrictions = { country: countries };
-    }
+    // Note: componentRestrictions is not supported in PlaceAutocompleteElement
+    // Client-side filtering will be applied in the place selection handler
 
     // Set fields
     if (fields.length > 0) {
@@ -227,7 +258,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
     element.placeholder = placeholder;
     element.disabled = disabled;
     element.value = inputValue;
-  }, [isApiLoaded, componentRestrictions, fields, placeholder, disabled, inputValue]);
+  }, [isApiLoaded, fields, placeholder, disabled, inputValue]);
 
   if (loadError) {
     return (

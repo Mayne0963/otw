@@ -52,7 +52,7 @@ interface EnhancedPlaceAutocompleteProps {
   required?: boolean;
   showIcon?: boolean;
   types?: string[];
-  componentRestrictions?: { country?: string | string[] };
+  countryFilter?: string | string[];
   bounds?: google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral;
   strictBounds?: boolean;
   value?: string;
@@ -97,7 +97,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
   required = false,
   showIcon = true,
   types = ['address'],
-  componentRestrictions,
+  countryFilter,
   bounds,
   strictBounds = false,
   value = '',
@@ -279,7 +279,7 @@ const EnhancedPlaceAutocomplete: React.FC<EnhancedPlaceAutocompleteProps> = ({
               showClearButton && inputValue ? 'pr-12' : 'pr-4',
               inputClassName,
             )}
-            componentRestrictions={componentRestrictions}
+            countryFilter={countryFilter}
             fields={fields}
           />
 

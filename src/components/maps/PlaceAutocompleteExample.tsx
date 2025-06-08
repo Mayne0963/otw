@@ -107,7 +107,6 @@ export default function PlaceAutocompleteExample() {
                 onPlaceSelect={handleOriginSelect}
                 placeholder="Starting location..."
                 className="mt-1"
-                types={['address', 'establishment']}
               />
             </div>
             <div>
@@ -116,7 +115,6 @@ export default function PlaceAutocompleteExample() {
                 onPlaceSelect={handleDestinationSelect}
                 placeholder="Destination..."
                 className="mt-1"
-                types={['address', 'establishment']}
               />
             </div>
             {originPlace && destinationPlace && (
@@ -153,7 +151,6 @@ export default function PlaceAutocompleteExample() {
                 onPlaceSelect={handleBusinessSelect}
                 placeholder="Search for restaurants, shops, etc..."
                 className="mt-1"
-                types={['establishment']}
                 fields={[
                   'formattedAddress',
                   'id',
@@ -202,7 +199,7 @@ export default function PlaceAutocompleteExample() {
                 className="mt-1"
                 value={controlledValue}
                 onChange={setControlledValue}
-                componentRestrictions={{ country: 'us' }}
+                countryFilter="us"
               />
             </div>
             <div className="flex gap-2">

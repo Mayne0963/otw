@@ -1,10 +1,19 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
-import { MapPin } from 'lucide-react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { MapPin, AlertTriangle } from 'lucide-react';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
 import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
+
+// Extend JSX to include the Google Maps web component
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'gmp-place-autocomplete': any;
+    }
+  }
+}
 
 interface PlaceDetails {
   formatted_address: string;
@@ -25,12 +34,18 @@ interface PlaceAutocompleteProps {
   className?: string;
   disabled?: boolean;
   showIcon?: boolean;
-  types?: string[];
-  componentRestrictions?: { country?: string | string[] };
-  bounds?: google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral;
-  strictBounds?: boolean;
+  // Client-side filtering (componentRestrictions not supported in PlaceAutocompleteElement)
+  countryFilter?: string | string[];
+  typeFilter?: string[];
   value?: string;
   onChange?: (value: string) => void;
+  // Additional modern props
+  fields?: string[];
+  id?: string;
+  'aria-label'?: string;
+  'aria-describedby'?: string;
+  required?: boolean;
+  error?: string;
 }
 
 export default function PlaceAutocomplete({
@@ -39,153 +54,189 @@ export default function PlaceAutocomplete({
   className = '',
   disabled = false,
   showIcon = true,
-  types = ['address'],
-  componentRestrictions,
-  bounds,
-  strictBounds = false,
+  countryFilter,
+  typeFilter,
   value,
   onChange,
+  fields = ['place_id', 'formatted_address', 'name', 'geometry', 'address_components'],
+  id,
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
+  required = false,
+  error,
 }: PlaceAutocompleteProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const autocompleteElementRef = useRef<any>(null);
+  const autocompleteRef = useRef<any>(null);
+  const [inputValue, setInputValue] = useState(value || '');
+  const [isApiLoaded, setIsApiLoaded] = useState(false);
+  const [apiLoadError, setApiLoadError] = useState<string | null>(null);
 
   // Use the centralized Google Maps context
   const { isLoaded, loadError } = useModernGoogleMaps();
 
-  // Initialize PlaceAutocompleteElement when API is loaded
+  // Check if Google Maps API is loaded and initialize
   useEffect(() => {
-    if (!isLoaded || !containerRef.current || !window.google?.maps?.places?.PlaceAutocompleteElement) {
-      return;
-    }
+    if (typeof window === 'undefined') return;
+
+    const checkApiLoaded = () => {
+      if (window.google?.maps?.places?.PlaceAutocompleteElement) {
+        setIsApiLoaded(true);
+        setApiLoadError(null);
+      } else if (isLoaded) {
+        // API should be loaded but PlaceAutocompleteElement is not available
+        setApiLoadError('PlaceAutocompleteElement not available in this API version');
+      }
+    };
+
+    checkApiLoaded();
+  }, [isLoaded]);
+
+  // Handle place selection
+  const handlePlaceChange = useCallback(() => {
+    if (!autocompleteRef.current) return;
 
     try {
-      // Create the new PlaceAutocompleteElement
-      const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
-        types,
-        componentRestrictions,
-        bounds,
-        strictBounds,
-      });
+      const place = autocompleteRef.current.getPlace();
 
-      // Configure the element
-      autocompleteElement.placeholder = placeholder;
-      if (disabled) {
-        autocompleteElement.setAttribute('disabled', 'true');
-      }
-      if (value) {
-        autocompleteElement.value = value;
+      if (!place || !place.place_id) {
+        console.warn('No valid place selected');
+        return;
       }
 
-      // Apply styling to match the project's Input component
-      autocompleteElement.className = cn(
-        'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
-        showIcon ? 'pl-10' : '',
-        className,
-      );
-
-      // Add event listeners
-      const handlePlaceSelect = (event: any) => {
-        const place = event.place;
-
-        if (place && place.location) {
-          const placeDetails: PlaceDetails = {
-            formatted_address: place.formattedAddress || '',
-            place_id: place.id || '',
-            geometry: {
-              location: {
-                lat: () => place.location.lat(),
-                lng: () => place.location.lng(),
-              },
-            },
-            address_components: place.addressComponents || [],
-            name: place.displayName,
-          };
-
-          onPlaceSelect(placeDetails);
-
-          // Update external value if onChange is provided
-          if (onChange) {
-            onChange(place.formattedAddress || '');
+      // Apply client-side country filtering if specified
+      if (countryFilter && place.address_components) {
+        const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
+        const countryComponent = place.address_components.find(
+          (component: any) => component.types.includes('country')
+        );
+        
+        if (countryComponent) {
+          const countryCode = countryComponent.short_name.toLowerCase();
+          const countryName = countryComponent.long_name.toLowerCase();
+          const isValidCountry = countries.some(filter => 
+            filter.toLowerCase() === countryCode || 
+            filter.toLowerCase() === countryName
+          );
+          
+          if (!isValidCountry) {
+            console.log('Place filtered out due to country restriction:', countryComponent);
+            return;
           }
         }
-      };
-
-      const handleInput = (event: any) => {
-        if (onChange) {
-          onChange(event.target.value);
+      }
+      
+      // Apply client-side type filtering if specified
+      if (typeFilter && typeFilter.length > 0) {
+        const hasValidType = typeFilter.some(filterType => 
+          place.types && place.types.includes(filterType)
+        );
+        
+        if (!hasValidType) {
+          console.log('Place filtered out due to type restriction:', place.types);
+          return;
         }
+      }
+
+      // Convert to our PlaceDetails interface
+      const placeDetails: PlaceDetails = {
+        place_id: place.place_id,
+        formatted_address: place.formatted_address || '',
+        name: place.name || place.formatted_address || '',
+        geometry: {
+          location: {
+            lat: () => place.geometry?.location?.lat() || 0,
+            lng: () => place.geometry?.location?.lng() || 0,
+          },
+        },
+        address_components: place.address_components || [],
       };
 
-      autocompleteElement.addEventListener('gmp-placeselect', handlePlaceSelect);
-      autocompleteElement.addEventListener('input', handleInput);
-
-      // Add to container
-      containerRef.current.appendChild(autocompleteElement);
-      autocompleteElementRef.current = autocompleteElement;
-
-      // Cleanup function
-      return () => {
-        if (autocompleteElement) {
-          autocompleteElement.removeEventListener('gmp-placeselect', handlePlaceSelect);
-          autocompleteElement.removeEventListener('input', handleInput);
-          if (autocompleteElement.parentNode) {
-            autocompleteElement.parentNode.removeChild(autocompleteElement);
-          }
-        }
-      };
+      setInputValue(placeDetails.formatted_address);
+      onPlaceSelect(placeDetails);
+      onChange?.(placeDetails.formatted_address);
     } catch (error) {
-      console.error('Error initializing PlaceAutocompleteElement:', error);
+      console.error('Error handling place selection:', error);
+      setApiLoadError('Error processing place selection');
     }
-  }, [isLoaded, onPlaceSelect, placeholder, disabled, types, componentRestrictions, bounds, strictBounds, className, showIcon, onChange, value]);
+  }, [onPlaceSelect, onChange, countryFilter, typeFilter]);
 
-  // Update value when prop changes
-  useEffect(() => {
-    if (autocompleteElementRef.current && value !== undefined) {
-      autocompleteElementRef.current.value = value;
-    }
-  }, [value]);
+  // Handle input changes
+  const handleInputChange = useCallback((event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const newValue = target.value;
+    setInputValue(newValue);
+    onChange?.(newValue);
+  }, [onChange]);
 
-  // Update disabled state when prop changes
+  // Set up event listeners when API is loaded
   useEffect(() => {
-    if (autocompleteElementRef.current) {
-      if (disabled) {
-        autocompleteElementRef.current.setAttribute('disabled', 'true');
-      } else {
-        autocompleteElementRef.current.removeAttribute('disabled');
+    if (!isApiLoaded || !autocompleteRef.current) return;
+
+    const element = autocompleteRef.current;
+
+    // Add event listeners
+    element.addEventListener('gmp-placeselect', handlePlaceChange);
+    element.addEventListener('input', handleInputChange);
+
+    return () => {
+      // Clean up event listeners
+      if (element) {
+        element.removeEventListener('gmp-placeselect', handlePlaceChange);
+        element.removeEventListener('input', handleInputChange);
+      }
+    };
+  }, [isApiLoaded, handlePlaceChange, handleInputChange]);
+
+  // Sync external value changes
+  useEffect(() => {
+    if (value !== inputValue && value !== undefined) {
+      setInputValue(value);
+      if (autocompleteRef.current) {
+        autocompleteRef.current.value = value;
       }
     }
-  }, [disabled]);
+  }, [value, inputValue]);
 
-  if (loadError) {
+  // Configure the autocomplete element
+  useEffect(() => {
+    if (!isApiLoaded || !autocompleteRef.current) return;
+
+    const element = autocompleteRef.current;
+
+    // Note: componentRestrictions is not supported in PlaceAutocompleteElement
+    // Client-side filtering will be applied in the place selection handler
+
+    // Set fields
+    if (fields.length > 0) {
+      element.fields = fields;
+    }
+
+    // Set other properties
+    element.placeholder = placeholder;
+    element.disabled = disabled;
+    element.value = inputValue;
+  }, [isApiLoaded, fields, placeholder, disabled, inputValue]);
+
+  // Show error state
+  if (loadError || apiLoadError) {
+    const errorMessage = loadError || apiLoadError;
     return (
       <div className={cn('relative', className)}>
-        {showIcon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
-            <MapPin className="w-4 h-4 text-muted-foreground" />
-          </div>
-        )}
-        <Input
-          placeholder={`Error: ${loadError}`}
-          disabled
-          className={cn('h-9', showIcon ? 'pl-10' : '')}
-        />
+        <div className="flex items-center space-x-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0" />
+          <span className="text-sm text-red-700">{errorMessage}</span>
+        </div>
       </div>
     );
   }
 
-  if (!isLoaded) {
+  // Show loading state
+  if (!isLoaded || !isApiLoaded) {
     return (
       <div className={cn('relative', className)}>
-        {showIcon && (
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
-            <MapPin className="w-4 h-4 text-muted-foreground" />
-          </div>
-        )}
-        <Input
-          placeholder="Loading..."
-          disabled
-          className={cn('h-9', showIcon ? 'pl-10' : '')}
-        />
+        <div className="flex items-center space-x-2 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          <span className="text-sm text-gray-600">Loading autocomplete...</span>
+        </div>
       </div>
     );
   }
@@ -197,7 +248,27 @@ export default function PlaceAutocomplete({
           <MapPin className="w-4 h-4 text-muted-foreground" />
         </div>
       )}
-      <div ref={containerRef} className="w-full" />
+      
+      <gmp-place-autocomplete
+        ref={autocompleteRef}
+        id={id}
+        className={cn(
+          'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+          showIcon ? 'pl-10' : '',
+          error ? 'border-red-500 focus:ring-red-500' : '',
+          className
+        )}
+        aria-label={ariaLabel}
+        aria-describedby={ariaDescribedBy}
+        required={required}
+      />
+
+      {error && (
+        <div className="mt-1 flex items-center space-x-1">
+          <AlertTriangle className="h-4 w-4 text-red-500" />
+          <span className="text-sm text-red-600">{error}</span>
+        </div>
+      )}
     </div>
   );
 }

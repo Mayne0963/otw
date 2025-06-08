@@ -196,7 +196,6 @@ export const AdvancedPackageDeliveryExample: React.FC = () => {
           onChange={setSenderValue}
           required
           maxSuggestions={5}
-          types={['address']}
           restrictToCountry={['US']}
         />
 
@@ -208,7 +207,6 @@ export const AdvancedPackageDeliveryExample: React.FC = () => {
           onChange={setRecipientValue}
           required
           maxSuggestions={5}
-          types={['address']}
           restrictToCountry={['US']}
         />
 
@@ -335,7 +333,6 @@ export const AdvancedGroceryDeliveryExample: React.FC = () => {
           value={storeValue}
           onChange={setStoreValue}
           maxSuggestions={5}
-          types={['establishment']}
           restrictToCountry={['US']}
           aria-describedby="store-help"
         />
@@ -351,7 +348,6 @@ export const AdvancedGroceryDeliveryExample: React.FC = () => {
           onChange={setDeliveryValue}
           required
           maxSuggestions={5}
-          types={['address']}
           restrictToCountry={['US']}
           disabled={isValidating}
         />

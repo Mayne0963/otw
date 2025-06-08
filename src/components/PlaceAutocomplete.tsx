@@ -14,6 +14,9 @@ interface PlaceAutocompleteProps {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
+  // Client-side filtering options (since componentRestrictions is not supported)
+  countryFilter?: string | string[];
+  typeFilter?: string[];
 }
 
 export default function PlaceAutocomplete({
@@ -21,9 +24,12 @@ export default function PlaceAutocomplete({
   placeholder = 'Type an address…',
   className = '',
   disabled = false,
+  countryFilter,
+  typeFilter,
 }: PlaceAutocompleteProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const autocompleteElementRef = useRef<any>(null);
+  const [apiLoadError, setApiLoadError] = useState<string | null>(null);
 
   // Use the modern Google Maps context
   const { isLoaded, loadError } = useModernGoogleMaps();
@@ -35,10 +41,8 @@ export default function PlaceAutocomplete({
     }
 
     try {
-      // Create the new PlaceAutocompleteElement
-      const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
-        types: ['address'],
-      });
+      // Create the new PlaceAutocompleteElement without deprecated properties
+      const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement();
 
       // Configure the element
       autocompleteElement.placeholder = placeholder;
@@ -53,10 +57,44 @@ export default function PlaceAutocomplete({
       // Store reference
       autocompleteElementRef.current = autocompleteElement;
 
-      // Handle place selection
+      // Handle place selection with client-side filtering
       const handlePlaceSelect = (event: any) => {
         const place = event.place;
         if (place && place.geometry && place.geometry.location) {
+          // Apply client-side country filtering if specified
+          if (countryFilter && place.address_components) {
+            const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
+            const countryComponent = place.address_components.find(
+              (component: any) => component.types.includes('country')
+            );
+            
+            if (countryComponent) {
+              const countryCode = countryComponent.short_name.toLowerCase();
+              const countryName = countryComponent.long_name.toLowerCase();
+              const isValidCountry = countries.some(filter => 
+                filter.toLowerCase() === countryCode || 
+                filter.toLowerCase() === countryName
+              );
+              
+              if (!isValidCountry) {
+                console.log('Place filtered out due to country restriction:', countryComponent);
+                return;
+              }
+            }
+          }
+          
+          // Apply client-side type filtering if specified
+          if (typeFilter && typeFilter.length > 0) {
+            const hasValidType = typeFilter.some(filterType => 
+              place.types && place.types.includes(filterType)
+            );
+            
+            if (!hasValidType) {
+              console.log('Place filtered out due to type restriction:', place.types);
+              return;
+            }
+          }
+          
           const suggestion: PlaceSuggestion = {
             formatted_address: place.formatted_address || '',
             place_id: place.place_id || '',
@@ -86,7 +124,7 @@ export default function PlaceAutocomplete({
     } catch (error) {
       console.error('Error initializing PlaceAutocompleteElement:', error);
     }
-  }, [isLoaded, placeholder, disabled, onSelectAddress]);
+  }, [isLoaded, placeholder, disabled, onSelectAddress, countryFilter, typeFilter]);
 
   // Update placeholder when prop changes
   useEffect(() => {

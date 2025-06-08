@@ -300,8 +300,7 @@ export default function AddressSearch({
               onPlaceSelect={onOriginPlaceSelect}
               placeholder="Enter pickup address..."
               className="pl-10"
-              types={['address']}
-              componentRestrictions={{ country: 'us' }}
+              countryFilter="us"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Button
@@ -324,8 +323,7 @@ export default function AddressSearch({
               onPlaceSelect={onDestinationPlaceSelect}
               placeholder="Enter delivery address..."
               className="pl-10"
-              types={['address']}
-              componentRestrictions={{ country: 'us' }}
+              countryFilter="us"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           </div>

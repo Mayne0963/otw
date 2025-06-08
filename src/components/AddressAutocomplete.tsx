@@ -56,7 +56,7 @@ const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
         error={error}
         className="w-full"
         inputClassName="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-        componentRestrictions={{ country: 'us' }}
+        countryFilter="us"
         fields={['place_id', 'formatted_address', 'geometry']}
       />
     </div>

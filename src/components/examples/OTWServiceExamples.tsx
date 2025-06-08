@@ -16,21 +16,21 @@ export const RideBookingExample: React.FC = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-gray-900 rounded-2xl shadow-2xl">
       <h2 className="text-2xl font-bold text-white mb-6 text-center">Book a Ride</h2>
-
+      
       <div className="space-y-4">
-        <AddressAutocomplete
-          label="Pickup Address"
+        <AddressAutocomplete 
+          label="Pickup Address" 
           onPlaceSelect={setPickupAddress}
           placeholder="Where are you?"
         />
-
-        <AddressAutocomplete
-          label="Drop-off Address"
+        
+        <AddressAutocomplete 
+          label="Drop-off Address" 
           onPlaceSelect={setDropoffAddress}
           placeholder="Where to?"
         />
-
-        <button
+        
+        <button 
           onClick={handleBookRide}
           disabled={!pickupAddress || !dropoffAddress}
           className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
@@ -38,7 +38,7 @@ export const RideBookingExample: React.FC = () => {
           Book Ride
         </button>
       </div>
-
+      
       {pickupAddress && dropoffAddress && (
         <div className="mt-4 p-3 bg-gray-800 rounded-lg">
           <p className="text-xs text-gray-300">Route: {pickupAddress.address} → {dropoffAddress.address}</p>
@@ -58,7 +58,7 @@ export const GroceryDeliveryExample: React.FC = () => {
     'Kroger',
     'Safeway',
     'Target Grocery',
-    'Walmart Grocery',
+    'Walmart Grocery'
   ];
 
   const handleStartShopping = () => {
@@ -71,17 +71,17 @@ export const GroceryDeliveryExample: React.FC = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-gray-900 rounded-2xl shadow-2xl">
       <h2 className="text-2xl font-bold text-white mb-6 text-center">Grocery Delivery</h2>
-
+      
       <div className="space-y-4">
-        <AddressAutocomplete
-          label="Delivery Address"
+        <AddressAutocomplete 
+          label="Delivery Address" 
           onPlaceSelect={setDeliveryAddress}
           placeholder="Where should we deliver?"
         />
-
+        
         <div>
           <label className="text-sm font-semibold text-gray-300 mb-1 block">Select Store</label>
-          <select
+          <select 
             value={selectedStore}
             onChange={(e) => setSelectedStore(e.target.value)}
             className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 border border-gray-600"
@@ -92,8 +92,8 @@ export const GroceryDeliveryExample: React.FC = () => {
             ))}
           </select>
         </div>
-
-        <button
+        
+        <button 
           onClick={handleStartShopping}
           disabled={!deliveryAddress || !selectedStore}
           className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
@@ -116,15 +116,15 @@ export const PackageDeliveryExample: React.FC = () => {
     'Medium Package (5-20 lbs)',
     'Large Package (20-50 lbs)',
     'Fragile Items',
-    'Documents',
+    'Documents'
   ];
 
   const handleScheduleDelivery = () => {
     if (senderAddress && recipientAddress && packageType) {
-      console.log('Scheduling package delivery:', {
-        sender: senderAddress,
-        recipient: recipientAddress,
-        type: packageType,
+      console.log('Scheduling package delivery:', { 
+        sender: senderAddress, 
+        recipient: recipientAddress, 
+        type: packageType 
       });
       // Implement package delivery scheduling logic here
     }
@@ -133,23 +133,23 @@ export const PackageDeliveryExample: React.FC = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-gray-900 rounded-2xl shadow-2xl">
       <h2 className="text-2xl font-bold text-white mb-6 text-center">Package Delivery</h2>
-
+      
       <div className="space-y-4">
-        <AddressAutocomplete
-          label="Pickup Address"
+        <AddressAutocomplete 
+          label="Pickup Address" 
           onPlaceSelect={setSenderAddress}
           placeholder="Where should we pick up?"
         />
-
-        <AddressAutocomplete
-          label="Delivery Address"
+        
+        <AddressAutocomplete 
+          label="Delivery Address" 
           onPlaceSelect={setRecipientAddress}
           placeholder="Where should we deliver?"
         />
-
+        
         <div>
           <label className="text-sm font-semibold text-gray-300 mb-1 block">Package Type</label>
-          <select
+          <select 
             value={packageType}
             onChange={(e) => setPackageType(e.target.value)}
             className="w-full bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-yellow-500 border border-gray-600"
@@ -160,8 +160,8 @@ export const PackageDeliveryExample: React.FC = () => {
             ))}
           </select>
         </div>
-
-        <button
+        
+        <button 
           onClick={handleScheduleDelivery}
           disabled={!senderAddress || !recipientAddress || !packageType}
           className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
@@ -169,7 +169,7 @@ export const PackageDeliveryExample: React.FC = () => {
           Schedule Delivery
         </button>
       </div>
-
+      
       {senderAddress && recipientAddress && (
         <div className="mt-4 p-3 bg-gray-800 rounded-lg">
           <p className="text-xs text-gray-300">Route: {senderAddress.address} → {recipientAddress.address}</p>
@@ -187,7 +187,7 @@ export const OTWServicesDemo: React.FC = () => {
   const services = [
     { id: 'ride' as const, name: 'Ride Booking', icon: '🚗' },
     { id: 'grocery' as const, name: 'Grocery Delivery', icon: '🛒' },
-    { id: 'package' as const, name: 'Package Delivery', icon: '📦' },
+    { id: 'package' as const, name: 'Package Delivery', icon: '📦' }
   ];
 
   const renderActiveService = () => {
@@ -207,7 +207,7 @@ export const OTWServicesDemo: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-white text-center mb-8">OTW Services</h1>
-
+        
         {/* Service Selector */}
         <div className="flex justify-center mb-8">
           <div className="bg-gray-800 rounded-xl p-1 flex space-x-1">
@@ -227,7 +227,7 @@ export const OTWServicesDemo: React.FC = () => {
             ))}
           </div>
         </div>
-
+        
         {/* Active Service Component */}
         <div className="flex justify-center">
           {renderActiveService()}

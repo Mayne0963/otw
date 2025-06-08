@@ -197,7 +197,6 @@ export default function PackagePage() {
                   placeholder="Where should we pick up your package?"
                   required
                   restrictToCountry={['US']}
-                  types={['address']}
                   maxSuggestions={5}
                   debounceMs={300}
                 />
@@ -213,7 +212,6 @@ export default function PackagePage() {
                   placeholder="Where should we deliver your package?"
                   required
                   restrictToCountry={['US']}
-                  types={['address']}
                   maxSuggestions={5}
                   debounceMs={300}
                 />

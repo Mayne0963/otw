@@ -4,6 +4,15 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { MapPinIcon, XMarkIcon, CheckIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 
+// Extend JSX to include the Google Maps web component
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'gmp-place-autocomplete': any;
+    }
+  }
+}
+
 export interface PlaceDetails {
   placeId: string;
   formattedAddress: string;
@@ -39,7 +48,7 @@ export interface ModernPlaceAutocompleteProps {
   error?: string;
   // API Configuration
   types?: string[];
-  componentRestrictions?: { country?: string | string[] };
+  countryFilter?: string | string[];
   bounds?: google.maps.LatLngBounds | google.maps.LatLngBoundsLiteral;
   strictBounds?: boolean;
   maxSuggestions?: number;
@@ -54,10 +63,24 @@ export interface ModernPlaceAutocompleteProps {
   'aria-describedby'?: string;
 }
 
-interface AutocompleteSuggestion {
-  placeId: string;
-  displayName: string;
-  formattedAddress: string;
+// AutocompleteSuggestion interface removed - using PlaceAutocompleteElement directly
+
+// Add interface for Google Maps Place object
+interface GoogleMapsPlace {
+  place_id: string;
+  formatted_address: string;
+  name: string;
+  geometry: {
+    location: {
+      lat(): number;
+      lng(): number;
+    };
+  };
+  address_components: Array<{
+    long_name: string;
+    short_name: string;
+    types: string[];
+  }>;
   types: string[];
 }
 
@@ -73,7 +96,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   required = false,
   error,
   types = ['address'],
-  componentRestrictions = { country: 'us' },
+  countryFilter = 'us',
   bounds,
   strictBounds = false,
   maxSuggestions = 5,
@@ -85,28 +108,22 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
 }) => {
-  const { isLoaded, loadError, getAutocompleteSuggestions, getPlaceDetails } = useModernGoogleMaps();
+  const { isLoaded, loadError, getPlaceDetails } = useModernGoogleMaps();
 
   const [inputValue, setInputValue] = useState(value);
-  const [suggestions, setSuggestions] = useState<AutocompleteSuggestion[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
   const [validation, setValidation] = useState<ValidationResult>({
     isValid: false,
     message: '',
     severity: 'success',
   });
+  const [isApiReady, setIsApiReady] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const suggestionRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const placeAutocompleteRef = useRef<any>(null);
 
   // Generate unique IDs for accessibility
   const componentId = useMemo(() => id || `place-autocomplete-${Math.random().toString(36).substr(2, 9)}`, [id]);
-  const listboxId = `${componentId}-listbox`;
   const errorId = `${componentId}-error`;
   const descriptionId = `${componentId}-description`;
 
@@ -117,12 +134,10 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     if (value !== inputValue && value !== undefined) {
       setInputValue(value);
       if (!value) {
-        setSuggestions([]);
-        setIsDropdownOpen(false);
         setValidation({ isValid: false, message: '', severity: 'success' });
       }
     }
-  }, [value]);
+  }, [value, inputValue]);
 
   // Validate service area if configured
   const validateServiceArea = useCallback((location: { lat: number; lng: number }): boolean => {
@@ -137,220 +152,203 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     return distance <= serviceAreaRadius;
   }, [serviceAreaCenter, serviceAreaRadius]);
 
-  // Debounced search function
-  const debouncedSearch = useCallback(async (searchInput: string) => {
-    if (!isLoaded || !searchInput.trim() || searchInput.trim().length < 2) {
-      setSuggestions([]);
-      setIsDropdownOpen(false);
+  // Use PlaceAutocompleteElement instead of deprecated getAutocompleteSuggestions
+
+  // Check if PlaceAutocompleteElement is available
+  useEffect(() => {
+    const checkApiReady = () => {
+      if (window.google?.maps?.places?.PlaceAutocompleteElement) {
+        setIsApiReady(true);
+      } else {
+        // Wait for API to load
+        const checkInterval = setInterval(() => {
+          if (window.google?.maps?.places?.PlaceAutocompleteElement) {
+            setIsApiReady(true);
+            clearInterval(checkInterval);
+          }
+        }, 100);
+
+        // Clear interval after 10 seconds
+        setTimeout(() => clearInterval(checkInterval), 10000);
+      }
+    };
+
+    if (isLoaded) {
+      checkApiReady();
+    }
+  }, [isLoaded]);
+
+  // Initialize PlaceAutocompleteElement
+  useEffect(() => {
+    if (!isApiReady || !placeAutocompleteRef.current || !window.google?.maps?.places?.PlaceAutocompleteElement) {
       return;
     }
 
-    // Cancel previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-    abortControllerRef.current = new AbortController();
-
-    setIsLoading(true);
-
     try {
-      const suggestions = await getAutocompleteSuggestions(searchInput.trim(), {
-        types,
-        componentRestrictions,
-        bounds,
-        strictBounds,
-        maxSuggestions,
+      // Create the autocomplete element
+      const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
+        fields: ['place_id', 'formatted_address', 'name', 'geometry', 'address_components', 'types'],
       });
 
-      if (!abortControllerRef.current?.signal.aborted) {
-        const formattedSuggestions: AutocompleteSuggestion[] = suggestions.map(suggestion => ({
-          placeId: suggestion.placePrediction?.placeId || '',
-          displayName: suggestion.placePrediction?.structuredFormat?.mainText?.text || '',
-          formattedAddress: suggestion.placePrediction?.structuredFormat?.secondaryText?.text || '',
-          types: suggestion.placePrediction?.types || [],
-        })).filter(s => s.placeId);
-
-        setSuggestions(formattedSuggestions);
-        setIsDropdownOpen(formattedSuggestions.length > 0);
-        setSelectedIndex(-1);
+      // Apply country filter if specified
+      if (countryFilter) {
+        const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
+        autocompleteElement.componentRestrictions = { country: countries };
       }
-    } catch (error: any) {
-      if (!abortControllerRef.current?.signal.aborted) {
-        console.error('Autocomplete search error:', error);
-        setSuggestions([]);
-        setIsDropdownOpen(false);
 
-        // Update validation with error
-        setValidation({
-          isValid: false,
-          message: 'Unable to search addresses. Please try again.',
-          severity: 'error',
-        });
+      // Apply type filter if specified
+      if (types && types.length > 0) {
+        autocompleteElement.types = types;
       }
-    } finally {
-      if (!abortControllerRef.current?.signal.aborted) {
-        setIsLoading(false);
+
+      // Handle place selection
+      autocompleteElement.addEventListener('gmp-placeselect', (event: any) => {
+        const place = event.place as GoogleMapsPlace;
+        handlePlaceSelectFromElement(place);
+      });
+
+      // Replace the input with the autocomplete element
+      placeAutocompleteRef.current.appendChild(autocompleteElement);
+
+      return () => {
+        if (placeAutocompleteRef.current && autocompleteElement) {
+          placeAutocompleteRef.current.removeChild(autocompleteElement);
+        }
+      };
+    } catch (error) {
+      console.error('Error initializing PlaceAutocompleteElement:', error);
+    }
+  }, [isApiReady, countryFilter, types]);
+
+  // Handle place selection from PlaceAutocompleteElement
+  const handlePlaceSelectFromElement = useCallback(async (place: GoogleMapsPlace) => {
+    if (!place || !place.place_id) {
+      console.warn('No valid place selected');
+      return;
+    }
+
+    // Apply client-side filtering
+    if (countryFilter && place.address_components) {
+      const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
+      const countryComponent = place.address_components.find(
+        (component) => component.types.includes('country')
+      );
+      
+      if (countryComponent) {
+        const countryCode = countryComponent.short_name.toLowerCase();
+        const countryName = countryComponent.long_name.toLowerCase();
+        const isValidCountry = countries.some(filter => 
+          filter.toLowerCase() === countryCode || 
+          filter.toLowerCase() === countryName
+        );
+        
+        if (!isValidCountry) {
+          console.log('Place filtered out due to country restriction:', countryComponent);
+          return;
+        }
       }
     }
-  }, [isLoaded, getAutocompleteSuggestions, types, componentRestrictions, bounds, strictBounds, maxSuggestions]);
 
-  // Handle input change with debouncing
+    // Convert to our PlaceDetails interface
+    const placeDetails: PlaceDetails = {
+      placeId: place.place_id,
+      formattedAddress: place.formatted_address || '',
+      displayName: place.name || place.formatted_address || '',
+      location: {
+        lat: place.geometry?.location?.lat() || 0,
+        lng: place.geometry?.location?.lng() || 0,
+      },
+      addressComponents: (place.address_components || []).map((component) => ({
+        longName: component.long_name,
+        shortName: component.short_name,
+        types: component.types,
+      })),
+      types: place.types || [],
+    };
+
+    // Validate service area if configured
+    if (serviceAreaCenter) {
+      const isInServiceArea = validateServiceArea(placeDetails.location);
+      if (!isInServiceArea) {
+        setValidation({
+          isValid: false,
+          message: `Address is outside our service area (${Math.round(serviceAreaRadius / 1000)}km radius)`,
+          severity: 'warning',
+        });
+        onValidationChange?.({
+          isValid: false,
+          message: `Address is outside our service area (${Math.round(serviceAreaRadius / 1000)}km radius)`,
+          severity: 'warning',
+        });
+        return;
+      }
+    }
+
+    // Update input value
+    setInputValue(placeDetails.displayName);
+    
+    // Set validation
+    const validationResult: ValidationResult = {
+      isValid: true,
+      message: enableAddressValidation ? 'Address validated successfully' : '',
+      severity: 'success',
+    };
+    setValidation(validationResult);
+    onValidationChange?.(validationResult);
+
+    // Call the callback
+    onPlaceSelect?.(placeDetails);
+  }, [countryFilter, serviceAreaCenter, validateServiceArea, serviceAreaRadius, enableAddressValidation, onPlaceSelect, onValidationChange]);
+
+  // Handle input change (simplified since PlaceAutocompleteElement handles suggestions)
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
-
-    // Clear previous timeout
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
 
     // Reset validation when typing
     if (validation.isValid) {
       setValidation({ isValid: false, message: '', severity: 'success' });
     }
 
-    // Set new timeout for debounced search
-    debounceTimeoutRef.current = setTimeout(() => {
-      debouncedSearch(newValue);
-    }, debounceMs);
-  }, [debouncedSearch, debounceMs, validation.isValid]);
+    // Call onInputChange if provided
+    // Note: PlaceAutocompleteElement handles autocomplete suggestions internally
+  }, [validation.isValid]);
 
-  // Handle place selection
-  const handlePlaceSelect = useCallback(async (suggestion: AutocompleteSuggestion) => {
-    const displayName = suggestion.displayName;
-    setInputValue(displayName);
-    setSuggestions([]);
-    setIsDropdownOpen(false);
-    setSelectedIndex(-1);
-    setIsLoading(true);
+  // Legacy handlePlaceSelect removed - now handled by handlePlaceSelectFromElement
+  // This function is no longer needed since PlaceAutocompleteElement handles place selection directly
 
-    try {
-      const place = await getPlaceDetails(suggestion.placeId);
-
-      if (place && place.location) {
-        const placeDetails: PlaceDetails = {
-          placeId: suggestion.placeId,
-          formattedAddress: place.formattedAddress || suggestion.formattedAddress,
-          displayName: place.displayName?.text || suggestion.displayName,
-          location: {
-            lat: place.location.lat(),
-            lng: place.location.lng(),
-          },
-          addressComponents: place.addressComponents?.map(component => ({
-            longName: component.longName,
-            shortName: component.shortName,
-            types: component.types,
-          })) || [],
-          types: place.types || suggestion.types,
-        };
-
-        // Validate service area if enabled
-        let validationResult: ValidationResult;
-        if (enableAddressValidation && serviceAreaCenter) {
-          const isInServiceArea = validateServiceArea(placeDetails.location);
-          if (isInServiceArea) {
-            validationResult = {
-              isValid: true,
-              message: 'Address verified and within service area',
-              severity: 'success',
-            };
-          } else {
-            validationResult = {
-              isValid: false,
-              message: 'Address is outside our service area',
-              severity: 'warning',
-            };
-          }
-        } else {
-          validationResult = {
-            isValid: true,
-            message: 'Address verified',
-            severity: 'success',
-          };
-        }
-
-        setValidation(validationResult);
-        onValidationChange?.(validationResult);
-        onPlaceSelect?.(placeDetails);
-      } else {
-        throw new Error('Unable to get place details');
-      }
-    } catch (error) {
-      console.error('Error getting place details:', error);
-      const errorValidation: ValidationResult = {
-        isValid: false,
-        message: 'Unable to verify address. Please try again.',
-        severity: 'error',
-      };
-      setValidation(errorValidation);
-      onValidationChange?.(errorValidation);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [getPlaceDetails, enableAddressValidation, serviceAreaCenter, validateServiceArea, onPlaceSelect, onValidationChange]);
-
-  // Keyboard navigation
+  // Simplified keyboard navigation (PlaceAutocompleteElement handles most navigation)
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!isDropdownOpen || suggestions.length === 0) {
-      if (e.key === 'ArrowDown' && suggestions.length > 0) {
-        setIsDropdownOpen(true);
-      }
-      return;
+    // Basic escape handling for consistency
+    if (e.key === 'Escape') {
+      inputRef.current?.blur();
     }
+    // PlaceAutocompleteElement handles other keyboard navigation internally
+  }, []);
 
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedIndex(prev => (prev < suggestions.length - 1 ? prev + 1 : 0));
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex(prev => (prev > 0 ? prev - 1 : suggestions.length - 1));
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
-          handlePlaceSelect(suggestions[selectedIndex]);
-        }
-        break;
-      case 'Escape':
-        setIsDropdownOpen(false);
-        setSelectedIndex(-1);
-        inputRef.current?.blur();
-        break;
-      case 'Tab':
-        setIsDropdownOpen(false);
-        setSelectedIndex(-1);
-        break;
-    }
-  }, [isDropdownOpen, suggestions, selectedIndex, handlePlaceSelect]);
-
-  // Handle input focus
+  // Handle input focus (simplified since PlaceAutocompleteElement handles suggestions)
   const handleInputFocus = useCallback(() => {
-    if (suggestions.length > 0) {
-      setIsDropdownOpen(true);
-    }
-  }, [suggestions.length]);
+    // PlaceAutocompleteElement handles focus behavior internally
+  }, []);
 
-  // Handle input blur
+  // Handle input blur (simplified since PlaceAutocompleteElement handles suggestions)
   const handleInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    // Delay closing to allow for suggestion clicks
-    setTimeout(() => {
-      if (!dropdownRef.current?.contains(document.activeElement)) {
-        setIsDropdownOpen(false);
-        setSelectedIndex(-1);
-      }
-    }, 150);
+    // PlaceAutocompleteElement handles blur behavior internally
   }, []);
 
   // Clear input
   const handleClear = useCallback(() => {
     setInputValue('');
-    setSuggestions([]);
-    setIsDropdownOpen(false);
-    setSelectedIndex(-1);
     setValidation({ isValid: false, message: '', severity: 'success' });
     onValidationChange?.({ isValid: false, message: '', severity: 'success' });
+
+    // Clear the PlaceAutocompleteElement if available
+    if (placeAutocompleteRef.current) {
+      const input = placeAutocompleteRef.current.querySelector('input');
+      if (input) {
+        input.value = '';
+      }
+    }
 
     // Notify parent component of the clear action
     onPlaceSelect?.({
@@ -365,27 +363,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     inputRef.current?.focus();
   }, [onValidationChange, onPlaceSelect]);
 
-  // Scroll selected item into view
-  useEffect(() => {
-    if (selectedIndex >= 0 && suggestionRefs.current[selectedIndex]) {
-      suggestionRefs.current[selectedIndex]?.scrollIntoView({
-        block: 'nearest',
-        behavior: 'smooth',
-      });
-    }
-  }, [selectedIndex]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, []);
+  // No cleanup needed since we're using PlaceAutocompleteElement
 
   // Determine validation icon and styling
   const getValidationIcon = () => {
@@ -437,106 +415,91 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
 
   return (
     <div className={`relative ${className}`}>
-      {/* Input Field */}
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <MapPinIcon className="h-5 w-5 text-gray-400" />
-        </div>
-
-        <input
-          ref={inputRef}
-          id={componentId}
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          placeholder={placeholder}
-          disabled={disabled || !isLoaded}
-          required={required}
+      {/* PlaceAutocompleteElement Web Component */}
+      {isApiReady && (
+        <gmp-place-autocomplete
+          ref={placeAutocompleteRef}
           className={`
-            w-full pl-10 pr-12 py-3 
-            bg-gray-800 text-white placeholder-gray-400
-            border rounded-lg transition-all duration-200
-            focus:outline-none focus:ring-2 focus:ring-opacity-50
-            disabled:opacity-50 disabled:cursor-not-allowed
-            ${getInputBorderClass()}
+            w-full
+            [&>input]:w-full [&>input]:pl-10 [&>input]:pr-12 [&>input]:py-3
+            [&>input]:bg-gray-800 [&>input]:text-white [&>input]:placeholder-gray-400
+            [&>input]:border [&>input]:rounded-lg [&>input]:transition-all [&>input]:duration-200
+            [&>input]:focus:outline-none [&>input]:focus:ring-2 [&>input]:focus:ring-opacity-50
+            [&>input]:disabled:opacity-50 [&>input]:disabled:cursor-not-allowed
+            [&>input]:${getInputBorderClass()}
             ${inputClassName}
           `}
-          aria-label={ariaLabel || placeholder}
-          aria-describedby={`${ariaDescribedBy || ''} ${validation.message ? descriptionId : ''} ${error ? errorId : ''}`.trim()}
-          aria-expanded={isDropdownOpen}
-          aria-haspopup="listbox"
-          aria-autocomplete="list"
-          aria-activedescendant={selectedIndex >= 0 ? `${componentId}-option-${selectedIndex}` : undefined}
-          role="combobox"
-        />
-
-        {/* Right side icons */}
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center space-x-2">
-          {getValidationIcon()}
-          {inputValue && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="text-gray-400 hover:text-gray-300 transition-colors"
-              aria-label="Clear input"
-            >
-              <XMarkIcon className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Dropdown */}
-      {isDropdownOpen && suggestions.length > 0 && (
-        <div
-          ref={dropdownRef}
-          className={`
-            absolute z-50 w-full mt-1 
-            bg-gray-800 border border-gray-600 rounded-lg shadow-xl
-            max-h-60 overflow-auto
-            ${dropdownClassName}
-          `}
-          role="listbox"
-          id={listboxId}
-          aria-label="Address suggestions"
         >
-          {suggestions.map((suggestion, index) => (
-            <div
-              key={suggestion.placeId}
-              ref={el => suggestionRefs.current[index] = el}
-              id={`${componentId}-option-${index}`}
-              className={`
-                px-4 py-3 cursor-pointer transition-colors
-                border-b border-gray-700 last:border-b-0
-                ${index === selectedIndex
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-700'
-                }
-              `}
-              onClick={() => handlePlaceSelect(suggestion)}
-              role="option"
-              aria-selected={index === selectedIndex}
-            >
-              <div className="flex items-start space-x-3">
-                <MapPinIcon className="h-5 w-5 text-gray-400 flex-shrink-0 mt-0.5" />
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">
-                    {suggestion.displayName}
-                  </div>
-                  {suggestion.formattedAddress && (
-                    <div className="text-sm text-gray-400 truncate">
-                      {suggestion.formattedAddress}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+          <input
+            ref={inputRef}
+            id={componentId}
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            placeholder={placeholder}
+            disabled={disabled || !isLoaded}
+            required={required}
+            aria-label={ariaLabel || placeholder}
+            aria-describedby={`${ariaDescribedBy || ''} ${validation.message ? descriptionId : ''} ${error ? errorId : ''}`.trim()}
+          />
+        </gmp-place-autocomplete>
+      )}
+
+      {/* Fallback input when API is not ready */}
+      {!isApiReady && (
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <MapPinIcon className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            ref={inputRef}
+            id={componentId}
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
+            placeholder={placeholder}
+            disabled={disabled || !isLoaded}
+            required={required}
+            className={`
+              w-full pl-10 pr-12 py-3 
+              bg-gray-800 text-white placeholder-gray-400
+              border rounded-lg transition-all duration-200
+              focus:outline-none focus:ring-2 focus:ring-opacity-50
+              disabled:opacity-50 disabled:cursor-not-allowed
+              ${getInputBorderClass()}
+              ${inputClassName}
+            `}
+            aria-label={ariaLabel || placeholder}
+            aria-describedby={`${ariaDescribedBy || ''} ${validation.message ? descriptionId : ''} ${error ? errorId : ''}`.trim()}
+          />
         </div>
       )}
+
+      {/* Icon overlay for both cases */}
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <MapPinIcon className="h-5 w-5 text-gray-400" />
+      </div>
+      
+      {/* Right side icons */}
+      <div className="absolute inset-y-0 right-0 pr-3 flex items-center space-x-2">
+        {getValidationIcon()}
+        {inputValue && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="text-gray-400 hover:text-gray-300 transition-colors"
+            aria-label="Clear input"
+          >
+            <XMarkIcon className="h-4 w-4" />
+          </button>
+        )}
+      </div>
 
       {/* Validation Message */}
       {validation.message && (
