@@ -75,7 +75,7 @@ export default function PlaceAutocomplete({
 
   // Check if Google Maps API is loaded and initialize
   useEffect(() => {
-    if (typeof window === 'undefined') {return;}
+    if (typeof window === 'undefined') return;
 
     const checkApiLoaded = () => {
       if (window.google?.maps?.places?.PlaceAutocompleteElement) {
@@ -92,7 +92,7 @@ export default function PlaceAutocomplete({
 
   // Handle place selection
   const handlePlaceChange = useCallback(() => {
-    if (!autocompleteRef.current) {return;}
+    if (!autocompleteRef.current) return;
 
     try {
       const place = autocompleteRef.current.getPlace();
@@ -106,30 +106,30 @@ export default function PlaceAutocomplete({
       if (countryFilter && place.address_components) {
         const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
         const countryComponent = place.address_components.find(
-          (component: any) => component.types.includes('country'),
+          (component: any) => component.types.includes('country')
         );
-
+        
         if (countryComponent) {
           const countryCode = countryComponent.short_name.toLowerCase();
           const countryName = countryComponent.long_name.toLowerCase();
-          const isValidCountry = countries.some(filter =>
-            filter.toLowerCase() === countryCode ||
-            filter.toLowerCase() === countryName,
+          const isValidCountry = countries.some(filter => 
+            filter.toLowerCase() === countryCode || 
+            filter.toLowerCase() === countryName
           );
-
+          
           if (!isValidCountry) {
             console.log('Place filtered out due to country restriction:', countryComponent);
             return;
           }
         }
       }
-
+      
       // Apply client-side type filtering if specified
       if (typeFilter && typeFilter.length > 0) {
-        const hasValidType = typeFilter.some(filterType =>
-          place.types && place.types.includes(filterType),
+        const hasValidType = typeFilter.some(filterType => 
+          place.types && place.types.includes(filterType)
         );
-
+        
         if (!hasValidType) {
           console.log('Place filtered out due to type restriction:', place.types);
           return;
@@ -169,7 +169,7 @@ export default function PlaceAutocomplete({
 
   // Set up event listeners when API is loaded
   useEffect(() => {
-    if (!isApiLoaded || !autocompleteRef.current) {return;}
+    if (!isApiLoaded || !autocompleteRef.current) return;
 
     const element = autocompleteRef.current;
 
@@ -198,7 +198,7 @@ export default function PlaceAutocomplete({
 
   // Configure the autocomplete element
   useEffect(() => {
-    if (!isApiLoaded || !autocompleteRef.current) {return;}
+    if (!isApiLoaded || !autocompleteRef.current) return;
 
     const element = autocompleteRef.current;
 
@@ -248,7 +248,7 @@ export default function PlaceAutocomplete({
           <MapPin className="w-4 h-4 text-muted-foreground" />
         </div>
       )}
-
+      
       <gmp-place-autocomplete
         ref={autocompleteRef}
         id={id}
@@ -256,7 +256,7 @@ export default function PlaceAutocomplete({
           'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
           showIcon ? 'pl-10' : '',
           error ? 'border-red-500 focus:ring-red-500' : '',
-          className,
+          className
         )}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
