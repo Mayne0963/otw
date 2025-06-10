@@ -1,0 +1,566 @@
+# Enhanced Firebase MCP Deployment Workflow
+# This workflow provides comprehensive CI/CD for Firebase backend with MCP integration
+# Supports multiple environments, automated testing, and deployment validation
+
+name: Firebase MCP Enhanced Deploy
+
+on:
+  push:
+    branches: [main, develop, staging]
+    paths:
+      - 'functions/**'
+      - 'firestore.rules'
+      - 'firestore-mcp-rules.rules'
+      - 'storage.rules'
+      - 'storage-mcp-rules.rules'
+      - 'firebase.json'
+      - '.firebaserc'
+      - 'src/lib/firebase-**'
+      - 'src/lib/firestore-**'
+      - 'src/lib/storage-**'
+      - '.github/workflows/firebase-**'
+  
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'functions/**'
+      - 'firestore.rules'
+      - 'firestore-mcp-rules.rules'
+      - 'storage.rules'
+      - 'storage-mcp-rules.rules'
+      - 'firebase.json'
+      - '.firebaserc'
+      - 'src/lib/firebase-**'
+  
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      
+      deploy_functions:
+        description: 'Deploy Cloud Functions'
+        required: false
+        default: true
+        type: boolean
+      
+      deploy_rules:
+        description: 'Deploy Firestore and Storage rules'
+        required: false
+        default: true
+        type: boolean
+      
+      deploy_indexes:
+        description: 'Deploy Firestore indexes'
+        required: false
+        default: true
+        type: boolean
+      
+      run_tests:
+        description: 'Run tests before deployment'
+        required: false
+        default: true
+        type: boolean
+      
+      force_deploy:
+        description: 'Force deployment (skip validation)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  FIREBASE_CLI_VERSION: 'latest'
+  MCP_INTEGRATION: 'true'
+
+jobs:
+  # ============================================================================
+  # SETUP AND VALIDATION
+  # ============================================================================
+  
+  setup:
+    name: Setup and Validation
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.determine-env.outputs.environment }}
+      project-id: ${{ steps.determine-env.outputs.project-id }}
+      deploy-functions: ${{ steps.determine-deploy.outputs.deploy-functions }}
+      deploy-rules: ${{ steps.determine-deploy.outputs.deploy-rules }}
+      deploy-indexes: ${{ steps.determine-deploy.outputs.deploy-indexes }}
+      run-tests: ${{ steps.determine-deploy.outputs.run-tests }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Determine environment and project
+        id: determine-env
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            ENV="${{ github.event.inputs.environment }}"
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            ENV="production"
+          elif [[ "${{ github.ref }}" == "refs/heads/staging" ]]; then
+            ENV="staging"
+          else
+            ENV="development"
+          fi
+          
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+          
+          case $ENV in
+            production)
+              echo "project-id=${{ secrets.FIREBASE_PROJECT_ID_PROD }}" >> $GITHUB_OUTPUT
+              ;;
+            staging)
+              echo "project-id=${{ secrets.FIREBASE_PROJECT_ID_STAGING }}" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "project-id=${{ secrets.FIREBASE_PROJECT_ID_DEV }}" >> $GITHUB_OUTPUT
+              ;;
+          esac
+      
+      - name: Determine deployment scope
+        id: determine-deploy
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "deploy-functions=${{ github.event.inputs.deploy_functions }}" >> $GITHUB_OUTPUT
+            echo "deploy-rules=${{ github.event.inputs.deploy_rules }}" >> $GITHUB_OUTPUT
+            echo "deploy-indexes=${{ github.event.inputs.deploy_indexes }}" >> $GITHUB_OUTPUT
+            echo "run-tests=${{ github.event.inputs.run_tests }}" >> $GITHUB_OUTPUT
+          else
+            # Auto-detect changes
+            FUNCTIONS_CHANGED=$(git diff --name-only HEAD~1 HEAD | grep -E '^functions/' | wc -l)
+            RULES_CHANGED=$(git diff --name-only HEAD~1 HEAD | grep -E '\.(rules)$' | wc -l)
+            INDEXES_CHANGED=$(git diff --name-only HEAD~1 HEAD | grep -E 'firestore\.(indexes|json)' | wc -l)
+            
+            echo "deploy-functions=$([[ $FUNCTIONS_CHANGED -gt 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+            echo "deploy-rules=$([[ $RULES_CHANGED -gt 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+            echo "deploy-indexes=$([[ $INDEXES_CHANGED -gt 0 ]] && echo true || echo false)" >> $GITHUB_OUTPUT
+            echo "run-tests=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Validate environment variables
+        run: |
+          ENV="${{ steps.determine-env.outputs.environment }}"
+          PROJECT_ID="${{ steps.determine-env.outputs.project-id }}"
+          
+          if [[ -z "$PROJECT_ID" ]]; then
+            echo "❌ Project ID not found for environment: $ENV"
+            echo "Please ensure the following secrets are set:"
+            echo "- FIREBASE_PROJECT_ID_DEV"
+            echo "- FIREBASE_PROJECT_ID_STAGING"
+            echo "- FIREBASE_PROJECT_ID_PROD"
+            exit 1
+          fi
+          
+          echo "✅ Environment: $ENV"
+          echo "✅ Project ID: $PROJECT_ID"
+
+  # ============================================================================
+  # TESTING
+  # ============================================================================
+  
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.run-tests == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Functions dependencies
+        run: |
+          cd functions
+          npm ci
+      
+      - name: Run linting
+        run: |
+          npm run lint
+          cd functions && npm run lint
+      
+      - name: Run type checking
+        run: |
+          npm run type-check
+          cd functions && npm run build
+      
+      - name: Run unit tests
+        run: |
+          npm run test
+          cd functions && npm run test
+      
+      - name: Setup Firebase Emulators
+        run: |
+          npm install -g firebase-tools@${{ env.FIREBASE_CLI_VERSION }}
+          firebase setup:emulators:firestore
+          firebase setup:emulators:storage
+      
+      - name: Run integration tests
+        run: |
+          firebase emulators:exec --only firestore,storage "npm run test:integration"
+        env:
+          FIRESTORE_EMULATOR_HOST: localhost:8080
+          FIREBASE_STORAGE_EMULATOR_HOST: localhost:9199
+      
+      - name: Validate Firestore rules
+        run: |
+          firebase emulators:exec --only firestore "npm run test:rules"
+        env:
+          FIRESTORE_EMULATOR_HOST: localhost:8080
+      
+      - name: Generate test coverage report
+        run: |
+          npm run test:coverage
+          cd functions && npm run test:coverage
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info,./functions/coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # ============================================================================
+  # SECURITY SCANNING
+  # ============================================================================
+  
+  security:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    needs: setup
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd functions && npm ci
+      
+      - name: Run npm audit
+        run: |
+          npm audit --audit-level moderate
+          cd functions && npm audit --audit-level moderate
+      
+      - name: Run security linting
+        run: |
+          npx eslint . --ext .js,.ts --config .eslintrc.security.js
+          cd functions && npx eslint . --ext .js,.ts --config ../.eslintrc.security.js
+      
+      - name: Scan for secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+
+  # ============================================================================
+  # DEPLOYMENT PREPARATION
+  # ============================================================================
+  
+  prepare-deploy:
+    name: Prepare Deployment
+    runs-on: ubuntu-latest
+    needs: [setup, test, security]
+    if: always() && (needs.test.result == 'success' || needs.test.result == 'skipped') && needs.security.result == 'success'
+    
+    outputs:
+      deployment-id: ${{ steps.create-deployment.outputs.deployment-id }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@${{ env.FIREBASE_CLI_VERSION }}
+      
+      - name: Authenticate with Firebase
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 -d > $HOME/firebase-service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS="$HOME/firebase-service-account.json"
+          firebase login:ci --no-localhost
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      
+      - name: Validate Firebase configuration
+        run: |
+          firebase projects:list
+          firebase use ${{ needs.setup.outputs.project-id }}
+          firebase functions:config:get
+      
+      - name: Build Functions
+        if: needs.setup.outputs.deploy-functions == 'true'
+        run: |
+          cd functions
+          npm ci
+          npm run build
+      
+      - name: Validate Firestore rules syntax
+        if: needs.setup.outputs.deploy-rules == 'true'
+        run: |
+          firebase firestore:rules:validate firestore.rules
+          if [[ -f "firestore-mcp-rules.rules" ]]; then
+            firebase firestore:rules:validate firestore-mcp-rules.rules
+          fi
+      
+      - name: Validate Storage rules syntax
+        if: needs.setup.outputs.deploy-rules == 'true'
+        run: |
+          firebase storage:rules:validate storage.rules
+          if [[ -f "storage-mcp-rules.rules" ]]; then
+            firebase storage:rules:validate storage-mcp-rules.rules
+          fi
+      
+      - name: Create deployment record
+        id: create-deployment
+        run: |
+          DEPLOYMENT_ID="deploy-$(date +%Y%m%d-%H%M%S)-${{ github.sha }}"
+          echo "deployment-id=$DEPLOYMENT_ID" >> $GITHUB_OUTPUT
+          
+          # Create deployment metadata
+          cat > deployment-metadata.json << EOF
+          {
+            "deploymentId": "$DEPLOYMENT_ID",
+            "environment": "${{ needs.setup.outputs.environment }}",
+            "projectId": "${{ needs.setup.outputs.project-id }}",
+            "branch": "${{ github.ref_name }}",
+            "commit": "${{ github.sha }}",
+            "actor": "${{ github.actor }}",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "deployFunctions": ${{ needs.setup.outputs.deploy-functions }},
+            "deployRules": ${{ needs.setup.outputs.deploy-rules }},
+            "deployIndexes": ${{ needs.setup.outputs.deploy-indexes }}
+          }
+          EOF
+      
+      - name: Upload deployment artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-artifacts-${{ steps.create-deployment.outputs.deployment-id }}
+          path: |
+            functions/lib/
+            deployment-metadata.json
+            firebase.json
+            .firebaserc
+            firestore.rules
+            firestore-mcp-rules.rules
+            storage.rules
+            storage-mcp-rules.rules
+            firestore.indexes.json
+
+  # ============================================================================
+  # DEPLOYMENT
+  # ============================================================================
+  
+  deploy:
+    name: Deploy to Firebase
+    runs-on: ubuntu-latest
+    needs: [setup, prepare-deploy]
+    environment: ${{ needs.setup.outputs.environment }}
+    
+    steps:
+      - name: Download deployment artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: deployment-artifacts-${{ needs.prepare-deploy.outputs.deployment-id }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@${{ env.FIREBASE_CLI_VERSION }}
+      
+      - name: Authenticate with Firebase
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 -d > $HOME/firebase-service-account.json
+          export GOOGLE_APPLICATION_CREDENTIALS="$HOME/firebase-service-account.json"
+          firebase login:ci --no-localhost
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      
+      - name: Set Firebase project
+        run: firebase use ${{ needs.setup.outputs.project-id }}
+      
+      - name: Deploy Firestore indexes
+        if: needs.setup.outputs.deploy-indexes == 'true'
+        run: |
+          echo "🚀 Deploying Firestore indexes..."
+          firebase deploy --only firestore:indexes --project ${{ needs.setup.outputs.project-id }}
+      
+      - name: Deploy Firestore rules
+        if: needs.setup.outputs.deploy-rules == 'true'
+        run: |
+          echo "🚀 Deploying Firestore rules..."
+          # Use MCP rules if available, otherwise use standard rules
+          if [[ -f "firestore-mcp-rules.rules" ]]; then
+            cp firestore-mcp-rules.rules firestore.rules
+          fi
+          firebase deploy --only firestore:rules --project ${{ needs.setup.outputs.project-id }}
+      
+      - name: Deploy Storage rules
+        if: needs.setup.outputs.deploy-rules == 'true'
+        run: |
+          echo "🚀 Deploying Storage rules..."
+          # Use MCP rules if available, otherwise use standard rules
+          if [[ -f "storage-mcp-rules.rules" ]]; then
+            cp storage-mcp-rules.rules storage.rules
+          fi
+          firebase deploy --only storage --project ${{ needs.setup.outputs.project-id }}
+      
+      - name: Deploy Cloud Functions
+        if: needs.setup.outputs.deploy-functions == 'true'
+        run: |
+          echo "🚀 Deploying Cloud Functions..."
+          firebase deploy --only functions --project ${{ needs.setup.outputs.project-id }}
+      
+      - name: Verify deployment
+        run: |
+          echo "✅ Verifying deployment..."
+          
+          # Check Functions deployment
+          if [[ "${{ needs.setup.outputs.deploy-functions }}" == "true" ]]; then
+            firebase functions:list --project ${{ needs.setup.outputs.project-id }}
+          fi
+          
+          # Test health endpoint if available
+          if [[ "${{ needs.setup.outputs.deploy-functions }}" == "true" ]]; then
+            HEALTH_URL="https://us-central1-${{ needs.setup.outputs.project-id }}.cloudfunctions.net/api/health"
+            echo "Testing health endpoint: $HEALTH_URL"
+            curl -f "$HEALTH_URL" || echo "Health endpoint not available or failed"
+          fi
+      
+      - name: Update deployment status
+        run: |
+          echo "📊 Deployment completed successfully!"
+          echo "Environment: ${{ needs.setup.outputs.environment }}"
+          echo "Project: ${{ needs.setup.outputs.project-id }}"
+          echo "Deployment ID: ${{ needs.prepare-deploy.outputs.deployment-id }}"
+          echo "Functions deployed: ${{ needs.setup.outputs.deploy-functions }}"
+          echo "Rules deployed: ${{ needs.setup.outputs.deploy-rules }}"
+          echo "Indexes deployed: ${{ needs.setup.outputs.deploy-indexes }}"
+
+  # ============================================================================
+  # POST-DEPLOYMENT
+  # ============================================================================
+  
+  post-deploy:
+    name: Post-Deployment Tasks
+    runs-on: ubuntu-latest
+    needs: [setup, deploy]
+    if: always() && needs.deploy.result == 'success'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Run post-deployment tests
+        run: |
+          echo "🧪 Running post-deployment tests..."
+          # Add your post-deployment test commands here
+          # npm run test:e2e
+      
+      - name: Update MCP integration
+        if: env.MCP_INTEGRATION == 'true'
+        run: |
+          echo "🔄 Updating MCP integration..."
+          # Trigger MCP sync or update
+          # This would typically call your MCP server to update configurations
+      
+      - name: Send deployment notification
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          text: |
+            🚀 Firebase deployment completed!
+            Environment: ${{ needs.setup.outputs.environment }}
+            Project: ${{ needs.setup.outputs.project-id }}
+            Status: ${{ job.status }}
+            Actor: ${{ github.actor }}
+            Commit: ${{ github.sha }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      
+      - name: Create GitHub release
+        if: needs.setup.outputs.environment == 'production' && github.ref == 'refs/heads/main'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Production Release v${{ github.run_number }}
+          body: |
+            🚀 Production deployment completed successfully!
+            
+            **Deployment Details:**
+            - Environment: Production
+            - Project: ${{ needs.setup.outputs.project-id }}
+            - Functions deployed: ${{ needs.setup.outputs.deploy-functions }}
+            - Rules deployed: ${{ needs.setup.outputs.deploy-rules }}
+            - Indexes deployed: ${{ needs.setup.outputs.deploy-indexes }}
+            
+            **Changes:**
+            ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+
+  # ============================================================================
+  # CLEANUP
+  # ============================================================================
+  
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: [prepare-deploy, deploy, post-deploy]
+    if: always()
+    
+    steps:
+      - name: Cleanup artifacts
+        run: |
+          echo "🧹 Cleaning up deployment artifacts..."
+          # Cleanup temporary files and artifacts
+      
+      - name: Cleanup credentials
+        run: |
+          rm -f $HOME/firebase-service-account.json
+          echo "🔐 Credentials cleaned up"

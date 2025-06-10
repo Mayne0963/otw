@@ -1,0 +1,448 @@
+rules_version = '2';
+
+/**
+ * Enhanced Firebase Storage Security Rules
+ * Comprehensive security rules for file uploads and downloads
+ * Covers profile images, screenshots, documents, and temporary files
+ */
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // ========================================================================
+    // HELPER FUNCTIONS
+    // ========================================================================
+    
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Check if user is the owner of the resource
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Check if user has admin role
+    function isAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'admin';
+    }
+    
+    // Check if user has restaurant owner role
+    function isRestaurantOwner() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'restaurant_owner';
+    }
+    
+    // Check if user has customer service role
+    function isCustomerService() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'customer_service';
+    }
+    
+    // Check if user has elevated permissions
+    function hasElevatedPermissions() {
+      return isAdmin() || isRestaurantOwner() || isCustomerService();
+    }
+    
+    // Validate image file types
+    function isValidImageType() {
+      return resource.contentType.matches('image/.*') &&
+             resource.contentType in ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    }
+    
+    // Validate document file types
+    function isValidDocumentType() {
+      return resource.contentType in [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'text/plain',
+        'image/jpeg',
+        'image/png'
+      ];
+    }
+    
+    // Check file size limits
+    function isWithinSizeLimit(maxSizeMB) {
+      return resource.size <= maxSizeMB * 1024 * 1024;
+    }
+    
+    // Check if file was uploaded recently (within last 5 minutes)
+    function isRecentUpload() {
+      return resource.timeCreated > request.time - duration.value(5, 'm');
+    }
+    
+    // Validate filename format (no special characters except underscore, dash, and dot)
+    function hasValidFilename() {
+      return resource.name.matches('[a-zA-Z0-9._-]+');
+    }
+    
+    // ========================================================================
+    // PROFILE IMAGES
+    // ========================================================================
+    
+    match /profile-images/{userId}/{fileName} {
+      // Users can upload their own profile images
+      allow create: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(5) && // 5MB limit
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users can read their own profile images
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Public read access for profile images (for display purposes)
+      allow read: if true;
+      
+      // Users can update/replace their own profile images
+      allow update: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(5);
+      
+      // Users can delete their own profile images
+      allow delete: if isAuthenticated() && isOwner(userId);
+      
+      // Admins can manage all profile images
+      allow read, write, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SCREENSHOTS FOR ORDER PROCESSING
+    // ========================================================================
+    
+    match /screenshots/{userId}/{fileName} {
+      // Users can upload screenshots for order processing
+      allow create: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(10) && // 10MB limit for screenshots
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users can read their own screenshots
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Customer service and admins can read all screenshots
+      allow read: if hasElevatedPermissions();
+      
+      // Users can delete their own screenshots
+      allow delete: if isAuthenticated() && isOwner(userId);
+      
+      // Admins can manage all screenshots
+      allow write, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // PROCESSED SCREENSHOTS (THUMBNAILS)
+    // ========================================================================
+    
+    match /thumbnails/{userId}/{fileName} {
+      // Only system (Cloud Functions) can create thumbnails
+      allow create: if false; // Created by Cloud Functions only
+      
+      // Users can read their own thumbnails
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Customer service and admins can read all thumbnails
+      allow read: if hasElevatedPermissions();
+      
+      // System cleanup (Cloud Functions) can delete old thumbnails
+      allow delete: if false; // Deleted by Cloud Functions only
+    }
+    
+    // ========================================================================
+    // RESTAURANT IMAGES
+    // ========================================================================
+    
+    match /restaurant-images/{restaurantId}/{fileName} {
+      // Restaurant owners can upload images for their restaurants
+      allow create: if isRestaurantOwner() && 
+                       restaurantId in request.auth.token.get('restaurantIds', []) &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(8) && // 8MB limit
+                       hasValidFilename();
+      
+      // Public read access for restaurant images
+      allow read: if true;
+      
+      // Restaurant owners can update their restaurant images
+      allow update: if isRestaurantOwner() && 
+                       restaurantId in request.auth.token.get('restaurantIds', []) &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(8);
+      
+      // Restaurant owners can delete their restaurant images
+      allow delete: if isRestaurantOwner() && 
+                       restaurantId in request.auth.token.get('restaurantIds', []);
+      
+      // Admins can manage all restaurant images
+      allow read, write, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // MENU ITEM IMAGES
+    // ========================================================================
+    
+    match /menu-images/{restaurantId}/{itemId}/{fileName} {
+      // Restaurant owners can upload menu item images
+      allow create: if isRestaurantOwner() && 
+                       restaurantId in request.auth.token.get('restaurantIds', []) &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(5) && // 5MB limit
+                       hasValidFilename();
+      
+      // Public read access for menu images
+      allow read: if true;
+      
+      // Restaurant owners can update menu item images
+      allow update: if isRestaurantOwner() && 
+                       restaurantId in request.auth.token.get('restaurantIds', []) &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(5);
+      
+      // Restaurant owners can delete menu item images
+      allow delete: if isRestaurantOwner() && 
+                       restaurantId in request.auth.token.get('restaurantIds', []);
+      
+      // Admins can manage all menu images
+      allow read, write, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // DOCUMENTS (RECEIPTS, INVOICES, ETC.)
+    // ========================================================================
+    
+    match /documents/{userId}/{category}/{fileName} {
+      // Users can upload documents in specific categories
+      allow create: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       category in ['receipts', 'invoices', 'other'] &&
+                       isValidDocumentType() &&
+                       isWithinSizeLimit(25) && // 25MB limit for documents
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users can read their own documents
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Customer service and admins can read user documents
+      allow read: if hasElevatedPermissions();
+      
+      // Users can delete their own documents
+      allow delete: if isAuthenticated() && isOwner(userId);
+      
+      // Admins can manage all documents
+      allow write, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SUPPORT TICKET ATTACHMENTS
+    // ========================================================================
+    
+    match /support-attachments/{ticketId}/{fileName} {
+      // Users can upload attachments to their support tickets
+      allow create: if isAuthenticated() &&
+                       isValidDocumentType() &&
+                       isWithinSizeLimit(10) && // 10MB limit
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users and customer service can read support attachments
+      allow read: if isAuthenticated();
+      
+      // Customer service and admins can manage support attachments
+      allow write, delete: if hasElevatedPermissions();
+    }
+    
+    // ========================================================================
+    // PROMOTIONAL CONTENT
+    // ========================================================================
+    
+    match /promotional/{category}/{fileName} {
+      // Only admins and restaurant owners can upload promotional content
+      allow create: if hasElevatedPermissions() &&
+                       category in ['banners', 'offers', 'announcements'] &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Public read access for promotional content
+      allow read: if true;
+      
+      // Admins and restaurant owners can manage promotional content
+      allow update, delete: if hasElevatedPermissions();
+    }
+    
+    // ========================================================================
+    // TEMPORARY UPLOADS
+    // ========================================================================
+    
+    match /temp-uploads/{userId}/{sessionId}/{fileName} {
+      // Users can upload temporary files
+      allow create: if isAuthenticated() && 
+                       isOwner(userId) &&
+                       (isValidImageType() || isValidDocumentType()) &&
+                       isWithinSizeLimit(50) && // 50MB limit for temp files
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users can read their own temporary files
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Users can delete their own temporary files
+      allow delete: if isAuthenticated() && isOwner(userId);
+      
+      // Auto-cleanup: files older than 24 hours can be deleted by system
+      allow delete: if resource.timeCreated < request.time - duration.value(24, 'h');
+      
+      // Admins can manage all temporary files
+      allow read, write, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SYSTEM BACKUPS (Admin Only)
+    // ========================================================================
+    
+    match /backups/{backupType}/{fileName} {
+      // Only system (Cloud Functions) can create backups
+      allow create: if false; // Created by Cloud Functions only
+      
+      // Only admins can read backups
+      allow read: if isAdmin();
+      
+      // Only admins can delete old backups
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // ANALYTICS EXPORTS
+    // ========================================================================
+    
+    match /analytics-exports/{exportId}/{fileName} {
+      // Only system can create analytics exports
+      allow create: if false; // Created by Cloud Functions only
+      
+      // Admins and restaurant owners can read analytics exports
+      allow read: if hasElevatedPermissions();
+      
+      // Only admins can delete analytics exports
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // DELIVERY PROOF IMAGES
+    // ========================================================================
+    
+    match /delivery-proof/{orderId}/{fileName} {
+      // Delivery drivers can upload proof of delivery
+      allow create: if isAuthenticated() &&
+                       request.auth.token.get('role', '') == 'delivery_driver' &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users, restaurant owners, and admins can read delivery proof
+      allow read: if isAuthenticated();
+      
+      // Only admins can delete delivery proof
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // CHAT/MESSAGE ATTACHMENTS
+    // ========================================================================
+    
+    match /chat-attachments/{chatId}/{messageId}/{fileName} {
+      // Authenticated users can upload chat attachments
+      allow create: if isAuthenticated() &&
+                       (isValidImageType() || isValidDocumentType()) &&
+                       isWithinSizeLimit(10) &&
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Participants in the chat can read attachments
+      allow read: if isAuthenticated();
+      
+      // Users can delete their own attachments within 24 hours
+      allow delete: if isAuthenticated() &&
+                       resource.timeCreated > request.time - duration.value(24, 'h');
+      
+      // Admins can manage all chat attachments
+      allow read, write, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // QUALITY ASSURANCE IMAGES
+    // ========================================================================
+    
+    match /qa-images/{restaurantId}/{orderId}/{fileName} {
+      // Restaurant staff can upload QA images
+      allow create: if isRestaurantOwner() &&
+                       restaurantId in request.auth.token.get('restaurantIds', []) &&
+                       isValidImageType() &&
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Restaurant owners and admins can read QA images
+      allow read: if (isRestaurantOwner() && 
+                      restaurantId in request.auth.token.get('restaurantIds', [])) ||
+                     isAdmin();
+      
+      // Only admins can delete QA images
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SECURITY AND MONITORING
+    // ========================================================================
+    
+    // Log suspicious activity
+    match /security-logs/{logId} {
+      // Only system can create security logs
+      allow create: if false;
+      
+      // Only admins can read security logs
+      allow read: if isAdmin();
+      
+      // No deletion of security logs
+      allow delete: if false;
+    }
+    
+    // ========================================================================
+    // RATE LIMITING HELPERS
+    // ========================================================================
+    
+    // Implement basic rate limiting by checking recent uploads
+    function hasExceededUploadLimit() {
+      // This would need to be implemented with Firestore counters
+      // For now, we'll rely on Cloud Functions for rate limiting
+      return false;
+    }
+    
+    // ========================================================================
+    // CONTENT MODERATION
+    // ========================================================================
+    
+    // Flag content for moderation (implemented via Cloud Functions)
+    function requiresModeration() {
+      // Images larger than 2MB or certain file types require moderation
+      return resource.size > 2 * 1024 * 1024 ||
+             resource.contentType in ['image/gif'];
+    }
+    
+    // ========================================================================
+    // FALLBACK RULES
+    // ========================================================================
+    
+    // Deny all other access by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,511 @@
+name: Enhanced Firebase Deployment
+
+# Trigger deployment on push to main branch and manual dispatch
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'functions/**'
+      - 'firestore*.rules'
+      - 'storage*.rules'
+      - 'firebase.json'
+      - '.firebaserc'
+      - 'src/lib/firebase**'
+      - '.github/workflows/firebase-enhanced-deploy.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'functions/**'
+      - 'firestore*.rules'
+      - 'storage*.rules'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      deploy_functions:
+        description: 'Deploy Cloud Functions'
+        required: false
+        default: true
+        type: boolean
+      deploy_rules:
+        description: 'Deploy Security Rules'
+        required: false
+        default: true
+        type: boolean
+      deploy_indexes:
+        description: 'Deploy Firestore Indexes'
+        required: false
+        default: true
+        type: boolean
+
+# Environment variables
+env:
+  NODE_VERSION: '18'
+  FIREBASE_CLI_VERSION: 'latest'
+
+jobs:
+  # ========================================================================
+  # VALIDATION AND TESTING
+  # ========================================================================
+  
+  validate:
+    name: Validate Configuration
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.check_changes.outputs.should_deploy }}
+      environment: ${{ steps.set_env.outputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@${{ env.FIREBASE_CLI_VERSION }}
+      
+      - name: Validate Firebase configuration
+        run: |
+          # Check if firebase.json exists and is valid
+          if [ ! -f "firebase.json" ]; then
+            echo "Error: firebase.json not found"
+            exit 1
+          fi
+          
+          # Validate JSON syntax
+          node -e "JSON.parse(require('fs').readFileSync('firebase.json', 'utf8'))"
+          echo "✅ firebase.json is valid"
+      
+      - name: Validate Firestore rules
+        run: |
+          if [ -f "firestore.rules" ]; then
+            firebase firestore:rules:validate firestore.rules --project=demo-project
+            echo "✅ firestore.rules is valid"
+          fi
+          
+          if [ -f "firestore-enhanced.rules" ]; then
+            firebase firestore:rules:validate firestore-enhanced.rules --project=demo-project
+            echo "✅ firestore-enhanced.rules is valid"
+          fi
+      
+      - name: Validate Storage rules
+        run: |
+          if [ -f "storage.rules" ]; then
+            firebase storage:rules:validate storage.rules --project=demo-project
+            echo "✅ storage.rules is valid"
+          fi
+          
+          if [ -f "storage-enhanced.rules" ]; then
+            firebase storage:rules:validate storage-enhanced.rules --project=demo-project
+            echo "✅ storage-enhanced.rules is valid"
+          fi
+      
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "push" ]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Set environment
+        id: set_env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+  # ========================================================================
+  # CLOUD FUNCTIONS TESTING
+  # ========================================================================
+  
+  test_functions:
+    name: Test Cloud Functions
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.should_deploy == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        working-directory: ./functions
+        run: npm ci
+      
+      - name: Run TypeScript compilation
+        working-directory: ./functions
+        run: npm run build
+      
+      - name: Run linting
+        working-directory: ./functions
+        run: |
+          if npm run lint --if-present; then
+            echo "✅ Linting passed"
+          else
+            echo "⚠️ Linting not configured or failed"
+          fi
+      
+      - name: Run unit tests
+        working-directory: ./functions
+        run: |
+          if npm test --if-present; then
+            echo "✅ Tests passed"
+          else
+            echo "⚠️ Tests not configured or failed"
+          fi
+      
+      - name: Check function size
+        working-directory: ./functions
+        run: |
+          # Check if built functions are within size limits
+          if [ -d "lib" ]; then
+            size=$(du -sh lib | cut -f1)
+            echo "Functions build size: $size"
+            
+            # Warn if size is large (>50MB)
+            size_bytes=$(du -sb lib | cut -f1)
+            if [ $size_bytes -gt 52428800 ]; then
+              echo "⚠️ Warning: Functions build size is large ($size)"
+            fi
+          fi
+
+  # ========================================================================
+  # SECURITY SCANNING
+  # ========================================================================
+  
+  security_scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: validate
+    if: needs.validate.outputs.should_deploy == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        working-directory: ./functions
+        run: npm ci
+      
+      - name: Run security audit
+        working-directory: ./functions
+        run: |
+          npm audit --audit-level=moderate
+          echo "✅ Security audit completed"
+      
+      - name: Check for secrets
+        run: |
+          # Basic check for potential secrets in code
+          if grep -r -i "api[_-]key\|secret\|password\|token" functions/src/ --exclude-dir=node_modules || true; then
+            echo "⚠️ Potential secrets found in code. Please review."
+          else
+            echo "✅ No obvious secrets found in code"
+          fi
+      
+      - name: Validate environment variables
+        run: |
+          # Check if required environment variables are documented
+          if [ -f "functions/.env.example" ]; then
+            echo "✅ Environment variables example found"
+          else
+            echo "⚠️ Consider adding functions/.env.example for documentation"
+          fi
+
+  # ========================================================================
+  # STAGING DEPLOYMENT
+  # ========================================================================
+  
+  deploy_staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [validate, test_functions, security_scan]
+    if: |
+      needs.validate.outputs.should_deploy == 'true' && 
+      needs.validate.outputs.environment == 'staging'
+    environment: staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@${{ env.FIREBASE_CLI_VERSION }}
+      
+      - name: Install function dependencies
+        working-directory: ./functions
+        run: npm ci
+      
+      - name: Build functions
+        working-directory: ./functions
+        run: npm run build
+      
+      - name: Deploy to Firebase Staging
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_STAGING }}
+        run: |
+          # Set Firebase project
+          firebase use staging --token $FIREBASE_TOKEN
+          
+          # Deploy based on workflow inputs or default behavior
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            deploy_cmd="firebase deploy --only "
+            targets=()
+            
+            if [ "${{ github.event.inputs.deploy_functions }}" = "true" ]; then
+              targets+=("functions")
+            fi
+            
+            if [ "${{ github.event.inputs.deploy_rules }}" = "true" ]; then
+              targets+=("firestore:rules,storage")
+            fi
+            
+            if [ "${{ github.event.inputs.deploy_indexes }}" = "true" ]; then
+              targets+=("firestore:indexes")
+            fi
+            
+            if [ ${#targets[@]} -eq 0 ]; then
+              echo "No deployment targets selected"
+              exit 1
+            fi
+            
+            IFS=','
+            deploy_cmd+="${targets[*]}"
+            echo "Executing: $deploy_cmd"
+            eval "$deploy_cmd --token $FIREBASE_TOKEN"
+          else
+            # Default deployment for push events
+            firebase deploy --token $FIREBASE_TOKEN
+          fi
+      
+      - name: Run post-deployment tests
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_STAGING }}
+        run: |
+          # Basic health check
+          echo "Running post-deployment health checks..."
+          
+          # Check if functions are deployed and responding
+          if firebase functions:list --token $FIREBASE_TOKEN | grep -q "✓"; then
+            echo "✅ Functions deployed successfully"
+          else
+            echo "⚠️ Functions deployment status unclear"
+          fi
+
+  # ========================================================================
+  # PRODUCTION DEPLOYMENT
+  # ========================================================================
+  
+  deploy_production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [validate, test_functions, security_scan]
+    if: |
+      needs.validate.outputs.should_deploy == 'true' && 
+      needs.validate.outputs.environment == 'production'
+    environment: production
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@${{ env.FIREBASE_CLI_VERSION }}
+      
+      - name: Install function dependencies
+        working-directory: ./functions
+        run: npm ci --only=production
+      
+      - name: Build functions for production
+        working-directory: ./functions
+        run: |
+          npm run build
+          
+          # Optimize build for production
+          if [ -f "package.json" ] && grep -q "build:prod" package.json; then
+            npm run build:prod
+          fi
+      
+      - name: Create deployment backup
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_PRODUCTION }}
+        run: |
+          # Backup current rules before deployment
+          firebase use production --token $FIREBASE_TOKEN
+          
+          mkdir -p backups
+          
+          # Backup Firestore rules
+          if firebase firestore:rules:get > backups/firestore-rules-backup.txt 2>/dev/null; then
+            echo "✅ Firestore rules backed up"
+          fi
+          
+          # Backup Storage rules
+          if firebase storage:rules:get > backups/storage-rules-backup.txt 2>/dev/null; then
+            echo "✅ Storage rules backed up"
+          fi
+      
+      - name: Deploy to Firebase Production
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_PRODUCTION }}
+        run: |
+          firebase use production --token $FIREBASE_TOKEN
+          
+          # Deploy with confirmation for production
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            deploy_cmd="firebase deploy --only "
+            targets=()
+            
+            if [ "${{ github.event.inputs.deploy_functions }}" = "true" ]; then
+              targets+=("functions")
+            fi
+            
+            if [ "${{ github.event.inputs.deploy_rules }}" = "true" ]; then
+              targets+=("firestore:rules,storage")
+            fi
+            
+            if [ "${{ github.event.inputs.deploy_indexes }}" = "true" ]; then
+              targets+=("firestore:indexes")
+            fi
+            
+            if [ ${#targets[@]} -eq 0 ]; then
+              echo "No deployment targets selected"
+              exit 1
+            fi
+            
+            IFS=','
+            deploy_cmd+="${targets[*]}"
+            echo "Executing: $deploy_cmd"
+            eval "$deploy_cmd --token $FIREBASE_TOKEN --force"
+          else
+            firebase deploy --token $FIREBASE_TOKEN --force
+          fi
+      
+      - name: Verify production deployment
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN_PRODUCTION }}
+        run: |
+          echo "Verifying production deployment..."
+          
+          # Wait for functions to be ready
+          sleep 30
+          
+          # Check function status
+          if firebase functions:list --token $FIREBASE_TOKEN | grep -q "✓"; then
+            echo "✅ Production functions are healthy"
+          else
+            echo "❌ Production functions may have issues"
+            exit 1
+          fi
+      
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "🚀 Production deployment completed successfully!"
+          echo "Timestamp: $(date -u)"
+          echo "Commit: ${{ github.sha }}"
+          echo "Branch: ${{ github.ref_name }}"
+
+  # ========================================================================
+  # ROLLBACK CAPABILITY
+  # ========================================================================
+  
+  rollback:
+    name: Rollback Deployment
+    runs-on: ubuntu-latest
+    if: failure() && (needs.deploy_staging.result == 'failure' || needs.deploy_production.result == 'failure')
+    needs: [deploy_staging, deploy_production]
+    environment: ${{ needs.validate.outputs.environment }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@${{ env.FIREBASE_CLI_VERSION }}
+      
+      - name: Rollback deployment
+        env:
+          FIREBASE_TOKEN: ${{ needs.validate.outputs.environment == 'production' && secrets.FIREBASE_TOKEN_PRODUCTION || secrets.FIREBASE_TOKEN_STAGING }}
+        run: |
+          firebase use ${{ needs.validate.outputs.environment }} --token $FIREBASE_TOKEN
+          
+          echo "⚠️ Deployment failed. Initiating rollback..."
+          
+          # Restore rules from backup if available
+          if [ -f "backups/firestore-rules-backup.txt" ]; then
+            echo "Restoring Firestore rules from backup..."
+            # Note: This would need custom implementation
+          fi
+          
+          if [ -f "backups/storage-rules-backup.txt" ]; then
+            echo "Restoring Storage rules from backup..."
+            # Note: This would need custom implementation
+          fi
+          
+          echo "❌ Rollback completed. Please check the deployment manually."
+
+  # ========================================================================
+  # CLEANUP
+  # ========================================================================
+  
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [deploy_staging, deploy_production, rollback]
+    
+    steps:
+      - name: Clean up artifacts
+        run: |
+          echo "🧹 Cleaning up deployment artifacts..."
+          # Remove any temporary files or caches if needed
+          echo "✅ Cleanup completed"

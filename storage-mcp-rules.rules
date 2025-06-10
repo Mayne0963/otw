@@ -1,0 +1,439 @@
+// Enhanced Firebase Storage Security Rules with MCP Integration
+// This file provides comprehensive security rules for Firebase Storage with
+// automated validation, file type restrictions, and MCP integration.
+
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // ============================================================================
+    // HELPER FUNCTIONS
+    // ============================================================================
+    
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Check if user is the owner of the file
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Check if user has admin role
+    function isAdmin() {
+      return isAuthenticated() && 
+             firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Check if user has moderator role or higher
+    function isModerator() {
+      return isAuthenticated() && 
+             firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role in ['admin', 'moderator'];
+    }
+    
+    // Check if user has premium subscription
+    function isPremiumUser() {
+      return isAuthenticated() && 
+             firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.subscription.status == 'active' &&
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.subscription.plan in ['premium', 'enterprise'];
+    }
+    
+    // Validate file size limits
+    function isValidFileSize(maxSizeBytes) {
+      return request.resource.size <= maxSizeBytes;
+    }
+    
+    // Validate image file types
+    function isValidImageType() {
+      return request.resource.contentType.matches('image/(jpeg|jpg|png|gif|webp|svg\\+xml)');
+    }
+    
+    // Validate document file types
+    function isValidDocumentType() {
+      return request.resource.contentType.matches('(application/(pdf|msword|vnd\\.openxmlformats-officedocument\\.wordprocessingml\\.document|vnd\\.ms-excel|vnd\\.openxmlformats-officedocument\\.spreadsheetml\\.sheet|vnd\\.ms-powerpoint|vnd\\.openxmlformats-officedocument\\.presentationml\\.presentation)|text/(plain|csv))');
+    }
+    
+    // Validate video file types
+    function isValidVideoType() {
+      return request.resource.contentType.matches('video/(mp4|mpeg|quicktime|x-msvideo|webm)');
+    }
+    
+    // Validate audio file types
+    function isValidAudioType() {
+      return request.resource.contentType.matches('audio/(mpeg|wav|ogg|mp4|webm)');
+    }
+    
+    // Check if file name is safe (no special characters that could cause issues)
+    function isSafeFileName(fileName) {
+      return fileName.matches('^[a-zA-Z0-9._-]+$') && 
+             !fileName.matches('^\\.') && 
+             !fileName.matches('\\.\\.$');
+    }
+    
+    // Check rate limiting based on user's upload count
+    function isWithinUploadLimit() {
+      // This would typically be implemented with Cloud Functions
+      // For now, we'll allow uploads but this can be enhanced
+      return true;
+    }
+    
+    // Check if user can access file based on privacy settings
+    function canAccessFile(filePath) {
+      // Extract userId from file path
+      let pathParts = filePath.split('/');
+      return pathParts.size() > 1 && 
+             (isOwner(pathParts[0]) || 
+              isAdmin() || 
+              isPublicFile(filePath));
+    }
+    
+    // Check if file is in public directory
+    function isPublicFile(filePath) {
+      return filePath.matches('^public/.*');
+    }
+    
+    // Validate metadata
+    function hasValidMetadata() {
+      return request.resource.metadata != null &&
+             request.resource.metadata.keys().hasAll(['uploadedBy', 'uploadedAt']) &&
+             request.resource.metadata.uploadedBy == request.auth.uid;
+    }
+    
+    // ============================================================================
+    // USER PROFILE IMAGES
+    // ============================================================================
+    
+    match /users/{userId}/profile/{fileName} {
+      // Users can read their own profile images, others can read if public
+      allow read: if isOwner(userId) || 
+                     isAdmin() ||
+                     (firestore.exists(/databases/(default)/documents/users/$(userId)) &&
+                      firestore.get(/databases/(default)/documents/users/$(userId)).data.profileImagePrivacy == 'public');
+      
+      // Users can upload their own profile images
+      allow write: if isOwner(userId) && 
+                      isValidImageType() && 
+                      isValidFileSize(5 * 1024 * 1024) && // 5MB limit
+                      isSafeFileName(fileName) &&
+                      hasValidMetadata() &&
+                      isWithinUploadLimit();
+      
+      // Users can delete their own profile images
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ============================================================================
+    // USER PRIVATE FILES
+    // ============================================================================
+    
+    match /users/{userId}/private/{allPaths=**} {
+      // Only the user and admins can access private files
+      allow read, write, delete: if isOwner(userId) || isAdmin();
+      
+      // Additional validation for uploads
+      allow write: if isOwner(userId) && 
+                      (isValidImageType() || isValidDocumentType() || isValidVideoType() || isValidAudioType()) &&
+                      isValidFileSize(100 * 1024 * 1024) && // 100MB limit for private files
+                      hasValidMetadata() &&
+                      isWithinUploadLimit();
+    }
+    
+    // ============================================================================
+    // USER PUBLIC FILES
+    // ============================================================================
+    
+    match /users/{userId}/public/{allPaths=**} {
+      // Anyone can read public files
+      allow read: if true;
+      
+      // Only the user can upload to their public directory
+      allow write: if isOwner(userId) && 
+                      (isValidImageType() || isValidDocumentType()) &&
+                      isValidFileSize(50 * 1024 * 1024) && // 50MB limit for public files
+                      hasValidMetadata() &&
+                      isWithinUploadLimit();
+      
+      // Users can delete their own public files
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ============================================================================
+    // SCREENSHOTS AND GENERATED CONTENT
+    // ============================================================================
+    
+    match /screenshots/{userId}/{fileName} {
+      // Users can read their own screenshots, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Only system (Cloud Functions) can create screenshots
+      allow write: if false;
+      
+      // Users can delete their own screenshots after 30 days
+      allow delete: if isOwner(userId) && 
+                       resource.timeCreated < timestamp.date(2024, 1, 1); // This should be dynamic
+    }
+    
+    match /generated/{userId}/{type}/{fileName} {
+      // Users can read their own generated content
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Only system can create generated content
+      allow write: if false;
+      
+      // Users can delete their own generated content
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ============================================================================
+    // RESTAURANT AND BUSINESS FILES
+    // ============================================================================
+    
+    match /restaurants/{restaurantId}/images/{fileName} {
+      // Public read access for restaurant images
+      allow read: if true;
+      
+      // Restaurant owners and admins can upload images
+      allow write: if (isAuthenticated() && 
+                       firestore.exists(/databases/(default)/documents/restaurants/$(restaurantId)) &&
+                       firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)).data.ownerId == request.auth.uid) ||
+                      isAdmin() &&
+                      isValidImageType() &&
+                      isValidFileSize(10 * 1024 * 1024) && // 10MB limit
+                      hasValidMetadata();
+      
+      // Restaurant owners and admins can delete images
+      allow delete: if (isAuthenticated() && 
+                        firestore.exists(/databases/(default)/documents/restaurants/$(restaurantId)) &&
+                        firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)).data.ownerId == request.auth.uid) ||
+                       isAdmin();
+    }
+    
+    match /restaurants/{restaurantId}/documents/{fileName} {
+      // Only restaurant owners and admins can access documents
+      allow read: if (isAuthenticated() && 
+                      firestore.exists(/databases/(default)/documents/restaurants/$(restaurantId)) &&
+                      firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)).data.ownerId == request.auth.uid) ||
+                     isAdmin();
+      
+      // Restaurant owners and admins can upload documents
+      allow write: if (isAuthenticated() && 
+                       firestore.exists(/databases/(default)/documents/restaurants/$(restaurantId)) &&
+                       firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)).data.ownerId == request.auth.uid) ||
+                      isAdmin() &&
+                      isValidDocumentType() &&
+                      isValidFileSize(25 * 1024 * 1024) && // 25MB limit
+                      hasValidMetadata();
+      
+      allow delete: if (isAuthenticated() && 
+                        firestore.exists(/databases/(default)/documents/restaurants/$(restaurantId)) &&
+                        firestore.get(/databases/(default)/documents/restaurants/$(restaurantId)).data.ownerId == request.auth.uid) ||
+                       isAdmin();
+    }
+    
+    // ============================================================================
+    // CONTENT AND MEDIA
+    // ============================================================================
+    
+    match /posts/{postId}/images/{fileName} {
+      // Public read access for post images
+      allow read: if true;
+      
+      // Post authors can upload images
+      allow write: if isAuthenticated() && 
+                      firestore.exists(/databases/(default)/documents/posts/$(postId)) &&
+                      firestore.get(/databases/(default)/documents/posts/$(postId)).data.authorId == request.auth.uid &&
+                      isValidImageType() &&
+                      isValidFileSize(15 * 1024 * 1024) && // 15MB limit
+                      hasValidMetadata();
+      
+      // Post authors and moderators can delete images
+      allow delete: if (isAuthenticated() && 
+                        firestore.exists(/databases/(default)/documents/posts/$(postId)) &&
+                        firestore.get(/databases/(default)/documents/posts/$(postId)).data.authorId == request.auth.uid) ||
+                       isModerator();
+    }
+    
+    match /posts/{postId}/attachments/{fileName} {
+      // Authenticated users can read post attachments
+      allow read: if isAuthenticated();
+      
+      // Post authors can upload attachments
+      allow write: if isAuthenticated() && 
+                      firestore.exists(/databases/(default)/documents/posts/$(postId)) &&
+                      firestore.get(/databases/(default)/documents/posts/$(postId)).data.authorId == request.auth.uid &&
+                      (isValidDocumentType() || isValidImageType()) &&
+                      isValidFileSize(20 * 1024 * 1024) && // 20MB limit
+                      hasValidMetadata();
+      
+      allow delete: if (isAuthenticated() && 
+                        firestore.exists(/databases/(default)/documents/posts/$(postId)) &&
+                        firestore.get(/databases/(default)/documents/posts/$(postId)).data.authorId == request.auth.uid) ||
+                       isModerator();
+    }
+    
+    // ============================================================================
+    // PREMIUM CONTENT
+    // ============================================================================
+    
+    match /premium/{userId}/{allPaths=**} {
+      // Only premium users can access premium content
+      allow read: if isPremiumUser() || isAdmin();
+      
+      // Only admins can upload premium content
+      allow write: if isAdmin() &&
+                      (isValidImageType() || isValidDocumentType() || isValidVideoType() || isValidAudioType()) &&
+                      isValidFileSize(500 * 1024 * 1024) && // 500MB limit for premium content
+                      hasValidMetadata();
+      
+      allow delete: if isAdmin();
+    }
+    
+    // ============================================================================
+    // TEMPORARY AND CACHE FILES
+    // ============================================================================
+    
+    match /temp/{userId}/{fileName} {
+      // Users can access their own temp files
+      allow read, write, delete: if isOwner(userId);
+      
+      // Temp files have smaller size limits and shorter retention
+      allow write: if isOwner(userId) &&
+                      isValidFileSize(10 * 1024 * 1024) && // 10MB limit for temp files
+                      hasValidMetadata();
+    }
+    
+    match /cache/{allPaths=**} {
+      // Public read access for cached content
+      allow read: if true;
+      
+      // Only system can write to cache
+      allow write, delete: if false;
+    }
+    
+    // ============================================================================
+    // SYSTEM AND ADMIN FILES
+    // ============================================================================
+    
+    match /system/{allPaths=**} {
+      // Only admins can access system files
+      allow read, write, delete: if isAdmin();
+    }
+    
+    match /backups/{allPaths=**} {
+      // Only super admins can access backups
+      allow read, write, delete: if isAdmin() && 
+                                     firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'super_admin';
+    }
+    
+    match /logs/{allPaths=**} {
+      // Only system can write logs, admins can read
+      allow read: if isAdmin();
+      allow write, delete: if false;
+    }
+    
+    // ============================================================================
+    // PUBLIC ASSETS
+    // ============================================================================
+    
+    match /public/{allPaths=**} {
+      // Anyone can read public assets
+      allow read: if true;
+      
+      // Only admins can modify public assets
+      allow write, delete: if isAdmin();
+    }
+    
+    match /assets/{allPaths=**} {
+      // Anyone can read assets
+      allow read: if true;
+      
+      // Only admins can modify assets
+      allow write, delete: if isAdmin();
+    }
+    
+    // ============================================================================
+    // UPLOADS AND PROCESSING
+    // ============================================================================
+    
+    match /uploads/{userId}/{uploadId}/{fileName} {
+      // Users can access their own uploads
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Users can upload files with validation
+      allow write: if isOwner(userId) &&
+                      (isValidImageType() || isValidDocumentType() || isValidVideoType() || isValidAudioType()) &&
+                      isValidFileSize(200 * 1024 * 1024) && // 200MB limit for uploads
+                      isSafeFileName(fileName) &&
+                      hasValidMetadata() &&
+                      isWithinUploadLimit();
+      
+      // Users can delete their own uploads
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    match /processing/{userId}/{jobId}/{fileName} {
+      // Users can read their processing results
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Only system can create processing results
+      allow write: if false;
+      
+      // Users can delete their processing results
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ============================================================================
+    // THUMBNAILS AND OPTIMIZED IMAGES
+    // ============================================================================
+    
+    match /thumbnails/{allPaths=**} {
+      // Anyone can read thumbnails
+      allow read: if true;
+      
+      // Only system can create thumbnails
+      allow write, delete: if false;
+    }
+    
+    match /optimized/{allPaths=**} {
+      // Anyone can read optimized images
+      allow read: if true;
+      
+      // Only system can create optimized images
+      allow write, delete: if false;
+    }
+    
+    // ============================================================================
+    // ANALYTICS AND TRACKING
+    // ============================================================================
+    
+    match /analytics/{allPaths=**} {
+      // Only admins can access analytics files
+      allow read: if isAdmin();
+      
+      // Only system can write analytics
+      allow write, delete: if false;
+    }
+    
+    match /reports/{allPaths=**} {
+      // Only moderators and admins can access reports
+      allow read: if isModerator();
+      
+      // Only system can generate reports
+      allow write, delete: if false;
+    }
+    
+    // ============================================================================
+    // CATCH-ALL RULE (DENY BY DEFAULT)
+    // ============================================================================
+    
+    // Deny access to any path not explicitly defined above
+    match /{allPaths=**} {
+      allow read, write, delete: if false;
+    }
+  }
+}

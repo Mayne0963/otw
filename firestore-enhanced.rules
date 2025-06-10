@@ -1,0 +1,435 @@
+rules_version = '2';
+
+/**
+ * Enhanced Firestore Security Rules
+ * Comprehensive security rules for the food delivery application
+ * Covers users, orders, screenshot_orders, restaurants, and analytics
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================================================
+    // HELPER FUNCTIONS
+    // ========================================================================
+    
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Check if user is the owner of the resource
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Check if user has admin role
+    function isAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'admin';
+    }
+    
+    // Check if user has restaurant owner role
+    function isRestaurantOwner() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'restaurant_owner';
+    }
+    
+    // Check if user has delivery driver role
+    function isDeliveryDriver() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'delivery_driver';
+    }
+    
+    // Check if user has customer service role
+    function isCustomerService() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'customer_service';
+    }
+    
+    // Check if user has elevated permissions (admin, restaurant owner, or customer service)
+    function hasElevatedPermissions() {
+      return isAdmin() || isRestaurantOwner() || isCustomerService();
+    }
+    
+    // Validate email format
+    function isValidEmail(email) {
+      return email.matches('.*@.*\\..*');
+    }
+    
+    // Check if the request is creating a new document
+    function isCreating() {
+      return resource == null;
+    }
+    
+    // Check if the request is updating an existing document
+    function isUpdating() {
+      return resource != null;
+    }
+    
+    // Check if specific fields are being modified
+    function isModifying(fields) {
+      return request.writeFields.hasAny(fields);
+    }
+    
+    // Validate required fields exist
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+    
+    // Check if timestamp is recent (within last 5 minutes)
+    function isRecentTimestamp(timestamp) {
+      return timestamp > request.time - duration.value(5, 'm');
+    }
+    
+    // ========================================================================
+    // USER DOCUMENTS
+    // ========================================================================
+    
+    match /users/{userId} {
+      // Users can read and write their own profile
+      allow read, write: if isOwner(userId);
+      
+      // Admins and customer service can read all user profiles
+      allow read: if isAdmin() || isCustomerService();
+      
+      // Admins can update user roles and status
+      allow update: if isAdmin() && 
+                       isModifying(['role', 'status', 'customClaims']);
+      
+      // Validate user data on create/update
+      allow create: if isOwner(userId) && 
+                       hasRequiredFields(['uid', 'email', 'createdAt']) &&
+                       isValidEmail(request.resource.data.email) &&
+                       request.resource.data.uid == userId &&
+                       isRecentTimestamp(request.resource.data.createdAt);
+      
+      allow update: if isOwner(userId) && 
+                       !isModifying(['uid', 'createdAt', 'role', 'customClaims']) &&
+                       (request.resource.data.email == resource.data.email || 
+                        isValidEmail(request.resource.data.email));
+    }
+    
+    // ========================================================================
+    // ORDER DOCUMENTS
+    // ========================================================================
+    
+    match /orders/{orderId} {
+      // Users can read their own orders
+      allow read: if isAuthenticated() && 
+                     (isOwner(resource.data.userRef) || 
+                      hasElevatedPermissions());
+      
+      // Users can create orders for themselves
+      allow create: if isAuthenticated() && 
+                       isOwner(request.resource.data.userRef) &&
+                       hasRequiredFields(['userRef', 'restaurantId', 'items', 'total', 'status', 'createdAt']) &&
+                       request.resource.data.status == 'pending' &&
+                       request.resource.data.total > 0 &&
+                       request.resource.data.items.size() > 0 &&
+                       isRecentTimestamp(request.resource.data.createdAt);
+      
+      // Users can update their own orders (limited fields)
+      allow update: if isAuthenticated() && 
+                       isOwner(resource.data.userRef) &&
+                       !isModifying(['userRef', 'restaurantId', 'total', 'createdAt', 'paymentIntentId']) &&
+                       (resource.data.status == 'pending' || resource.data.status == 'confirmed');
+      
+      // Restaurant owners can update orders for their restaurant
+      allow update: if isRestaurantOwner() && 
+                       resource.data.restaurantId in request.auth.token.get('restaurantIds', []) &&
+                       isModifying(['status', 'estimatedDeliveryTime', 'updatedAt']) &&
+                       request.resource.data.status in ['confirmed', 'preparing', 'ready', 'out_for_delivery'];
+      
+      // Delivery drivers can update delivery status
+      allow update: if isDeliveryDriver() && 
+                       resource.data.assignedDriverId == request.auth.uid &&
+                       isModifying(['status', 'deliveryLocation', 'deliveredAt', 'updatedAt']) &&
+                       request.resource.data.status in ['out_for_delivery', 'delivered'];
+      
+      // Admins and customer service can update any order
+      allow update: if hasElevatedPermissions() &&
+                       !isModifying(['userRef', 'createdAt', 'paymentIntentId']);
+      
+      // Only admins can delete orders
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SCREENSHOT ORDER DOCUMENTS
+    // ========================================================================
+    
+    match /screenshot_orders/{orderId} {
+      // Users can read their own screenshot orders
+      allow read: if isAuthenticated() && 
+                     (isOwner(resource.data.customerInfo.uid) || 
+                      hasElevatedPermissions());
+      
+      // Users can create screenshot orders for themselves
+      allow create: if isAuthenticated() && 
+                       isOwner(request.resource.data.customerInfo.uid) &&
+                       hasRequiredFields(['customerInfo', 'screenshotUrl', 'status', 'createdAt']) &&
+                       request.resource.data.status == 'processing' &&
+                       isRecentTimestamp(request.resource.data.createdAt);
+      
+      // Users can update their own screenshot orders (limited fields)
+      allow update: if isAuthenticated() && 
+                       isOwner(resource.data.customerInfo.uid) &&
+                       isModifying(['deliveryAddress', 'notes', 'updatedAt']) &&
+                       resource.data.status in ['processing', 'confirmed'];
+      
+      // Customer service and admins can update screenshot orders
+      allow update: if hasElevatedPermissions() &&
+                       !isModifying(['customerInfo', 'createdAt']);
+      
+      // Only admins can delete screenshot orders
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // RESTAURANT DOCUMENTS
+    // ========================================================================
+    
+    match /restaurants/{restaurantId} {
+      // Everyone can read restaurant information
+      allow read: if true;
+      
+      // Restaurant owners can update their own restaurants
+      allow update: if isRestaurantOwner() && 
+                       restaurantId in request.auth.token.get('restaurantIds', []) &&
+                       !isModifying(['id', 'createdAt', 'ownerId']);
+      
+      // Admins can create, update, and delete restaurants
+      allow create, update, delete: if isAdmin();
+      
+      // Restaurant creation validation
+      allow create: if isAdmin() && 
+                       hasRequiredFields(['name', 'address', 'phone', 'email', 'ownerId', 'createdAt']) &&
+                       isValidEmail(request.resource.data.email) &&
+                       isRecentTimestamp(request.resource.data.createdAt);
+    }
+    
+    // ========================================================================
+    // MENU ITEMS
+    // ========================================================================
+    
+    match /restaurants/{restaurantId}/menu/{itemId} {
+      // Everyone can read menu items
+      allow read: if true;
+      
+      // Restaurant owners can manage their menu items
+      allow create, update, delete: if isRestaurantOwner() && 
+                                       restaurantId in request.auth.token.get('restaurantIds', []);
+      
+      // Admins can manage all menu items
+      allow create, update, delete: if isAdmin();
+      
+      // Menu item creation validation
+      allow create: if (isRestaurantOwner() || isAdmin()) && 
+                       hasRequiredFields(['name', 'price', 'category', 'available', 'createdAt']) &&
+                       request.resource.data.price > 0 &&
+                       isRecentTimestamp(request.resource.data.createdAt);
+    }
+    
+    // ========================================================================
+    // ANALYTICS DOCUMENTS
+    // ========================================================================
+    
+    match /analytics/{docId} {
+      // Only admins can read analytics
+      allow read: if isAdmin();
+      
+      // System can write analytics (via server-side code)
+      allow write: if false; // Only server-side functions can write
+    }
+    
+    match /daily_reports/{reportId} {
+      // Admins and restaurant owners can read reports
+      allow read: if isAdmin() || isRestaurantOwner();
+      
+      // Only server-side functions can write reports
+      allow write: if false;
+    }
+    
+    match /restaurant_analytics/{restaurantId} {
+      // Restaurant owners can read their own analytics
+      allow read: if isRestaurantOwner() && 
+                     restaurantId in request.auth.token.get('restaurantIds', []);
+      
+      // Admins can read all restaurant analytics
+      allow read: if isAdmin();
+      
+      // Only server-side functions can write
+      allow write: if false;
+    }
+    
+    // ========================================================================
+    // NOTIFICATION DOCUMENTS
+    // ========================================================================
+    
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isAuthenticated() && 
+                     isOwner(resource.data.userId);
+      
+      // Users can update their own notifications (mark as read)
+      allow update: if isAuthenticated() && 
+                       isOwner(resource.data.userId) &&
+                       isModifying(['read', 'readAt']);
+      
+      // Admins and customer service can create notifications
+      allow create: if hasElevatedPermissions() &&
+                       hasRequiredFields(['userId', 'title', 'message', 'type', 'createdAt']) &&
+                       isRecentTimestamp(request.resource.data.createdAt);
+      
+      // Only admins can delete notifications
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // REVIEW DOCUMENTS
+    // ========================================================================
+    
+    match /reviews/{reviewId} {
+      // Everyone can read reviews
+      allow read: if true;
+      
+      // Users can create reviews for their completed orders
+      allow create: if isAuthenticated() && 
+                       isOwner(request.resource.data.userId) &&
+                       hasRequiredFields(['userId', 'orderId', 'restaurantId', 'rating', 'createdAt']) &&
+                       request.resource.data.rating >= 1 && 
+                       request.resource.data.rating <= 5 &&
+                       isRecentTimestamp(request.resource.data.createdAt);
+      
+      // Users can update their own reviews within 24 hours
+      allow update: if isAuthenticated() && 
+                       isOwner(resource.data.userId) &&
+                       resource.data.createdAt > request.time - duration.value(24, 'h') &&
+                       !isModifying(['userId', 'orderId', 'restaurantId', 'createdAt']);
+      
+      // Restaurant owners can respond to reviews
+      allow update: if isRestaurantOwner() && 
+                       resource.data.restaurantId in request.auth.token.get('restaurantIds', []) &&
+                       isModifying(['response', 'responseDate']) &&
+                       !('response' in resource.data); // Can only respond once
+      
+      // Admins can moderate reviews
+      allow update, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SUPPORT TICKETS
+    // ========================================================================
+    
+    match /support_tickets/{ticketId} {
+      // Users can read their own tickets
+      allow read: if isAuthenticated() && 
+                     isOwner(resource.data.userId);
+      
+      // Customer service and admins can read all tickets
+      allow read: if hasElevatedPermissions();
+      
+      // Users can create support tickets
+      allow create: if isAuthenticated() && 
+                       isOwner(request.resource.data.userId) &&
+                       hasRequiredFields(['userId', 'subject', 'description', 'status', 'priority', 'createdAt']) &&
+                       request.resource.data.status == 'open' &&
+                       isRecentTimestamp(request.resource.data.createdAt);
+      
+      // Users can update their own tickets (add messages)
+      allow update: if isAuthenticated() && 
+                       isOwner(resource.data.userId) &&
+                       isModifying(['messages', 'updatedAt']) &&
+                       resource.data.status != 'closed';
+      
+      // Customer service can update ticket status and add responses
+      allow update: if hasElevatedPermissions() &&
+                       !isModifying(['userId', 'createdAt']);
+      
+      // Only admins can delete tickets
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // PROMOTIONAL CODES
+    // ========================================================================
+    
+    match /promo_codes/{promoId} {
+      // Users can read active promo codes
+      allow read: if isAuthenticated() && 
+                     resource.data.active == true &&
+                     resource.data.expiresAt > request.time;
+      
+      // Admins and restaurant owners can manage promo codes
+      allow create, update: if hasElevatedPermissions() &&
+                               hasRequiredFields(['code', 'discountType', 'discountValue', 'active', 'createdAt']);
+      
+      // Only admins can delete promo codes
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // DELIVERY ZONES
+    // ========================================================================
+    
+    match /delivery_zones/{zoneId} {
+      // Everyone can read delivery zones
+      allow read: if true;
+      
+      // Only admins can manage delivery zones
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SYSTEM CONFIGURATION
+    // ========================================================================
+    
+    match /system_config/{configId} {
+      // Everyone can read public configuration
+      allow read: if resource.data.public == true;
+      
+      // Admins can read all configuration
+      allow read: if isAdmin();
+      
+      // Only admins can manage system configuration
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // TEMPORARY COLLECTIONS (Auto-cleanup)
+    // ========================================================================
+    
+    match /temp_uploads/{uploadId} {
+      // Users can manage their own temporary uploads
+      allow read, write: if isAuthenticated() && 
+                            isOwner(resource.data.userId);
+      
+      // Auto-expire after 1 hour
+      allow read, write: if isAuthenticated() && 
+                            resource.data.createdAt > request.time - duration.value(1, 'h');
+    }
+    
+    match /analytics_events/{eventId} {
+      // Users can create analytics events for themselves
+      allow create: if isAuthenticated() && 
+                       isOwner(request.resource.data.userId) &&
+                       isRecentTimestamp(request.resource.data.timestamp);
+      
+      // No read access to analytics events
+      allow read: if false;
+      
+      // Auto-cleanup handled by Cloud Functions
+      allow delete: if false;
+    }
+    
+    // ========================================================================
+    // FALLBACK RULES
+    // ========================================================================
+    
+    // Deny all other access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

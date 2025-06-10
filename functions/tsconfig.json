@@ -1,0 +1,85 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es2020",
+    "lib": ["es2020"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    
+    /* Emit */
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "lib",
+    "rootDir": "./src",
+    "removeComments": false,
+    "sourceMap": true,
+    "inlineSources": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    
+    /* Interop Constraints */
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    
+    /* Advanced */
+    "incremental": true,
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    
+    /* Path Mapping */
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@utils/*": ["utils/*"],
+      "@types/*": ["types/*"],
+      "@services/*": ["services/*"],
+      "@middleware/*": ["middleware/*"],
+      "@config/*": ["config/*"],
+      "@test/*": ["test/*"]
+    },
+    
+    /* Type Definitions */
+    "types": [
+      "node",
+      "jest",
+      "express"
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "src/**/*.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib",
+    "coverage",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "emulator-data",
+    "docs"
+  ],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+    "files": true,
+    "experimentalSpecifierResolution": "node"
+  },
+  "compileOnSave": false
+}
