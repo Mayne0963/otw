@@ -2,6 +2,7 @@
 
 import { ThemeProvider } from 'next-themes';
 import { AuthProvider } from '../contexts/AuthContext';
+import { CartProvider } from '../contexts/CartContext';
 import { ModernGoogleMapsProvider } from '../contexts/ModernGoogleMapsContext';
 import { Toaster } from '../components/ui/toaster';
 
@@ -15,8 +16,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     >
       <ModernGoogleMapsProvider>
         <AuthProvider>
-          {children}
-          <Toaster />
+          <CartProvider>
+            {children}
+            <Toaster />
+          </CartProvider>
         </AuthProvider>
       </ModernGoogleMapsProvider>
     </ThemeProvider>
