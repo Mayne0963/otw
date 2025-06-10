@@ -4,19 +4,18 @@ import type React from 'react';
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { FaTimes, FaStar, FaFire, FaShoppingCart } from 'react-icons/fa';
+import { FaTimes, FaStar, FaFire, FaShoppingBag } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 import type { Product } from '../../types/merch';
 
 interface ProductQuickViewProps {
   product: Product;
   onClose: () => void;
-  onAddToCart: (product: Product, quantity: number) => void;
 }
 
 const ProductQuickView: React.FC<ProductQuickViewProps> = ({
   product,
   onClose,
-  onAddToCart,
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -26,11 +25,28 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({
   const [selectedColor, setSelectedColor] = useState(
     product.colors ? product.colors[0] : null,
   );
+  const router = useRouter();
 
   const handleQuantityChange = (value: number) => {
     if (value < 1) {return;}
     if (value > 10) {return;}
     setQuantity(value);
+  };
+
+  const handleOrderNow = () => {
+    // Navigate to checkout with product information
+    const productData = encodeURIComponent(JSON.stringify({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: quantity,
+      image: product.images[selectedImage],
+      description: product.description,
+      size: selectedSize,
+      color: selectedColor,
+    }));
+    router.push(`/checkout?item=${productData}`);
+    onClose();
   };
 
   return (
@@ -187,15 +203,12 @@ const ProductQuickView: React.FC<ProductQuickViewProps> = ({
               </div>
             </div>
 
-            {/* Add to Cart Button */}
+            {/* Order Now Button */}
             <button
               className="btn-primary w-full flex items-center justify-center gap-2"
-              onClick={() => {
-                onAddToCart(product, quantity);
-                onClose();
-              }}
+              onClick={handleOrderNow}
             >
-              <FaShoppingCart /> Add to Cart
+              <FaShoppingBag /> Order Now
             </button>
 
             {/* Additional Info */}

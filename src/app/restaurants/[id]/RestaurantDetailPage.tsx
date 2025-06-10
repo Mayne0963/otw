@@ -5,8 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCart } from '../../../lib/context/CartContext';
-import { Star, ChevronLeft, Search, ShoppingBag } from 'lucide-react';
+import { Star, ChevronLeft, Search } from 'lucide-react';
 import MenuItemCard from '../../../components/menu/MenuItemCard';
 import CategoryFilter from '../../../components/menu/CategoryFilter';
 import type { Restaurant } from '../../../types/restaurant';
@@ -18,9 +17,6 @@ interface RestaurantDetailPageProps {
 }
 
 export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPageProps) {
-  // Always call hooks at the top level
-  const cartContext = useCart();
-  const { itemCount, addItem } = cartContext || { itemCount: 0, addItem: undefined };
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [menuItems, setMenuItems] = useState<any[]>([]);
@@ -200,19 +196,6 @@ export default function RestaurantDetailPage({ restaurant }: RestaurantDetailPag
                 <MenuItemCard
                   key={item.id}
                   item={item}
-                  onAddToCart={(quantity, customizations) => {
-                    // Add item to cart using the extracted addItem function
-                    if (addItem) {
-                      addItem({
-                        id: item.id,
-                        name: item.name,
-                        price: item.price,
-                        quantity: quantity || 1,
-                        image: item.image,
-                        customizations: customizations || {}, // Provide empty object as fallback
-                      });
-                    }
-                  }}
                 />
               ))}
             </div>

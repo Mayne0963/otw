@@ -2,52 +2,28 @@
 
 export const dynamic = 'force-dynamic';
 
-import type { Metadata } from 'next';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
-import { Separator } from '../../components/ui/separator';
-import { Input } from '../../components/ui/input';
-import type React from 'react';
-
-import { useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useCart } from '../../lib/context/CartContext';
-import {
-  FaShoppingCart,
-  FaTrash,
-  FaPlus,
-  FaMinus,
-  FaArrowLeft,
-  FaCreditCard,
-  FaCog,
-  FaTimes,
-  FaTag,
-  FaCheck,
-} from 'react-icons/fa';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { FaShoppingBag } from 'react-icons/fa';
 
 export default function CartPage() {
-  const { 
-    items, 
-    removeItem, 
-    updateQuantity, 
-    subtotal, 
-    discount,
-    discountedSubtotal,
-    shippingFee,
-    tax, 
-    total, 
-    clearCart,
-    appliedPromoCode,
-    promoCodeError,
-    applyPromoCode,
-    removePromoCode
-  } = useCart();
-  const [promoCode, setPromoCode] = useState('');
-  const [isApplying, setIsApplying] = useState(false);
+  const router = useRouter();
 
-  const handleQuantityChange = (
+  useEffect(() => {
+    // Redirect to order page since cart functionality has been removed
+    router.push('/order');
+  }, [router]);
+
+  return (
+    <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="text-center">
+        <FaShoppingBag className="text-6xl text-gold-foil mx-auto mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Cart Removed</h1>
+        <p className="text-gray-400 mb-4">We've simplified the ordering process. You'll be redirected to our menu.</p>
+      </div>
+    </div>
+  );
+}
     id: string,
     currentQuantity: number,
     change: number,

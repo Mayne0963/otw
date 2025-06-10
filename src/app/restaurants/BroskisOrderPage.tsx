@@ -11,24 +11,17 @@ import {
   Star,
   Clock,
   MapPin,
-  ShoppingCart,
   Plus,
-  Minus,
   Search,
   Filter,
   Award,
   Users,
   Utensils,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 // TODO: Remove static data import - get menu data from API
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+
 
 interface MenuItem {
   id: string;
@@ -50,7 +43,7 @@ interface MenuItem {
 export default function BroskisOrderPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const router = useRouter();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,56 +98,17 @@ export default function BroskisOrderPage() {
     setFilteredItems(filtered);
   }, [selectedCategory, searchQuery]);
 
-  const addToCart = (item: MenuItem) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
-      if (existingItem) {
-        return prevCart.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem,
-        );
-      } else {
-        return [
-          ...prevCart,
-          {
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: 1,
-            image: item.image,
-          },
-        ];
-      }
-    });
-  };
-
-  const removeFromCart = (itemId: string) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((cartItem) => cartItem.id === itemId);
-      if (existingItem && existingItem.quantity > 1) {
-        return prevCart.map((cartItem) =>
-          cartItem.id === itemId
-            ? { ...cartItem, quantity: cartItem.quantity - 1 }
-            : cartItem,
-        );
-      } else {
-        return prevCart.filter((cartItem) => cartItem.id !== itemId);
-      }
-    });
-  };
-
-  const getCartItemQuantity = (itemId: string) => {
-    const item = cart.find((cartItem) => cartItem.id === itemId);
-    return item ? item.quantity : 0;
-  };
-
-  const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  const getTotalItems = () => {
-    return cart.reduce((total, item) => total + item.quantity, 0);
+  const handleOrderNow = (item: MenuItem) => {
+    // Navigate to checkout with item information
+    const itemData = encodeURIComponent(JSON.stringify({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: 1,
+      image: item.image,
+      description: item.description,
+    }));
+    router.push(`/checkout?item=${itemData}`);
   };
 
   return (
@@ -261,7 +215,7 @@ export default function BroskisOrderPage() {
           {filteredItems.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {filteredItems.map((item) => {
-                const quantity = getCartItemQuantity(item.id);
+
                 return (
                   <Card key={item.id} className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-2 border-gray-700 hover:border-otw-gold hover:shadow-2xl hover:shadow-otw-gold/20 transition-all duration-500 transform hover:scale-105 backdrop-blur-sm group">
                     <div className="relative h-56 overflow-hidden rounded-t-lg">
@@ -324,37 +278,14 @@ export default function BroskisOrderPage() {
                           ))}
                           <span className="ml-2 text-sm font-bold text-gray-300">5.0</span>
                         </div>
-                        {quantity > 0 ? (
-                          <div className="flex items-center gap-3 bg-otw-black/30 rounded-full p-1 border border-otw-gold/30">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => removeFromCart(item.id)}
-                              className="border-otw-red text-otw-red hover:bg-otw-red hover:text-white w-10 h-10 p-0 rounded-full transition-all duration-300 hover:scale-110"
-                            >
-                              <Minus className="w-5 h-5" />
-                            </Button>
-                            <span className="text-white font-black text-lg w-8 text-center">
-                              {quantity}
-                            </span>
-                            <Button
-                              size="sm"
-                              onClick={() => addToCart(item)}
-                              className="bg-gradient-to-r from-otw-red to-red-600 hover:from-red-600 hover:to-otw-red w-10 h-10 p-0 rounded-full transition-all duration-300 hover:scale-110 shadow-lg"
-                            >
-                              <Plus className="w-5 h-5" />
-                            </Button>
-                          </div>
-                        ) : (
-                          <Button
-                            size="lg"
-                            onClick={() => addToCart(item)}
-                            className="bg-gradient-to-r from-otw-red to-red-600 hover:from-red-600 hover:to-otw-red px-6 py-3 rounded-full font-bold transition-all duration-300 hover:scale-110 shadow-lg"
-                          >
-                            <Plus className="w-5 h-5 mr-2" />
-                            ADD TO CART
-                          </Button>
-                        )}
+                        <Button
+                          size="lg"
+                          onClick={() => handleOrderNow(item)}
+                          className="bg-gradient-to-r from-otw-red to-red-600 hover:from-red-600 hover:to-otw-red px-6 py-3 rounded-full font-bold transition-all duration-300 hover:scale-110 shadow-lg"
+                        >
+                          <Plus className="w-5 h-5 mr-2" />
+                          ORDER NOW
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -386,23 +317,7 @@ export default function BroskisOrderPage() {
         </div>
       </section>
 
-      {/* Floating Cart */}
-      {cart.length > 0 && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <Link href="/cart">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-otw-red to-red-600 hover:from-red-600 hover:to-otw-red text-white shadow-2xl relative px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-110 border-2 border-otw-gold/30 backdrop-blur-sm"
-            >
-              <ShoppingCart className="w-6 h-6 mr-3" />
-              🛒 Cart ({getTotalItems()}) • ${getTotalPrice().toFixed(2)}
-              <Badge className="absolute -top-3 -right-3 bg-gradient-to-r from-otw-gold to-yellow-400 text-black font-black px-3 py-1 rounded-full shadow-lg animate-bounce">
-                {getTotalItems()}
-              </Badge>
-            </Button>
-          </Link>
-        </div>
-      )}
+
     </div>
   );
 }

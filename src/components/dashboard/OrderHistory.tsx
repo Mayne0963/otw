@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Badge } from '../ui/badge';
 import { Clock, MapPin, DollarSign, Star, Loader2, RefreshCw, Search, Filter, Eye, RotateCcw, Truck, Package, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useCart } from '../../contexts/CartContext';
+import { useRouter } from 'next/navigation';
 import { auth } from '../../lib/firebase-config';
 import { cn } from '../../lib/utils';
 import { toast } from '../ui/use-toast';
@@ -62,7 +62,7 @@ interface OrdersResponse {
 
 export default function OrderHistory() {
   const { user } = useAuth();
-  const { addItem } = useCart();
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -298,24 +298,18 @@ export default function OrderHistory() {
     setIsReordering(order.id);
     
     try {
-      // Add items to cart
-      const itemsToAdd = order.cart || order.items || [];
+      // Navigate to checkout with order items
+      const itemsToReorder = order.cart || order.items || [];
       
-      for (const item of itemsToAdd) {
-        addItem({
-          id: item.id || `${Date.now()}-${Math.random()}`,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity || 1,
-          image: item.image,
-          description: item.description,
+      if (itemsToReorder.length > 0) {
+        router.push(`/checkout?reorder=${encodeURIComponent(JSON.stringify(itemsToReorder))}`);
+      } else {
+        toast({
+          title: 'No Items Found',
+          description: 'No items found in this order to reorder.',
+          variant: 'destructive',
         });
       }
-
-      toast({
-        title: 'Items Added to Cart',
-        description: `${itemsToAdd.length} items from order #${order.orderId || order.id.slice(-8)} have been added to your cart.`,
-      });
     } catch (error) {
       console.error('Error reordering:', error);
       toast({
@@ -326,7 +320,7 @@ export default function OrderHistory() {
     } finally {
       setIsReordering(null);
     }
-  }, [addItem]);
+  }, [router]);
 
   // Track order function
   const handleTrackOrder = useCallback((order: Order) => {

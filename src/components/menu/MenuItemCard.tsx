@@ -2,10 +2,8 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { FaStar, FaFire, FaLeaf, FaShoppingCart, FaPlus, FaMinus, FaCog } from 'react-icons/fa';
-import CustomizationModal from './CustomizationModal';
-// TODO: Remove static data import - get customization options from API
-import type { CustomizationOption } from '../../types';
+import { FaStar, FaFire, FaLeaf, FaShoppingBag } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 interface MenuItem {
   id: string
@@ -27,36 +25,23 @@ interface MenuItem {
 
 interface MenuItemProps {
   item: MenuItem
-  onAddToCart: (quantity: number, customizations?: { [categoryId: string]: CustomizationOption[] }) => void
 }
 
-const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
-  const [quantity, setQuantity] = useState(1);
+const MenuItemCard: React.FC<MenuItemProps> = ({ item }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showCustomizationModal, setShowCustomizationModal] = useState(false);
+  const router = useRouter();
 
-  // TODO: Replace with API call to get customization options
-  const customizationOptions: any[] = [];
-  const hasCustomizationOptions = customizationOptions.length > 0;
-
-  const handleQuantityChange = (change: number) => {
-    const newQuantity = Math.max(1, quantity + change);
-    setQuantity(newQuantity);
-  };
-
-  const handleAddToCart = () => {
-    if (hasCustomizationOptions) {
-      setShowCustomizationModal(true);
-    } else {
-      onAddToCart(quantity);
-    }
-  };
-
-  const handleCustomizedAddToCart = (
-    quantity: number,
-    customizations: { [categoryId: string]: CustomizationOption[] },
-  ) => {
-    onAddToCart(quantity, customizations);
+  const handleOrderNow = () => {
+    // Navigate to checkout with item information
+    const itemData = encodeURIComponent(JSON.stringify({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: 1,
+      image: item.image,
+      description: item.description,
+    }));
+    router.push(`/checkout?item=${itemData}`);
   };
 
   return (
@@ -126,46 +111,14 @@ const MenuItemCard: React.FC<MenuItemProps> = ({ item, onAddToCart }) => {
           )}
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center border border-[#333333] rounded-md">
-              <button
-                className="px-2 py-1 text-white hover:bg-[#333333] transition-colors"
-                onClick={() => handleQuantityChange(-1)}
-              >
-                <FaMinus size={12} />
-              </button>
-              <span className="px-3 py-1 text-white">{quantity}</span>
-              <button
-                className="px-2 py-1 text-white hover:bg-[#333333] transition-colors"
-                onClick={() => handleQuantityChange(1)}
-              >
-                <FaPlus size={12} />
-              </button>
-            </div>
-
-            {hasCustomizationOptions ? (
-              <button
-                onClick={() => setShowCustomizationModal(true)}
-                className="btn-primary flex-1 flex items-center justify-center gap-2"
-              >
-                <FaCog size={14} /> Customize
-              </button>
-            ) : (
-              <button onClick={handleAddToCart} className="btn-primary flex-1 flex items-center justify-center gap-2">
-                <FaShoppingCart size={14} /> Add to Cart
-              </button>
-            )}
+            <button onClick={handleOrderNow} className="btn-primary flex-1 flex items-center justify-center gap-2">
+              <FaShoppingBag size={14} /> Order Now
+            </button>
           </div>
         </div>
       </div>
 
-      {showCustomizationModal && (
-        <CustomizationModal
-          item={item}
-          customizationOptions={customizationOptions}
-          onClose={() => setShowCustomizationModal(false)}
-          onAddToCart={handleCustomizedAddToCart}
-        />
-      )}
+
     </>
   );
 };

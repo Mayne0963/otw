@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaCheckCircle, FaSpinner } from 'react-icons/fa';
-import { useCart } from '../../../lib/context/CartContext';
+
 
 interface OrderDetails {
   id: string;
@@ -33,7 +33,7 @@ interface OrderDetails {
 export default function CheckoutSuccess() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { clearCart } = useCart();
+
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -59,8 +59,7 @@ export default function CheckoutSuccess() {
         const data = await response.json();
         setOrderDetails(data);
 
-        // Clear cart after successful payment
-        clearCart();
+        // Order completed successfully
       } catch (err) {
         console.error('Error fetching order details:', err);
         setError('Failed to load order details');
@@ -70,7 +69,7 @@ export default function CheckoutSuccess() {
     };
 
     fetchOrderDetails();
-  }, [searchParams, clearCart]);
+  }, [searchParams]);
 
   if (loading) {
     return (

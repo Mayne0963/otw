@@ -4,7 +4,7 @@ import type React from 'react';
 
 import { ThemeProvider } from '../../components/theme-provider';
 import { UserProvider } from './UserContext';
-import { CartProvider } from './CartContext';
+
 import { DeliveryProvider } from './DeliveryContext';
 import { AgeVerificationProvider } from './AgeVerificationContext';
 import { RewardsProvider } from './RewardsContext';
@@ -25,8 +25,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       >
         <AuthProvider>
           <UserProvider>
-            <CartProvider>
-              <DeliveryProvider>
+            <DeliveryProvider>
                 <AgeVerificationProvider>
                   <RewardsProvider>
                     <ChatProvider>
@@ -38,7 +37,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
                   </RewardsProvider>
                 </AgeVerificationProvider>
               </DeliveryProvider>
-            </CartProvider>
           </UserProvider>
         </AuthProvider>
       </ThemeProvider>

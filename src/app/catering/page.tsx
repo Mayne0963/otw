@@ -30,7 +30,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from '../../components/ui/use-toast';
-import { useCart } from '../../lib/context/CartContext';
+import { useRouter } from 'next/navigation';
 
 interface CateringPackage {
   id: string;
@@ -230,7 +230,11 @@ export default function CateringPage() {
     additionalRequests: '',
   });
 
-  const { addItem } = useCart();
+  const router = useRouter();
+
+  const handleOrderNow = (item: any) => {
+    router.push(`/checkout?item=${encodeURIComponent(JSON.stringify(item))}`);
+  };
 
   const categories = ['all', 'breakfast', 'lunch', 'dinner', 'dessert', 'beverages'];
   const menuCategories = ['All', 'Breakfast', 'Lunch', 'Dinner', 'Appetizers', 'Desserts'];
@@ -284,7 +288,7 @@ export default function CateringPage() {
   };
 
   const handleAddToCart = (item: MenuItem) => {
-    addItem({
+    handleOrderNow({
       id: item.id,
       name: item.name,
       price: item.price,
@@ -292,11 +296,6 @@ export default function CateringPage() {
       restaurant: 'OTW Catering',
       image: item.image,
       customizations: [],
-    });
-
-    toast({
-      title: 'Added to Cart!',
-      description: `${item.name} has been added to your cart.`,
     });
   };
 

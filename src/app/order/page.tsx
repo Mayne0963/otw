@@ -12,8 +12,7 @@ import type React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCart } from '../../lib/context/CartContext';
-import { toast } from '../../components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import {
@@ -71,23 +70,19 @@ export default function OrderPage() {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
-  const { addItem } = useCart();
+  const router = useRouter();
 
-  const handleAddToCart = (item: typeof menuItems[0]) => {
-    const cartItem = {
+  const handleOrderNow = (item: typeof menuItems[0]) => {
+    // Navigate to checkout with item information
+    const itemData = encodeURIComponent(JSON.stringify({
       id: item.id,
       name: item.name,
       price: item.price,
       quantity: 1,
       image: item.image,
       description: item.description,
-    };
-
-    addItem(cartItem);
-    toast({
-      title: 'Added to Cart!',
-      description: `${item.name} has been added to your cart.`,
-    });
+    }));
+    router.push(`/checkout?item=${itemData}`);
   };
 
   return (
@@ -196,9 +191,9 @@ export default function OrderPage() {
                   </p>
                   <Button
                     className="w-full"
-                    onClick={() => handleAddToCart(item)}
+                    onClick={() => handleOrderNow(item)}
                   >
-                    Add to Cart
+                    Order Now
                   </Button>
                 </div>
               </div>
@@ -273,17 +268,17 @@ export default function OrderPage() {
           <div className="bg-gray-900 rounded-lg p-8 text-center border border-gray-800">
             <h2 className="text-3xl font-bold text-white mb-4">Ready to Order?</h2>
             <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
-              Add items to your cart and proceed to checkout, or browse our full menu for more options.
+              Browse our full menu and order your favorite items directly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/cart">
+              <Link href="/menu">
                 <Button size="lg" className="bg-otw-gold text-black hover:bg-yellow-600">
-                  View Cart & Checkout
+                  Browse Full Menu
                 </Button>
               </Link>
-              <Link href="/menu">
+              <Link href="/checkout">
                 <Button size="lg" variant="outline">
-                  Browse Full Menu
+                  Go to Checkout
                 </Button>
               </Link>
             </div>

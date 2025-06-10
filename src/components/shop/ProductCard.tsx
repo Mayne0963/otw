@@ -4,22 +4,35 @@ import type React from 'react';
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { FaShoppingCart, FaEye, FaStar, FaFire } from 'react-icons/fa';
+import { FaShoppingBag, FaEye, FaStar, FaFire } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 import type { Product } from '../../types/merch';
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: () => void;
   onQuickView: () => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
-  onAddToCart,
   onQuickView,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isImageLoading, setIsImageLoading] = useState(true);
+  const router = useRouter();
+
+  const handleOrderNow = () => {
+    // Navigate to checkout with product information
+    const productData = encodeURIComponent(JSON.stringify({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.images[0],
+      description: product.description,
+    }));
+    router.push(`/checkout?item=${productData}`);
+  };
 
   return (
     <div
@@ -80,11 +93,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onAddToCart();
+              handleOrderNow();
             }}
-            aria-label="Add to cart"
+            aria-label="Order now"
           >
-            <FaShoppingCart />
+            <FaShoppingBag />
           </button>
         </div>
       </div>

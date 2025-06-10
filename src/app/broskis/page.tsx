@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCart } from '../../lib/context/CartContext';
+import { useRouter } from 'next/navigation';
 import { toast } from '../../components/ui/use-toast';
 
 interface MenuItem {
@@ -130,7 +130,7 @@ const RESTAURANT_INFO = {
 export default function BroskisPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filteredMenu, setFilteredMenu] = useState(BROSKIS_MENU);
-  const { addItem } = useCart();
+  const router = useRouter();
 
   const categories = ['All', ...Array.from(new Set(BROSKIS_MENU.map(item => item.category)))];
 
@@ -143,7 +143,7 @@ export default function BroskisPage() {
   }, [selectedCategory]);
 
   const handleAddToCart = (item: MenuItem) => {
-    const cartItem = {
+    const orderItem = {
       id: item.id,
       name: item.name,
       price: item.price,
@@ -152,11 +152,7 @@ export default function BroskisPage() {
       restaurant: "Broski's Kitchen",
     };
 
-    addItem(cartItem);
-    toast({
-      title: 'Added to Cart',
-      description: `${item.name} has been added to your cart`,
-    });
+    router.push(`/checkout?item=${encodeURIComponent(JSON.stringify(orderItem))}`);
   };
 
   const getDietaryBadgeColor = (dietary: string) => {

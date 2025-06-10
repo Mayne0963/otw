@@ -6,7 +6,6 @@ import {
   Menu,
   X,
   User,
-  ShoppingBag,
   Home,
   Utensils,
   Car,
@@ -16,7 +15,6 @@ import {
   Camera,
   ChevronDown,
 } from 'lucide-react';
-import { useCart } from '../../lib/context/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
 import { useOnClickOutside } from '../../hooks/useOnClickOutside';
@@ -58,7 +56,6 @@ const Navbar = () => {
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const { user, logout } = useAuth();
-  const { items: cartItems } = useCart();
   const pathname = usePathname();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -97,10 +94,7 @@ const Navbar = () => {
     }
   };
 
-  const cartItemCount = cartItems.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
+
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-otw-black-950/95 via-otw-black-900/95 to-otw-black-950/95 backdrop-blur-xl border-b border-otw-gold-500/30 shadow-2xl shadow-otw-black/50">
@@ -247,18 +241,7 @@ const Navbar = () => {
 
         {/* Enhanced Right Side Actions */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
-          <Link
-            href="/cart"
-            className="relative -m-2.5 p-3 text-white/70 hover:text-otw-gold-400 transition-all duration-300 rounded-xl hover:bg-otw-gold-500/10 border border-transparent hover:border-otw-gold-500/30"
-          >
-            <span className="sr-only">Shopping cart</span>
-            <ShoppingBag className="h-6 w-6" aria-hidden="true" />
-            {cartItemCount > 0 && (
-              <span className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-r from-otw-gold-500 to-otw-gold-600 text-xs font-bold text-otw-black-950 flex items-center justify-center shadow-lg animate-pulse">
-                {cartItemCount}
-              </span>
-            )}
-          </Link>
+
           {user ? (
             <div className="flex items-center gap-x-3">
               <Link
@@ -452,14 +435,7 @@ const Navbar = () => {
                       <span className="flex-shrink-0"><User className="mr-3 h-5 w-5" /></span>
                       <span>Profile</span>
                     </Link>
-                    <Link
-                      href="/cart"
-                      className="-mx-3 flex items-center rounded-xl px-4 py-4 text-base font-semibold leading-7 text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 border border-transparent hover:border-otw-gold-500/30 hover:shadow-md transition-all duration-300"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <span className="flex-shrink-0"><ShoppingBag className="mr-3 h-5 w-5" /></span>
-                      <span>Cart ({cartItemCount})</span>
-                    </Link>
+
                     <button
                       onClick={handleSignOut}
                       className="-mx-3 flex w-full text-left rounded-xl px-4 py-4 text-base font-semibold leading-7 text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 border border-transparent hover:border-otw-gold-500/30 hover:shadow-md transition-all duration-300"

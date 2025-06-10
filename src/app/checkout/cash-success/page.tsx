@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaCheckCircle, FaMoneyBillWave } from 'react-icons/fa';
-import { useCart } from '../../../lib/context/CartContext';
+
 
 export default function CashOrderSuccess() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { clearCart } = useCart();
+
   const [orderData, setOrderData] = useState<any>(null);
 
   useEffect(() => {
@@ -30,9 +30,8 @@ export default function CashOrderSuccess() {
       localStorage.removeItem(`order_${orderId}`);
     }
 
-    // Clear cart after successful order
-    clearCart();
-  }, [searchParams, router, clearCart]);
+    // Order completed successfully
+  }, [searchParams, router]);
 
   if (!orderData) {
     return (

@@ -4,7 +4,7 @@ import './globals.css';
 import { Providers } from './providers';
 import Navbar from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
-import { CartProvider } from '../lib/context/CartContext';
+
 import { ToastContainer } from '../components/ui/toast';
 import { ScrollToTop } from '../components/ui/scroll-to-top';
 import { cn } from '../lib/utils';

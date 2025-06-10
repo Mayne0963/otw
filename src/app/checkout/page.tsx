@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCart } from '../../lib/context/CartContext';
+import { useSearchParams } from 'next/navigation';
 import {
   FaArrowLeft,
   FaCreditCard,
@@ -21,7 +21,46 @@ import PlaceAutocomplete, { PlaceSuggestion } from '../../components/PlaceAutoco
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, subtotal, tax, total, clearCart } = useCart();
+  const searchParams = useSearchParams();
+  const [items, setItems] = useState<any[]>([]);
+  const [subtotal, setSubtotal] = useState(0);
+  const [tax, setTax] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  // Load items from URL parameters
+  useEffect(() => {
+    const itemParam = searchParams.get('item');
+    const reorderParam = searchParams.get('reorder');
+    
+    let orderItems: any[] = [];
+    
+    if (itemParam) {
+      try {
+        const item = JSON.parse(decodeURIComponent(itemParam));
+        orderItems = [item];
+      } catch (error) {
+        console.error('Error parsing item parameter:', error);
+      }
+    } else if (reorderParam) {
+      try {
+        orderItems = JSON.parse(decodeURIComponent(reorderParam));
+      } catch (error) {
+        console.error('Error parsing reorder parameter:', error);
+      }
+    }
+    
+    if (orderItems.length > 0) {
+      setItems(orderItems);
+      const calculatedSubtotal = orderItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+      const calculatedTax = calculatedSubtotal * 0.08; // 8% tax
+      setSubtotal(calculatedSubtotal);
+      setTax(calculatedTax);
+      setTotal(calculatedSubtotal + calculatedTax);
+    } else {
+      // Redirect to menu if no items
+      router.push('/order');
+    }
+  }, [searchParams, router]);
   // Allow step = 1, 2, or 3
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isProcessing, setIsProcessing] = useState(false);
