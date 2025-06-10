@@ -3,10 +3,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
-import { Clock, MapPin, DollarSign, Star, Loader2, RefreshCw } from 'lucide-react';
+import { Input } from '../ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Badge } from '../ui/badge';
+import { Clock, MapPin, DollarSign, Star, Loader2, RefreshCw, Search, Filter, Eye, RotateCcw, Truck, Package, CheckCircle, XCircle } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../contexts/CartContext';
 import { auth } from '../../lib/firebase-config';
 import { cn } from '../../lib/utils';
+import { toast } from '../ui/use-toast';
 
 interface Order {
   id: string;
@@ -56,10 +62,17 @@ interface OrdersResponse {
 
 export default function OrderHistory() {
   const { user } = useAuth();
+  const { addItem } = useCart();
   const [orders, setOrders] = useState<Order[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isReordering, setIsReordering] = useState<string | null>(null);
   const [summary, setSummary] = useState<OrderSummary>({
     totalOrders: 0,
     totalSpent: 0,
@@ -204,6 +217,33 @@ export default function OrderHistory() {
     }
   }, [user?.uid, pagination.limit, pagination.offset]);
 
+  // Filter orders based on search and filters
+  useEffect(() => {
+    let filtered = [...orders];
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(order => 
+        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.customerInfo?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.restaurantInfo?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(order => order.status === statusFilter);
+    }
+
+    // Type filter
+    if (typeFilter !== 'all') {
+      filtered = filtered.filter(order => order.type === typeFilter);
+    }
+
+    setFilteredOrders(filtered);
+  }, [orders, searchTerm, statusFilter, typeFilter]);
+
   // Initial load effect with proper dependency management
   useEffect(() => {
     let isMounted = true;
@@ -243,6 +283,63 @@ export default function OrderHistory() {
     setError(null);
     await fetchOrders();
   }, [fetchOrders]);
+
+  // Reorder function
+  const handleReorder = useCallback(async (order: Order) => {
+    if (!order.cart && !order.items) {
+      toast({
+        title: 'Cannot Reorder',
+        description: 'Order items are not available for reordering.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsReordering(order.id);
+    
+    try {
+      // Add items to cart
+      const itemsToAdd = order.cart || order.items || [];
+      
+      for (const item of itemsToAdd) {
+        addItem({
+          id: item.id || `${Date.now()}-${Math.random()}`,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity || 1,
+          image: item.image,
+          description: item.description,
+        });
+      }
+
+      toast({
+        title: 'Items Added to Cart',
+        description: `${itemsToAdd.length} items from order #${order.orderId || order.id.slice(-8)} have been added to your cart.`,
+      });
+    } catch (error) {
+      console.error('Error reordering:', error);
+      toast({
+        title: 'Reorder Failed',
+        description: 'Failed to add items to cart. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsReordering(null);
+    }
+  }, [addItem]);
+
+  // Track order function
+  const handleTrackOrder = useCallback((order: Order) => {
+    // Navigate to tracking page or open tracking modal
+    window.open(`/track?orderId=${order.orderId || order.id}`, '_blank');
+  }, []);
+
+  // Clear filters
+  const clearFilters = useCallback(() => {
+    setSearchTerm('');
+    setStatusFilter('all');
+    setTypeFilter('all');
+  }, []);
 
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -339,9 +436,145 @@ export default function OrderHistory() {
           <p className="text-gray-400 mb-6 max-w-md">
             You haven't placed any orders yet. Start by booking a service!
           </p>
-          <Button variant="default" size="sm">
-            Browse Services
+          <div className="flex gap-3">
+            <Button variant="default" size="sm" onClick={() => window.location.href = '/order'}>
+              Browse Menu
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => window.location.href = '/restaurants'}>
+              View Restaurants
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No filtered results
+  if (!loading && !error && orders.length > 0 && filteredOrders.length === 0) {
+    return (
+      <div className="space-y-6">
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="p-4 bg-otw-black-800/50 border-otw-black-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-otw-gold/20">
+                <Clock className="w-5 h-5 text-otw-gold" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Total Orders</p>
+                <p className="text-xl font-bold text-white">{summary.totalOrders}</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="p-4 bg-otw-black-800/50 border-otw-black-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-green-500/20">
+                <DollarSign className="w-5 h-5 text-green-400" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Total Spent</p>
+                <p className="text-xl font-bold text-white">{formatCurrency(summary.totalSpent)}</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="p-4 bg-otw-black-800/50 border-otw-black-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-blue-500/20">
+                <Star className="w-5 h-5 text-blue-400" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Completed</p>
+                <p className="text-xl font-bold text-white">{summary.completedOrders}</p>
+              </div>
+            </div>
+          </Card>
+          
+          <Card className="p-4 bg-otw-black-800/50 border-otw-black-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-purple-500/20">
+                <MapPin className="w-5 h-5 text-purple-400" />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Avg Order</p>
+                <p className="text-xl font-bold text-white">{formatCurrency(summary.averageOrderValue)}</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-3 flex-1">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search orders..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-otw-black-800/50 border-otw-black-700 text-white"
+              />
+            </div>
+            
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-[180px] bg-otw-black-800/50 border-otw-black-700 text-white">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="processing">Processing</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger className="w-full sm:w-[180px] bg-otw-black-800/50 border-otw-black-700 text-white">
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="regular">Regular</SelectItem>
+                <SelectItem value="screenshot">Screenshot</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            {(searchTerm || statusFilter !== 'all' || typeFilter !== 'all') && (
+              <Button variant="outline" size="sm" onClick={clearFilters}>
+                <XCircle className="w-4 h-4 mr-2" />
+                Clear
+              </Button>
+            )}
+          </div>
+          
+          <Button 
+            onClick={handleRefresh} 
+            variant="outline" 
+            size="sm" 
+            disabled={refreshing}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={cn('w-4 h-4', refreshing && 'animate-spin')} />
+            {refreshing ? 'Refreshing...' : 'Refresh'}
           </Button>
+        </div>
+
+        {/* No Results */}
+        <div className="flex flex-col items-center justify-center py-12 space-y-4">
+          <div className="text-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-500/10 flex items-center justify-center">
+              <Filter className="w-8 h-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-white mb-2">No Orders Found</h3>
+            <p className="text-gray-400 mb-6 max-w-md">
+              No orders match your current filters. Try adjusting your search criteria.
+            </p>
+            <Button variant="outline" size="sm" onClick={clearFilters}>
+              Clear Filters
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -400,9 +633,51 @@ export default function OrderHistory() {
         </Card>
       </div>
 
-      {/* Header with Refresh */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-otw-gold">Order History</h2>
+      {/* Filters and Search */}
+      <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex flex-col sm:flex-row gap-3 flex-1">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Search orders..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-otw-black-800/50 border-otw-black-700 text-white"
+            />
+          </div>
+          
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-full sm:w-[180px] bg-otw-black-800/50 border-otw-black-700 text-white">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="processing">Processing</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger className="w-full sm:w-[180px] bg-otw-black-800/50 border-otw-black-700 text-white">
+              <SelectValue placeholder="Filter by type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="regular">Regular</SelectItem>
+              <SelectItem value="screenshot">Screenshot</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          {(searchTerm || statusFilter !== 'all' || typeFilter !== 'all') && (
+            <Button variant="outline" size="sm" onClick={clearFilters}>
+              <XCircle className="w-4 h-4 mr-2" />
+              Clear
+            </Button>
+          )}
+        </div>
+        
         <Button 
           onClick={handleRefresh} 
           variant="outline" 
@@ -415,9 +690,20 @@ export default function OrderHistory() {
         </Button>
       </div>
 
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-semibold text-otw-gold">Order History</h2>
+          <p className="text-gray-400 text-sm mt-1">
+            {filteredOrders.length} of {orders.length} orders
+            {(searchTerm || statusFilter !== 'all' || typeFilter !== 'all') && ' (filtered)'}
+          </p>
+        </div>
+      </div>
+
       {/* Orders List */}
       <div className="space-y-4">
-        {orders.map((order) => (
+        {filteredOrders.map((order) => (
           <Card key={order.id} className="p-6 bg-otw-black-800/50 border-otw-black-700 hover:border-otw-gold/30 transition-colors">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div className="flex-1">
@@ -425,15 +711,15 @@ export default function OrderHistory() {
                   <h3 className="font-semibold text-white">
                     Order #{order.orderId || order.id.slice(-8).toUpperCase()}
                   </h3>
-                  <span className={cn(
-                    'px-2 py-1 rounded-full text-xs font-medium',
+                  <Badge className={cn(
+                    'text-xs font-medium',
                     getStatusColor(order.status)
                   )}>
                     {order.status?.replace('_', ' ').toUpperCase() || 'PENDING'}
-                  </span>
-                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-otw-gold/20 text-otw-gold">
+                  </Badge>
+                  <Badge variant="outline" className="text-xs font-medium border-otw-gold/30 text-otw-gold">
                     {order.type === 'screenshot' ? 'SCREENSHOT' : 'REGULAR'}
-                  </span>
+                  </Badge>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -480,12 +766,176 @@ export default function OrderHistory() {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-2">
-                <Button variant="outline" size="sm">
-                  View Details
-                </Button>
-                {(order.status === 'completed' || order.status === 'delivered') && (
-                  <Button variant="outline" size="sm">
-                    Reorder
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="sm" onClick={() => setSelectedOrder(order)}>
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Details
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl bg-otw-black-900 border-otw-black-700">
+                    <DialogHeader>
+                      <DialogTitle className="text-otw-gold">
+                        Order #{order.orderId || order.id.slice(-8).toUpperCase()}
+                      </DialogTitle>
+                      <DialogDescription className="text-gray-400">
+                        Order details and status information
+                      </DialogDescription>
+                    </DialogHeader>
+                    
+                    {selectedOrder && (
+                      <div className="space-y-6">
+                        {/* Order Status */}
+                        <div className="flex items-center gap-3">
+                          <div className={cn(
+                            'p-2 rounded-full',
+                            selectedOrder.status === 'completed' || selectedOrder.status === 'delivered' 
+                              ? 'bg-green-500/20' 
+                              : selectedOrder.status === 'cancelled' 
+                              ? 'bg-red-500/20' 
+                              : 'bg-yellow-500/20'
+                          )}>
+                            {selectedOrder.status === 'completed' || selectedOrder.status === 'delivered' ? (
+                              <CheckCircle className="w-5 h-5 text-green-400" />
+                            ) : selectedOrder.status === 'cancelled' ? (
+                              <XCircle className="w-5 h-5 text-red-400" />
+                            ) : (
+                              <Clock className="w-5 h-5 text-yellow-400" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold">
+                              {selectedOrder.status?.replace('_', ' ').toUpperCase() || 'PENDING'}
+                            </p>
+                            <p className="text-gray-400 text-sm">
+                              {formatDate(selectedOrder.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        {/* Order Information */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <h4 className="text-white font-semibold">Order Information</h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-400">Order Type:</span>
+                                <span className="text-white">{selectedOrder.type === 'screenshot' ? 'Screenshot' : 'Regular'}</span>
+                              </div>
+                              {selectedOrder.total && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-400">Total:</span>
+                                  <span className="text-white font-semibold">{formatCurrency(selectedOrder.total)}</span>
+                                </div>
+                              )}
+                              {selectedOrder.orderDetails?.estimatedTotal && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-400">Estimated Total:</span>
+                                  <span className="text-white font-semibold">{selectedOrder.orderDetails.estimatedTotal}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {selectedOrder.restaurantInfo && (
+                            <div className="space-y-4">
+                              <h4 className="text-white font-semibold">Restaurant Information</h4>
+                              <div className="space-y-2 text-sm">
+                                <div>
+                                  <span className="text-gray-400">Name:</span>
+                                  <p className="text-white">{selectedOrder.restaurantInfo.name}</p>
+                                </div>
+                                {selectedOrder.restaurantInfo.pickupLocation && (
+                                  <div>
+                                    <span className="text-gray-400">Pickup Location:</span>
+                                    <p className="text-white">{selectedOrder.restaurantInfo.pickupLocation}</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Customer Information */}
+                        {selectedOrder.customerInfo && (
+                          <div className="space-y-4">
+                            <h4 className="text-white font-semibold">Customer Information</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <span className="text-gray-400">Name:</span>
+                                <p className="text-white">{selectedOrder.customerInfo.name}</p>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Phone:</span>
+                                <p className="text-white">{selectedOrder.customerInfo.phone}</p>
+                              </div>
+                              <div className="md:col-span-2">
+                                <span className="text-gray-400">Email:</span>
+                                <p className="text-white">{selectedOrder.customerInfo.email}</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Special Instructions */}
+                        {selectedOrder.orderDetails?.specialInstructions && (
+                          <div className="space-y-2">
+                            <h4 className="text-white font-semibold">Special Instructions</h4>
+                            <p className="text-gray-300 text-sm bg-otw-black-800/50 p-3 rounded-lg">
+                              {selectedOrder.orderDetails.specialInstructions}
+                            </p>
+                          </div>
+                        )}
+                        
+                        {/* Order Items */}
+                        {(selectedOrder.cart || selectedOrder.items) && (
+                          <div className="space-y-4">
+                            <h4 className="text-white font-semibold">Order Items</h4>
+                            <div className="space-y-2 max-h-40 overflow-y-auto">
+                              {(selectedOrder.cart || selectedOrder.items || []).map((item: any, index: number) => (
+                                <div key={index} className="flex justify-between items-center p-2 bg-otw-black-800/30 rounded">
+                                  <div>
+                                    <p className="text-white text-sm">{item.name}</p>
+                                    <p className="text-gray-400 text-xs">Qty: {item.quantity || 1}</p>
+                                  </div>
+                                  <p className="text-white text-sm font-semibold">
+                                    {formatCurrency(item.price * (item.quantity || 1))}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </DialogContent>
+                </Dialog>
+                
+                {['pending', 'processing', 'confirmed', 'preparing', 'out_for_delivery'].includes(order.status) && (
+                  <Button variant="outline" size="sm" onClick={() => handleTrackOrder(order)}>
+                    <Truck className="w-4 h-4 mr-2" />
+                    Track
+                  </Button>
+                )}
+                
+                {(order.status === 'completed' || order.status === 'delivered') && (order.cart || order.items) && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleReorder(order)}
+                    disabled={isReordering === order.id}
+                  >
+                    {isReordering === order.id ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Reorder
+                      </>
+                    )}
                   </Button>
                 )}
               </div>
@@ -503,6 +953,7 @@ export default function OrderHistory() {
               setPagination(prev => ({ ...prev, offset: prev.offset + prev.limit }));
             }}
             disabled={loading}
+            className="bg-otw-black-800/50 border-otw-black-700 hover:border-otw-gold/30"
           >
             {loading ? (
               <>
@@ -510,7 +961,10 @@ export default function OrderHistory() {
                 Loading...
               </>
             ) : (
-              'Load More Orders'
+              <>
+                <Package className="w-4 h-4 mr-2" />
+                Load More Orders
+              </>
             )}
           </Button>
         </div>

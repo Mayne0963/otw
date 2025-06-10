@@ -53,6 +53,17 @@ export interface CartItem {
   };
 }
 
+export interface PromoCode {
+  code: string;
+  type: 'percentage' | 'fixed' | 'shipping';
+  value: number;
+  description: string;
+  minOrderAmount: number;
+  maxDiscount?: number;
+  isActive: boolean;
+  expiresAt?: Date;
+}
+
 export interface CartContextType {
   items: CartItem[];
   addItem: (item: CartItem) => void;
@@ -60,11 +71,19 @@ export interface CartContextType {
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   subtotal: number;
+  discount: number;
+  discountedSubtotal: number;
+  shippingFee: number;
   tax: number;
   total: number;
   itemCount: number;
   loading: boolean;
   error: string | null;
+  appliedPromoCode: PromoCode | null;
+  promoCodeError: string | null;
+  applyPromoCode: (code: string) => boolean;
+  removePromoCode: () => void;
+  promoCodes: PromoCode[];
 }
 
 // Delivery types

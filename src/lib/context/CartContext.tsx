@@ -9,7 +9,7 @@ import {
   useEffect,
   type ReactNode,
 } from 'react';
-import type { CartContextType, CartItem } from '../../types';
+import type { CartContextType, CartItem, PromoCode } from '../../types';
 import { toast } from '../../components/ui/use-toast';
 
 // Create the context with a default undefined value
@@ -22,14 +22,80 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
   const [items, setItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [appliedPromoCode, setAppliedPromoCode] = useState<PromoCode | null>(null);
+  const [promoCodeError, setPromoCodeError] = useState<string | null>(null);
+
+  // Predefined promo codes
+  const promoCodes: PromoCode[] = [
+    {
+      code: 'WELCOME10',
+      type: 'percentage',
+      value: 10,
+      description: '10% off your order',
+      minOrderAmount: 0,
+      maxDiscount: 50,
+      isActive: true,
+      expiresAt: new Date('2024-12-31'),
+    },
+    {
+      code: 'SAVE5',
+      type: 'fixed',
+      value: 5,
+      description: '$5 off your order',
+      minOrderAmount: 25,
+      maxDiscount: 5,
+      isActive: true,
+      expiresAt: new Date('2024-12-31'),
+    },
+    {
+      code: 'BIGORDER',
+      type: 'percentage',
+      value: 15,
+      description: '15% off orders over $50',
+      minOrderAmount: 50,
+      maxDiscount: 100,
+      isActive: true,
+      expiresAt: new Date('2024-12-31'),
+    },
+    {
+      code: 'FREESHIP',
+      type: 'shipping',
+      value: 0,
+      description: 'Free shipping',
+      minOrderAmount: 30,
+      maxDiscount: 10,
+      isActive: true,
+      expiresAt: new Date('2024-12-31'),
+    },
+  ];
 
   // Calculate cart totals
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
     0,
   );
-  const tax = subtotal * 0.0825; // 8.25% tax rate
-  const total = subtotal + tax;
+  
+  // Calculate discount
+  const calculateDiscount = () => {
+    if (!appliedPromoCode || subtotal < appliedPromoCode.minOrderAmount) {
+      return 0;
+    }
+    
+    if (appliedPromoCode.type === 'percentage') {
+      const discount = (subtotal * appliedPromoCode.value) / 100;
+      return Math.min(discount, appliedPromoCode.maxDiscount || discount);
+    } else if (appliedPromoCode.type === 'fixed') {
+      return Math.min(appliedPromoCode.value, subtotal);
+    }
+    
+    return 0;
+  };
+  
+  const discount = calculateDiscount();
+  const discountedSubtotal = subtotal - discount;
+  const shippingFee = appliedPromoCode?.type === 'shipping' && subtotal >= appliedPromoCode.minOrderAmount ? 0 : 5;
+  const tax = discountedSubtotal * 0.0825; // 8.25% tax rate
+  const total = discountedSubtotal + tax + shippingFee;
   const itemCount = items.reduce((count, item) => count + item.quantity, 0);
 
   // Add item to cart
@@ -126,6 +192,52 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
+  // Apply promo code
+  const applyPromoCode = (code: string): boolean => {
+    setPromoCodeError(null);
+    
+    if (!code.trim()) {
+      setPromoCodeError('Please enter a promo code');
+      return false;
+    }
+    
+    const promoCode = promoCodes.find(
+      (promo) => promo.code.toLowerCase() === code.toLowerCase() && promo.isActive
+    );
+    
+    if (!promoCode) {
+      setPromoCodeError('Invalid promo code');
+      return false;
+    }
+    
+    if (promoCode.expiresAt && new Date() > promoCode.expiresAt) {
+      setPromoCodeError('This promo code has expired');
+      return false;
+    }
+    
+    if (subtotal < promoCode.minOrderAmount) {
+      setPromoCodeError(`Minimum order amount is $${promoCode.minOrderAmount.toFixed(2)}`);
+      return false;
+    }
+    
+    setAppliedPromoCode(promoCode);
+    toast({ 
+      title: 'Promo code applied!', 
+      description: `${promoCode.description} has been applied to your order` 
+    });
+    return true;
+  };
+  
+  // Remove promo code
+  const removePromoCode = () => {
+    setAppliedPromoCode(null);
+    setPromoCodeError(null);
+    toast({ 
+      title: 'Promo code removed', 
+      description: 'The discount has been removed from your order' 
+    });
+  };
+
   // Clear cart
   const clearCart = () => {
     setLoading(true);
@@ -133,11 +245,13 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
 
     try {
       setItems([]);
-      toast.info('All items have been removed from your cart', 3000);
+      setAppliedPromoCode(null);
+      setPromoCodeError(null);
+      toast({ title: 'Cart cleared', description: 'All items have been removed from your cart' });
     } catch (err) {
       console.error('Failed to clear cart:', err);
       setError('Failed to clear cart. Please try again.');
-      toast.error('Failed to clear cart. Please try again.');
+      toast({ title: 'Error', description: 'Failed to clear cart. Please try again.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -184,11 +298,19 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
         updateQuantity,
         clearCart,
         subtotal,
+        discount,
+        discountedSubtotal,
+        shippingFee,
         tax,
         total,
         itemCount,
         loading,
         error,
+        appliedPromoCode,
+        promoCodeError,
+        applyPromoCode,
+        removePromoCode,
+        promoCodes,
       }}
     >
       {children}

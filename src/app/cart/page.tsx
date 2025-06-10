@@ -22,13 +22,30 @@ import {
   FaArrowLeft,
   FaCreditCard,
   FaCog,
+  FaTimes,
+  FaTag,
+  FaCheck,
 } from 'react-icons/fa';
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, subtotal, tax, total, clearCart } =
-    useCart();
+  const { 
+    items, 
+    removeItem, 
+    updateQuantity, 
+    subtotal, 
+    discount,
+    discountedSubtotal,
+    shippingFee,
+    tax, 
+    total, 
+    clearCart,
+    appliedPromoCode,
+    promoCodeError,
+    applyPromoCode,
+    removePromoCode
+  } = useCart();
   const [promoCode, setPromoCode] = useState('');
-  const [promoError, setPromoError] = useState<string | null>(null);
+  const [isApplying, setIsApplying] = useState(false);
 
   const handleQuantityChange = (
     id: string,
@@ -41,15 +58,24 @@ export default function CartPage() {
     }
   };
 
-  const handlePromoCode = (e: React.FormEvent) => {
+  const handlePromoCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (promoCode.trim() === '') {
-      setPromoError('Please enter a promo code');
-      return;
+    setIsApplying(true);
+    
+    // Add a small delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const success = applyPromoCode(promoCode);
+    if (success) {
+      setPromoCode('');
     }
-
-    // In a real app, you would validate the promo code with an API
-    setPromoError('Invalid promo code');
+    
+    setIsApplying(false);
+  };
+  
+  const handleRemovePromoCode = () => {
+    removePromoCode();
+    setPromoCode('');
   };
 
   // Check if an item has customizations
@@ -103,8 +129,12 @@ export default function CartPage() {
               </div>
 
               <ul className="divide-y divide-[#333333]">
-                {items.map((item) => (
-                  <li key={item.id} className="p-4 flex flex-col">
+                {items.map((item, index) => (
+                  <li 
+                    key={item.id} 
+                    className="p-4 flex flex-col transform transition-all duration-300 ease-in-out hover:bg-[#222222] animate-fade-in"
+                    style={{ animationDelay: `${index * 100}ms` }}
+                  >
                     <div className="flex items-center gap-4">
                       <div className="w-20 h-20 bg-[#222222] rounded-lg overflow-hidden relative flex-shrink-0">
                         {item.image ? (
@@ -158,20 +188,20 @@ export default function CartPage() {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <div className="flex items-center border border-[#333333] rounded-md">
+                        <div className="flex items-center border border-[#333333] rounded-md overflow-hidden">
                           <button
-                            className="px-2 py-1 text-white hover:bg-[#333333] transition-colors"
+                            className="px-2 py-1 text-white hover:bg-[#333333] transition-all duration-200 transform hover:scale-110"
                             onClick={() =>
                               handleQuantityChange(item.id, item.quantity, -1)
                             }
                           >
                             <FaMinus size={12} />
                           </button>
-                          <span className="px-3 py-1 text-white">
+                          <span className="px-3 py-1 text-white bg-[#222222] min-w-[40px] text-center">
                             {item.quantity}
                           </span>
                           <button
-                            className="px-2 py-1 text-white hover:bg-[#333333] transition-colors"
+                            className="px-2 py-1 text-white hover:bg-[#333333] transition-all duration-200 transform hover:scale-110"
                             onClick={() =>
                               handleQuantityChange(item.id, item.quantity, 1)
                             }
@@ -182,7 +212,7 @@ export default function CartPage() {
 
                         <button
                           onClick={() => removeItem(item.id)}
-                          className="p-2 text-gray-400 hover:text-blood-red transition-colors"
+                          className="p-2 text-gray-400 hover:text-blood-red transition-all duration-200 transform hover:scale-110 hover:rotate-12"
                           aria-label="Remove item"
                         >
                           <FaTrash />
@@ -210,48 +240,121 @@ export default function CartPage() {
               <h2 className="text-xl font-bold mb-6">Order Summary</h2>
 
               <div className="space-y-4 mb-6">
-                <div className="flex justify-between">
+                <div className="flex justify-between transition-all duration-300">
                   <span className="text-gray-400">Subtotal</span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
+                
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-500 animate-fade-in">
+                    <span className="flex items-center gap-2">
+                      <FaTag size={12} />
+                      Discount ({appliedPromoCode?.description})
+                    </span>
+                    <span>-${discount.toFixed(2)}</span>
+                  </div>
+                )}
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Shipping</span>
+                  <span className={shippingFee === 0 ? 'text-green-500' : ''}>
+                    {shippingFee === 0 ? 'FREE' : `$${shippingFee.toFixed(2)}`}
+                  </span>
+                </div>
+                
                 <div className="flex justify-between">
                   <span className="text-gray-400">Tax (8.25%)</span>
                   <span>${tax.toFixed(2)}</span>
                 </div>
 
-                <form
-                  onSubmit={handlePromoCode}
-                  className="pt-4 border-t border-[#333333]"
-                >
-                  <label className="block text-sm font-medium mb-2">
-                    Promo Code
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      className="input flex-grow"
-                      value={promoCode}
-                      onChange={(e) => {
-                        setPromoCode(e.target.value);
-                        setPromoError(null);
-                      }}
-                      placeholder="Enter code"
-                    />
-                    <button
-                      type="submit"
-                      className="btn-outline whitespace-nowrap"
-                    >
-                      Apply
-                    </button>
+                {/* Applied Promo Code Display */}
+                {appliedPromoCode && (
+                  <div className="bg-green-500 bg-opacity-10 border border-green-500 rounded-lg p-3 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FaCheck className="text-green-500" size={14} />
+                        <span className="text-green-500 font-medium">
+                          {appliedPromoCode.code}
+                        </span>
+                        <span className="text-sm text-gray-400">
+                          {appliedPromoCode.description}
+                        </span>
+                      </div>
+                      <button
+                        onClick={handleRemovePromoCode}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                        aria-label="Remove promo code"
+                      >
+                        <FaTimes size={12} />
+                      </button>
+                    </div>
                   </div>
-                  {promoError && (
-                    <p className="text-blood-red text-sm mt-1">{promoError}</p>
-                  )}
-                </form>
+                )}
 
-                <div className="flex justify-between pt-4 border-t border-[#333333] font-bold">
+                {/* Promo Code Input */}
+                {!appliedPromoCode && (
+                  <form
+                    onSubmit={handlePromoCode}
+                    className="pt-4 border-t border-[#333333] animate-fade-in"
+                  >
+                    <label className="block text-sm font-medium mb-2 flex items-center gap-2">
+                      <FaTag size={12} />
+                      Promo Code
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        className="input flex-grow transition-all duration-200 focus:ring-2 focus:ring-gold-foil focus:border-gold-foil"
+                        value={promoCode}
+                        onChange={(e) => {
+                          setPromoCode(e.target.value.toUpperCase());
+                        }}
+                        placeholder="Enter code (e.g., WELCOME10)"
+                        disabled={isApplying}
+                      />
+                      <button
+                        type="submit"
+                        disabled={isApplying || !promoCode.trim()}
+                        className="btn-outline whitespace-nowrap transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isApplying ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            Applying...
+                          </div>
+                        ) : (
+                          'Apply'
+                        )}
+                      </button>
+                    </div>
+                    {promoCodeError && (
+                      <p className="text-blood-red text-sm mt-1 animate-fade-in">{promoCodeError}</p>
+                    )}
+                    
+                    {/* Promo Code Suggestions */}
+                    <div className="mt-3 text-xs text-gray-500">
+                      <p>Try these codes:</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {['WELCOME10', 'SAVE5', 'BIGORDER', 'FREESHIP'].map((code) => (
+                          <button
+                            key={code}
+                            type="button"
+                            onClick={() => setPromoCode(code)}
+                            className="bg-[#333333] hover:bg-[#444444] px-2 py-1 rounded text-xs transition-colors"
+                          >
+                            {code}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </form>
+                )}
+
+                <div className="flex justify-between pt-4 border-t border-[#333333] font-bold text-lg">
                   <span>Total</span>
-                  <span className="text-gold-foil">${total.toFixed(2)}</span>
+                  <span className="text-gold-foil transition-all duration-300">
+                    ${total.toFixed(2)}
+                  </span>
                 </div>
               </div>
 
