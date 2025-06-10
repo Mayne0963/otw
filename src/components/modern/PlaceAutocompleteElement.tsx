@@ -315,35 +315,34 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
   const sizeClasses = getSizeStyles(size);
   const iconSizeClasses = getIconSizeStyles(size);
 
-  // Enhanced CSS injection for autocomplete dropdown styling with dark theme
+  // Enhanced CSS injection for autocomplete dropdown styling with improved z-index and responsiveness
   useEffect(() => {
     if (!isApiLoaded) return;
 
     const style = document.createElement('style');
     style.textContent = `
-      /* Custom styling for Google Places Autocomplete dropdown with enhanced background blending */
+      /* Custom styling for Google Places Autocomplete dropdown with enhanced visibility */
       .pac-container {
-        background: rgba(10, 10, 10, 0.75) !important;
-        backdrop-filter: blur(32px) saturate(200%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 20px !important;
-        box-shadow: 
-          0 32px 64px rgba(0, 0, 0, 0.6),
-          0 16px 32px rgba(0, 0, 0, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.08),
-          0 0 0 1px rgba(244, 228, 166, 0.05) !important;
-        margin-top: 8px !important;
+        background: rgba(0, 0, 0, 0.98) !important;
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+        border: 1px solid rgba(212, 175, 55, 0.4) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.9), 
+                    0 0 0 1px rgba(212, 175, 55, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        margin-top: 12px !important;
         overflow: hidden !important;
-        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-        z-index: 9999 !important;
-        max-height: 360px !important;
-        overflow-y: auto !important;
-        transform: translateZ(0) !important;
-        animation: dropdownFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        position: relative;
+        z-index: 999999 !important;
+        position: fixed !important;
+        min-width: 320px !important;
+        max-width: 600px !important;
+        width: auto !important;
+        animation: dropdownFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transform-origin: top center !important;
       }
       
-      .pac-container::before {
+      .pac-container:before {
         content: '';
         position: absolute;
         top: 0;
@@ -351,188 +350,140 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
         right: 0;
         bottom: 0;
         background: linear-gradient(135deg, 
-          rgba(244, 228, 166, 0.02) 0%,
-          rgba(10, 10, 10, 0.1) 50%,
-          rgba(244, 228, 166, 0.01) 100%
-        );
-        pointer-events: none;
+          rgba(212, 175, 55, 0.08) 0%, 
+          rgba(0, 0, 0, 0.9) 50%, 
+          rgba(212, 175, 55, 0.05) 100%) !important;
         z-index: -1;
+        border-radius: inherit;
       }
       
       .pac-item {
         background: transparent !important;
-        border: none !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
-        color: rgba(255, 255, 255, 0.88) !important;
-        padding: 16px 20px !important;
-        font-size: 14px !important;
-        line-height: 1.5 !important;
+        color: rgba(255, 255, 255, 0.92) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding: 14px 18px !important;
         cursor: pointer !important;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
         position: relative !important;
-        backdrop-filter: blur(12px) !important;
-        display: flex;
-        align-items: center;
-        gap: 16px;
+        font-size: 15px !important;
+        line-height: 1.4 !important;
+      }
+      
+      .pac-item:hover,
+      .pac-item-selected {
+        background: linear-gradient(90deg, 
+          rgba(212, 175, 55, 0.18) 0%, 
+          rgba(212, 175, 55, 0.12) 100%) !important;
+        color: rgba(255, 255, 255, 1) !important;
+        transform: translateX(6px) !important;
+        border-left: 3px solid rgba(212, 175, 55, 0.8) !important;
+      }
+      
+      .pac-item:first-child {
+        border-top-left-radius: 16px !important;
+        border-top-right-radius: 16px !important;
       }
       
       .pac-item:last-child {
         border-bottom: none !important;
-      }
-      
-      .pac-item:hover,
-      .pac-item.pac-item-selected {
-        background: linear-gradient(135deg, 
-          rgba(244, 228, 166, 0.08), 
-          rgba(212, 175, 55, 0.05),
-          rgba(255, 215, 0, 0.03)
-        ) !important;
-        color: rgba(255, 255, 255, 0.98) !important;
-        transform: translateX(8px) scale(1.005) !important;
-        border-left: 3px solid rgba(244, 228, 166, 0.6) !important;
-        padding-left: 17px !important;
-        box-shadow: 
-          0 12px 24px rgba(244, 228, 166, 0.12),
-          inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(16px) !important;
+        border-bottom-left-radius: 16px !important;
+        border-bottom-right-radius: 16px !important;
       }
       
       .pac-item-query {
-        color: rgba(244, 228, 166, 0.95) !important;
+        color: rgba(212, 175, 55, 0.95) !important;
         font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
-        flex: 1;
       }
       
       .pac-matched {
-        color: rgba(244, 228, 166, 1) !important;
+        color: rgba(212, 175, 55, 1) !important;
         font-weight: 700 !important;
-        text-shadow: 0 0 8px rgba(244, 228, 166, 0.3) !important;
-        background: linear-gradient(135deg, rgba(244, 228, 166, 0.15), transparent) !important;
-        padding: 2px 4px !important;
-        border-radius: 4px !important;
+        text-shadow: 0 0 10px rgba(212, 175, 55, 0.4) !important;
       }
       
       .pac-icon {
         background-image: none !important;
-        width: 24px !important;
-        height: 24px !important;
-        border-radius: 50% !important;
-        background: linear-gradient(135deg, 
-          rgba(255, 255, 255, 0.06), 
-          rgba(244, 228, 166, 0.04)
-        ) !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        width: 22px !important;
+        height: 22px !important;
+        margin-right: 14px !important;
+        background: linear-gradient(135deg, #d4af37, #f4d03f) !important;
+        border-radius: 6px !important;
         position: relative !important;
-        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
-        backdrop-filter: blur(8px) !important;
-        flex-shrink: 0;
+        flex-shrink: 0 !important;
       }
       
-      .pac-icon::after {
-        content: '';
+      .pac-icon:before {
+        content: '📍';
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 14px;
-        height: 14px;
-        background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDOC4xMyAyIDUgNS4xMyA1IDlDNSAxNC4yNSAxMiAyMiAxMiAyMkMxMiAyMiAxOSAxNC4yNSAxOSA5QzE5IDUuMTMgMTUuODcgMiAxMiAyWk0xMiAxMS41QzEwLjYyIDExLjUgOS41IDEwLjM4IDkuNSA5QzkuNSA3LjYyIDEwLjYyIDYuNSAxMiA2LjVDMTMuMzggNi41IDE0LjUgNy42MiAxNC41IDlDMTQuNSAxMC4zOCAxMy4zOCAxMS41IDEyIDExLjVaIiBmaWxsPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuNzUpIi8+Cjwvc3ZnPgo=') center/contain no-repeat;
-        filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
-      }
-      
-      .pac-item:hover .pac-icon,
-      .pac-item.pac-item-selected .pac-icon {
-        background: linear-gradient(135deg, 
-          rgba(244, 228, 166, 0.85), 
-          rgba(212, 175, 55, 0.75),
-          rgba(255, 215, 0, 0.65)
-        ) !important;
-        box-shadow: 
-          0 8px 24px rgba(244, 228, 166, 0.4),
-          0 0 0 2px rgba(244, 228, 166, 0.25) !important;
-        transform: scale(1.15) rotate(3deg) !important;
-        border-color: rgba(244, 228, 166, 0.7) !important;
-      }
-      
-      .pac-item:hover .pac-icon::after,
-      .pac-item.pac-item-selected .pac-icon::after {
-        filter: drop-shadow(0 0 12px rgba(0, 0, 0, 0.9)) !important;
-      }
-      
-      /* Enhanced scrollbar styling */
-      .pac-container::-webkit-scrollbar {
-        width: 6px;
-      }
-      
-      .pac-container::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 6px;
-      }
-      
-      .pac-container::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, 
-          rgba(244, 228, 166, 0.5), 
-          rgba(212, 175, 55, 0.3)
-        );
-        border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-      
-      .pac-container::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, 
-          rgba(244, 228, 166, 0.7), 
-          rgba(212, 175, 55, 0.5)
-        );
-      }
-      
-      /* Loading state for autocomplete */
-      .pac-container.pac-logo::after {
-        display: none;
+        font-size: 13px;
       }
       
       /* Enhanced animation for dropdown appearance */
-      .pac-container {
-        animation: dropdownFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      
       @keyframes dropdownFadeIn {
         from {
           opacity: 0;
-          transform: translateY(-16px) scale(0.9);
-          filter: blur(8px);
+          transform: translateY(-12px) scale(0.96);
         }
         to {
           opacity: 1;
           transform: translateY(0) scale(1);
-          filter: blur(0);
         }
       }
       
       /* Responsive adjustments */
       @media (max-width: 768px) {
         .pac-container {
-          border-radius: 16px !important;
-          margin-top: 6px !important;
-          backdrop-filter: blur(24px) !important;
+          min-width: 300px !important;
+          max-width: calc(100vw - 32px) !important;
+          left: 16px !important;
+          right: 16px !important;
+          width: auto !important;
         }
         
         .pac-item {
-          padding: 14px 18px !important;
-          font-size: 13px !important;
+          padding: 12px 16px !important;
+          font-size: 14px !important;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .pac-container {
+          min-width: 280px !important;
+          max-width: calc(100vw - 24px) !important;
+          left: 12px !important;
+          right: 12px !important;
         }
         
-        .pac-icon {
-          width: 20px !important;
-          height: 20px !important;
+        .pac-item {
+          padding: 10px 14px !important;
+          font-size: 13px !important;
         }
+      }
+      
+      /* Ensure dropdown appears above all other elements */
+      .pac-container {
+        z-index: 999999 !important;
+      }
+      
+      /* Fix for modal and overlay conflicts */
+      .pac-container.pac-logo:after {
+        display: none !important;
       }
     `;
     
-    document.head.appendChild(style);
+    if (!document.head.querySelector('[data-pac-styles]')) {
+      style.setAttribute('data-pac-styles', 'true');
+      document.head.appendChild(style);
+    }
     
     return () => {
-      document.head.removeChild(style);
+      const existingStyle = document.head.querySelector('[data-pac-styles]');
+      if (existingStyle) {
+        document.head.removeChild(existingStyle);
+      }
     };
   }, [isApiLoaded]);
 

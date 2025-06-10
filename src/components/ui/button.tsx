@@ -4,26 +4,35 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-otw-gold disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-95',
   {
     variants: {
       variant: {
         default:
-          'bg-primary text-primary-foreground shadow hover:bg-primary/90',
+          'bg-gradient-to-r from-otw-red to-otw-gold text-black shadow-lg hover:shadow-xl hover:from-otw-gold hover:to-yellow-500 hover:scale-105 focus:ring-otw-gold/50',
         destructive:
-          'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
+          'bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg hover:shadow-xl hover:from-red-700 hover:to-red-800 hover:scale-105 focus:ring-red-500/50',
         outline:
-          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
+          'border-2 border-otw-gold/50 bg-transparent text-otw-gold shadow-sm hover:bg-otw-gold hover:text-black hover:border-otw-gold hover:scale-105 focus:ring-otw-gold/50 backdrop-blur-sm',
         secondary:
-          'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
+          'bg-gray-800/80 text-white shadow-sm hover:bg-gray-700 hover:scale-105 focus:ring-gray-500/50 backdrop-blur-sm border border-gray-600/50',
+        ghost: 
+          'text-white/80 hover:bg-white/10 hover:text-white hover:scale-105 focus:ring-white/20 backdrop-blur-sm',
+        link: 
+          'text-otw-gold underline-offset-4 hover:underline hover:text-yellow-400 focus:ring-otw-gold/30',
+        success:
+          'bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg hover:shadow-xl hover:from-green-700 hover:to-green-800 hover:scale-105 focus:ring-green-500/50',
+        warning:
+          'bg-gradient-to-r from-yellow-600 to-orange-600 text-black shadow-lg hover:shadow-xl hover:from-yellow-700 hover:to-orange-700 hover:scale-105 focus:ring-yellow-500/50',
       },
       size: {
-        default: 'h-9 px-4 py-2',
-        sm: 'h-8 rounded-md px-3 text-xs',
-        lg: 'h-10 rounded-md px-8',
-        icon: 'h-9 w-9',
+        default: 'h-10 px-6 py-2 text-sm',
+        sm: 'h-8 rounded-md px-4 text-xs',
+        lg: 'h-12 rounded-xl px-8 text-base',
+        xl: 'h-14 rounded-xl px-10 text-lg',
+        icon: 'h-10 w-10',
+        'icon-sm': 'h-8 w-8',
+        'icon-lg': 'h-12 w-12',
       },
     },
     defaultVariants: {

@@ -74,6 +74,8 @@ export default function BookingForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   // Get minimum date (today)
   const getMinDate = useCallback(() => {
@@ -185,6 +187,17 @@ export default function BookingForm() {
   const updateFormData = useCallback((updates: Partial<FormData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
     setSubmitError(null);
+    
+    // Mark fields as touched and validate in real-time
+    const touchedFields = Object.keys(updates).reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+    
+    setTouched(prev => ({ ...prev, ...touchedFields }));
+    
+    // Trigger validation after state update
+    setTimeout(() => validateForm(), 0);
   }, []);
 
   // Handle place selection
@@ -204,8 +217,35 @@ export default function BookingForm() {
     };
   }, []);
 
+  // Check if form is valid
+  const isFormValid = useCallback(() => {
+    const requiredFields = ['selectedService', 'pickupLocation', 'dropoffLocation'];
+    if (!formData.isEmergency) {
+      requiredFields.push('scheduledDate', 'scheduledTime');
+    }
+    
+    const hasRequiredFields = requiredFields.every(field => {
+      const value = formData[field as keyof FormData];
+      return value !== null && value !== undefined && value !== '';
+    });
+    
+    const hasNoErrors = Object.values(validation).every(v => v === null || v.isValid);
+    return hasRequiredFields && hasNoErrors;
+  }, [formData, validation]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Mark all fields as touched
+    setTouched({
+      selectedService: true,
+      pickupLocation: true,
+      dropoffLocation: true,
+      scheduledDate: true,
+      scheduledTime: true,
+      instructions: true,
+      isEmergency: true,
+    });
     
     if (!validateForm()) {
       setSubmitError('Please fix all validation errors before submitting');
@@ -214,29 +254,75 @@ export default function BookingForm() {
 
     setIsSubmitting(true);
     setSubmitError(null);
+    setSubmitStatus('idle');
 
     try {
-      // TODO: Implement actual form submission
-      console.log('Form submitted', formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Reset form on success
-      setFormData({
-        selectedService: '',
-        pickupLocation: null,
-        dropoffLocation: null,
-        scheduledDate: '',
-        scheduledTime: '',
-        instructions: '',
-        isEmergency: false,
+      // API request with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          pickupLocation: formData.pickupLocation ? {
+            address: formData.pickupLocation.address,
+            coordinates: formData.pickupLocation.coordinates,
+          } : null,
+          dropoffLocation: formData.dropoffLocation ? {
+            address: formData.dropoffLocation.address,
+            coordinates: formData.dropoffLocation.coordinates,
+          } : null,
+        }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Failed to submit booking: ${response.status}`);
+      }
+
+      const result = await response.json();
       
-      alert('Booking submitted successfully!');
+      // Show success state
+      setSubmitStatus('success');
+      
+      // Reset form after delay
+      setTimeout(() => {
+        setFormData({
+          selectedService: '',
+          pickupLocation: null,
+          dropoffLocation: null,
+          scheduledDate: '',
+          scheduledTime: '',
+          instructions: '',
+          isEmergency: false,
+        });
+        setTouched({});
+        setValidation({
+          selectedService: null,
+          pickupLocation: null,
+          dropoffLocation: null,
+          scheduledDate: null,
+          scheduledTime: null,
+        });
+        setSubmitStatus('idle');
+      }, 3000);
+      
     } catch (error) {
-      setSubmitError('Failed to submit booking. Please try again.');
       console.error('Booking submission error:', error);
+      setSubmitStatus('error');
+      
+      if (error.name === 'AbortError') {
+        setSubmitError('Request timeout. Please try again.');
+      } else {
+        setSubmitError(error instanceof Error ? error.message : 'Failed to submit booking. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -249,8 +335,8 @@ export default function BookingForm() {
           Select a Service
         </h2>
         <RadioGroup
-          value={selectedService}
-          onValueChange={setSelectedService}
+          value={formData.selectedService}
+          onValueChange={(value) => updateFormData({ selectedService: value })}
           className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
           {services.map((service) => (
@@ -480,18 +566,32 @@ export default function BookingForm() {
 
       <Button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || !isFormValid()}
         className={cn(
-          'w-full h-12 bg-otw-red hover:bg-otw-gold hover:text-black transition-colors font-medium text-base',
-          isSubmitting ? 'cursor-wait opacity-75' : '',
+          'w-full h-12 font-medium text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-otw-gold focus:ring-offset-2',
+          isSubmitting || !isFormValid()
+            ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+            : submitStatus === 'success'
+            ? 'bg-green-600 text-white hover:bg-green-700'
+            : submitStatus === 'error'
+            ? 'bg-red-600 text-white hover:bg-red-700'
+            : 'bg-otw-red hover:bg-otw-gold hover:text-black hover:shadow-lg transform hover:-translate-y-0.5',
         )}
         aria-describedby="submit-help"
+        aria-label={isSubmitting ? 'Submitting booking' : formData.isEmergency ? 'Request emergency service' : 'Book service now'}
       >
         {isSubmitting ? (
           <div className="flex items-center justify-center space-x-2">
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             <span>Booking...</span>
           </div>
+        ) : submitStatus === 'success' ? (
+          <div className="flex items-center justify-center space-x-2">
+            <CheckCircle2 className="w-5 h-5" />
+            <span>Booking Confirmed!</span>
+          </div>
+        ) : submitStatus === 'error' ? (
+          'Try Again'
         ) : (
           <span>{formData.isEmergency ? 'Request Emergency Service' : 'Book Now'}</span>
         )}

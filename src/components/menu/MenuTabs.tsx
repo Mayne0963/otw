@@ -17,7 +17,7 @@ export default function MenuTabs() {
     async function fetchMenu() {
       try {
         setLoading(true);
-        const res = await fetch('/api/menu');
+        const res = await fetch('/api/admin/menu');
         const data = await res.json();
 
         if (data.success) {

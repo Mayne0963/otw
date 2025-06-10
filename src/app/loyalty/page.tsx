@@ -81,7 +81,7 @@ export default function LoyaltyPage() {
   const fetchRewards = async () => {
     try {
       setRewardsLoading(true);
-      const response = await fetch('/api/rewards');
+      const response = await fetch('/api/loyalty');
       if (!response.ok) {
         throw new Error('Failed to fetch rewards');
       }

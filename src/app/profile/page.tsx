@@ -72,45 +72,84 @@ export default function ProfilePage() {
     }
   };
 
-  // Fetch user profile data from Firebase
+  // Fetch user profile data from Firebase with timeout and error handling
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    
     const fetchUserData = async () => {
       if (!user?.uid) {
-        setLoading(false);
+        if (isMounted) setLoading(false);
         return;
       }
 
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+      }, 15000); // 15 second timeout
+
       try {
-        // Fetch user profile from Firestore
+        // Fetch user profile from Firestore with timeout
         const userDocRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userDocRef);
+        const userDocPromise = getDoc(userDocRef);
+        
+        // Race between the fetch and timeout
+        const userDoc = await Promise.race([
+          userDocPromise,
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Profile fetch timeout')), 10000)
+          )
+        ]) as any;
 
         let profileData: Partial<UserProfile> = {};
-        if (userDoc.exists()) {
+        if (userDoc?.exists()) {
           profileData = userDoc.data() as UserProfile;
         }
 
-        // Fetch user addresses
-        const addressesQuery = query(
-          collection(db, 'addresses'),
-          where('userId', '==', user.uid),
-        );
-        const addressesSnapshot = await getDocs(addressesQuery);
-        const addresses: Address[] = addressesSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Address[];
+        // Fetch user addresses with error handling
+        let addresses: Address[] = [];
+        try {
+          const addressesQuery = query(
+            collection(db, 'addresses'),
+            where('userId', '==', user.uid),
+          );
+          const addressesSnapshot = await Promise.race([
+            getDocs(addressesQuery),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Addresses fetch timeout')), 8000)
+            )
+          ]) as any;
+          
+          addresses = addressesSnapshot?.docs?.map((doc: any) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) || [];
+        } catch (addressError) {
+          console.warn('Failed to fetch addresses:', addressError);
+          addresses = [];
+        }
 
-        // Fetch user payment methods
-        const paymentMethodsQuery = query(
-          collection(db, 'paymentMethods'),
-          where('userId', '==', user.uid),
-        );
-        const paymentMethodsSnapshot = await getDocs(paymentMethodsQuery);
-        const paymentMethods: PaymentMethod[] = paymentMethodsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as PaymentMethod[];
+        // Fetch user payment methods with error handling
+        let paymentMethods: PaymentMethod[] = [];
+        try {
+          const paymentMethodsQuery = query(
+            collection(db, 'paymentMethods'),
+            where('userId', '==', user.uid),
+          );
+          const paymentMethodsSnapshot = await Promise.race([
+            getDocs(paymentMethodsQuery),
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Payment methods fetch timeout')), 8000)
+            )
+          ]) as any;
+          
+          paymentMethods = paymentMethodsSnapshot?.docs?.map((doc: any) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) || [];
+        } catch (paymentError) {
+          console.warn('Failed to fetch payment methods:', paymentError);
+          paymentMethods = [];
+        }
 
         // Calculate member since date
         const memberSince = profileData.createdAt
@@ -126,26 +165,49 @@ export default function ProfilePage() {
         if (points >= 1000) {tier = 'Gold';}
         else if (points >= 500) {tier = 'Silver';}
 
-        setUserData({
-          name: user.displayName || profileData.displayName || 'User',
-          email: user.email || profileData.email || '',
-          phone: profileData.phone || '',
-          avatar: user.photoURL || profileData.photoURL || '',
-          memberSince,
-          tier,
-          rewardPoints: points,
-          addresses,
-          paymentMethods,
-        });
+        if (isMounted) {
+          setUserData({
+            name: user.displayName || profileData.displayName || 'User',
+            email: user.email || profileData.email || '',
+            phone: profileData.phone || '',
+            avatar: user.photoURL || profileData.photoURL || '',
+            memberSince,
+            tier,
+            rewardPoints: points,
+            addresses,
+            paymentMethods,
+          });
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
+        
+        // Fallback to basic user data from auth
+        if (isMounted && user) {
+          setUserData({
+            name: user.displayName || 'User',
+            email: user.email || '',
+            phone: '',
+            avatar: user.photoURL || '',
+            memberSince: 'Recently',
+            tier: 'Bronze',
+            rewardPoints: 0,
+            addresses: [],
+            paymentMethods: [],
+          });
+        }
       } finally {
-        setLoading(false);
+        clearTimeout(timeoutId);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [user]);
+    
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [user?.uid]);
 
   if (loading) {
     return (

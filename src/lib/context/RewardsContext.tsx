@@ -50,7 +50,7 @@ export const RewardsProvider: React.FC<RewardsProviderProps> = ({
       // Fetch rewards from API
       const fetchRewards = async () => {
         try {
-          const response = await fetch('/api/rewards');
+          const response = await fetch('/api/loyalty');
           if (response.ok) {
             const data = await response.json();
             setRewards(data.data || []);

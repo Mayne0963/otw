@@ -165,7 +165,7 @@ const AutocompleteInput: React.FC<AddressSearchProps> = ({
     const style = document.createElement('style');
     style.textContent = `
       .pac-container {
-        background: rgba(10, 10, 10, 0.75) !important;
+        background: rgba(10, 10, 10, 0.95) !important;
         backdrop-filter: blur(32px) saturate(200%) !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
         border-radius: 20px !important;
@@ -177,12 +177,15 @@ const AutocompleteInput: React.FC<AddressSearchProps> = ({
         margin-top: 8px !important;
         overflow: hidden !important;
         font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-        z-index: 9999 !important;
+        z-index: 2147483647 !important;
         max-height: 360px !important;
         overflow-y: auto !important;
         transform: translateZ(0) !important;
         animation: dropdownFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        position: relative;
+        position: fixed !important;
+        will-change: transform !important;
+        isolation: isolate !important;
+        max-width: 500px !important;
       }
       .pac-container::before {
         content: '';
