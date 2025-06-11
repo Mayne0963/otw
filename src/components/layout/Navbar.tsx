@@ -15,6 +15,9 @@ import {
   Camera,
   ChevronDown,
   ShoppingBag,
+  Trophy,
+  Users,
+  Briefcase,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';
@@ -23,22 +26,20 @@ import { cn } from '../../lib/utils';
 import Image from 'next/image';
 
 const mainNavItems = [
-  { name: 'Home', href: '/', icon: <Home className="mr-3 h-4 w-4" /> },
   {
     name: 'Services',
     href: '/otw',
     icon: <Car className="mr-3 h-4 w-4" />,
   },
   {
-      name: 'Broskis Kitchen',
-      href: '/restaurants',
+    name: 'Broskis Kitchen',
+    href: '/restaurants',
     icon: <Utensils className="mr-3 h-4 w-4" />,
   },
-
   {
-    name: 'Loyalty',
-    href: '/loyalty',
-    icon: <Crown className="mr-3 h-4 w-4" />,
+    name: 'Hall of Hustle',
+    href: '/hall-of-hustle',
+    icon: <Trophy className="mr-3 h-4 w-4" />,
   },
   {
     name: 'Events',
@@ -46,9 +47,9 @@ const mainNavItems = [
     icon: <Camera className="mr-3 h-4 w-4" />,
   },
   {
-    name: 'Help',
-    href: '/help',
-    icon: <HelpingHand className="mr-3 h-4 w-4" />,
+    name: 'Loyalty',
+    href: '/loyalty',
+    icon: <Crown className="mr-3 h-4 w-4" />,
   },
 ];
 

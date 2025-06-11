@@ -2,6 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
+/* OTW Design System - Base Styles */
+:root {
+  --otw-red: #c22126;
+  --otw-gold: #d4af37;
+  --otw-black: #0A0A0A;
+  --otw-gradient-text: linear-gradient(135deg, var(--otw-gold) 0%, #ffffff 50%, var(--otw-gold) 100%);
+  --otw-gradient-radial: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 10, 0.2) 50%, rgba(10, 10, 10, 0.4) 100%);
+}
+
+/* OTW Card Component */
+.otw-card {
+  @apply bg-gradient-to-br from-otw-black-800/90 to-otw-black-900/90;
+  @apply backdrop-blur-sm border border-otw-gold/20;
+  @apply rounded-2xl shadow-otw-lg;
+  @apply transition-all duration-500 ease-out;
+  @apply hover:border-otw-gold/40 hover:shadow-otw-xl;
+  @apply hover:shadow-otw-gold/10;
+  position: relative;
+  overflow: hidden;
+}
+
+.otw-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, transparent 50%, rgba(194, 33, 38, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.otw-card:hover::before {
+  opacity: 1;
+}
+
+/* OTW Typography */
+.otw-heading {
+  @apply bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent;
+  @apply font-bold tracking-wide;
+}
+
+.otw-text-gradient {
+  @apply bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent;
+}
+
+/* OTW Animations */
+@keyframes gradient-text {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-text {
+  background-size: 200% 200%;
+  animation: gradient-text 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* OTW Focus States */
+.otw-focus {
+  @apply focus:outline-none focus:ring-2 focus:ring-otw-gold focus:ring-offset-2 focus:ring-offset-otw-black;
+}
+
+/* OTW Buttons Enhancement */
+.otw-button {
+  @apply relative overflow-hidden;
+  @apply transition-all duration-300 ease-out;
+  @apply transform hover:scale-105 active:scale-95;
+  @apply shadow-lg hover:shadow-xl;
+}
+
+.otw-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.otw-button:hover::before {
+  left: 100%;
+}
+
 /* Cart Animation Classes */
 @keyframes fade-in {
   from {
