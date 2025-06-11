@@ -14,6 +14,7 @@ import {
   HelpingHand,
   Camera,
   ChevronDown,
+  ShoppingBag,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/button';

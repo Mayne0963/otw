@@ -5,7 +5,8 @@ export const dynamic = 'force-dynamic';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, ChevronLeft, Search } from 'lucide-react';
+// Added ShoppingBag to the existing lucide-react import
+import { Star, ChevronLeft, Search, ShoppingBag } from 'lucide-react';
 import MenuItemCard from '../../../components/menu/MenuItemCard';
 import CategoryFilter from '../../../components/menu/CategoryFilter';
 import type { Restaurant } from '../../../types/restaurant';
