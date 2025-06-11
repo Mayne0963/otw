@@ -1,51 +1,128 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    
     // Users collection - users can only read/write their own data
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated();
+    }
+    
+    // Admin collection - only admins can access
+    match /admins/{adminId} {
+      allow read, write: if isAdmin();
     }
     
     // Orders collection - users can only read/write their own orders
     match /orders/{orderId} {
-      allow read, write: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow read: if isAuthenticated() && 
+                     (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if isAuthenticated() && 
+                      (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
     }
     
     // Screenshot orders collection - users can only read/write their own screenshot orders
     match /screenshot_orders/{orderId} {
-      allow read, write: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow read: if isAuthenticated() && 
+                     (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if isAuthenticated() && 
+                      (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
     }
     
     // Restaurants collection - public read access, authenticated write
     match /restaurants/{restaurantId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated();
+      
+      // Menu items subcollection
+      match /menu/{menuId} {
+        allow read: if true;
+        allow write: if isAuthenticated();
+      }
+    }
+    
+    // Catering menu collection - public read access
+    match /catering_menu/{menuId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    // Catering packages collection - public read access
+    match /catering-packages/{packageId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    
+    // Packages collection - public read access
+    match /packages/{packageId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
     }
     
     // Membership tiers collection - public read access, authenticated write
     match /membershipTiers/{tierId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated();
     }
     
     // Testimonials collection - public read access, authenticated write
     match /testimonials/{testimonialId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated();
     }
     
     // Loyalty program collection - authenticated users can read/write their own data
     match /loyaltyProgram/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      allow read, write: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
     }
     
     // Events collection - public read access, authenticated write
     match /events/{eventId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated();
+    }
+    
+    // Notifications collection - users can read their own notifications
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && 
+                     (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if isAuthenticated();
+    }
+    
+    // Analytics collection - admin only
+    match /analytics/{docId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Settings collection - public read, admin write
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Feedback collection - authenticated users can create, admins can read all
+    match /feedback/{feedbackId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated();
     }
   }
 }

@@ -1,10 +1,10 @@
-import type { Metadata } from 'next/types';
+import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
 import Navbar from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
-import { CartProvider } from '@/contexts/CartContext';
+import { CartProvider } from '@/lib/context/CartContext';
 
 import { ToastContainer } from '../components/ui/toast';
 import { ScrollToTop } from '../components/ui/scroll-to-top';

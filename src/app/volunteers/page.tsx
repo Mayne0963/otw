@@ -24,6 +24,7 @@ import {
   Coffee,
 } from 'lucide-react';
 import { toast } from '../../components/ui/use-toast';
+import TestimonialsSection from '../../components/testimonials/TestimonialsSection';
 
 interface VolunteerApplication {
   firstName: string;
@@ -312,61 +313,7 @@ export default function VolunteersPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center">
-                    <Users className="w-6 h-6 text-black" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold">Sarah M.</h4>
-                    <p className="text-gray-400 text-sm">Delivery Volunteer</p>
-                  </div>
-                </div>
-                <p className="text-gray-300 italic">
-                  "Volunteering with OTW has been incredibly rewarding. I love being able to help
-                  families in my community while meeting amazing people along the way."
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center">
-                    <Award className="w-6 h-6 text-black" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold">Mike R.</h4>
-                    <p className="text-gray-400 text-sm">Event Support</p>
-                  </div>
-                </div>
-                <p className="text-gray-300 italic">
-                  "The events team is like a family. We work together to create memorable experiences
-                  for the community, and I've gained valuable event planning skills."
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center">
-                    <Heart className="w-6 h-6 text-black" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold">Lisa K.</h4>
-                    <p className="text-gray-400 text-sm">Customer Support</p>
-                  </div>
-                </div>
-                <p className="text-gray-300 italic">
-                  "Helping customers solve their problems and seeing their satisfaction makes every
-                  shift worthwhile. The flexible schedule works perfectly with my studies."
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          <TestimonialsSection limit={3} featured={true} serviceType="volunteer" />
         </div>
       </div>
 

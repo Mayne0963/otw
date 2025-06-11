@@ -2,7 +2,7 @@
 
 import { ThemeProvider } from 'next-themes';
 import { AuthProvider } from '../contexts/AuthContext';
-import { CartProvider } from '../contexts/CartContext';
+import { CartProvider } from '../lib/context/CartContext';
 import { ModernGoogleMapsProvider } from '../contexts/ModernGoogleMapsContext';
 import { Toaster } from '../components/ui/toaster';
 

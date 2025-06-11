@@ -1,0 +1,492 @@
+/**
+ * Firebase Storage Security Rules for Rewards Bucket
+ * Bucket: ezyzip-rewards.appspot.com
+ * Purpose: Loyalty program assets, reward certificates, promotional materials, and user achievements
+ */
+
+service firebase.storage {
+  match /b/ezyzip-rewards.appspot.com/o {
+    
+    // ========================================================================
+    // HELPER FUNCTIONS
+    // ========================================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'admin';
+    }
+    
+    function isMarketingManager() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'marketing_manager';
+    }
+    
+    function isCustomerService() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'customer_service';
+    }
+    
+    function isRestaurantOwner() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'restaurant_owner';
+    }
+    
+    function isSystem() {
+      // Cloud Functions have special system tokens
+      return request.auth != null && 
+             request.auth.token.get('system', false) == true;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isValidImage() {
+      return resource.contentType.matches('image/.*') &&
+             resource.contentType in ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
+    }
+    
+    function isValidDocument() {
+      return resource.contentType in [
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+        'text/plain',
+        'application/json'
+      ];
+    }
+    
+    function isWithinSizeLimit(maxSizeMB) {
+      return resource.size <= maxSizeMB * 1024 * 1024;
+    }
+    
+    function isRecentUpload() {
+      return resource.timeCreated > request.time - duration.value(5, 'm');
+    }
+    
+    function hasValidFilename() {
+      return resource.name.matches('[a-zA-Z0-9._-]+');
+    }
+    
+    function isValidRewardTier() {
+      return resource.name.matches('(bronze|silver|gold|platinum|diamond).*');
+    }
+    
+    // ========================================================================
+    // REWARD CERTIFICATES AND VOUCHERS
+    // ========================================================================
+    
+    match /reward-certificates/{userId}/{certificateId} {
+      // Users can read their own certificates
+      allow read: if isOwner(userId) || isAdmin() || isCustomerService();
+      
+      // Only system can create certificates
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // No updates to certificates (they are immutable)
+      allow update: if false;
+      
+      // Only admins can delete certificates (for fraud prevention)
+      allow delete: if isAdmin();
+    }
+    
+    match /digital-vouchers/{userId}/{voucherId} {
+      // Users can read their own vouchers
+      allow read: if isOwner(userId) || isAdmin() || isCustomerService();
+      
+      // Only system can create vouchers
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(3) &&
+                       hasValidFilename();
+      
+      // System can update voucher status (used/expired)
+      allow update: if isSystem() && isValidDocument();
+      
+      // Only admins can delete vouchers
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // LOYALTY PROGRAM ASSETS
+    // ========================================================================
+    
+    match /loyalty-badges/{badgeType}/{fileName} {
+      // Everyone can read badge images (for display)
+      allow read: if true;
+      
+      // Only marketing managers and admins can upload badges
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       isValidImage() && 
+                       isWithinSizeLimit(2) &&
+                       hasValidFilename();
+      
+      // Marketing managers and admins can update badges
+      allow update: if (isMarketingManager() || isAdmin()) && isValidImage();
+      
+      // Only admins can delete badges
+      allow delete: if isAdmin();
+    }
+    
+    match /tier-icons/{tierLevel}/{fileName} {
+      // Everyone can read tier icons
+      allow read: if true;
+      
+      // Only marketing managers and admins can upload tier icons
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       isValidImage() && 
+                       isWithinSizeLimit(1) &&
+                       hasValidFilename() &&
+                       isValidRewardTier();
+      
+      // Marketing managers and admins can update tier icons
+      allow update: if (isMarketingManager() || isAdmin()) && 
+                       isValidImage() &&
+                       isValidRewardTier();
+      
+      // Only admins can delete tier icons
+      allow delete: if isAdmin();
+    }
+    
+    match /achievement-icons/{achievementType}/{fileName} {
+      // Everyone can read achievement icons
+      allow read: if true;
+      
+      // Only marketing managers and admins can upload achievement icons
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       isValidImage() && 
+                       isWithinSizeLimit(1) &&
+                       hasValidFilename();
+      
+      // Marketing managers and admins can update achievement icons
+      allow update: if (isMarketingManager() || isAdmin()) && isValidImage();
+      
+      // Only admins can delete achievement icons
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // USER ACHIEVEMENTS AND PROGRESS
+    // ========================================================================
+    
+    match /user-achievements/{userId}/{achievementId} {
+      // Users can read their own achievements
+      allow read: if isOwner(userId) || isAdmin() || isCustomerService();
+      
+      // Only system can create user achievements
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(2) &&
+                       hasValidFilename();
+      
+      // System can update achievement progress
+      allow update: if isSystem() && isValidDocument();
+      
+      // Only admins can delete achievements (for corrections)
+      allow delete: if isAdmin();
+    }
+    
+    match /progress-screenshots/{userId}/{progressId} {
+      // Users can upload progress screenshots
+      allow create: if isOwner(userId) && 
+                       isValidImage() && 
+                       isWithinSizeLimit(10) &&
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users can read their own progress screenshots
+      allow read: if isOwner(userId) || isAdmin() || isCustomerService();
+      
+      // Users can update their screenshots within 1 hour
+      allow update: if isOwner(userId) && 
+                       isValidImage() &&
+                       resource.timeCreated > request.time - duration.value(1, 'h');
+      
+      // Users and admins can delete progress screenshots
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ========================================================================
+    // PROMOTIONAL MATERIALS
+    // ========================================================================
+    
+    match /promotional-banners/{campaignId}/{fileName} {
+      // Everyone can read promotional banners
+      allow read: if true;
+      
+      // Marketing managers and admins can upload banners
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       isValidImage() && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Marketing managers and admins can update banners
+      allow update: if (isMarketingManager() || isAdmin()) && isValidImage();
+      
+      // Marketing managers and admins can delete banners
+      allow delete: if isMarketingManager() || isAdmin();
+    }
+    
+    match /reward-catalogs/{catalogVersion}/{fileName} {
+      // Everyone can read reward catalogs
+      allow read: if true;
+      
+      // Marketing managers and admins can upload catalogs
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(20) &&
+                       hasValidFilename();
+      
+      // Marketing managers and admins can update catalogs
+      allow update: if (isMarketingManager() || isAdmin()) && isValidDocument();
+      
+      // Only admins can delete catalogs
+      allow delete: if isAdmin();
+    }
+    
+    match /campaign-assets/{campaignId}/{assetType}/{fileName} {
+      // Everyone can read campaign assets
+      allow read: if true;
+      
+      // Marketing managers and admins can upload campaign assets
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       (isValidImage() || isValidDocument()) && 
+                       isWithinSizeLimit(10) &&
+                       hasValidFilename();
+      
+      // Marketing managers and admins can update campaign assets
+      allow update: if (isMarketingManager() || isAdmin()) && 
+                       (isValidImage() || isValidDocument());
+      
+      // Marketing managers and admins can delete campaign assets
+      allow delete: if isMarketingManager() || isAdmin();
+    }
+    
+    // ========================================================================
+    // PARTNER REWARDS
+    // ========================================================================
+    
+    match /partner-logos/{partnerId}/{fileName} {
+      // Everyone can read partner logos
+      allow read: if true;
+      
+      // Restaurant owners can upload their logos
+      allow create: if isRestaurantOwner() && 
+                       isValidImage() && 
+                       isWithinSizeLimit(2) &&
+                       hasValidFilename();
+      
+      // Restaurant owners and admins can update logos
+      allow update: if (isRestaurantOwner() || isAdmin()) && isValidImage();
+      
+      // Restaurant owners and admins can delete logos
+      allow delete: if isRestaurantOwner() || isAdmin();
+    }
+    
+    match /partner-rewards/{partnerId}/{rewardId} {
+      // Everyone can read partner reward details
+      allow read: if true;
+      
+      // Restaurant owners can upload reward details
+      allow create: if isRestaurantOwner() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Restaurant owners and admins can update reward details
+      allow update: if (isRestaurantOwner() || isAdmin()) && isValidDocument();
+      
+      // Restaurant owners and admins can delete reward details
+      allow delete: if isRestaurantOwner() || isAdmin();
+    }
+    
+    // ========================================================================
+    // REFERRAL PROGRAM
+    // ========================================================================
+    
+    match /referral-assets/{assetType}/{fileName} {
+      // Everyone can read referral assets
+      allow read: if true;
+      
+      // Marketing managers and admins can upload referral assets
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       (isValidImage() || isValidDocument()) && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Marketing managers and admins can update referral assets
+      allow update: if (isMarketingManager() || isAdmin()) && 
+                       (isValidImage() || isValidDocument());
+      
+      // Only admins can delete referral assets
+      allow delete: if isAdmin();
+    }
+    
+    match /referral-codes/{userId}/{codeId} {
+      // Users can read their own referral codes
+      allow read: if isOwner(userId) || isAdmin() || isCustomerService();
+      
+      // Only system can create referral codes
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(1) &&
+                       hasValidFilename();
+      
+      // System can update referral code status
+      allow update: if isSystem() && isValidDocument();
+      
+      // Only admins can delete referral codes
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // ANALYTICS AND REPORTS
+    // ========================================================================
+    
+    match /rewards-analytics/{period}/{fileName} {
+      // Only system can create analytics files
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(50);
+      
+      // Admins and marketing managers can read analytics
+      allow read: if isAdmin() || isMarketingManager();
+      
+      // Only system can update analytics
+      allow update: if isSystem() && isValidDocument();
+      
+      // Only admins can delete analytics
+      allow delete: if isAdmin();
+    }
+    
+    match /user-engagement-reports/{reportType}/{fileName} {
+      // Only system can create engagement reports
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(30);
+      
+      // Admins and marketing managers can read reports
+      allow read: if isAdmin() || isMarketingManager();
+      
+      // Only system can update reports
+      allow update: if isSystem() && isValidDocument();
+      
+      // Only admins can delete reports
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // TEMPORARY FILES
+    // ========================================================================
+    
+    match /temp-rewards/{userId}/{sessionId}/{fileName} {
+      // Users can upload temporary reward-related files
+      allow create: if isOwner(userId) && 
+                       (isValidImage() || isValidDocument()) && 
+                       isWithinSizeLimit(10) &&
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users can read their own temp files
+      allow read: if isOwner(userId);
+      
+      // Users can delete their own temp files
+      allow delete: if isOwner(userId);
+      
+      // Auto-cleanup: files older than 24 hours can be deleted by system
+      allow delete: if isSystem() && 
+                       resource.timeCreated < request.time - duration.value(24, 'h');
+    }
+    
+    // ========================================================================
+    // BACKUP FILES
+    // ========================================================================
+    
+    match /rewards-backups/{backupDate}/{fileName} {
+      // Only system can create backups
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(100);
+      
+      // Only admins can read backups
+      allow read: if isAdmin();
+      
+      // No updates to backups
+      allow update: if false;
+      
+      // Only admins can delete old backups
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SEASONAL AND EVENT REWARDS
+    // ========================================================================
+    
+    match /seasonal-rewards/{season}/{rewardType}/{fileName} {
+      // Everyone can read seasonal reward assets
+      allow read: if true;
+      
+      // Marketing managers and admins can upload seasonal rewards
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       (isValidImage() || isValidDocument()) && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Marketing managers and admins can update seasonal rewards
+      allow update: if (isMarketingManager() || isAdmin()) && 
+                       (isValidImage() || isValidDocument());
+      
+      // Marketing managers and admins can delete seasonal rewards
+      allow delete: if isMarketingManager() || isAdmin();
+    }
+    
+    match /event-rewards/{eventId}/{fileName} {
+      // Everyone can read event reward assets
+      allow read: if true;
+      
+      // Marketing managers and admins can upload event rewards
+      allow create: if (isMarketingManager() || isAdmin()) && 
+                       (isValidImage() || isValidDocument()) && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Marketing managers and admins can update event rewards
+      allow update: if (isMarketingManager() || isAdmin()) && 
+                       (isValidImage() || isValidDocument());
+      
+      // Marketing managers and admins can delete event rewards
+      allow delete: if isMarketingManager() || isAdmin();
+    }
+    
+    // ========================================================================
+    // SECURITY AND AUDIT LOGS
+    // ========================================================================
+    
+    match /rewards-audit-logs/{logType}/{fileName} {
+      // Only system can create audit logs
+      allow create: if isSystem();
+      
+      // Only admins can read audit logs
+      allow read: if isAdmin();
+      
+      // No updates or deletes of audit logs
+      allow update, delete: if false;
+    }
+    
+    // ========================================================================
+    // FALLBACK RULES
+    // ========================================================================
+    
+    // Deny all other access by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

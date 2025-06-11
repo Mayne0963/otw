@@ -131,6 +131,7 @@ export async function GET(request: NextRequest) {
     const orderId = searchParams.get('orderId');
     const status = searchParams.get('status');
     const limit = parseInt(searchParams.get('limit') || '50');
+    const isAdmin = searchParams.get('admin') === 'true';
 
     let query = adminDb.collection('screenshot_orders');
 
@@ -163,6 +164,15 @@ export async function GET(request: NextRequest) {
       id: doc.id,
       ...doc.data(),
     }));
+
+    // Return format expected by admin dashboard
+    if (isAdmin) {
+      return NextResponse.json({
+        success: true,
+        data: orders,
+        total: orders.length
+      });
+    }
 
     return NextResponse.json({
       orders,

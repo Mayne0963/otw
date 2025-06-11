@@ -21,6 +21,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import Link from 'next/link';
+import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
 
 export default function OTWServicesPage() {
   const services = [
@@ -79,26 +80,7 @@ export default function OTWServicesPage() {
     },
   ];
 
-  const testimonials = [
-    {
-      name: 'Sarah Johnson',
-      role: 'Busy Parent',
-      quote: 'OTW grocery delivery saved me hours every week. The service is reliable and the helpers are so friendly!',
-      rating: 5,
-    },
-    {
-      name: 'Mike Chen',
-      role: 'Senior Citizen',
-      quote: "I love that it's community-driven. The local drivers know the area well and always provide excellent service.",
-      rating: 5,
-    },
-    {
-      name: 'Emma Davis',
-      role: 'College Student',
-      quote: "Perfect for when I need groceries but don't have a car. Quick, affordable, and convenient!",
-      rating: 5,
-    },
-  ];
+  // Testimonials are now loaded dynamically via TestimonialsSection component
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-otw-black via-gray-900 to-black">
@@ -260,24 +242,7 @@ export default function OTWServicesPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="transition-all duration-300 hover:shadow-lg bg-otw-black/50 border-otw-red/30 hover:border-otw-gold/50">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-otw-gold text-otw-gold" />
-                    ))}
-                  </div>
-                  <p className="text-gray-300 mb-4 italic">"{testimonial.quote}"</p>
-                  <div>
-                    <p className="font-semibold text-white">{testimonial.name}</p>
-                    <p className="text-sm text-gray-400">{testimonial.role}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <TestimonialsSection limit={3} featured={true} />
         </div>
 
         {/* CTA Section */}

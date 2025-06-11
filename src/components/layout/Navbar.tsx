@@ -18,8 +18,10 @@ import {
   Trophy,
   Users,
   Briefcase,
+  ShoppingCart,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../lib/context/CartContext';
 import { Button } from '../ui/button';
 import { useOnClickOutside } from '../../hooks/useOnClickOutside';
 import { cn } from '../../lib/utils';
@@ -33,7 +35,7 @@ const mainNavItems = [
   },
   {
     name: 'Broskis Kitchen',
-    href: '/restaurants',
+    href: '/broskis',
     icon: <Utensils className="mr-3 h-4 w-4" />,
   },
   {
@@ -42,8 +44,8 @@ const mainNavItems = [
     icon: <Trophy className="mr-3 h-4 w-4" />,
   },
   {
-    name: 'Events',
-    href: '/events',
+    name: 'Catering',
+    href: '/catering',
     icon: <Camera className="mr-3 h-4 w-4" />,
   },
   {
@@ -58,6 +60,7 @@ const Navbar = () => {
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { itemCount } = useCart();
   const pathname = usePathname();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -243,6 +246,19 @@ const Navbar = () => {
 
         {/* Enhanced Right Side Actions */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
+          {/* Cart Icon */}
+          <Link
+            href="/cart"
+            className="relative -m-2.5 p-3 text-white/70 hover:text-otw-gold-400 transition-all duration-300 rounded-xl hover:bg-otw-gold-500/10 border border-transparent hover:border-otw-gold-500/30"
+          >
+            <span className="sr-only">Shopping cart</span>
+            <ShoppingCart className="h-6 w-6" aria-hidden="true" />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-otw-red text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                {itemCount > 99 ? '99+' : itemCount}
+              </span>
+            )}
+          </Link>
 
           {user ? (
             <div className="flex items-center gap-x-3">
@@ -427,6 +443,23 @@ const Navbar = () => {
                 })}
               </div>
               <div className="py-6">
+                {/* Cart Link for Mobile */}
+                <Link
+                  href="/cart"
+                  className="-mx-3 flex items-center rounded-xl px-4 py-4 text-base font-semibold leading-7 text-white/80 hover:text-otw-gold-400 hover:bg-otw-gold-500/10 border border-transparent hover:border-otw-gold-500/30 hover:shadow-md transition-all duration-300"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="flex-shrink-0 relative">
+                    <ShoppingCart className="mr-3 h-5 w-5" />
+                    {itemCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-otw-red text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                        {itemCount > 9 ? '9+' : itemCount}
+                      </span>
+                    )}
+                  </span>
+                  <span>Cart {itemCount > 0 && `(${itemCount})`}</span>
+                </Link>
+                
                 {user ? (
                   <>
                     <Link

@@ -70,3 +70,27 @@ exports.syncExternalData = backupService.syncExternalData;
 exports.scheduledBackup = backupService.dailyBackup;
 exports.dailyAnalytics = analyticsService.generateDailyReport;
 exports.weeklyCleanup = backupService.cleanupOldData;
+
+// Blaze Plan Features
+exports.processExternalApiCall = require('./services/blazePlanFeatures').processExternalApiCall;
+exports.analyzeImageWithVision = require('./services/blazePlanFeatures').analyzeImageWithVision;
+exports.getSecretValue = require('./services/blazePlanFeatures').getSecretValue;
+exports.processHighVolumeData = require('./services/blazePlanFeatures').processHighVolumeData;
+exports.sendBulkEmails = require('./services/blazePlanFeatures').sendBulkEmails;
+exports.generateAdvancedReport = require('./services/blazePlanFeatures').generateAdvancedReport;
+exports.syncWithThirdPartyService = require('./services/blazePlanFeatures').syncWithThirdPartyService;
+exports.processWebhookData = require('./services/blazePlanFeatures').processWebhookData;
+exports.handlePaymentWebhook = require('./services/blazePlanFeatures').handlePaymentWebhook;
+exports.scheduledDataProcessing = require('./services/blazePlanFeatures').scheduledDataProcessing;
+
+// Cloud Messaging
+exports.sendNotification = require('./services/cloudMessaging').sendNotification;
+exports.manageTopicSubscriptions = require('./services/cloudMessaging').manageTopicSubscriptions;
+exports.onOrderStatusChange = require('./services/cloudMessaging').onOrderStatusChange;
+exports.sendPromotionalNotifications = require('./services/cloudMessaging').sendPromotionalNotifications;
+
+// Advanced Storage
+exports.generateUploadUrl = require('./services/advancedStorage').generateUploadUrl;
+exports.processAdvancedImage = require('./services/advancedStorage').processUploadedImage;
+exports.onFileUploaded = require('./services/advancedStorage').onFileUploaded;
+exports.onFileDeleted = require('./services/advancedStorage').onFileDeleted;

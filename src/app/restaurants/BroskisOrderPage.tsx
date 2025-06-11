@@ -17,8 +17,10 @@ import {
   Award,
   Users,
   Utensils,
+  ShoppingCart,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useCart } from '../../lib/context/CartContext';
 // TODO: Remove static data import - get menu data from API
 
 
@@ -48,6 +50,7 @@ export default function BroskisOrderPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCart, cartItems } = useCart();
   const [filteredItems, setFilteredItems] = useState<MenuItem[]>([]);
 
   // Fetch menu items from API
@@ -98,6 +101,17 @@ export default function BroskisOrderPage() {
     setFilteredItems(filtered);
   }, [selectedCategory, searchQuery]);
 
+  const handleAddToCart = (item: MenuItem) => {
+    addToCart({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: 1,
+      image: item.image,
+      description: item.description,
+    });
+  };
+
   const handleOrderNow = (item: MenuItem) => {
     // Navigate to checkout with item information
     const itemData = encodeURIComponent(JSON.stringify({
@@ -109,6 +123,11 @@ export default function BroskisOrderPage() {
       description: item.description,
     }));
     router.push(`/checkout?item=${itemData}`);
+  };
+
+  const getCartItemQuantity = (itemId: string) => {
+    const cartItem = cartItems.find(item => item.id === itemId);
+    return cartItem ? cartItem.quantity : 0;
   };
 
   return (
@@ -271,21 +290,38 @@ export default function BroskisOrderPage() {
                       </div>
 
                       {/* Add to cart controls */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-otw-gold">
-                          {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-5 h-5 fill-current drop-shadow-sm" />
-                          ))}
-                          <span className="ml-2 text-sm font-bold text-gray-300">5.0</span>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center text-otw-gold">
+                            {[...Array(5)].map((_, i) => (
+                              <Star key={i} className="w-5 h-5 fill-current drop-shadow-sm" />
+                            ))}
+                            <span className="ml-2 text-sm font-bold text-gray-300">5.0</span>
+                          </div>
+                          {getCartItemQuantity(item.id) > 0 && (
+                            <div className="flex items-center bg-otw-gold/20 px-3 py-1 rounded-full border border-otw-gold/50">
+                              <ShoppingCart className="w-4 h-4 text-otw-gold mr-1" />
+                              <span className="text-otw-gold font-bold text-sm">{getCartItemQuantity(item.id)}</span>
+                            </div>
+                          )}
                         </div>
-                        <Button
-                          size="lg"
-                          onClick={() => handleOrderNow(item)}
-                          className="bg-gradient-to-r from-otw-red to-red-600 hover:from-red-600 hover:to-otw-red px-6 py-3 rounded-full font-bold transition-all duration-300 hover:scale-110 shadow-lg"
-                        >
-                          <Plus className="w-5 h-5 mr-2" />
-                          ORDER NOW
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            size="lg"
+                            onClick={() => handleAddToCart(item)}
+                            className="flex-1 bg-gradient-to-r from-otw-gold to-yellow-500 hover:from-yellow-500 hover:to-otw-gold text-black px-4 py-3 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            ADD TO CART
+                          </Button>
+                          <Button
+                            size="lg"
+                            onClick={() => handleOrderNow(item)}
+                            className="flex-1 bg-gradient-to-r from-otw-red to-red-600 hover:from-red-600 hover:to-otw-red px-4 py-3 rounded-full font-bold transition-all duration-300 hover:scale-105 shadow-lg"
+                          >
+                            ORDER NOW
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

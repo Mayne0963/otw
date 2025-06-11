@@ -1,0 +1,588 @@
+/**
+ * Firebase Storage Security Rules for Analytics Bucket
+ * Bucket: ezyzip-analytics.appspot.com
+ * Purpose: Analytics data, reports, user behavior data, and business intelligence files
+ */
+
+service firebase.storage {
+  match /b/ezyzip-analytics.appspot.com/o {
+    
+    // ========================================================================
+    // HELPER FUNCTIONS
+    // ========================================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'admin';
+    }
+    
+    function isAnalyst() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'analyst';
+    }
+    
+    function isMarketingManager() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'marketing_manager';
+    }
+    
+    function isRestaurantOwner() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'restaurant_owner';
+    }
+    
+    function isCustomerService() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'customer_service';
+    }
+    
+    function isSystem() {
+      // Cloud Functions have special system tokens
+      return request.auth != null && 
+             request.auth.token.get('system', false) == true;
+    }
+    
+    function hasAnalyticsAccess() {
+      return isAdmin() || isAnalyst() || isMarketingManager();
+    }
+    
+    function hasRestaurantAnalyticsAccess(restaurantId) {
+      // Restaurant owners can only access their own analytics
+      return isRestaurantOwner() && 
+             request.auth.token.get('restaurant_id', '') == restaurantId;
+    }
+    
+    function isValidDataFile() {
+      return resource.contentType in [
+        'application/json',
+        'text/csv',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/plain',
+        'application/pdf'
+      ];
+    }
+    
+    function isValidReportFile() {
+      return resource.contentType in [
+        'application/pdf',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'text/csv',
+        'application/json'
+      ];
+    }
+    
+    function isWithinSizeLimit(maxSizeMB) {
+      return resource.size <= maxSizeMB * 1024 * 1024;
+    }
+    
+    function hasValidFilename() {
+      return resource.name.matches('[a-zA-Z0-9._-]+');
+    }
+    
+    function isRecentFile() {
+      return resource.timeCreated > request.time - duration.value(1, 'h');
+    }
+    
+    function isValidDateFormat() {
+      // Check if filename contains valid date format (YYYY-MM-DD)
+      return resource.name.matches('.*[0-9]{4}-[0-9]{2}-[0-9]{2}.*');
+    }
+    
+    // ========================================================================
+    // RAW ANALYTICS DATA
+    // ========================================================================
+    
+    match /raw-data/user-events/{date}/{fileName} {
+      // Only system can create raw user event data
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(100) &&
+                       hasValidFilename() &&
+                       isValidDateFormat();
+      
+      // Analysts and admins can read raw data
+      allow read: if hasAnalyticsAccess();
+      
+      // Only system can update raw data (for data corrections)
+      allow update: if isSystem() && isValidDataFile();
+      
+      // Only admins can delete raw data
+      allow delete: if isAdmin();
+    }
+    
+    match /raw-data/order-events/{date}/{fileName} {
+      // Only system can create raw order event data
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(200) &&
+                       hasValidFilename() &&
+                       isValidDateFormat();
+      
+      // Analysts, admins, and restaurant owners can read order data
+      allow read: if hasAnalyticsAccess() || isRestaurantOwner();
+      
+      // Only system can update raw data
+      allow update: if isSystem() && isValidDataFile();
+      
+      // Only admins can delete raw data
+      allow delete: if isAdmin();
+    }
+    
+    match /raw-data/app-performance/{date}/{fileName} {
+      // Only system can create app performance data
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(50) &&
+                       hasValidFilename() &&
+                       isValidDateFormat();
+      
+      // Analysts and admins can read performance data
+      allow read: if hasAnalyticsAccess();
+      
+      // Only system can update performance data
+      allow update: if isSystem() && isValidDataFile();
+      
+      // Only admins can delete performance data
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // PROCESSED ANALYTICS
+    // ========================================================================
+    
+    match /processed-data/daily-summaries/{date}/{fileName} {
+      // Only system can create daily summaries
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(20) &&
+                       hasValidFilename() &&
+                       isValidDateFormat();
+      
+      // Analytics team can read daily summaries
+      allow read: if hasAnalyticsAccess();
+      
+      // Only system can update summaries
+      allow update: if isSystem() && isValidDataFile();
+      
+      // Only admins can delete summaries
+      allow delete: if isAdmin();
+    }
+    
+    match /processed-data/weekly-reports/{weekOf}/{fileName} {
+      // Only system can create weekly reports
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(30) &&
+                       hasValidFilename();
+      
+      // Analytics team and restaurant owners can read weekly reports
+      allow read: if hasAnalyticsAccess() || isRestaurantOwner();
+      
+      // Only system can update reports
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete reports
+      allow delete: if isAdmin();
+    }
+    
+    match /processed-data/monthly-reports/{monthOf}/{fileName} {
+      // Only system can create monthly reports
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(50) &&
+                       hasValidFilename();
+      
+      // Analytics team and restaurant owners can read monthly reports
+      allow read: if hasAnalyticsAccess() || isRestaurantOwner();
+      
+      // Only system can update reports
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete reports
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // RESTAURANT-SPECIFIC ANALYTICS
+    // ========================================================================
+    
+    match /restaurant-analytics/{restaurantId}/sales/{period}/{fileName} {
+      // Only system can create restaurant sales analytics
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(20) &&
+                       hasValidFilename();
+      
+      // Restaurant owners can read their own analytics, admins can read all
+      allow read: if hasRestaurantAnalyticsAccess(restaurantId) || 
+                     hasAnalyticsAccess();
+      
+      // Only system can update analytics
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete analytics
+      allow delete: if isAdmin();
+    }
+    
+    match /restaurant-analytics/{restaurantId}/customer-insights/{period}/{fileName} {
+      // Only system can create customer insights
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(15) &&
+                       hasValidFilename();
+      
+      // Restaurant owners can read their own insights, admins can read all
+      allow read: if hasRestaurantAnalyticsAccess(restaurantId) || 
+                     hasAnalyticsAccess();
+      
+      // Only system can update insights
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete insights
+      allow delete: if isAdmin();
+    }
+    
+    match /restaurant-analytics/{restaurantId}/performance/{period}/{fileName} {
+      // Only system can create performance analytics
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(10) &&
+                       hasValidFilename();
+      
+      // Restaurant owners can read their own performance data
+      allow read: if hasRestaurantAnalyticsAccess(restaurantId) || 
+                     hasAnalyticsAccess();
+      
+      // Only system can update performance data
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete performance data
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // USER BEHAVIOR ANALYTICS
+    // ========================================================================
+    
+    match /user-behavior/session-data/{date}/{fileName} {
+      // Only system can create session data
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(100) &&
+                       hasValidFilename() &&
+                       isValidDateFormat();
+      
+      // Only analytics team can read session data
+      allow read: if hasAnalyticsAccess();
+      
+      // Only system can update session data
+      allow update: if isSystem() && isValidDataFile();
+      
+      // Only admins can delete session data
+      allow delete: if isAdmin();
+    }
+    
+    match /user-behavior/funnel-analysis/{period}/{fileName} {
+      // Only system can create funnel analysis
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(25) &&
+                       hasValidFilename();
+      
+      // Analytics team and marketing can read funnel analysis
+      allow read: if hasAnalyticsAccess();
+      
+      // Only system can update funnel analysis
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete funnel analysis
+      allow delete: if isAdmin();
+    }
+    
+    match /user-behavior/cohort-analysis/{period}/{fileName} {
+      // Only system can create cohort analysis
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(30) &&
+                       hasValidFilename();
+      
+      // Analytics team and marketing can read cohort analysis
+      allow read: if hasAnalyticsAccess();
+      
+      // Only system can update cohort analysis
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete cohort analysis
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // FINANCIAL ANALYTICS
+    // ========================================================================
+    
+    match /financial-analytics/revenue/{period}/{fileName} {
+      // Only system can create revenue analytics
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(20) &&
+                       hasValidFilename();
+      
+      // Only admins and analysts can read financial data
+      allow read: if isAdmin() || isAnalyst();
+      
+      // Only system can update financial data
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete financial data
+      allow delete: if isAdmin();
+    }
+    
+    match /financial-analytics/commission/{period}/{fileName} {
+      // Only system can create commission analytics
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(15) &&
+                       hasValidFilename();
+      
+      // Only admins and analysts can read commission data
+      allow read: if isAdmin() || isAnalyst();
+      
+      // Only system can update commission data
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete commission data
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // MARKETING ANALYTICS
+    // ========================================================================
+    
+    match /marketing-analytics/campaigns/{campaignId}/{fileName} {
+      // Only system can create campaign analytics
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(20) &&
+                       hasValidFilename();
+      
+      // Marketing team and admins can read campaign analytics
+      allow read: if isMarketingManager() || isAdmin() || isAnalyst();
+      
+      // Only system can update campaign analytics
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete campaign analytics
+      allow delete: if isAdmin();
+    }
+    
+    match /marketing-analytics/conversion-rates/{period}/{fileName} {
+      // Only system can create conversion rate analytics
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(15) &&
+                       hasValidFilename();
+      
+      // Marketing team and admins can read conversion analytics
+      allow read: if isMarketingManager() || isAdmin() || isAnalyst();
+      
+      // Only system can update conversion analytics
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete conversion analytics
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // CUSTOM REPORTS
+    // ========================================================================
+    
+    match /custom-reports/{reportId}/{fileName} {
+      // Analysts and admins can create custom reports
+      allow create: if (isAnalyst() || isAdmin()) && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(50) &&
+                       hasValidFilename() &&
+                       isRecentFile();
+      
+      // Analytics team can read custom reports
+      allow read: if hasAnalyticsAccess();
+      
+      // Analysts and admins can update custom reports
+      allow update: if (isAnalyst() || isAdmin()) && isValidReportFile();
+      
+      // Analysts and admins can delete custom reports
+      allow delete: if isAnalyst() || isAdmin();
+    }
+    
+    match /scheduled-reports/{reportType}/{schedule}/{fileName} {
+      // Only system can create scheduled reports
+      allow create: if isSystem() && 
+                       isValidReportFile() && 
+                       isWithinSizeLimit(100) &&
+                       hasValidFilename();
+      
+      // Analytics team can read scheduled reports
+      allow read: if hasAnalyticsAccess();
+      
+      // Only system can update scheduled reports
+      allow update: if isSystem() && isValidReportFile();
+      
+      // Only admins can delete scheduled reports
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // DATA EXPORTS
+    // ========================================================================
+    
+    match /data-exports/{exportType}/{requestId}/{fileName} {
+      // Analysts and admins can create data exports
+      allow create: if (isAnalyst() || isAdmin()) && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(500) &&
+                       hasValidFilename() &&
+                       isRecentFile();
+      
+      // Analytics team can read data exports
+      allow read: if hasAnalyticsAccess();
+      
+      // No updates to exports (they are immutable)
+      allow update: if false;
+      
+      // Analysts and admins can delete exports
+      allow delete: if isAnalyst() || isAdmin();
+      
+      // Auto-cleanup: exports older than 30 days can be deleted by system
+      allow delete: if isSystem() && 
+                       resource.timeCreated < request.time - duration.value(30, 'd');
+    }
+    
+    // ========================================================================
+    // MACHINE LEARNING DATA
+    // ========================================================================
+    
+    match /ml-data/training-sets/{modelType}/{fileName} {
+      // Only system can create ML training data
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(1000) &&
+                       hasValidFilename();
+      
+      // Only admins and analysts can read ML data
+      allow read: if isAdmin() || isAnalyst();
+      
+      // Only system can update ML data
+      allow update: if isSystem() && isValidDataFile();
+      
+      // Only admins can delete ML data
+      allow delete: if isAdmin();
+    }
+    
+    match /ml-data/model-outputs/{modelType}/{fileName} {
+      // Only system can create model outputs
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(100) &&
+                       hasValidFilename();
+      
+      // Analytics team can read model outputs
+      allow read: if hasAnalyticsAccess();
+      
+      // Only system can update model outputs
+      allow update: if isSystem() && isValidDataFile();
+      
+      // Only admins can delete model outputs
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // BACKUP AND ARCHIVE
+    // ========================================================================
+    
+    match /analytics-backups/{backupDate}/{fileName} {
+      // Only system can create backups
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(1000);
+      
+      // Only admins can read backups
+      allow read: if isAdmin();
+      
+      // No updates to backups
+      allow update: if false;
+      
+      // Only admins can delete old backups
+      allow delete: if isAdmin();
+    }
+    
+    match /archived-data/{archiveYear}/{fileName} {
+      // Only system can create archived data
+      allow create: if isSystem() && 
+                       isValidDataFile() && 
+                       isWithinSizeLimit(2000);
+      
+      // Only admins can read archived data
+      allow read: if isAdmin();
+      
+      // No updates to archived data
+      allow update: if false;
+      
+      // Only admins can delete archived data
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // TEMPORARY ANALYTICS FILES
+    // ========================================================================
+    
+    match /temp-analytics/{userId}/{sessionId}/{fileName} {
+      // Analysts can upload temporary analytics files
+      allow create: if (isAnalyst() || isAdmin()) && 
+                       request.auth.uid == userId &&
+                       isValidDataFile() && 
+                       isWithinSizeLimit(100) &&
+                       hasValidFilename() &&
+                       isRecentFile();
+      
+      // Users can read their own temp files
+      allow read: if request.auth.uid == userId || isAdmin();
+      
+      // Users can delete their own temp files
+      allow delete: if request.auth.uid == userId || isAdmin();
+      
+      // Auto-cleanup: files older than 7 days can be deleted by system
+      allow delete: if isSystem() && 
+                       resource.timeCreated < request.time - duration.value(7, 'd');
+    }
+    
+    // ========================================================================
+    // SECURITY AND AUDIT LOGS
+    // ========================================================================
+    
+    match /analytics-audit-logs/{logType}/{fileName} {
+      // Only system can create audit logs
+      allow create: if isSystem();
+      
+      // Only admins can read audit logs
+      allow read: if isAdmin();
+      
+      // No updates or deletes of audit logs
+      allow update, delete: if false;
+    }
+    
+    // ========================================================================
+    // FALLBACK RULES
+    // ========================================================================
+    
+    // Deny all other access by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

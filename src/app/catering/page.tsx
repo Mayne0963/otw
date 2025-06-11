@@ -1,36 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import {
-  Utensils,
   Users,
   Clock,
   Phone,
-  Mail,
   Star,
   CheckCircle,
   ChefHat,
   Truck,
-  Calendar,
-  MapPin,
-  Heart,
   Leaf,
-  Zap,
   Award,
-  Coffee,
-  Pizza,
-  Cake,
-  Salad,
+  Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from '../../components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import TestimonialsSection from '../../components/testimonials/TestimonialsSection';
 
 interface CateringPackage {
   id: string;
@@ -56,165 +54,18 @@ interface MenuItem {
   prepTime: string;
 }
 
-const CATERING_PACKAGES: CateringPackage[] = [
-  {
-    id: 'breakfast-basic',
-    name: 'Continental Breakfast',
-    description: 'Perfect start to your morning event with fresh pastries and coffee',
-    pricePerPerson: 12,
-    minGuests: 10,
-    category: 'breakfast',
-    features: [
-      'Assorted pastries and muffins',
-      'Fresh fruit platter',
-      'Premium coffee and tea service',
-      'Orange juice and water',
-      'Disposable plates and utensils',
-      'Setup and cleanup included',
-    ],
-  },
-  {
-    id: 'lunch-deluxe',
-    name: 'Executive Lunch',
-    description: 'Professional lunch service perfect for corporate events',
-    pricePerPerson: 18,
-    minGuests: 15,
-    category: 'lunch',
-    features: [
-      'Choice of 3 gourmet sandwiches',
-      'Mixed green salad',
-      'Seasonal soup',
-      'Chips and pickles',
-      'Dessert selection',
-      'Beverages included',
-      'Professional service staff',
-    ],
-    popular: true,
-  },
-  {
-    id: 'dinner-premium',
-    name: 'Premium Dinner Service',
-    description: 'Elegant multi-course dinner for special occasions',
-    pricePerPerson: 45,
-    minGuests: 20,
-    category: 'dinner',
-    features: [
-      'Three-course plated dinner',
-      'Choice of premium entrees',
-      'Seasonal vegetables',
-      'Artisan bread service',
-      'Signature dessert',
-      'Wine pairing available',
-      'White-glove service',
-      'Linens and centerpieces',
-    ],
-    premium: true,
-  },
-  {
-    id: 'dessert-station',
-    name: 'Dessert Station',
-    description: 'Sweet endings for any celebration',
-    pricePerPerson: 8,
-    minGuests: 10,
-    category: 'dessert',
-    features: [
-      'Assorted mini desserts',
-      'Fresh fruit display',
-      'Chocolate fountain',
-      'Coffee and tea service',
-      'Decorative presentation',
-      'Serving utensils included',
-    ],
-  },
-  {
-    id: 'beverage-package',
-    name: 'Premium Beverage Service',
-    description: 'Complete beverage solutions for your event',
-    pricePerPerson: 15,
-    minGuests: 15,
-    category: 'beverages',
-    features: [
-      'Open bar service (4 hours)',
-      'Premium spirits and wines',
-      'Craft beer selection',
-      'Signature cocktails',
-      'Non-alcoholic options',
-      'Professional bartender',
-      'All glassware included',
-    ],
-  },
-];
-
-const MENU_ITEMS: MenuItem[] = [
-  {
-    id: 'gourmet-sandwich-platter',
-    name: 'Gourmet Sandwich Platter',
-    description: 'Assorted premium sandwiches with artisan breads and fresh ingredients',
-    price: 89,
-    category: 'Lunch',
-    dietary: ['Vegetarian Options'],
-    image: '/images/catering/sandwich-platter.jpg',
-    servingSize: 'Serves 8-10',
-    prepTime: '2 hours notice',
-  },
-  {
-    id: 'mediterranean-mezze',
-    name: 'Mediterranean Mezze Board',
-    description: 'Hummus, olives, cheese, crackers, and fresh vegetables',
-    price: 65,
-    category: 'Appetizers',
-    dietary: ['Vegetarian', 'Gluten-Free Options'],
-    image: '/images/catering/mezze-board.jpg',
-    servingSize: 'Serves 6-8',
-    prepTime: '4 hours notice',
-  },
-  {
-    id: 'bbq-platter',
-    name: 'BBQ Feast Platter',
-    description: 'Pulled pork, brisket, ribs with sides and sauces',
-    price: 145,
-    category: 'Dinner',
-    dietary: ['Gluten-Free Sides'],
-    image: '/images/catering/bbq-platter.jpg',
-    servingSize: 'Serves 10-12',
-    prepTime: '24 hours notice',
-  },
-  {
-    id: 'breakfast-pastry-box',
-    name: 'Breakfast Pastry Box',
-    description: 'Fresh croissants, muffins, and danish pastries',
-    price: 45,
-    category: 'Breakfast',
-    dietary: ['Vegetarian'],
-    image: '/images/catering/pastry-box.jpg',
-    servingSize: 'Serves 6-8',
-    prepTime: '1 day notice',
-  },
-  {
-    id: 'salad-bar-setup',
-    name: 'Build-Your-Own Salad Bar',
-    description: 'Complete salad station with fresh greens, toppings, and dressings',
-    price: 12,
-    category: 'Lunch',
-    dietary: ['Vegetarian', 'Vegan', 'Gluten-Free'],
-    image: '/images/catering/salad-bar.jpg',
-    servingSize: 'Per person',
-    prepTime: '4 hours notice',
-  },
-  {
-    id: 'dessert-tower',
-    name: 'Dessert Tower',
-    description: 'Tiered display of assorted mini desserts and sweets',
-    price: 95,
-    category: 'Desserts',
-    dietary: ['Vegetarian', 'Some Gluten-Free'],
-    image: '/images/catering/dessert-tower.jpg',
-    servingSize: 'Serves 12-15',
-    prepTime: '48 hours notice',
-  },
-];
+// Dynamic state will replace static data
 
 export default function CateringPage() {
+  // Dynamic state for data
+  const [cateringPackages, setCateringPackages] = useState<CateringPackage[]>(
+    [],
+  );
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // UI state
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPackage, setSelectedPackage] = useState<string>('');
   const [showQuoteForm, setShowQuoteForm] = useState(false);
@@ -230,25 +81,157 @@ export default function CateringPage() {
     additionalRequests: '',
   });
 
+  // Fetch catering data
+  useEffect(() => {
+    const fetchCateringData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch catering packages and menu items in parallel
+        const [packagesResponse, menuResponse] = await Promise.all([
+          fetch('/api/catering/packages'),
+          fetch('/api/catering/menu'),
+        ]);
+
+        if (!packagesResponse.ok) {
+          throw new Error('Failed to fetch catering packages');
+        }
+        if (!menuResponse.ok) {
+          throw new Error('Failed to fetch catering menu');
+        }
+
+        const packagesData = await packagesResponse.json();
+        const menuData = await menuResponse.json();
+
+        // Ensure we have arrays from the API response
+        const packages = Array.isArray(packagesData)
+          ? packagesData
+          : packagesData?.packages && Array.isArray(packagesData.packages)
+            ? packagesData.packages
+            : [];
+        const items = Array.isArray(menuData)
+          ? menuData
+          : menuData?.menuItems && Array.isArray(menuData.menuItems)
+            ? menuData.menuItems
+            : [];
+
+        setCateringPackages(packages);
+        setMenuItems(items);
+      } catch (err) {
+        console.error('Error fetching catering data:', err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Failed to load catering information',
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCateringData();
+  }, []);
+
   const router = useRouter();
 
-  const handleOrderNow = (item: any) => {
+  const handleOrderNow = (item: MenuItem) => {
     router.push(`/checkout?item=${encodeURIComponent(JSON.stringify(item))}`);
   };
 
-  const categories = ['all', 'breakfast', 'lunch', 'dinner', 'dessert', 'beverages'];
-  const menuCategories = ['All', 'Breakfast', 'Lunch', 'Dinner', 'Appetizers', 'Desserts'];
+  const categories = [
+    'all',
+    'breakfast',
+    'lunch',
+    'dinner',
+    'dessert',
+    'beverages',
+  ];
+  const menuCategories = [
+    'All',
+    'Breakfast',
+    'Lunch',
+    'Dinner',
+    'Appetizers',
+    'Desserts',
+  ];
 
-  const filteredPackages = selectedCategory === 'all'
-    ? CATERING_PACKAGES
-    : CATERING_PACKAGES.filter(pkg => pkg.category === selectedCategory);
+  // Ensure arrays are always valid before filtering with comprehensive safety checks
+  const safePackages = React.useMemo(() => {
+    try {
+      if (Array.isArray(cateringPackages)) {return cateringPackages;}
+      if (
+        cateringPackages &&
+        typeof cateringPackages === 'object' &&
+        Array.isArray(cateringPackages.data)
+      ) {
+        return cateringPackages.data;
+      }
+      return [];
+    } catch (error) {
+      console.error('Error processing catering packages:', error);
+      return [];
+    }
+  }, [cateringPackages]);
+
+  const safeMenuItems = React.useMemo(() => {
+    try {
+      if (Array.isArray(menuItems)) {return menuItems;}
+      if (
+        menuItems &&
+        typeof menuItems === 'object' &&
+        Array.isArray(menuItems.data)
+      ) {
+        return menuItems.data;
+      }
+      return [];
+    } catch (error) {
+      console.error('Error processing menu items:', error);
+      return [];
+    }
+  }, [menuItems]);
+
+  // Filter packages with additional safety checks
+  const filteredPackages = React.useMemo(() => {
+    try {
+      if (!Array.isArray(safePackages)) {return [];}
+      return selectedCategory === 'all'
+        ? safePackages
+        : safePackages.filter(
+            (pkg) =>
+              pkg &&
+              typeof pkg === 'object' &&
+              pkg.category === selectedCategory,
+          );
+    } catch (error) {
+      console.error('Error filtering packages:', error);
+      return [];
+    }
+  }, [safePackages, selectedCategory]);
 
   const [selectedMenuCategory, setSelectedMenuCategory] = useState('All');
-  const filteredMenuItems = selectedMenuCategory === 'All'
-    ? MENU_ITEMS
-    : MENU_ITEMS.filter(item => item.category === selectedMenuCategory);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // Filter menu items with additional safety checks
+  const filteredMenuItems = React.useMemo(() => {
+    try {
+      if (!Array.isArray(safeMenuItems)) {return [];}
+      return selectedMenuCategory === 'All'
+        ? safeMenuItems
+        : safeMenuItems.filter(
+            (item) =>
+              item &&
+              typeof item === 'object' &&
+              item.category === selectedMenuCategory,
+          );
+    } catch (error) {
+      console.error('Error filtering menu items:', error);
+      return [];
+    }
+  }, [safeMenuItems, selectedMenuCategory]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -259,7 +242,7 @@ export default function CateringPage() {
     e.preventDefault();
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       toast({
         title: 'Catering Quote Requested!',
@@ -299,6 +282,41 @@ export default function CateringPage() {
     });
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-otw-black via-otw-black-800 to-otw-black-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-otw-gold animate-spin mx-auto mb-4" />
+          <p className="text-white text-lg">Loading catering information...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-otw-black via-otw-black-800 to-otw-black-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ChefHat className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Oops! Something went wrong
+          </h2>
+          <p className="text-gray-300 mb-6">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-otw-black via-otw-black-800 to-otw-black-900">
       {/* Hero Section */}
@@ -314,7 +332,9 @@ export default function CateringPage() {
                 Premium <span className="text-otw-gold">Catering</span>
               </h1>
               <p className="text-xl text-gray-300 mb-8 max-w-2xl">
-                Exceptional culinary experiences delivered to your event. From intimate gatherings to large celebrations, we bring restaurant-quality food to you.
+                Exceptional culinary experiences delivered to your event. From
+                intimate gatherings to large celebrations, we bring
+                restaurant-quality food to you.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -323,7 +343,10 @@ export default function CateringPage() {
                 >
                   Get Catering Quote
                 </Button>
-                <Button variant="outline" className="border-2 border-otw-gold text-otw-gold hover:bg-otw-gold hover:text-black px-8 py-3 rounded-full transition-all duration-300">
+                <Button
+                  variant="outline"
+                  className="border-2 border-otw-gold text-otw-gold hover:bg-otw-gold hover:text-black px-8 py-3 rounded-full transition-all duration-300"
+                >
                   <Phone className="w-5 h-5 mr-2" />
                   Call (260) 555-FOOD
                 </Button>
@@ -362,32 +385,48 @@ export default function CateringPage() {
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Truck className="w-8 h-8 text-black" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Delivery & Setup</h3>
-              <p className="text-gray-300 text-sm">Full-service delivery with professional setup and presentation</p>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Delivery & Setup
+              </h3>
+              <p className="text-gray-300 text-sm">
+                Full-service delivery with professional setup and presentation
+              </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="w-8 h-8 text-black" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Event Staffing</h3>
-              <p className="text-gray-300 text-sm">Professional servers and bartenders for your event</p>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Event Staffing
+              </h3>
+              <p className="text-gray-300 text-sm">
+                Professional servers and bartenders for your event
+              </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Leaf className="w-8 h-8 text-black" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Dietary Options</h3>
-              <p className="text-gray-300 text-sm">Vegetarian, vegan, gluten-free, and allergy-friendly options</p>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Dietary Options
+              </h3>
+              <p className="text-gray-300 text-sm">
+                Vegetarian, vegan, gluten-free, and allergy-friendly options
+              </p>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 bg-gradient-to-r from-otw-gold to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Award className="w-8 h-8 text-black" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Quality Guarantee</h3>
-              <p className="text-gray-300 text-sm">Fresh ingredients and restaurant-quality preparation</p>
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Quality Guarantee
+              </h3>
+              <p className="text-gray-300 text-sm">
+                Fresh ingredients and restaurant-quality preparation
+              </p>
             </div>
           </div>
         </div>
@@ -424,71 +463,114 @@ export default function CateringPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredPackages.map((pkg) => (
-              <Card
-                key={pkg.id}
-                className={`bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:shadow-otw-gold/10 relative ${
-                  selectedPackage === pkg.id
-                    ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20 scale-105'
-                    : 'border-otw-gold/20 hover:border-otw-gold/40'
-                }`}
-              >
-                {pkg.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-red-500 text-white px-4 py-2 text-sm font-semibold">
-                      🔥 Most Popular
-                    </Badge>
-                  </div>
-                )}
-                {pkg.premium && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 text-sm font-semibold">
-                      ✨ Premium
-                    </Badge>
-                  </div>
-                )}
-
-                <CardHeader className="text-center">
-                  <CardTitle className="text-xl text-white mb-2">{pkg.name}</CardTitle>
-                  <CardDescription className="text-gray-300 mb-4">
-                    {pkg.description}
-                  </CardDescription>
-                  <div className="text-3xl font-bold text-otw-gold mb-2">
-                    ${pkg.pricePerPerson}
-                    <span className="text-sm text-gray-400">/person</span>
-                  </div>
-                  <div className="text-sm text-gray-400">
-                    Minimum {pkg.minGuests} guests
-                  </div>
-                </CardHeader>
-
-                <CardContent>
-                  <ul className="space-y-2 mb-6">
-                    {pkg.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2 text-gray-300">
-                        <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    onClick={() => {
-                      setSelectedPackage(pkg.id);
-                      setFormData(prev => ({ ...prev, eventType: pkg.name }));
-                      setShowQuoteForm(true);
-                    }}
-                    className={`w-full py-3 rounded-xl transition-all duration-300 ${
-                      pkg.premium
-                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
-                        : 'bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold hover:shadow-lg hover:shadow-otw-gold/20'
+            {Array.isArray(filteredPackages) && filteredPackages.length > 0 ? (
+              filteredPackages
+                .filter((pkg) => pkg && pkg.id)
+                .map((pkg) => (
+                  <Card
+                    key={pkg.id}
+                    className={`bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:shadow-otw-gold/10 relative ${
+                      selectedPackage === pkg.id
+                        ? 'border-otw-gold/60 shadow-lg shadow-otw-gold/20 scale-105'
+                        : 'border-otw-gold/20 hover:border-otw-gold/40'
                     }`}
                   >
-                    Select Package
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    {pkg.popular && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <Badge className="bg-red-500 text-white px-4 py-2 text-sm font-semibold">
+                          🔥 Most Popular
+                        </Badge>
+                      </div>
+                    )}
+                    {pkg.premium && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 text-sm font-semibold">
+                          ✨ Premium
+                        </Badge>
+                      </div>
+                    )}
+
+                    <CardHeader className="text-center">
+                      <CardTitle className="text-xl text-white mb-2">
+                        {pkg.name}
+                      </CardTitle>
+                      <CardDescription className="text-gray-300 mb-4">
+                        {pkg.description}
+                      </CardDescription>
+                      <div className="text-3xl font-bold text-otw-gold mb-2">
+                        ${pkg.pricePerPerson}
+                        <span className="text-sm text-gray-400">/person</span>
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        Minimum {pkg.minGuests} guests
+                      </div>
+                    </CardHeader>
+
+                    <CardContent>
+                      <ul className="space-y-2 mb-6">
+                        {Array.isArray(pkg.features) &&
+                        pkg.features.length > 0 ? (
+                          pkg.features.map((feature, index) => (
+                            <li
+                              key={index}
+                              className="flex items-center gap-2 text-gray-300"
+                            >
+                              <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                              <span className="text-sm">{feature}</span>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="flex items-center gap-2 text-gray-300">
+                            <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+                            <span className="text-sm">
+                              Package details available upon request
+                            </span>
+                          </li>
+                        )}
+                      </ul>
+
+                      <Button
+                        onClick={() => {
+                          setSelectedPackage(pkg.id);
+                          setFormData((prev) => ({
+                            ...prev,
+                            eventType: pkg.name,
+                          }));
+                          setShowQuoteForm(true);
+                        }}
+                        className={`w-full py-3 rounded-xl transition-all duration-300 ${
+                          pkg.premium
+                            ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg hover:shadow-purple-500/20'
+                            : 'bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold hover:shadow-lg hover:shadow-otw-gold/20'
+                        }`}
+                      >
+                        Select Package
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <div className="w-20 h-20 bg-otw-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ChefHat className="w-10 h-10 text-otw-gold/60" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  No Menu Items Available
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  {selectedMenuCategory === 'All'
+                    ? 'No menu items are currently available. Please try again later.'
+                    : `No items found for ${selectedMenuCategory}. Try selecting a different category.`}
+                </p>
+                <Button
+                  onClick={() => setSelectedMenuCategory('All')}
+                  variant="outline"
+                  className="border-otw-gold text-otw-gold hover:bg-otw-gold hover:text-black"
+                >
+                  View All Items
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -511,7 +593,9 @@ export default function CateringPage() {
               <Button
                 key={category}
                 onClick={() => setSelectedMenuCategory(category)}
-                variant={selectedMenuCategory === category ? 'default' : 'outline'}
+                variant={
+                  selectedMenuCategory === category ? 'default' : 'outline'
+                }
                 className={`px-6 py-2 rounded-full transition-all duration-300 ${
                   selectedMenuCategory === category
                     ? 'bg-gradient-to-r from-otw-gold to-yellow-500 text-black'
@@ -524,58 +608,107 @@ export default function CateringPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredMenuItems.map((item) => (
-              <Card key={item.id} className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20 hover:border-otw-gold/40 transition-all duration-300 hover:shadow-lg hover:shadow-otw-gold/10">
-                <div className="relative h-48 overflow-hidden rounded-t-lg">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-otw-gold text-black font-semibold">
-                      {item.category}
-                    </Badge>
-                  </div>
-                </div>
-
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold text-white">{item.name}</h3>
-                    <span className="text-2xl font-bold text-otw-gold">${item.price}</span>
-                  </div>
-
-                  <p className="text-gray-300 text-sm mb-4">{item.description}</p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {item.dietary.map((diet, index) => (
-                      <Badge key={index} variant="outline" className="border-green-400 text-green-400 text-xs">
-                        {diet}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <div className="flex justify-between items-center text-sm text-gray-400 mb-4">
-                    <span className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      {item.servingSize}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {item.prepTime}
-                    </span>
-                  </div>
-
-                  <Button
-                    onClick={() => handleAddToCart(item)}
-                    className="w-full bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold py-2 rounded-lg hover:shadow-lg transition-all duration-300"
+            {Array.isArray(filteredMenuItems) &&
+            filteredMenuItems.length > 0 ? (
+              filteredMenuItems
+                .filter((item) => item && item.id)
+                .map((item) => (
+                  <Card
+                    key={item.id}
+                    className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20 hover:border-otw-gold/40 transition-all duration-300 hover:shadow-lg hover:shadow-otw-gold/10"
                   >
-                    Add to Cart
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className="relative h-48 overflow-hidden rounded-t-lg">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-cover transition-transform duration-300 hover:scale-105"
+                      />
+                      <div className="absolute top-4 right-4">
+                        <Badge className="bg-otw-gold text-black font-semibold">
+                          {item.category}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-xl font-semibold text-white">
+                          {item.name}
+                        </h3>
+                        <span className="text-2xl font-bold text-otw-gold">
+                          ${item.price}
+                        </span>
+                      </div>
+
+                      <p className="text-gray-300 text-sm mb-4">
+                        {item.description}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {Array.isArray(item.dietary) &&
+                        item.dietary.length > 0 ? (
+                          item.dietary.map((diet, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="border-green-400 text-green-400 text-xs"
+                            >
+                              {diet}
+                            </Badge>
+                          ))
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="border-gray-400 text-gray-400 text-xs"
+                          >
+                            Standard
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="flex justify-between items-center text-sm text-gray-400 mb-4">
+                        <span className="flex items-center gap-1">
+                          <Users className="w-4 h-4" />
+                          {item.servingSize}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {item.prepTime}
+                        </span>
+                      </div>
+
+                      <Button
+                        onClick={() => handleAddToCart(item)}
+                        className="w-full bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold py-2 rounded-lg hover:shadow-lg transition-all duration-300"
+                      >
+                        Add to Cart
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <div className="w-20 h-20 bg-otw-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ChefHat className="w-10 h-10 text-otw-gold/60" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  No Packages Available
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  {selectedCategory === 'all'
+                    ? 'No catering packages are currently available. Please try again later.'
+                    : `No packages found for ${selectedCategory}. Try selecting a different category.`}
+                </p>
+                <Button
+                  onClick={() => setSelectedCategory('all')}
+                  variant="outline"
+                  className="border-otw-gold text-otw-gold hover:bg-otw-gold hover:text-black"
+                >
+                  View All Categories
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -588,74 +721,8 @@ export default function CateringPage() {
               Client <span className="text-otw-gold">Reviews</span>
             </h2>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-4">
-                  "The catering for our corporate event was exceptional. Every dish was perfectly prepared and beautifully presented."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-otw-gold rounded-full flex items-center justify-center">
-                    <span className="text-black font-semibold">MJ</span>
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold">Maria Johnson</p>
-                    <p className="text-gray-400 text-sm">Corporate Event Manager</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-4">
-                  "Outstanding service and delicious food! They accommodated all our dietary restrictions perfectly."
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-otw-gold rounded-full flex items-center justify-center">
-                    <span className="text-black font-semibold">DL</span>
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold">David Lee</p>
-                    <p className="text-gray-400 text-sm">Wedding Coordinator</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-otw-black-800/80 to-otw-black-900/80 backdrop-blur-sm border border-otw-gold/20">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-4">
-                  "Professional, reliable, and the food was absolutely amazing. Will definitely use them again!"
-                </p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-otw-gold rounded-full flex items-center justify-center">
-                    <span className="text-black font-semibold">SK</span>
-                  </div>
-                  <div>
-                    <p className="text-white font-semibold">Sarah Kim</p>
-                    <p className="text-gray-400 text-sm">Birthday Party Host</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          
+          <TestimonialsSection limit={3} featured={true} serviceType="catering" />
         </div>
       </div>
 
@@ -675,7 +742,8 @@ export default function CateringPage() {
                 </Button>
               </CardTitle>
               <CardDescription className="text-gray-300">
-                Tell us about your event and we'll create a custom catering quote
+                Tell us about your event and we&apos;ll create a custom catering
+                quote
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -708,7 +776,9 @@ export default function CateringPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white mb-2">Phone Number *</label>
+                    <label className="block text-white mb-2">
+                      Phone Number *
+                    </label>
                     <Input
                       name="phone"
                       type="tel"
@@ -720,7 +790,9 @@ export default function CateringPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-white mb-2">Event Date *</label>
+                    <label className="block text-white mb-2">
+                      Event Date *
+                    </label>
                     <Input
                       name="eventDate"
                       type="date"
@@ -734,7 +806,9 @@ export default function CateringPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-white mb-2">Guest Count *</label>
+                    <label className="block text-white mb-2">
+                      Guest Count *
+                    </label>
                     <Input
                       name="guestCount"
                       type="number"
@@ -746,7 +820,9 @@ export default function CateringPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-white mb-2">Budget Range</label>
+                    <label className="block text-white mb-2">
+                      Budget Range
+                    </label>
                     <Input
                       name="budget"
                       value={formData.budget}
@@ -758,7 +834,9 @@ export default function CateringPage() {
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2">Dietary Restrictions</label>
+                  <label className="block text-white mb-2">
+                    Dietary Restrictions
+                  </label>
                   <Input
                     name="dietaryRestrictions"
                     value={formData.dietaryRestrictions}
@@ -769,7 +847,9 @@ export default function CateringPage() {
                 </div>
 
                 <div>
-                  <label className="block text-white mb-2">Additional Requests</label>
+                  <label className="block text-white mb-2">
+                    Additional Requests
+                  </label>
                   <Textarea
                     name="additionalRequests"
                     value={formData.additionalRequests}
@@ -809,7 +889,8 @@ export default function CateringPage() {
             Ready to Cater Your <span className="text-otw-gold">Event</span>?
           </h2>
           <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
-            Let our culinary team create an unforgettable dining experience for your guests.
+            Let our culinary team create an unforgettable dining experience for
+            your guests.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -819,7 +900,10 @@ export default function CateringPage() {
               Get Custom Quote
             </Button>
             <Link href="/private-events">
-              <Button variant="outline" className="border-2 border-otw-gold text-otw-gold hover:bg-otw-gold hover:text-black px-8 py-3 rounded-full transition-all duration-300">
+              <Button
+                variant="outline"
+                className="border-2 border-otw-gold text-otw-gold hover:bg-otw-gold hover:text-black px-8 py-3 rounded-full transition-all duration-300"
+              >
                 View Event Services
               </Button>
             </Link>

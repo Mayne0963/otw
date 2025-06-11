@@ -1,0 +1,461 @@
+{
+  "version": "1.0.0",
+  "description": "Firebase Storage Buckets Configuration for EzyZip Application",
+  "lastUpdated": "2024-01-15",
+  "environment": "production",
+  "project": {
+    "id": "ezyzip-app",
+    "region": "us-central1",
+    "defaultStorageClass": "STANDARD"
+  },
+  "buckets": {
+    "primary": {
+      "name": "ezyzip-app.appspot.com",
+      "description": "Primary application bucket for core features",
+      "type": "primary",
+      "location": "us-central1",
+      "storageClass": "STANDARD",
+      "rulesFile": "storage-enhanced.rules",
+      "maxFileSize": "50MB",
+      "allowedTypes": ["image/*", "application/pdf", "text/*"],
+      "paths": {
+        "profile-images": {
+          "maxSize": "5MB",
+          "allowedTypes": ["image/jpeg", "image/png", "image/webp"],
+          "retention": "permanent"
+        },
+        "screenshots": {
+          "maxSize": "10MB",
+          "allowedTypes": ["image/jpeg", "image/png"],
+          "retention": "90 days"
+        },
+        "restaurant-images": {
+          "maxSize": "5MB",
+          "allowedTypes": ["image/jpeg", "image/png", "image/webp"],
+          "retention": "permanent"
+        },
+        "menu-images": {
+          "maxSize": "5MB",
+          "allowedTypes": ["image/jpeg", "image/png", "image/webp"],
+          "retention": "permanent"
+        },
+        "documents": {
+          "maxSize": "20MB",
+          "allowedTypes": ["application/pdf", "text/plain", "application/msword"],
+          "retention": "7 years"
+        }
+      }
+    },
+    "orders": {
+      "name": "ezyzip-orders.appspot.com",
+      "description": "Order-related files including receipts, invoices, and delivery documentation",
+      "type": "secondary",
+      "location": "us-central1",
+      "storageClass": "STANDARD",
+      "rulesFile": "storage-orders.rules",
+      "maxFileSize": "25MB",
+      "allowedTypes": ["image/*", "application/pdf", "text/*"],
+      "encryption": {
+        "type": "customer-managed",
+        "keyName": "projects/ezyzip-app/locations/us-central1/keyRings/storage-keys/cryptoKeys/orders-key"
+      },
+      "lifecycle": {
+        "rules": [
+          {
+            "condition": {
+              "age": 1,
+              "matchesPrefix": ["temp/"]
+            },
+            "action": {
+              "type": "Delete"
+            }
+          },
+          {
+            "condition": {
+              "age": 90,
+              "matchesPrefix": ["receipts/", "invoices/"]
+            },
+            "action": {
+              "type": "SetStorageClass",
+              "storageClass": "NEARLINE"
+            }
+          },
+          {
+            "condition": {
+              "age": 365,
+              "matchesPrefix": ["receipts/", "invoices/"]
+            },
+            "action": {
+              "type": "SetStorageClass",
+              "storageClass": "COLDLINE"
+            }
+          },
+          {
+            "condition": {
+              "age": 2555,
+              "matchesPrefix": ["receipts/", "invoices/"]
+            },
+            "action": {
+              "type": "SetStorageClass",
+              "storageClass": "ARCHIVE"
+            }
+          }
+        ]
+      },
+      "paths": {
+        "receipts": {
+          "maxSize": "5MB",
+          "allowedTypes": ["application/pdf", "image/jpeg", "image/png"],
+          "retention": "7 years",
+          "compliance": "financial-records"
+        },
+        "invoices": {
+          "maxSize": "5MB",
+          "allowedTypes": ["application/pdf"],
+          "retention": "7 years",
+          "compliance": "financial-records"
+        },
+        "confirmations": {
+          "maxSize": "2MB",
+          "allowedTypes": ["application/pdf", "text/plain"],
+          "retention": "2 years"
+        },
+        "delivery-photos": {
+          "maxSize": "10MB",
+          "allowedTypes": ["image/jpeg", "image/png"],
+          "retention": "90 days"
+        },
+        "packaging-photos": {
+          "maxSize": "10MB",
+          "allowedTypes": ["image/jpeg", "image/png"],
+          "retention": "30 days"
+        },
+        "modifications": {
+          "maxSize": "5MB",
+          "allowedTypes": ["application/json", "text/plain"],
+          "retention": "1 year"
+        },
+        "refunds": {
+          "maxSize": "5MB",
+          "allowedTypes": ["application/pdf", "application/json"],
+          "retention": "7 years",
+          "compliance": "financial-records"
+        }
+      }
+    },
+    "rewards": {
+      "name": "ezyzip-rewards.appspot.com",
+      "description": "Rewards and loyalty program assets including certificates and promotional materials",
+      "type": "secondary",
+      "location": "us-central1",
+      "storageClass": "STANDARD",
+      "rulesFile": "storage-rewards.rules",
+      "maxFileSize": "15MB",
+      "allowedTypes": ["image/*", "application/pdf", "video/mp4"],
+      "lifecycle": {
+        "rules": [
+          {
+            "condition": {
+              "age": 1,
+              "matchesPrefix": ["temp/"]
+            },
+            "action": {
+              "type": "Delete"
+            }
+          },
+          {
+            "condition": {
+              "age": 180,
+              "matchesPrefix": ["certificates/", "vouchers/"]
+            },
+            "action": {
+              "type": "SetStorageClass",
+              "storageClass": "NEARLINE"
+            }
+          },
+          {
+            "condition": {
+              "age": 365,
+              "matchesPrefix": ["promotional/expired/"]
+            },
+            "action": {
+              "type": "Delete"
+            }
+          }
+        ]
+      },
+      "paths": {
+        "certificates": {
+          "maxSize": "5MB",
+          "allowedTypes": ["application/pdf", "image/png", "image/jpeg"],
+          "retention": "3 years"
+        },
+        "vouchers": {
+          "maxSize": "2MB",
+          "allowedTypes": ["application/pdf", "image/png"],
+          "retention": "2 years"
+        },
+        "loyalty-assets": {
+          "maxSize": "10MB",
+          "allowedTypes": ["image/*", "video/mp4"],
+          "retention": "permanent"
+        },
+        "achievements": {
+          "maxSize": "5MB",
+          "allowedTypes": ["image/png", "image/svg+xml"],
+          "retention": "permanent"
+        },
+        "promotional": {
+          "maxSize": "15MB",
+          "allowedTypes": ["image/*", "video/mp4", "application/pdf"],
+          "retention": "1 year"
+        },
+        "partner-rewards": {
+          "maxSize": "10MB",
+          "allowedTypes": ["image/*", "application/pdf"],
+          "retention": "2 years"
+        },
+        "referral": {
+          "maxSize": "5MB",
+          "allowedTypes": ["image/*", "application/pdf"],
+          "retention": "1 year"
+        }
+      }
+    },
+    "analytics": {
+      "name": "ezyzip-analytics.appspot.com",
+      "description": "Analytics data, reports, and machine learning datasets",
+      "type": "secondary",
+      "location": "us-central1",
+      "storageClass": "STANDARD",
+      "rulesFile": "storage-analytics.rules",
+      "maxFileSize": "100MB",
+      "allowedTypes": ["application/json", "text/csv", "application/parquet", "application/pdf"],
+      "encryption": {
+        "type": "customer-managed",
+        "keyName": "projects/ezyzip-app/locations/us-central1/keyRings/storage-keys/cryptoKeys/analytics-key"
+      },
+      "lifecycle": {
+        "rules": [
+          {
+            "condition": {
+              "age": 1,
+              "matchesPrefix": ["temp/"]
+            },
+            "action": {
+              "type": "Delete"
+            }
+          },
+          {
+            "condition": {
+              "age": 30,
+              "matchesPrefix": ["raw-data/"]
+            },
+            "action": {
+              "type": "SetStorageClass",
+              "storageClass": "NEARLINE"
+            }
+          },
+          {
+            "condition": {
+              "age": 90,
+              "matchesPrefix": ["processed/"]
+            },
+            "action": {
+              "type": "SetStorageClass",
+              "storageClass": "NEARLINE"
+            }
+          },
+          {
+            "condition": {
+              "age": 365,
+              "matchesPrefix": ["raw-data/", "processed/"]
+            },
+            "action": {
+              "type": "SetStorageClass",
+              "storageClass": "COLDLINE"
+            }
+          },
+          {
+            "condition": {
+              "age": 1095,
+              "matchesPrefix": ["raw-data/"]
+            },
+            "action": {
+              "type": "SetStorageClass",
+              "storageClass": "ARCHIVE"
+            }
+          }
+        ]
+      },
+      "paths": {
+        "raw-data": {
+          "maxSize": "100MB",
+          "allowedTypes": ["application/json", "text/csv", "application/parquet"],
+          "retention": "5 years"
+        },
+        "processed": {
+          "maxSize": "50MB",
+          "allowedTypes": ["application/json", "text/csv", "application/parquet"],
+          "retention": "3 years"
+        },
+        "restaurant-analytics": {
+          "maxSize": "25MB",
+          "allowedTypes": ["application/json", "text/csv"],
+          "retention": "2 years"
+        },
+        "user-behavior": {
+          "maxSize": "50MB",
+          "allowedTypes": ["application/json", "text/csv"],
+          "retention": "1 year",
+          "privacy": "anonymized"
+        },
+        "financial": {
+          "maxSize": "25MB",
+          "allowedTypes": ["application/json", "text/csv", "application/pdf"],
+          "retention": "7 years",
+          "compliance": "financial-records"
+        },
+        "marketing": {
+          "maxSize": "25MB",
+          "allowedTypes": ["application/json", "text/csv"],
+          "retention": "2 years"
+        },
+        "reports": {
+          "maxSize": "25MB",
+          "allowedTypes": ["application/pdf", "text/csv", "application/json"],
+          "retention": "3 years"
+        },
+        "ml-data": {
+          "maxSize": "100MB",
+          "allowedTypes": ["application/parquet", "application/json", "text/csv"],
+          "retention": "2 years"
+        }
+      }
+    }
+  },
+  "cors": {
+    "production": {
+      "origin": [
+        "https://ezyzip.app",
+        "https://www.ezyzip.app",
+        "https://admin.ezyzip.app",
+        "https://api.ezyzip.app"
+      ],
+      "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "maxAgeSeconds": 3600,
+      "responseHeader": ["Content-Type", "Authorization", "X-Requested-With"]
+    },
+    "development": {
+      "origin": [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://localhost:5000",
+        "http://localhost:8080"
+      ],
+      "method": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "maxAgeSeconds": 300,
+      "responseHeader": ["*"]
+    }
+  },
+  "monitoring": {
+    "alerts": {
+      "storageUsage": {
+        "warningThresholdGB": 50,
+        "criticalThresholdGB": 100,
+        "checkIntervalHours": 6
+      },
+      "costThreshold": {
+        "warningThresholdUSD": 100,
+        "criticalThresholdUSD": 250,
+        "checkIntervalHours": 24
+      },
+      "unusualActivity": {
+        "uploadRateThreshold": 1000,
+        "downloadRateThreshold": 5000,
+        "checkIntervalMinutes": 15
+      }
+    },
+    "metrics": {
+      "enabled": true,
+      "exportToCloudMonitoring": true,
+      "customMetrics": [
+        "bucket_size_by_type",
+        "upload_success_rate",
+        "download_latency",
+        "storage_cost_by_bucket"
+      ]
+    }
+  },
+  "backup": {
+    "enabled": true,
+    "schedule": "0 2 * * *",
+    "retention": {
+      "daily": 7,
+      "weekly": 4,
+      "monthly": 12,
+      "yearly": 3
+    },
+    "destinations": [
+      {
+        "type": "cloud-storage",
+        "bucket": "ezyzip-backups",
+        "region": "us-west1"
+      }
+    ]
+  },
+  "security": {
+    "encryption": {
+      "atRest": "customer-managed",
+      "inTransit": "tls-1.2"
+    },
+    "accessLogging": {
+      "enabled": true,
+      "destination": "cloud-logging",
+      "retention": "90 days"
+    },
+    "auditLogging": {
+      "enabled": true,
+      "events": ["upload", "download", "delete", "permission-change"],
+      "destination": "cloud-logging"
+    },
+    "virusScanning": {
+      "enabled": true,
+      "quarantineBucket": "ezyzip-quarantine"
+    }
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "cdnEnabled": true,
+      "cacheControl": {
+        "images": "public, max-age=31536000",
+        "documents": "private, max-age=3600",
+        "temp": "no-cache"
+      }
+    },
+    "compression": {
+      "enabled": true,
+      "types": ["text/*", "application/json", "application/javascript"]
+    }
+  },
+  "compliance": {
+    "gdpr": {
+      "enabled": true,
+      "dataRetentionPolicies": true,
+      "rightToErasure": true
+    },
+    "ccpa": {
+      "enabled": true,
+      "dataPortability": true
+    },
+    "pci": {
+      "enabled": false,
+      "scope": "none"
+    },
+    "sox": {
+      "enabled": true,
+      "scope": "financial-records"
+    }
+  }
+}

@@ -17,6 +17,7 @@ import {
   ChefHat,
   Coffee,
   Truck,
+  Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -35,112 +36,78 @@ interface MenuItem {
   dietary: string[];
 }
 
-const BROSKIS_MENU: MenuItem[] = [
-  {
-    id: 'signature-burger',
-    name: 'Broski Signature Burger',
-    description: 'Our famous double patty with special sauce, lettuce, tomato, cheese, and crispy onions',
-    price: 14.99,
-    image: '/images/menu/signature-burger.jpg',
-    category: 'Burgers',
-    isPopular: true,
-    dietary: ['Gluten-Free Bun Available'],
-  },
-  {
-    id: 'loaded-fries',
-    name: 'Loaded Broski Fries',
-    description: 'Crispy fries topped with cheese sauce, bacon bits, green onions, and sour cream',
-    price: 9.99,
-    image: '/images/menu/loaded-fries.jpg',
-    category: 'Sides',
-    isPopular: true,
-    dietary: ['Vegetarian Option'],
-  },
-  {
-    id: 'chicken-sandwich',
-    name: 'Crispy Chicken Sandwich',
-    description: 'Hand-breaded chicken breast with pickles, mayo, and coleslaw on a brioche bun',
-    price: 12.99,
-    image: '/images/menu/chicken-sandwich.jpg',
-    category: 'Sandwiches',
-    dietary: [],
-  },
-  {
-    id: 'bbq-wings',
-    name: 'BBQ Wings',
-    description: 'Smoky BBQ wings served with celery sticks and blue cheese dip',
-    price: 11.99,
-    image: '/images/menu/bbq-wings.jpg',
-    category: 'Wings',
-    dietary: ['Gluten-Free'],
-  },
-  {
-    id: 'veggie-burger',
-    name: 'Garden Veggie Burger',
-    description: 'House-made veggie patty with avocado, sprouts, and herb aioli',
-    price: 11.99,
-    image: '/images/menu/veggie-burger.jpg',
-    category: 'Burgers',
-    isNew: true,
-    dietary: ['Vegetarian', 'Vegan Option'],
-  },
-  {
-    id: 'milkshake',
-    name: 'Broski Milkshake',
-    description: 'Thick and creamy milkshake available in vanilla, chocolate, or strawberry',
-    price: 5.99,
-    image: '/images/menu/milkshake.jpg',
-    category: 'Beverages',
-    dietary: ['Vegetarian'],
-  },
-];
-
-const RESTAURANT_INFO = {
-  name: "Broski's Kitchen",
-  description: "Fort Wayne's favorite burger joint serving up fresh, made-to-order burgers, crispy fries, and ice-cold shakes since 2018.",
-  rating: 4.8,
-  reviewCount: 1247,
-  priceRange: '$$',
-  cuisine: 'American, Burgers',
-  hours: {
-    'Monday': '11:00 AM - 10:00 PM',
-    'Tuesday': '11:00 AM - 10:00 PM',
-    'Wednesday': '11:00 AM - 10:00 PM',
-    'Thursday': '11:00 AM - 10:00 PM',
-    'Friday': '11:00 AM - 11:00 PM',
-    'Saturday': '11:00 AM - 11:00 PM',
-    'Sunday': '12:00 PM - 9:00 PM',
-  },
+interface RestaurantInfo {
+  name: string;
+  description: string;
+  rating: number;
+  reviewCount: number;
+  priceRange: string;
+  cuisine: string;
+  hours: Record<string, string>;
   contact: {
-    phone: '(260) 555-BROSKI',
-    address: '123 Main Street, Fort Wayne, IN 46802',
-    website: 'www.broskiskitchen.com',
-  },
-  features: [
-    'Dine-in',
-    'Takeout',
-    'Delivery',
-    'Drive-thru',
-    'Outdoor Seating',
-    'Family Friendly',
-    'Local Favorite',
-  ],
-};
+    phone: string;
+    address: string;
+    website: string;
+  };
+  features: string[];
+}
 
 export default function BroskisPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [filteredMenu, setFilteredMenu] = useState(BROSKIS_MENU);
+  const [menu, setMenu] = useState<MenuItem[]>([]);
+  const [filteredMenu, setFilteredMenu] = useState<MenuItem[]>([]);
+  const [restaurantInfo, setRestaurantInfo] = useState<RestaurantInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const categories = ['All', ...Array.from(new Set(BROSKIS_MENU.map(item => item.category)))];
+  const categories = ['All', ...Array.from(new Set(menu.map(item => item.category)))];
+
+  // Fetch restaurant data and menu
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch restaurant info and menu from API
+        const [restaurantResponse, menuResponse] = await Promise.all([
+          fetch('/api/restaurants/broskis'),
+          fetch('/api/restaurants/broskis/menu')
+        ]);
+
+        if (!restaurantResponse.ok || !menuResponse.ok) {
+          throw new Error('Failed to fetch restaurant data');
+        }
+
+        const restaurantData = await restaurantResponse.json();
+        const menuData = await menuResponse.json();
+
+        if (restaurantData.success && restaurantData.data) {
+          setRestaurantInfo(restaurantData.data);
+        }
+
+        if (menuData.success && menuData.data) {
+          setMenu(menuData.data);
+        }
+      } catch (err) {
+        console.error('Error fetching restaurant data:', err);
+        setError('Failed to load restaurant information. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (selectedCategory === 'All') {
-      setFilteredMenu(BROSKIS_MENU);
+      setFilteredMenu(menu);
     } else {
-      setFilteredMenu(BROSKIS_MENU.filter(item => item.category === selectedCategory));
+      setFilteredMenu(menu.filter(item => item.category === selectedCategory));
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, menu]);
 
   const handleAddToCart = (item: MenuItem) => {
     const orderItem = {
@@ -171,6 +138,50 @@ export default function BroskisPage() {
     }
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-otw-black via-otw-black-800 to-otw-black-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-otw-gold animate-spin mx-auto mb-4" />
+          <p className="text-white text-lg">Loading restaurant information...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-otw-black via-otw-black-800 to-otw-black-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <ChefHat className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2">Oops! Something went wrong</h2>
+          <p className="text-gray-300 mb-6">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // No restaurant info
+  if (!restaurantInfo) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-otw-black via-otw-black-800 to-otw-black-900 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-white text-lg">Restaurant information not available.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-otw-black via-otw-black-800 to-otw-black-900">
       {/* Hero Section */}
@@ -186,25 +197,25 @@ export default function BroskisPage() {
                 </div>
                 <div>
                   <h1 className="text-4xl md:text-5xl font-bold text-white">
-                    {RESTAURANT_INFO.name}
+                    {restaurantInfo.name}
                   </h1>
                   <div className="flex items-center gap-4 mt-2">
                     <div className="flex items-center gap-1">
                       <Star className="w-5 h-5 text-yellow-400 fill-current" />
-                      <span className="text-white font-semibold">{RESTAURANT_INFO.rating}</span>
-                      <span className="text-gray-400">({RESTAURANT_INFO.reviewCount} reviews)</span>
+                      <span className="text-white font-semibold">{restaurantInfo.rating}</span>
+                      <span className="text-gray-400">({restaurantInfo.reviewCount} reviews)</span>
                     </div>
-                    <Badge className="bg-otw-gold text-black">{RESTAURANT_INFO.priceRange}</Badge>
+                    <Badge className="bg-otw-gold text-black">{restaurantInfo.priceRange}</Badge>
                   </div>
                 </div>
               </div>
 
               <p className="text-xl text-gray-300 mb-6 max-w-2xl">
-                {RESTAURANT_INFO.description}
+                {restaurantInfo.description}
               </p>
 
               <div className="flex flex-wrap gap-2 mb-8">
-                {RESTAURANT_INFO.features.map((feature) => (
+                {restaurantInfo.features.map((feature) => (
                   <Badge key={feature} variant="outline" className="border-otw-gold/30 text-otw-gold">
                     {feature}
                   </Badge>
@@ -253,7 +264,7 @@ export default function BroskisPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {Object.entries(RESTAURANT_INFO.hours).map(([day, hours]) => (
+                  {Object.entries(restaurantInfo.hours).map(([day, hours]) => (
                     <div key={day} className="flex justify-between text-gray-300">
                       <span className="font-medium">{day}</span>
                       <span>{hours}</span>
@@ -274,15 +285,15 @@ export default function BroskisPage() {
               <CardContent className="space-y-3">
                 <div className="flex items-center gap-2 text-gray-300">
                   <Phone className="w-4 h-4 text-otw-gold" />
-                  <span>{RESTAURANT_INFO.contact.phone}</span>
+                  <span>{restaurantInfo.contact.phone}</span>
                 </div>
                 <div className="flex items-start gap-2 text-gray-300">
                   <MapPin className="w-4 h-4 text-otw-gold mt-1" />
-                  <span>{RESTAURANT_INFO.contact.address}</span>
+                  <span>{restaurantInfo.contact.address}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-300">
                   <Globe className="w-4 h-4 text-otw-gold" />
-                  <span>{RESTAURANT_INFO.contact.website}</span>
+                  <span>{restaurantInfo.contact.website}</span>
                 </div>
               </CardContent>
             </Card>
@@ -296,7 +307,7 @@ export default function BroskisPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-300 mb-4">{RESTAURANT_INFO.cuisine}</p>
+                <p className="text-gray-300 mb-4">{restaurantInfo.cuisine}</p>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1">
                     <Users className="w-4 h-4 text-otw-gold" />

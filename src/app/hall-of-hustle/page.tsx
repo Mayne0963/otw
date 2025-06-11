@@ -33,7 +33,7 @@ const topPerformers = [
   {
     name: 'Alex Johnson',
     role: 'Delivery Driver',
-    image: '/assets/driver1.jpg',
+    image: '/assets/images/placeholder-user.jpg',
     achievements: [
       '1000+ deliveries completed',
       '98% customer satisfaction',
@@ -48,7 +48,7 @@ const topPerformers = [
   {
     name: 'Maria Garcia',
     role: 'Restaurant Partner',
-    image: '/assets/restaurant1.jpg',
+    image: '/assets/images/placeholder-user.jpg',
     achievements: [
       'Highest rated restaurant in downtown',
       '500+ orders per week',
@@ -63,7 +63,7 @@ const topPerformers = [
   {
     name: 'David Chen',
     role: 'Store Manager',
-    image: '/assets/store1.jpg',
+    image: '/assets/images/placeholder-user.jpg',
     achievements: [
       'Best customer service award',
       'Increased store revenue by 40%',
@@ -81,19 +81,19 @@ const successStories = [
   {
     title: 'From Student to Top Earner',
     description: 'How Sarah turned her part-time delivery job into a full-time career',
-    image: '/assets/success1.jpg',
+    image: '/assets/images/placeholder.jpg',
     category: 'driver',
   },
   {
     title: 'Restaurant Revival',
     description: "How Tony's Pizza doubled their revenue with our platform",
-    image: '/assets/success2.jpg',
+    image: '/assets/images/placeholder.jpg',
     category: 'restaurant',
   },
   {
     title: 'Community Impact',
     description: 'Local store creates 20 new jobs through delivery expansion',
-    image: '/assets/success3.jpg',
+    image: '/assets/images/placeholder.jpg',
     category: 'retail',
   },
 ];

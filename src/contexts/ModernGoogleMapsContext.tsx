@@ -27,6 +27,9 @@ const GOOGLE_MAPS_CONFIG = {
   libraries: ['places', 'geometry', 'drawing'] as const,
   region: 'US',
   language: 'en',
+  // Add retry configuration
+  retries: 3,
+  timeout: 10000, // 10 seconds
 };
 
 // Global state management

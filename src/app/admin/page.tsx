@@ -70,15 +70,56 @@ export default function AdminDashboard() {
   const fetchOrders = async () => {
     try {
       setIsLoadingOrders(true);
-      // TODO: Replace with actual API call to fetch orders from backend
-      // const response = await fetch('/api/orders');
-      // const orders = await response.json();
-      // setOrders(orders);
-
-      // For now, set empty array until backend is implemented
-      setOrders([]);
+      
+      // Fetch all orders from Firebase
+      const [regularOrdersResponse, screenshotOrdersResponse] = await Promise.all([
+        fetch('/api/orders?admin=true'),
+        fetch('/api/orders/screenshot?admin=true')
+      ]);
+      
+      const regularOrders = regularOrdersResponse.ok ? await regularOrdersResponse.json() : { data: [] };
+      const screenshotOrders = screenshotOrdersResponse.ok ? await screenshotOrdersResponse.json() : { data: [] };
+      
+      // Combine and format orders
+      const allOrders = [
+        ...(regularOrders.data || []).map((order: any) => ({
+          id: order.id,
+          orderId: order.id,
+          customerName: order.customerInfo?.name || order.customerName || 'Unknown',
+          customerPhone: order.customerInfo?.phone || order.customerPhone || '',
+          customerEmail: order.customerInfo?.email || order.customerEmail || '',
+          orderType: order.orderType || 'food',
+          status: order.status || 'pending',
+          items: order.items?.map((item: any) => item.name || item.title || 'Unknown item') || [],
+          total: order.total || 0,
+          address: order.deliveryAddress || order.address || '',
+          estimatedDeliveryTime: order.estimatedDeliveryTime || 'TBD',
+          createdAt: order.createdAt || new Date().toISOString(),
+          assignedDriver: order.assignedDriver || '',
+          specialInstructions: order.specialInstructions || order.notes || ''
+        })),
+        ...(screenshotOrders.data || []).map((order: any) => ({
+          id: order.id,
+          orderId: order.id,
+          customerName: order.customerInfo?.name || 'Screenshot Order',
+          customerPhone: order.customerInfo?.phone || '',
+          customerEmail: order.customerInfo?.email || '',
+          orderType: 'food',
+          status: order.status || 'pending',
+          items: [order.orderDetails?.restaurant || 'Restaurant Order'],
+          total: parseFloat(order.orderDetails?.estimatedTotal?.replace(/[^\d.]/g, '') || '0'),
+          address: order.deliveryInfo?.address || '',
+          estimatedDeliveryTime: order.estimatedDeliveryTime || 'TBD',
+          createdAt: order.timestamps?.created || new Date().toISOString(),
+          assignedDriver: order.assignedDriver || '',
+          specialInstructions: order.deliveryInfo?.instructions || ''
+        }))
+      ];
+      
+      setOrders(allOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
+      setOrders([]);
     } finally {
       setIsLoadingOrders(false);
     }

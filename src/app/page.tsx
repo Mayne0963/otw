@@ -9,8 +9,9 @@ import Button from '../components/Button.jsx';
 import AddressSearch, { PlaceDetails } from '../components/AddressSearch';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRightIcon, StarIcon, PhoneIcon, ClockIcon, TruckIcon, ShoppingBagIcon, HeartIcon, MapPinIcon, SparklesIcon } from '@heroicons/react/24/outline';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import { ChevronRightIcon, PhoneIcon, ClockIcon, TruckIcon, ShoppingBagIcon, MapPinIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, StarIcon, HeartIcon } from '@heroicons/react/24/solid';
+import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
 
 const MapSearch = dynamic(() => import('../components/maps/MapSearch'), { ssr: false });
 
@@ -356,61 +357,9 @@ export default function Home() {
             </motion.p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Sarah Johnson",
-                role: "Regular Customer",
-                content: "OTW has completely changed how I handle daily errands. The grocery delivery is always fresh and on time! Their attention to detail is incredible.",
-                rating: 5,
-                location: "Downtown Fort Wayne"
-              },
-              {
-                name: "Mike Chen",
-                role: "Business Owner",
-                content: "Their package delivery service is incredibly reliable. I use them for all my business shipments now. Professional, fast, and trustworthy.",
-                rating: 5,
-                location: "West Central"
-              },
-              {
-                name: "Emily Rodriguez",
-                role: "Busy Parent",
-                content: "As a working mom, OTW is a lifesaver. From rides to groceries, they handle everything perfectly. The app is so easy to use!",
-                rating: 5,
-                location: "Northside"
-              }
-            ].map((testimonial, index) => (
-              <motion.div 
-                key={index} 
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                whileHover={{ y: -5 }}
-                className="otw-card p-8 group hover:border-otw-gold/40 transition-all duration-500"
-              >
-                <div className="flex items-center mb-6">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <StarIcon key={i} className="w-6 h-6 text-otw-gold fill-current mr-1 group-hover:scale-110 transition-transform duration-300" style={{ transitionDelay: `${i * 50}ms` }} />
-                  ))}
-                </div>
-                <p className="text-gray-300 mb-8 italic leading-relaxed text-lg group-hover:text-white transition-colors duration-300">
-                  "{testimonial.content}"
-                </p>
-                <div className="flex items-center">
-                  <div className="w-14 h-14 bg-gradient-to-br from-otw-gold to-otw-red rounded-full flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <span className="text-white font-bold text-lg">
-                      {testimonial.name.split(' ').map(n => n[0]).join('')}
-                    </span>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold text-lg group-hover:text-otw-gold transition-colors duration-300">{testimonial.name}</h4>
-                    <p className="text-gray-400 text-sm">{testimonial.role}</p>
-                    <p className="text-otw-gold text-xs font-medium mt-1">{testimonial.location}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+          {/* Testimonials content will be rendered by TestimonialsSection component */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Testimonials will be dynamically rendered */}
           </div>
 
           {/* Trust Indicators */}

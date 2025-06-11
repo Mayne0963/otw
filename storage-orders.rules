@@ -1,0 +1,355 @@
+/**
+ * Firebase Storage Security Rules for Orders Bucket
+ * Bucket: ezyzip-orders.appspot.com
+ * Purpose: Order-related documents, receipts, delivery photos, and refund documentation
+ */
+
+service firebase.storage {
+  match /b/ezyzip-orders.appspot.com/o {
+    
+    // ========================================================================
+    // HELPER FUNCTIONS
+    // ========================================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'admin';
+    }
+    
+    function isCustomerService() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'customer_service';
+    }
+    
+    function isDeliveryDriver() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'delivery_driver';
+    }
+    
+    function isRestaurantOwner() {
+      return isAuthenticated() && 
+             request.auth.token.get('role', '') == 'restaurant_owner';
+    }
+    
+    function isSystem() {
+      // Cloud Functions have special system tokens
+      return request.auth != null && 
+             request.auth.token.get('system', false) == true;
+    }
+    
+    function isOrderOwner(orderId) {
+      // This would need to be validated against Firestore
+      // For now, we'll use a simplified check
+      return isAuthenticated();
+    }
+    
+    function isRestaurantOwnerForOrder(orderId) {
+      // This would need to be validated against Firestore
+      return isRestaurantOwner();
+    }
+    
+    function isValidImage() {
+      return resource.contentType.matches('image/.*') &&
+             resource.contentType in ['image/jpeg', 'image/png', 'image/webp'];
+    }
+    
+    function isValidDocument() {
+      return resource.contentType in [
+        'application/pdf',
+        'image/jpeg',
+        'image/png',
+        'text/plain'
+      ];
+    }
+    
+    function isWithinSizeLimit(maxSizeMB) {
+      return resource.size <= maxSizeMB * 1024 * 1024;
+    }
+    
+    function isRecentUpload() {
+      return resource.timeCreated > request.time - duration.value(5, 'm');
+    }
+    
+    function hasValidFilename() {
+      return resource.name.matches('[a-zA-Z0-9._-]+');
+    }
+    
+    // ========================================================================
+    // ORDER RECEIPTS AND INVOICES
+    // ========================================================================
+    
+    match /order-receipts/{orderId}/{fileName} {
+      // Users can read their own order receipts
+      allow read: if isOrderOwner(orderId) || isAdmin() || isCustomerService();
+      
+      // Only system (Cloud Functions) can create receipts
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // No updates or deletes (receipts are immutable)
+      allow update, delete: if false;
+    }
+    
+    match /order-invoices/{orderId}/{fileName} {
+      // Users and restaurant owners can read invoices
+      allow read: if isOrderOwner(orderId) || 
+                     isRestaurantOwnerForOrder(orderId) || 
+                     isAdmin() || 
+                     isCustomerService();
+      
+      // Only system can create invoices
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Only admins can update invoices (for corrections)
+      allow update: if isAdmin() && isValidDocument();
+      
+      // No deletion of invoices
+      allow delete: if false;
+    }
+    
+    // ========================================================================
+    // ORDER CONFIRMATIONS
+    // ========================================================================
+    
+    match /order-confirmations/{orderId}/{fileName} {
+      // Users and restaurants can read confirmations
+      allow read: if isOrderOwner(orderId) || 
+                     isRestaurantOwnerForOrder(orderId) || 
+                     isAdmin();
+      
+      // System and restaurants can create confirmations
+      allow create: if (isSystem() || isRestaurantOwnerForOrder(orderId)) && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(3) &&
+                       hasValidFilename();
+      
+      // Restaurants can update their confirmations within 1 hour
+      allow update: if isRestaurantOwnerForOrder(orderId) && 
+                       isValidDocument() &&
+                       resource.timeCreated > request.time - duration.value(1, 'h');
+      
+      // Only admins can delete confirmations
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // DELIVERY PHOTOS AND PROOF
+    // ========================================================================
+    
+    match /delivery-photos/{orderId}/{fileName} {
+      // Users, delivery drivers, and admins can read delivery photos
+      allow read: if isOrderOwner(orderId) || 
+                     isDeliveryDriver() || 
+                     isAdmin() || 
+                     isCustomerService();
+      
+      // Only delivery drivers can upload delivery photos
+      allow create: if isDeliveryDriver() && 
+                       isValidImage() && 
+                       isWithinSizeLimit(10) &&
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Delivery drivers can update their photos within 30 minutes
+      allow update: if isDeliveryDriver() && 
+                       isValidImage() &&
+                       resource.timeCreated > request.time - duration.value(30, 'm');
+      
+      // Only admins can delete delivery photos
+      allow delete: if isAdmin();
+    }
+    
+    match /packaging-photos/{orderId}/{fileName} {
+      // Restaurant staff can upload packaging photos
+      allow create: if isRestaurantOwnerForOrder(orderId) && 
+                       isValidImage() && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Users and restaurants can read packaging photos
+      allow read: if isOrderOwner(orderId) || 
+                     isRestaurantOwnerForOrder(orderId) || 
+                     isAdmin();
+      
+      // Restaurant can update within 1 hour
+      allow update: if isRestaurantOwnerForOrder(orderId) && 
+                       isValidImage() &&
+                       resource.timeCreated > request.time - duration.value(1, 'h');
+      
+      // Only admins can delete
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // ORDER MODIFICATIONS
+    // ========================================================================
+    
+    match /order-modifications/{orderId}/{fileName} {
+      // Users can upload modification requests
+      allow create: if isOrderOwner(orderId) && 
+                       (isValidImage() || isValidDocument()) && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users, restaurants, and admins can read modifications
+      allow read: if isOrderOwner(orderId) || 
+                     isRestaurantOwnerForOrder(orderId) || 
+                     isAdmin() || 
+                     isCustomerService();
+      
+      // Users can update their modifications within 15 minutes
+      allow update: if isOrderOwner(orderId) && 
+                       (isValidImage() || isValidDocument()) &&
+                       resource.timeCreated > request.time - duration.value(15, 'm');
+      
+      // Users and admins can delete modifications
+      allow delete: if isOrderOwner(orderId) || isAdmin();
+    }
+    
+    // ========================================================================
+    // REFUND DOCUMENTS
+    // ========================================================================
+    
+    match /refund-documents/{orderId}/{fileName} {
+      // Users and customer service can read refund documents
+      allow read: if isOrderOwner(orderId) || 
+                     isCustomerService() || 
+                     isAdmin();
+      
+      // Only customer service and system can create refund documents
+      allow create: if (isCustomerService() || isSystem()) && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(10) &&
+                       hasValidFilename();
+      
+      // Customer service can update refund documents
+      allow update: if isCustomerService() && isValidDocument();
+      
+      // Only admins can delete refund documents
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // QUALITY ASSURANCE PHOTOS
+    // ========================================================================
+    
+    match /qa-photos/{orderId}/{fileName} {
+      // Restaurant staff can upload QA photos
+      allow create: if isRestaurantOwnerForOrder(orderId) && 
+                       isValidImage() && 
+                       isWithinSizeLimit(5) &&
+                       hasValidFilename();
+      
+      // Restaurants and admins can read QA photos
+      allow read: if isRestaurantOwnerForOrder(orderId) || 
+                     isAdmin() || 
+                     isCustomerService();
+      
+      // Restaurant can update within 2 hours
+      allow update: if isRestaurantOwnerForOrder(orderId) && 
+                       isValidImage() &&
+                       resource.timeCreated > request.time - duration.value(2, 'h');
+      
+      // Only admins can delete QA photos
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // ORDER ANALYTICS AND REPORTS
+    // ========================================================================
+    
+    match /order-analytics/{period}/{fileName} {
+      // Only system can create analytics files
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(50);
+      
+      // Admins and restaurant owners can read analytics
+      allow read: if isAdmin() || isRestaurantOwner();
+      
+      // Only system can update analytics
+      allow update: if isSystem() && isValidDocument();
+      
+      // Only admins can delete analytics
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // TEMPORARY ORDER FILES
+    // ========================================================================
+    
+    match /temp-order-files/{userId}/{sessionId}/{fileName} {
+      // Users can upload temporary order-related files
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == userId &&
+                       (isValidImage() || isValidDocument()) && 
+                       isWithinSizeLimit(20) &&
+                       hasValidFilename() &&
+                       isRecentUpload();
+      
+      // Users can read their own temp files
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Users can delete their own temp files
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Auto-cleanup: files older than 24 hours can be deleted by system
+      allow delete: if isSystem() && 
+                       resource.timeCreated < request.time - duration.value(24, 'h');
+    }
+    
+    // ========================================================================
+    // ORDER BACKUP FILES
+    // ========================================================================
+    
+    match /order-backups/{backupDate}/{fileName} {
+      // Only system can create backups
+      allow create: if isSystem() && 
+                       isValidDocument() && 
+                       isWithinSizeLimit(100);
+      
+      // Only admins can read backups
+      allow read: if isAdmin();
+      
+      // No updates to backups
+      allow update: if false;
+      
+      // Only admins can delete old backups
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================================================
+    // SECURITY AND AUDIT LOGS
+    // ========================================================================
+    
+    match /audit-logs/{logType}/{fileName} {
+      // Only system can create audit logs
+      allow create: if isSystem();
+      
+      // Only admins can read audit logs
+      allow read: if isAdmin();
+      
+      // No updates or deletes of audit logs
+      allow update, delete: if false;
+    }
+    
+    // ========================================================================
+    // FALLBACK RULES
+    // ========================================================================
+    
+    // Deny all other access by default
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

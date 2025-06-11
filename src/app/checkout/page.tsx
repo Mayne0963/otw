@@ -30,6 +30,7 @@ export default function CheckoutPage() {
   // Load items from URL parameters
   useEffect(() => {
     const itemParam = searchParams.get('item');
+    const itemsParam = searchParams.get('items');
     const reorderParam = searchParams.get('reorder');
     
     let orderItems: any[] = [];
@@ -40,6 +41,12 @@ export default function CheckoutPage() {
         orderItems = [item];
       } catch (error) {
         console.error('Error parsing item parameter:', error);
+      }
+    } else if (itemsParam) {
+      try {
+        orderItems = JSON.parse(decodeURIComponent(itemsParam));
+      } catch (error) {
+        console.error('Error parsing items parameter:', error);
       }
     } else if (reorderParam) {
       try {
