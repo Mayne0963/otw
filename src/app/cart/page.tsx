@@ -4,11 +4,12 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCart } from '@/lib/context/CartContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useCart } from '../../lib/context/CartContext';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Button } from '../../components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import {
   FaArrowLeft,
   FaTrash,
@@ -17,33 +18,54 @@ import {
   FaShoppingBag,
   FaCreditCard,
 } from 'react-icons/fa';
+import { PromoCodeInput } from '../../components/cart/PromoCodeInput';
 
 export default function CartPage() {
   const router = useRouter();
-  const { cartItems, total, itemCount, removeFromCart, updateQuantity, clearCart } = useCart();
+  const {
+    items = [], // Default to empty array
+    addItem,
+    removeItem,
+    updateQuantity,
+    clearCart,
+    subtotal = 0,
+    discount = 0,
+    shippingFee = 0,
+    tax = 0,
+    total = 0,
+    itemCount = 0,
+    loading = false,
+    error = null,
+    appliedPromoCode = null,
+    promoCodeError = null,
+    applyPromoCode,
+    removePromoCode,
+  } = useCart() || {}; // Fallback to empty object if context is undefined
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
+    if (!id || newQuantity < 0) return;
+    
     if (newQuantity <= 0) {
-      removeFromCart(id);
+      removeFromCart?.(id);
     } else {
-      updateQuantity(id, newQuantity);
+      updateQuantity?.(id, newQuantity);
     }
   };
 
   const handleCheckout = () => {
-    if (cartItems.length === 0) return;
-    
-    // Prepare items for checkout
-    const checkoutItems = cartItems.map(item => ({
-      id: item.id,
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity,
-      image: item.image,
-      description: item.description,
-      restaurantId: item.restaurantId,
-      restaurantName: item.restaurantName,
-      customizations: item.customizations
+    if (!items || items.length === 0) return;
+
+    // Prepare items for checkout with safe property access
+    const checkoutItems = items.map(item => ({
+      id: item?.id || '',
+      name: item?.name || '',
+      price: item?.price || 0,
+      quantity: item?.quantity || 1,
+      image: item?.image || '',
+      description: item?.description || '',
+      restaurantId: item?.restaurantId || '',
+      restaurantName: item?.restaurantName || '',
+      customizations: item?.customizations || {}
     }));
     
     // Navigate to checkout with items
@@ -51,7 +73,38 @@ export default function CartPage() {
     router.push(`/checkout?items=${itemsParam}`);
   };
 
-  if (cartItems.length === 0) {
+  // Show loading state during initial render or when loading
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading your cart...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center py-12">
+            <p className="text-red-600 mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()} variant="outline">
+              Retry
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty cart state if no items (using safe length check)
+  if (!items || items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -101,98 +154,115 @@ export default function CartPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={clearCart}
+                  onClick={() => clearCart?.()}
                   className="text-red-600 hover:text-red-700"
+                  disabled={!clearCart || !items || items.length === 0}
                 >
                   Clear Cart
                 </Button>
               </CardHeader>
               <CardContent className="space-y-4">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="flex items-center space-x-4 p-4 border rounded-lg">
-                    {/* Item Image */}
-                    <div className="flex-shrink-0">
-                      {item.image ? (
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          width={80}
-                          height={80}
-                          className="rounded-lg object-cover"
+                {items?.map((item) => {
+                  // Defensive programming for each item
+                  const itemId = item?.id || '';
+                  const itemName = item?.name || 'Unknown Item';
+                  const itemPrice = item?.price || 0;
+                  const itemQuantity = item?.quantity || 1;
+                  const itemImage = item?.image;
+                  const itemRestaurantName = item?.restaurantName;
+                  const itemDescription = item?.description;
+                  const itemCustomizations = item?.customizations || {};
+                  
+                  return (
+                    <div key={itemId || Math.random()} className="flex items-center space-x-4 p-4 border rounded-lg">
+                      {/* Item Image */}
+                      <div className="flex-shrink-0">
+                        {itemImage ? (
+                          <Image
+                            src={itemImage}
+                            alt={itemName}
+                            width={80}
+                            height={80}
+                            className="rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <FaShoppingBag className="text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Item Details */}
+                      <div className="flex-grow">
+                        <h3 className="font-semibold text-gray-900">{itemName}</h3>
+                        {itemRestaurantName && (
+                          <p className="text-sm text-gray-600">From {itemRestaurantName}</p>
+                        )}
+                        {itemDescription && (
+                          <p className="text-sm text-gray-600">{itemDescription}</p>
+                        )}
+                        {itemCustomizations && Object.keys(itemCustomizations).length > 0 && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            {Object.entries(itemCustomizations).map(([key, value]) => (
+                              <span key={key} className="mr-2">
+                                {key}: {String(value || '')}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <p className="font-semibold text-orange-600 mt-1">
+                          ${itemPrice.toFixed(2)} each
+                        </p>
+                      </div>
+
+                      {/* Quantity Controls */}
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuantityChange(itemId, itemQuantity - 1)}
+                          className="w-8 h-8 p-0"
+                          disabled={!itemId}
+                        >
+                          <FaMinus className="w-3 h-3" />
+                        </Button>
+                        <Input
+                          type="number"
+                          value={itemQuantity}
+                          onChange={(e) => handleQuantityChange(itemId, parseInt(e.target.value) || 0)}
+                          className="w-16 text-center"
+                          min="0"
+                          disabled={!itemId}
                         />
-                      ) : (
-                        <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
-                          <FaShoppingBag className="text-gray-400" />
-                        </div>
-                      )}
-                    </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuantityChange(itemId, itemQuantity + 1)}
+                          className="w-8 h-8 p-0"
+                          disabled={!itemId}
+                        >
+                          <FaPlus className="w-3 h-3" />
+                        </Button>
+                      </div>
 
-                    {/* Item Details */}
-                    <div className="flex-grow">
-                      <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                      {item.restaurantName && (
-                        <p className="text-sm text-gray-600">From {item.restaurantName}</p>
-                      )}
-                      {item.description && (
-                        <p className="text-sm text-gray-600">{item.description}</p>
-                      )}
-                      {item.customizations && Object.keys(item.customizations).length > 0 && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          {Object.entries(item.customizations).map(([key, value]) => (
-                            <span key={key} className="mr-2">
-                              {key}: {String(value)}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <p className="font-semibold text-orange-600 mt-1">
-                        ${item.price.toFixed(2)} each
-                      </p>
+                      {/* Item Total */}
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">
+                          ${(itemPrice * itemQuantity).toFixed(2)}
+                        </p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeItem?.(itemId)}
+                          className="text-red-600 hover:text-red-700 mt-1"
+                          disabled={!itemId || !removeItem}
+                        >
+                          <FaTrash className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
-
-                    {/* Quantity Controls */}
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                        className="w-8 h-8 p-0"
-                      >
-                        <FaMinus className="w-3 h-3" />
-                      </Button>
-                      <Input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 0)}
-                        className="w-16 text-center"
-                        min="0"
-                      />
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                        className="w-8 h-8 p-0"
-                      >
-                        <FaPlus className="w-3 h-3" />
-                      </Button>
-                    </div>
-
-                    {/* Item Total */}
-                    <div className="text-right">
-                      <p className="font-semibold text-gray-900">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </p>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeFromCart(item.id)}
-                        className="text-red-600 hover:text-red-700 mt-1"
-                      >
-                        <FaTrash className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                }) || []}
               </CardContent>
             </Card>
           </div>
