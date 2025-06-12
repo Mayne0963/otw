@@ -1,49 +1,17 @@
 'use client';
 
-import React, { useState, useRef } from 'react'; // Added React import
+import React, { useState, useRef } from 'react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, updateDoc } from 'firebase/firestore';
+import { storage, db } from '../../lib/firebase-config';
 
-// Define a more specific type for the user prop
 interface User {
   uid: string;
-  name?: string; // Assuming name can be optional
-  photoURL?: string; // Assuming photoURL can be optional
+  name?: string;
+  photoURL?: string;
 }
-
-// Define types for Firebase services to avoid 'any'
-// These are simplified; for a real app, import types from 'firebase/app', 'firebase/storage', 'firebase/firestore'
-interface FirebaseStorageRef {
-  child: (path: string) => FirebaseStorageRef;
-  put: (file: File) => Promise<any>; // Replace 'any' with actual UploadTaskSnapshot if using firebase/storage types
-  getDownloadURL: () => Promise<string>;
-}
-
-interface FirebaseStorage {
-  ref: (path?: string) => FirebaseStorageRef;
-}
-
-interface FirebaseFirestoreDocRef {
-  update: (data: Record<string, any>) => Promise<void>;
-}
-
-interface FirebaseFirestoreCollectionRef {
-  doc: (documentPath: string) => FirebaseFirestoreDocRef;
-}
-
-interface FirebaseFirestore {
-  collection: (collectionPath: string) => FirebaseFirestoreCollectionRef;
-}
-
-interface FirebaseApp {
-  storage: () => FirebaseStorage;
-  firestore: () => FirebaseFirestore;
-}
-
-// Helper to safely access the Firebase instance from window
-const getFirebase = (): FirebaseApp | undefined => {
-  return (window as any).firebase as FirebaseApp | undefined;
-};
 
 export default function AvatarUpload({
   user,
@@ -58,40 +26,48 @@ export default function AvatarUpload({
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) {return;}
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file.');
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB.');
+      return;
+    }
 
     setPreview(URL.createObjectURL(file));
     setUploading(true);
 
-    const firebaseApp = getFirebase();
-    if (!firebaseApp) {
-      alert('Firebase is not available.');
-      setUploading(false);
-      return;
-    }
-
     try {
-      // Upload to Firebase Storage
-      const storageRef = firebaseApp.storage().ref();
-      const avatarRef = storageRef.child(`avatars/${user.uid}`);
-      await avatarRef.put(file);
-      const url = await avatarRef.getDownloadURL();
+      // Create storage reference
+      const storageRef = ref(storage, `profile-images/${user.uid}`);
+      
+      // Upload file
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
 
       // Update Firestore user profile
-      await firebaseApp
-        .firestore()
-        .collection('users')
-        .doc(user.uid)
-        .update({ photoURL: url });
+      const userDocRef = doc(db, 'users', user.uid);
+      await updateDoc(userDocRef, {
+        photoURL: downloadURL,
+        updatedAt: new Date().toISOString()
+      });
 
-      if (onUpload) {onUpload(url);}
-    } catch (err: unknown) {
-      console.error('Failed to upload avatar:', err); // Log the error for debugging
+      if (onUpload) {
+        onUpload(downloadURL);
+      }
+    } catch (error) {
+      console.error('Failed to upload avatar:', error);
       alert('Failed to upload avatar. Please try again.');
     } finally {
-      setUploading(false);
-    }
-  };
+       setUploading(false);
+     }
+   };
 
   return (
     <div className="flex flex-col items-center gap-2">

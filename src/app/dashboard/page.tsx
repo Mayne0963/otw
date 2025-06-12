@@ -3,6 +3,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Suspense } from 'react';
+import CustomerOverview from '@/components/dashboard/CustomerOverview';
 import OrderHistory from '@/components/dashboard/OrderHistory';
 import Favorites from '@/components/dashboard/Favorites';
 import Tasks from '@/components/dashboard/Tasks';
@@ -13,7 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LogIn, User } from 'lucide-react';
 
-type TabValue = 'orders' | 'favorites' | 'tasks' | 'tier-perks';
+type TabValue = 'overview' | 'orders' | 'favorites' | 'tasks' | 'tier-perks';
 
 interface TabConfig {
   id: TabValue;
@@ -23,10 +24,11 @@ interface TabConfig {
 }
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState<TabValue>('orders');
+  const [activeTab, setActiveTab] = useState<TabValue>('overview');
   const { user, loading: authLoading } = useAuth();
 
   const tabs: TabConfig[] = useMemo(() => [
+    { id: 'overview', label: 'Overview', component: CustomerOverview, requiresAuth: false },
     { id: 'orders', label: 'Order History', component: OrderHistory, requiresAuth: true },
     { id: 'favorites', label: 'Favorites', component: Favorites, requiresAuth: false },
     { id: 'tasks', label: 'Tasks', component: Tasks, requiresAuth: false },
@@ -93,7 +95,7 @@ export default function DashboardPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-6">
+        <TabsList className="grid w-full grid-cols-5 mb-6">
           {tabs.map((tab) => (
             <TabsTrigger 
               key={tab.id} 

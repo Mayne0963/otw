@@ -21,7 +21,8 @@ import {
   AvatarImage,
 } from '../../components/ui/avatar';
 import { Badge } from '../../components/ui/badge';
-import { User, CreditCard, MapPin, Bell, Shield, LogOut } from 'lucide-react';
+import { User, CreditCard, MapPin, Bell, Shield, LogOut, Phone, Info, Home, Building, Briefcase } from 'lucide-react';
+import AvatarUpload from '../../components/profile/AvatarUpload';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -30,20 +31,55 @@ import type { UserProfile } from '../../types';
 
 interface Address {
   id: string;
-  name: string;
-  street: string;
+  type: 'home' | 'work' | 'other';
+  nickname?: string;
+  recipientName: string;
+  phoneNumber: string;
+  addressLine1: string;
+  addressLine2?: string;
   city: string;
   state: string;
-  zip: string;
-  default: boolean;
+  postalCode: string;
+  country: string;
+  latitude?: number;
+  longitude?: number;
+  isDefault: boolean;
+  deliveryInstructions?: string;
+  accessCode?: string;
+  businessHours?: {
+    start: string;
+    end: string;
+    days: string[];
+  };
+  verified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
 }
 
 interface PaymentMethod {
   id: string;
-  type: string;
+  type: 'card' | 'bank' | 'paypal' | 'apple_pay' | 'google_pay';
+  brand?: string;
   last4: string;
-  expiry: string;
-  default: boolean;
+  expiryMonth?: number;
+  expiryYear?: number;
+  holderName: string;
+  isDefault: boolean;
+  isVerified: boolean;
+  nickname?: string;
+  billingAddress?: {
+    line1: string;
+    line2?: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  stripePaymentMethodId?: string;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
 }
 
 interface UserData {
@@ -61,141 +97,140 @@ interface UserData {
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('account');
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
-  const handleSignOut = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
-  // Fetch user profile data from Firebase with timeout and error handling
   useEffect(() => {
+    if (!user?.uid) {
+      setLoading(false);
+      return;
+    }
+
     let isMounted = true;
     const controller = new AbortController();
-    
+
     const fetchUserData = async () => {
-      if (!user?.uid) {
-        if (isMounted) setLoading(false);
-        return;
-      }
-
-      const timeoutId = setTimeout(() => {
-        controller.abort();
-      }, 15000); // 15 second timeout
-
       try {
-        // Fetch user profile from Firestore with timeout
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDocPromise = getDoc(userDocRef);
+        setLoading(true);
         
-        // Race between the fetch and timeout
-        const userDoc = await Promise.race([
-          userDocPromise,
-          new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Profile fetch timeout')), 10000)
-          )
-        ]) as any;
+        const timeoutId = setTimeout(() => {
+          if (isMounted) {
+            console.warn('Data fetch timeout, using fallback');
+            setUserData({
+              name: user.displayName || 'User',
+              email: user.email || '',
+              avatar: user.photoURL || '',
+              memberSince: 'Recently',
+              tier: 'Bronze',
+              rewardPoints: 0,
+              addresses: [],
+              paymentMethods: []
+            });
+            setAddresses([]);
+            setPaymentMethods([]);
+            setLoading(false);
+          }
+        }, 10000);
 
-        let profileData: Partial<UserProfile> = {};
-        if (userDoc?.exists()) {
-          profileData = userDoc.data() as UserProfile;
-        }
+        // Fetch user profile
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        // Fetch addresses
+        const addressesQuery = query(
+          collection(db, 'addresses'),
+          where('userId', '==', user.uid)
+        );
+        const addressesSnapshot = await getDocs(addressesQuery);
+        const addressesData = addressesSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Address[];
 
-        // Fetch user addresses with error handling
-        let addresses: Address[] = [];
-        try {
-          const addressesQuery = query(
-            collection(db, 'addresses'),
-            where('userId', '==', user.uid),
-          );
-          const addressesSnapshot = await Promise.race([
-            getDocs(addressesQuery),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Addresses fetch timeout')), 8000)
-            )
-          ]) as any;
+        // Fetch payment methods
+        const paymentMethodsQuery = query(
+          collection(db, 'paymentMethods'),
+          where('userId', '==', user.uid)
+        );
+        const paymentMethodsSnapshot = await getDocs(paymentMethodsQuery);
+        const paymentMethodsData = paymentMethodsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as PaymentMethod[];
+
+        if (userDoc.exists() && isMounted) {
+          const profileData = userDoc.data() as UserProfile;
           
-          addresses = addressesSnapshot?.docs?.map((doc: any) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) || [];
-        } catch (addressError) {
-          console.warn('Failed to fetch addresses:', addressError);
-          addresses = [];
-        }
+          // Calculate member since date
+          const memberSince = profileData.createdAt 
+            ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+              })
+            : 'Recently';
 
-        // Fetch user payment methods with error handling
-        let paymentMethods: PaymentMethod[] = [];
-        try {
-          const paymentMethodsQuery = query(
-            collection(db, 'paymentMethods'),
-            where('userId', '==', user.uid),
-          );
-          const paymentMethodsSnapshot = await Promise.race([
-            getDocs(paymentMethodsQuery),
-            new Promise((_, reject) => 
-              setTimeout(() => reject(new Error('Payment methods fetch timeout')), 8000)
-            )
-          ]) as any;
-          
-          paymentMethods = paymentMethodsSnapshot?.docs?.map((doc: any) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) || [];
-        } catch (paymentError) {
-          console.warn('Failed to fetch payment methods:', paymentError);
-          paymentMethods = [];
-        }
+          // Calculate tier based on reward points
+          const rewardPoints = profileData.rewardPoints || 0;
+          let tier = 'Bronze';
+          if (rewardPoints >= 1000) tier = 'Gold';
+          else if (rewardPoints >= 500) tier = 'Silver';
 
-        // Calculate member since date
-        const memberSince = profileData.createdAt
-          ? new Date(profileData.createdAt).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-            })
-          : 'Recently';
-
-        // Determine tier based on reward points
-        const points = profileData.rewardPoints || 0;
-        let tier = 'Bronze';
-        if (points >= 1000) {tier = 'Gold';}
-        else if (points >= 500) {tier = 'Silver';}
-
-        if (isMounted) {
-          setUserData({
-            name: user.displayName || profileData.displayName || 'User',
-            email: user.email || profileData.email || '',
-            phone: profileData.phone || '',
-            avatar: user.photoURL || profileData.photoURL || '',
+          const userData = {
+            name: profileData.name || user.displayName || 'User',
+            email: profileData.email || user.email || '',
+            phone: profileData.phone,
+            avatar: profileData.photoURL || user.photoURL || '',
             memberSince,
             tier,
-            rewardPoints: points,
-            addresses,
-            paymentMethods,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        
-        // Fallback to basic user data from auth
-        if (isMounted && user) {
-          setUserData({
+            rewardPoints,
+            addresses: addressesData,
+            paymentMethods: paymentMethodsData
+          };
+
+          setUserData(userData);
+          setAddresses(addressesData);
+          setPaymentMethods(paymentMethodsData);
+        } else if (isMounted) {
+          // Fallback for new users
+          const fallbackData = {
             name: user.displayName || 'User',
             email: user.email || '',
-            phone: '',
             avatar: user.photoURL || '',
             memberSince: 'Recently',
             tier: 'Bronze',
             rewardPoints: 0,
-            addresses: [],
-            paymentMethods: [],
-          });
+            addresses: addressesData,
+            paymentMethods: paymentMethodsData
+          };
+          setUserData(fallbackData);
+          setAddresses(addressesData);
+          setPaymentMethods(paymentMethodsData);
         }
-      } finally {
+
+        clearTimeout(timeoutId);
+        if (isMounted) setLoading(false);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        const timeoutId = setTimeout(() => {
+          if (isMounted) {
+            setUserData({
+              name: user.displayName || 'User',
+              email: user.email || '',
+              avatar: user.photoURL || '',
+              memberSince: 'Recently',
+              tier: 'Bronze',
+              rewardPoints: 0,
+              addresses: [],
+              paymentMethods: []
+            });
+            setAddresses([]);
+            setPaymentMethods([]);
+            setLoading(false);
+          }
+        }, 1000);
+        
         clearTimeout(timeoutId);
         if (isMounted) setLoading(false);
       }
@@ -242,18 +277,16 @@ export default function ProfilePage() {
             <Card>
               <CardHeader>
                 <div className="flex flex-col items-center">
-                  <Avatar className="h-24 w-24 mb-4">
-                    <AvatarImage
-                      src={userData.avatar || '/assets/users/default-avatar.jpg'}
-                      alt={userData.name}
-                    />
-                    <AvatarFallback>
-                      {userData.name
-                        .split(' ')
-                        .map((n) => n[0])
-                        .join('')}
-                    </AvatarFallback>
-                  </Avatar>
+                  <AvatarUpload
+                    user={{
+                      uid: user.uid,
+                      name: userData.name,
+                      photoURL: userData.avatar
+                    }}
+                    onUpload={(url) => {
+                      setUserData(prev => prev ? { ...prev, avatar: url } : null);
+                    }}
+                  />
                   <CardTitle>{userData.name}</CardTitle>
                   <CardDescription>
                     Member since {userData.memberSince}
@@ -290,9 +323,7 @@ export default function ProfilePage() {
                     Payment Methods
                   </Button>
                   <Button
-                    variant={
-                      activeTab === 'notifications' ? 'default' : 'ghost'
-                    }
+                    variant={activeTab === 'notifications' ? 'default' : 'ghost'}
                     className="justify-start"
                     onClick={() => setActiveTab('notifications')}
                   >
@@ -309,261 +340,272 @@ export default function ProfilePage() {
                   </Button>
                 </nav>
               </CardContent>
-              <CardFooter>
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                  onClick={handleSignOut}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Tier Membership</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between mb-4">
-                  <span>Current Tier:</span>
-                  <Badge className="bg-otw-gold text-black">{userData.tier}</Badge>
-                </div>
-                <div className="flex items-center justify-between mb-4">
-                  <span>Reward Points:</span>
-                  <span className="font-semibold">{userData.rewardPoints}</span>
-                </div>
-                <Link href="/tier">
-                  <Button variant="outline" className="w-full">
-                    Manage Membership
-                  </Button>
-                </Link>
-              </CardContent>
             </Card>
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            {/* Account Tab */}
             {activeTab === 'account' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Account Information</CardTitle>
                   <CardDescription>
-                    Update your personal information
+                    Manage your personal information and preferences.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <form className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="name">Full Name</Label>
-                        <Input
-                          id="name"
-                          defaultValue={userData.name}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          defaultValue={userData.email}
-                          className="mt-1"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                          id="phone"
-                          defaultValue={userData.phone || ''}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="dob">Date of Birth</Label>
-                        <Input id="dob" type="date" className="mt-1" />
-                      </div>
-                    </div>
-
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Button>Save Changes</Button>
+                      <Label htmlFor="name">Full Name</Label>
+                      <Input
+                        id="name"
+                        value={userData.name}
+                        className="mt-1"
+                        readOnly
+                      />
                     </div>
-                  </form>
+                    <div>
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={userData.email}
+                        className="mt-1"
+                        readOnly
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={userData.phone || ''}
+                        className="mt-1"
+                        placeholder="Add phone number"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="tier">Membership Tier</Label>
+                      <div className="mt-1">
+                        <Badge className="bg-otw-gold text-black">
+                          {userData.tier} Member
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label>Reward Points</Label>
+                    <div className="mt-1 text-2xl font-bold text-otw-gold">
+                      {userData.rewardPoints.toLocaleString()} points
+                    </div>
+                  </div>
+
+                  <div>
+                    <Button>Save Changes</Button>
+                  </div>
                 </CardContent>
               </Card>
             )}
 
-            {/* Addresses Tab */}
             {activeTab === 'addresses' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Saved Addresses</CardTitle>
                   <CardDescription>
-                    Manage your delivery addresses
+                    Manage your delivery addresses for faster checkout.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-6">
-                    {userData.addresses.map((address) => (
-                      <div
-                        key={address.id}
-                        className="bg-gray-900 p-4 rounded-lg border border-gray-800"
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-medium">{address.name}</h3>
-                            <p className="text-sm text-gray-400">
-                              {address.street}
-                              <br />
-                              {address.city}, {address.state} {address.zip}
-                            </p>
+                  {addresses.length > 0 ? (
+                    <div className="space-y-4">
+                      {addresses.map((address) => (
+                        <div key={address.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center space-x-2">
+                              <h3 className="font-medium">{address.recipientName}</h3>
+                              {address.isDefault && (
+                                <Badge variant="secondary">Default</Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              {address.type === 'home' && <Home className="h-4 w-4" />}
+                              {address.type === 'work' && <Building className="h-4 w-4" />}
+                              {address.type === 'other' && <Briefcase className="h-4 w-4" />}
+                              <span className="text-sm text-gray-600 capitalize">{address.type}</span>
+                            </div>
                           </div>
-                          <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">
-                              Edit
-                            </Button>
-                            <Button variant="destructive" size="sm">
-                              Delete
-                            </Button>
+                          {address.nickname && (
+                            <p className="text-sm text-gray-600 mb-1">{address.nickname}</p>
+                          )}
+                          <p className="text-sm">{address.addressLine1}</p>
+                          {address.addressLine2 && (
+                            <p className="text-sm">{address.addressLine2}</p>
+                          )}
+                          <p className="text-sm">
+                            {address.city}, {address.state} {address.postalCode}
+                          </p>
+                          <p className="text-sm">{address.country}</p>
+                          {address.phoneNumber && (
+                            <div className="flex items-center mt-2 text-sm text-gray-600">
+                              <Phone className="h-3 w-3 mr-1" />
+                              {address.phoneNumber}
+                            </div>
+                          )}
+                          {address.deliveryInstructions && (
+                            <div className="flex items-start mt-2 text-sm text-gray-600">
+                              <Info className="h-3 w-3 mr-1 mt-0.5" />
+                              {address.deliveryInstructions}
+                            </div>
+                          )}
+                          <div className="flex space-x-2 mt-3">
+                            <Button size="sm" variant="outline">Edit</Button>
+                            <Button size="sm" variant="outline">Delete</Button>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                    <Button variant="outline" className="w-full">
-                      Add New Address
-                    </Button>
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <MapPin className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                      <p className="text-gray-600 mb-4">No addresses saved yet</p>
+                      <Button>Add New Address</Button>
+                    </div>
+                  )}
+                  {addresses.length > 0 && (
+                    <div className="mt-6">
+                      <Button>Add New Address</Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
 
-            {/* Payment Methods Tab */}
             {activeTab === 'payment' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Payment Methods</CardTitle>
-                  <CardDescription>Manage your payment options</CardDescription>
+                  <CardDescription>
+                    Manage your saved payment methods for quick and secure checkout.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-6">
-                    {userData.paymentMethods.map((method) => (
-                      <div
-                        key={method.id}
-                        className="bg-gray-900 p-4 rounded-lg border border-gray-800"
-                      >
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <div className="flex items-center">
-                              <h3 className="font-bold">
-                                {method.type} •••• {method.last4}
-                              </h3>
-                              {method.default && (
-                                <Badge className="ml-2 bg-otw-gold text-black">
-                                  Default
-                                </Badge>
+                  {paymentMethods.length > 0 ? (
+                    <div className="space-y-4">
+                      {paymentMethods.map((method) => (
+                        <div key={method.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex items-center space-x-2">
+                              <CreditCard className="h-5 w-5" />
+                              <span className="font-medium capitalize">
+                                {method.brand} •••• {method.last4}
+                              </span>
+                              {method.isDefault && (
+                                <Badge variant="secondary">Default</Badge>
                               )}
                             </div>
-                            <p className="text-gray-400 mt-1">
-                              Expires {method.expiry}
-                            </p>
+                            <div className="flex items-center space-x-2">
+                              {method.isVerified ? (
+                                <Badge className="bg-green-100 text-green-800">Verified</Badge>
+                              ) : (
+                                <Badge variant="outline">Unverified</Badge>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex gap-2">
-                            {!method.default && (
-                              <Button variant="outline" size="sm">
-                                Set as Default
-                              </Button>
-                            )}
-                            {!method.default && (
-                              <Button variant="destructive" size="sm">
-                                Delete
-                              </Button>
-                            )}
+                          {method.nickname && (
+                            <p className="text-sm text-gray-600 mb-1">{method.nickname}</p>
+                          )}
+                          <p className="text-sm text-gray-600">{method.holderName}</p>
+                          {method.expiryMonth && method.expiryYear && (
+                            <p className="text-sm text-gray-600">
+                              Expires {method.expiryMonth.toString().padStart(2, '0')}/{method.expiryYear}
+                            </p>
+                          )}
+                          {method.billingAddress && (
+                            <p className="text-sm text-gray-600">
+                              {method.billingAddress.city}, {method.billingAddress.state}
+                            </p>
+                          )}
+                          <div className="flex space-x-2 mt-3">
+                            <Button size="sm" variant="outline">Set as Default</Button>
+                            <Button size="sm" variant="outline">Edit</Button>
+                            <Button size="sm" variant="outline">Delete</Button>
                           </div>
                         </div>
-                      </div>
-                    ))}
-
-                    <Button>Add New Payment Method</Button>
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <CreditCard className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                      <p className="text-gray-600 mb-4">No payment methods saved yet</p>
+                      <Button>Add New Payment Method</Button>
+                    </div>
+                  )}
+                  {paymentMethods.length > 0 && (
+                    <div className="mt-6">
+                      <Button>Add New Payment Method</Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
 
-            {/* Notifications Tab */}
             {activeTab === 'notifications' && (
               <Card>
                 <CardHeader>
                   <CardTitle>Notification Preferences</CardTitle>
-                  <CardDescription>Manage how we contact you</CardDescription>
+                  <CardDescription>
+                    Choose how you want to receive updates and notifications.
+                  </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-bold">Order Updates</h3>
-                        <p className="text-gray-400">
-                          Receive updates about your orders
-                        </p>
+                <CardContent className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium mb-3">Order Updates</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="order-email"
+                          className="rounded border-gray-600 text-otw-gold focus:ring-otw-gold"
+                          defaultChecked
+                        />
+                        <Label htmlFor="order-email">Email notifications for order updates</Label>
                       </div>
-                      <div className="flex gap-4">
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="order-email"
-                            className="rounded border-gray-600 text-otw-gold focus:ring-otw-gold"
-                            defaultChecked
-                          />
-                          <Label htmlFor="order-email">Email</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="order-sms"
-                            className="rounded border-gray-600 text-otw-gold focus:ring-otw-gold"
-                            defaultChecked
-                          />
-                          <Label htmlFor="order-sms">SMS</Label>
-                        </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="order-sms"
+                          className="rounded border-gray-600 text-otw-gold focus:ring-otw-gold"
+                        />
+                        <Label htmlFor="order-sms">SMS notifications for order updates</Label>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-bold">Promotions</h3>
-                        <p className="text-gray-400">
-                          Receive special offers and promotions
-                        </p>
+                  <div>
+                    <h3 className="text-lg font-medium mb-3">Marketing</h3>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="promo-email"
+                          className="rounded border-gray-600 text-otw-gold focus:ring-otw-gold"
+                        />
+                        <Label htmlFor="promo-email">Email</Label>
                       </div>
-                      <div className="flex gap-4">
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="promo-email"
-                            className="rounded border-gray-600 text-otw-gold focus:ring-otw-gold"
-                            defaultChecked
-                          />
-                          <Label htmlFor="promo-email">Email</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="promo-sms"
-                            className="rounded border-gray-600 text-otw-gold focus:ring-otw-gold"
-                          />
-                          <Label htmlFor="promo-sms">SMS</Label>
-                        </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="promo-sms"
+                          className="rounded border-gray-600 text-otw-gold focus:ring-otw-gold"
+                        />
+                        <Label htmlFor="promo-sms">SMS</Label>
                       </div>
                     </div>
+                  </div>
 
-                    <div>
-                      <Button>Save Changes</Button>
-                    </div>
+                  <div>
+                    <Button>Save Changes</Button>
                   </div>
                 </CardContent>
               </Card>

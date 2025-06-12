@@ -33,7 +33,7 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "userRef",
+          "fieldPath": "userId",
           "order": "ASCENDING"
         },
         {
@@ -218,16 +218,7 @@
         }
       ]
     },
-    {
-      "collectionGroup": "daily_reports",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "date",
-          "order": "DESCENDING"
-        }
-      ]
-    },
+
     {
       "collectionGroup": "backup_logs",
       "queryScope": "COLLECTION",

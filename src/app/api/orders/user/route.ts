@@ -42,14 +42,14 @@ export async function GET(request: NextRequest) {
     // Fetch regular orders from Firestore
     let regularOrdersQuery = query(
       collection(db, 'orders'),
-      where('userRef', '==', userId),
+      where('userId', '==', userId),
       orderBy('createdAt', 'desc')
     );
 
     if (statusFilter) {
       regularOrdersQuery = query(
         collection(db, 'orders'),
-        where('userRef', '==', userId),
+        where('userId', '==', userId),
         where('status', '==', statusFilter),
         orderBy('createdAt', 'desc')
       );
