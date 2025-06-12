@@ -48,11 +48,97 @@ export default function PlaceAutocomplete({
       autocompleteElement.placeholder = placeholder;
       autocompleteElement.disabled = disabled;
 
-      // Apply custom styling
-      autocompleteElement.style.setProperty('--gmp-input-border', '1px solid #ccc');
-      autocompleteElement.style.setProperty('--gmp-input-border-radius', '0.375rem');
-      autocompleteElement.style.setProperty('--gmp-input-padding', '0.5rem 1rem');
+      // Apply enhanced custom styling for dark theme
       autocompleteElement.style.width = '100%';
+      autocompleteElement.style.height = '100%';
+      
+      // Inject custom CSS into shadow DOM for comprehensive styling with OTW theme
+      const styleTag = document.createElement('style');
+      styleTag.textContent = `
+        /* Hide default input styles and apply OTW dark theme */
+        input {
+          background: rgba(39, 39, 39, 0.8) !important; /* otw-black-900 with opacity */
+          color: white !important;
+          font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif !important;
+          font-size: 1rem !important;
+          border: 1px solid rgba(212, 175, 55, 0.5) !important; /* otw-gold with opacity */
+          border-radius: 0.375rem !important;
+          outline: none !important;
+          padding: 0.75rem 1rem !important;
+          transition: all 0.2s ease !important;
+          width: 100% !important;
+          box-sizing: border-box !important;
+        }
+        
+        input::placeholder {
+          color: rgba(164, 164, 164, 1) !important; /* otw-black-300 */
+        }
+        
+        input:focus {
+          border-color: #d4af37 !important; /* otw-gold */
+          box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.5) !important;
+        }
+        
+        input:disabled {
+          opacity: 0.6 !important;
+          cursor: not-allowed !important;
+        }
+        
+        /* Style suggestions dropdown with OTW theme */
+        .pac-container {
+          background-color: rgba(39, 39, 39, 0.95) !important; /* otw-black-900 */
+          border: 1px solid rgba(212, 175, 55, 0.4) !important; /* otw-gold */
+          border-radius: 0.375rem !important;
+          box-shadow: 0 10px 15px -3px rgba(10, 10, 10, 0.6), 0 4px 6px -2px rgba(10, 10, 10, 0.3) !important;
+          color: white !important;
+          max-height: 15rem !important;
+          overflow-y: auto !important;
+          z-index: 9999 !important;
+          margin-top: 0.25rem !important;
+        }
+        
+        .pac-item {
+          padding: 0.5rem 1rem !important;
+          cursor: pointer !important;
+          color: white !important;
+          border-bottom: 1px solid rgba(212, 175, 55, 0.2) !important; /* otw-gold */
+          transition: background-color 0.15s ease !important;
+        }
+        
+        .pac-item:last-child {
+          border-bottom: none !important;
+        }
+        
+        .pac-item:hover,
+        .pac-item-selected {
+          background-color: rgba(212, 175, 55, 0.2) !important; /* otw-gold hover */
+        }
+        
+        .pac-item-query {
+          color: #d4af37 !important; /* otw-gold */
+          font-weight: 500 !important;
+        }
+        
+        .pac-matched {
+          color: #d4af37 !important; /* otw-gold */
+          font-weight: 600 !important;
+        }
+        
+        .pac-icon {
+          background-image: none !important;
+          color: rgba(212, 175, 55, 0.8) !important; /* otw-gold */
+        }
+      `;
+      
+      // Wait for shadow root to be available and inject styles
+      setTimeout(() => {
+        if (autocompleteElement.shadowRoot) {
+          autocompleteElement.shadowRoot.appendChild(styleTag);
+        } else {
+          // Fallback: try to inject into document head for global pac-container styling
+          document.head.appendChild(styleTag);
+        }
+      }, 100);
 
       // Store reference
       autocompleteElementRef.current = autocompleteElement;
@@ -144,9 +230,9 @@ export default function PlaceAutocomplete({
   if (!isLoaded) {
     return (
       <div className={`w-full ${className}`}>
-        <div className="flex items-center space-x-2 p-3 border border-gray-300 rounded-md bg-gray-50">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-          <span className="text-gray-600">Loading address search...</span>
+        <div className="flex items-center space-x-2 p-3 border border-otw-gold/50 rounded-md bg-gradient-to-br from-otw-black-900 to-otw-black-800">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-otw-gold"></div>
+          <span className="text-otw-black-300">Loading address search...</span>
         </div>
       </div>
     );
@@ -156,8 +242,8 @@ export default function PlaceAutocomplete({
   if (apiLoadError || loadError) {
     return (
       <div className={`w-full ${className}`}>
-        <div className="p-3 border border-red-300 rounded-md bg-red-50">
-          <span className="text-red-600">
+        <div className="p-3 border border-otw-red/50 rounded-md bg-gradient-to-br from-otw-black-900 to-otw-black-800">
+          <span className="text-otw-red-400">
             Error loading address search: {apiLoadError?.message || loadError}
           </span>
         </div>
@@ -169,9 +255,10 @@ export default function PlaceAutocomplete({
     <div className={`w-full ${className}`}>
       <div
         ref={containerRef}
-        className="w-full"
+        className="relative bg-gradient-to-br from-otw-black-900 to-otw-black-800 rounded-md p-2 shadow-inner border border-otw-gold/50"
         style={{
-          minHeight: '40px',
+          minHeight: '48px',
+          maxWidth: '100%',
         }}
       />
     </div>
