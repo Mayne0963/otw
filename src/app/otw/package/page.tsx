@@ -138,7 +138,7 @@ export default function PackagePage() {
   return (
     <div className="min-h-screen pb-20 pt-16">
       {/* Enhanced Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-otw-black-900 via-otw-black-800 to-otw-black-950">
+      <section className="relative min-h-screen flex items-center justify-center overflow-visible bg-gradient-to-br from-otw-black via-otw-black-900 to-otw-black-950">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-otw-black/80 via-otw-black/60 to-transparent z-10"></div>
           <div className="absolute inset-0 bg-gradient-to-br from-otw-red-900/30 to-otw-gold-900/20 opacity-60"></div>
@@ -182,7 +182,7 @@ export default function PackagePage() {
             </div>
 
             {/* Right side - Quick quote form */}
-            <div className="otw-card p-8">
+            <div className="otw-card p-8 max-w-md w-full backdrop-blur-xl bg-otw-black-800/40 border border-otw-gold/20 rounded-2xl shadow-2xl overflow-visible relative z-10">
               <h3 className="text-2xl font-bold text-white mb-6">Get instant quote</h3>
 
               <div className="space-y-4">

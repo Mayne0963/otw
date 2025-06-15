@@ -79,7 +79,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   }, [onPlaceSelect]);
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`address-autocomplete-container relative z-[9999] ${className}`}>
       {label && (
         <label className="block text-sm font-semibold text-white/95 mb-2 tracking-wide drop-shadow-sm">
           {label}
@@ -91,7 +91,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
         disabled={disabled}
         onPlaceSelect={handlePlaceSelect}
         error={error}
-        className="w-full px-5 py-4 border-2 rounded-xl transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-offset-0 bg-black/50 backdrop-blur-xl border-white/15 text-white/95 placeholder-white/65 focus:border-otw-gold-400/70 focus:ring-2 focus:ring-otw-gold-400/40 focus:bg-black/60 hover:border-white/25 hover:bg-black/55 hover:shadow-2xl hover:shadow-otw-gold-400/15 focus:shadow-3xl focus:shadow-otw-gold-400/25 hover:scale-[1.01] focus:scale-[1.02] transition-all duration-300 ease-out font-medium text-base"
+        className="w-full px-5 py-4 border-2 rounded-xl transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-offset-0 bg-[--color-input-bg] backdrop-blur-xl border-[--color-border] text-white/95 placeholder:[--color-muted] focus:border-[--color-harvest-gold] focus:ring-2 focus:ring-[--color-harvest-gold]/40 focus:bg-[--color-input-bg] hover:border-[--color-harvest-gold]/25 hover:bg-[--color-input-bg] hover:shadow-2xl hover:shadow-[--color-harvest-gold]/15 focus:shadow-3xl focus:shadow-[--color-harvest-gold]/25 hover:scale-[1.01] focus:scale-[1.02] transition-all duration-300 ease-out font-medium text-base"
         countryFilter={restrictToCountry}
         size="md"
         showIcon={true}

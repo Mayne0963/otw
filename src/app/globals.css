@@ -9,6 +9,15 @@
   --otw-black: #0A0A0A;
   --otw-gradient-text: linear-gradient(135deg, var(--otw-gold) 0%, #ffffff 50%, var(--otw-gold) 100%);
   --otw-gradient-radial: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 10, 0.2) 50%, rgba(10, 10, 10, 0.4) 100%);
+  
+  /* Enhanced OTW Color System */
+  --color-onyx: #0A0A0A;
+  --color-harvest-gold: #d4af37;
+  --color-muted: rgba(255, 255, 255, 0.6);
+  --color-input-bg: rgba(0, 0, 0, 0.5);
+  --color-border: rgba(255, 255, 255, 0.15);
+  --color-surface: rgba(0, 0, 0, 0.9);
+  --color-surface-strong: rgba(255, 255, 255, 0.1);
 }
 
 /* OTW Card Component */
@@ -81,6 +90,45 @@
 /* OTW Focus States */
 .otw-focus {
   @apply focus:outline-none focus:ring-2 focus:ring-otw-gold focus:ring-offset-2 focus:ring-offset-otw-black;
+}
+
+/* OTW Address Autocomplete Utility Classes */
+@layer utilities {
+  .input-otw {
+    @apply w-full px-4 py-3 rounded-xl border border-[--color-border] bg-[--color-input-bg] text-[--color-onyx] placeholder:text-[--color-muted] focus:outline-none focus:border-[--color-harvest-gold] transition-all;
+  }
+
+  .autocomplete-dropdown {
+    @apply absolute top-full mt-2 w-full rounded-xl border border-[--color-border] bg-[--color-surface] text-[--color-onyx] shadow-xl z-[9999];
+  }
+
+  .autocomplete-item {
+    @apply px-4 py-2 cursor-pointer text-sm hover:bg-[--color-surface-strong] transition-colors duration-150;
+  }
+
+  .autocomplete-active {
+    @apply bg-[--color-harvest-gold]/10 font-semibold;
+  }
+}
+
+/* Global Google Maps Autocomplete Dropdown Z-Index Fix */
+.pac-container {
+  z-index: 99999 !important;
+  position: absolute !important;
+}
+
+/* Ensure parent containers don't clip the dropdown */
+.address-autocomplete-container {
+  position: relative;
+  z-index: 9999;
+  overflow: visible !important;
+}
+
+/* Portal strategy for autocomplete dropdown if needed */
+.pac-container-portal {
+  position: fixed !important;
+  z-index: 999999 !important;
+  pointer-events: auto !important;
 }
 
 /* OTW Buttons Enhancement */

@@ -64,7 +64,7 @@ const getThemeStyles = (theme: ThemeVariant): string => {
     minimal: 'bg-transparent border-gray-300 text-gray-900 placeholder-gray-400 focus:border-gray-500 focus:ring-0',
     glassmorphism: 'bg-white/10 backdrop-blur-md border-white/20 text-gray-900 placeholder-gray-600 focus:border-white/40 focus:ring-white/20',
     dark: 'bg-gray-800 border-gray-600 text-white placeholder-gray-400 focus:border-gray-400 focus:ring-gray-400',
-    otw: 'bg-black/50 backdrop-blur-lg border-white/15 text-white/95 placeholder-white/40 focus:border-otw-gold-400/70 focus:ring-otw-gold-400/25 hover:border-otw-gold-300/50 hover:bg-black/60 focus:bg-black/65 transition-all duration-500 ease-out shadow-lg shadow-black/20'
+    otw: 'bg-[--color-input-bg] backdrop-blur-lg border-[--color-border] text-white/95 placeholder:[--color-muted] focus:border-[--color-harvest-gold] focus:ring-[--color-harvest-gold]/25 hover:border-[--color-harvest-gold]/50 hover:bg-[--color-input-bg] focus:bg-[--color-input-bg] transition-all duration-500 ease-out shadow-lg shadow-black/20'
   };
   return themes[theme] || themes.otw;
 };
@@ -323,14 +323,13 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
     style.textContent = `
       /* Custom styling for Google Places Autocomplete dropdown with enhanced visibility */
       .pac-container {
-        background: rgba(0, 0, 0, 0.98) !important;
+        background: var(--color-surface) !important;
         backdrop-filter: blur(24px) !important;
         -webkit-backdrop-filter: blur(24px) !important;
-        border: 1px solid rgba(212, 175, 55, 0.4) !important;
+        border: 1px solid var(--color-border) !important;
         border-radius: 16px !important;
         box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.9), 
-                    0 0 0 1px rgba(212, 175, 55, 0.2),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+                    0 0 0 1px var(--color-harvest-gold, #d4af37) !important;
         margin-top: 12px !important;
         overflow: hidden !important;
         z-index: 999999 !important;
@@ -350,9 +349,9 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
         right: 0;
         bottom: 0;
         background: linear-gradient(135deg, 
-          rgba(212, 175, 55, 0.08) 0%, 
-          rgba(0, 0, 0, 0.9) 50%, 
-          rgba(212, 175, 55, 0.05) 100%) !important;
+          color-mix(in srgb, var(--color-harvest-gold) 8%, transparent) 0%, 
+          var(--color-surface) 50%, 
+          color-mix(in srgb, var(--color-harvest-gold) 5%, transparent) 100%) !important;
         z-index: -1;
         border-radius: inherit;
       }
@@ -360,7 +359,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
       .pac-item {
         background: transparent !important;
         color: rgba(255, 255, 255, 0.92) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-bottom: 1px solid var(--color-border) !important;
         padding: 14px 18px !important;
         cursor: pointer !important;
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -371,12 +370,10 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
       
       .pac-item:hover,
       .pac-item-selected {
-        background: linear-gradient(90deg, 
-          rgba(212, 175, 55, 0.18) 0%, 
-          rgba(212, 175, 55, 0.12) 100%) !important;
+        background: var(--color-surface-strong) !important;
         color: rgba(255, 255, 255, 1) !important;
         transform: translateX(6px) !important;
-        border-left: 3px solid rgba(212, 175, 55, 0.8) !important;
+        border-left: 3px solid var(--color-harvest-gold) !important;
       }
       
       .pac-item:first-child {
@@ -391,14 +388,14 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
       }
       
       .pac-item-query {
-        color: rgba(212, 175, 55, 0.95) !important;
+        color: var(--color-harvest-gold) !important;
         font-weight: 600 !important;
       }
       
       .pac-matched {
-        color: rgba(212, 175, 55, 1) !important;
+        color: var(--color-harvest-gold) !important;
         font-weight: 700 !important;
-        text-shadow: 0 0 10px rgba(212, 175, 55, 0.4) !important;
+        text-shadow: 0 0 10px color-mix(in srgb, var(--color-harvest-gold) 40%, transparent) !important;
       }
       
       .pac-icon {
@@ -406,7 +403,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
         width: 22px !important;
         height: 22px !important;
         margin-right: 14px !important;
-        background: linear-gradient(135deg, #d4af37, #f4d03f) !important;
+        background: linear-gradient(135deg, var(--color-harvest-gold), color-mix(in srgb, var(--color-harvest-gold) 80%, #ffffff)) !important;
         border-radius: 6px !important;
         position: relative !important;
         flex-shrink: 0 !important;
