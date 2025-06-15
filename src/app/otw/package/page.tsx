@@ -182,7 +182,7 @@ export default function PackagePage() {
             </div>
 
             {/* Right side - Quick quote form */}
-            <div className="otw-card otw-form-container p-8 max-w-md w-full backdrop-blur-xl bg-otw-black-800/40 border border-otw-gold/20 rounded-2xl shadow-2xl overflow-visible relative z-0">
+            <div className="otw-card otw-form-container p-8 max-w-md w-full backdrop-blur-xl bg-otw-black-800/40 border border-otw-gold/20 rounded-2xl shadow-2xl overflow-visible relative z-0" style={{ overflow: 'visible', position: 'relative', zIndex: 0 }}>
               <h3 className="text-2xl font-bold text-white mb-6">Get instant quote</h3>
 
               <div className="space-y-6 overflow-visible relative z-0">

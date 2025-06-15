@@ -79,14 +79,14 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   }, [onPlaceSelect]);
 
   return (
-    <div className={`address-autocomplete-container relative z-[9999] overflow-visible ${className}`}>
+    <div className={`address-autocomplete-container relative z-[9999] overflow-visible ${className}`} style={{ zIndex: 9999, position: 'relative', overflow: 'visible' }}>
       {label && (
         <label className="block text-sm font-semibold text-[--color-onyx] mb-3 tracking-wide drop-shadow-sm">
           {label}
           {required && <span className="text-[--color-harvest-gold] ml-1" aria-label="required">*</span>}
         </label>
       )}
-      <div className="relative z-[10] overflow-visible">
+      <div className="relative z-[10] overflow-visible" style={{ zIndex: 10, position: 'relative', overflow: 'visible' }}>
         <OTWPlaceAutocompleteElement
           placeholder={placeholder}
           disabled={disabled}

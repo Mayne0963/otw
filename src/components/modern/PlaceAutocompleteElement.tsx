@@ -321,7 +321,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
 
     const style = document.createElement('style');
     style.textContent = `
-      /* Enhanced OTW Google Maps Autocomplete Dropdown Styling */
+      /* Enhanced OTW Google Maps Autocomplete Dropdown Styling with Critical Z-Index Fixes */
       .pac-container {
         background-color: var(--color-surface) !important;
         border: 2px solid var(--color-border) !important;
@@ -333,10 +333,15 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
         backdrop-filter: blur(20px) saturate(180%) !important;
         -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
         position: absolute !important;
-        z-index: 999999 !important;
+        z-index: 2147483647 !important;
         min-width: 100% !important;
         max-height: 300px !important;
         overflow-y: auto !important;
+        top: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        transform: translateZ(0) !important;
+        will-change: transform !important;
       }
       
       .pac-item {
