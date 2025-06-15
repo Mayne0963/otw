@@ -138,51 +138,51 @@ export default function PackagePage() {
   return (
     <div className="min-h-screen pb-20 pt-16">
       {/* Enhanced Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900">
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-otw-black-900 via-otw-black-800 to-otw-black-950">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent z-10"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-800/50 to-purple-800/50 opacity-60"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-otw-black/80 via-otw-black/60 to-transparent z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-otw-red-900/30 to-otw-gold-900/20 opacity-60"></div>
           {/* Animated background elements */}
-          <div className="absolute top-20 left-10 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+          <div className="absolute top-20 left-10 w-2 h-2 bg-otw-gold rounded-full animate-pulse"></div>
           <div className="absolute top-40 right-20 w-1 h-1 bg-otw-gold rounded-full animate-ping"></div>
-          <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse delay-1000"></div>
+          <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-otw-red rounded-full animate-pulse delay-1000"></div>
         </div>
 
         <div className="container mx-auto px-4 z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left side - Hero content */}
             <div className="text-left">
-              <div className="inline-flex items-center bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-2 mb-6">
-                <Package className="w-4 h-4 text-blue-400 mr-2" />
-                <span className="text-blue-400 text-sm font-medium">Trusted by 10,000+ customers</span>
+              <div className="inline-flex items-center bg-otw-gold/10 border border-otw-gold/20 rounded-full px-4 py-2 mb-6">
+                <Package className="w-4 h-4 text-otw-gold mr-2" />
+                <span className="text-otw-gold text-sm font-medium uppercase tracking-wide">Trusted by 10,000+ customers</span>
               </div>
-              <h1 className="text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight">
-                Package delivery
-                <span className="block text-blue-400">made simple</span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                <span className="otw-text-gradient">Package delivery</span>
+                <span className="block text-white">made simple</span>
               </h1>
-              <p className="text-xl text-gray-300 mb-8 max-w-lg">
+              <p className="text-base md:text-lg text-gray-300 mb-8 max-w-lg">
                 Send packages anywhere in the city with real-time tracking, secure handling, and guaranteed delivery times.
               </p>
 
               {/* Quick stats */}
               <div className="flex flex-wrap gap-6 mb-8">
                 <div className="flex items-center text-gray-300">
-                  <Timer className="w-5 h-5 text-blue-400 mr-2" />
-                  <span>2-hour delivery</span>
+                  <Timer className="w-5 h-5 text-otw-gold mr-2" />
+                  <span className="text-sm uppercase tracking-wide">2-hour delivery</span>
                 </div>
                 <div className="flex items-center text-gray-300">
-                  <Shield className="w-5 h-5 text-blue-400 mr-2" />
-                  <span>$1000 insurance</span>
+                  <Shield className="w-5 h-5 text-otw-gold mr-2" />
+                  <span className="text-sm uppercase tracking-wide">$1000 insurance</span>
                 </div>
                 <div className="flex items-center text-gray-300">
-                  <CheckCircle className="w-5 h-5 text-blue-400 mr-2" />
-                  <span>99.9% success rate</span>
+                  <CheckCircle className="w-5 h-5 text-otw-gold mr-2" />
+                  <span className="text-sm uppercase tracking-wide">99.9% success rate</span>
                 </div>
               </div>
             </div>
 
             {/* Right side - Quick quote form */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
+            <div className="otw-card p-8">
               <h3 className="text-2xl font-bold text-white mb-6">Get instant quote</h3>
 
               <div className="space-y-4">
@@ -217,17 +217,17 @@ export default function PackagePage() {
                 />
 
                 <Select value={packageType} onValueChange={setPackageType}>
-                  <SelectTrigger className="h-14 bg-white/10 border-white/20 text-white">
+                  <SelectTrigger className="h-14 bg-otw-black-800/50 border border-otw-gold/20 text-white rounded-xl px-4 py-3 focus:border-otw-gold transition-all">
                     <div className="flex items-center">
-                      <Package className="w-5 h-5 text-gray-400 mr-3" />
+                      <Package className="w-5 h-5 text-otw-gold mr-3" />
                       <SelectValue placeholder="Package type" />
                     </div>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-otw-black-800 border border-otw-gold/20 text-white">
                     {packageTypes.map((type) => (
-                      <SelectItem key={type.name} value={type.name.toLowerCase()}>
+                      <SelectItem key={type.name} value={type.name.toLowerCase()} className="hover:bg-otw-black-700">
                         <div className="flex items-center">
-                          <type.icon className="w-4 h-4 mr-2" />
+                          <type.icon className="w-4 h-4 mr-2 text-otw-gold" />
                           <span>{type.name} (up to {type.maxWeight})</span>
                         </div>
                       </SelectItem>
@@ -237,7 +237,7 @@ export default function PackagePage() {
 
                 <Button
                   size="lg"
-                  className="w-full h-14 text-lg font-semibold bg-blue-500 hover:bg-blue-600 text-white"
+                  className="w-full h-14 text-lg font-bold bg-otw-gold hover:bg-otw-gold-600 text-otw-black rounded-full transition-all transform hover:scale-105 otw-button"
                   disabled={!pickupAddress || !deliveryAddress}
                 >
                   Calculate price & time
@@ -250,11 +250,13 @@ export default function PackagePage() {
       </section>
 
       {/* Service Selection Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-otw-black-950">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Choose your delivery speed</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+              <span className="otw-text-gradient">Choose your delivery speed</span>
+            </h2>
+            <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
               From urgent same-day delivery to scheduled delivery, we have options for every need.
             </p>
           </div>
@@ -265,38 +267,38 @@ export default function PackagePage() {
               return (
                 <div
                   key={service.id}
-                  className={`relative bg-white rounded-2xl overflow-hidden shadow-lg border-2 transition-all duration-300 cursor-pointer hover:shadow-xl ${
+                  className={`otw-card p-6 cursor-pointer transition-all duration-500 ${
                     selectedService === service.id
-                      ? 'border-blue-500 shadow-lg scale-105'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'ring-2 ring-otw-gold bg-otw-black-800/90 scale-105'
+                      : 'hover:border-otw-gold/40 hover:shadow-otw-lg'
                   }`}
                   onClick={() => setSelectedService(service.id)}
                 >
                   {selectedService === service.id && (
-                    <div className="absolute top-4 right-4 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center z-10">
-                      <CheckCircle className="w-5 h-5 text-white" />
+                    <div className="absolute top-4 right-4 w-8 h-8 bg-otw-gold rounded-full flex items-center justify-center z-10">
+                      <CheckCircle className="w-5 h-5 text-otw-black" />
                     </div>
                   )}
 
-                  <div className={`h-32 bg-gradient-to-br ${service.color} flex items-center justify-center`}>
-                    <IconComponent className="w-16 h-16 text-white" />
+                  <div className="h-32 bg-gradient-to-br from-otw-black-800 to-otw-black-900 flex items-center justify-center rounded-xl mb-6">
+                    <IconComponent className="w-16 h-16 text-otw-gold" />
                   </div>
 
-                  <div className="p-6">
+                  <div>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-xl font-bold text-gray-900">{service.name}</h3>
+                      <h3 className="text-xl font-bold text-white">{service.name}</h3>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-blue-600">{service.price}</div>
-                        <div className="text-sm text-gray-500">{service.deliveryTime}</div>
+                        <div className="text-2xl font-bold text-otw-gold">{service.price}</div>
+                        <div className="text-sm text-gray-400 uppercase tracking-wide">{service.deliveryTime}</div>
                       </div>
                     </div>
 
-                    <p className="text-gray-600 mb-4">{service.description}</p>
+                    <p className="text-gray-400 mb-4">{service.description}</p>
 
                     <div className="space-y-2">
                       {service.features.map((feature, index) => (
-                        <div key={index} className="flex items-center text-sm text-gray-700">
-                          <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+                        <div key={index} className="flex items-center text-sm text-gray-300">
+                          <CheckCircle className="w-4 h-4 text-otw-gold mr-2" />
                           <span>{feature}</span>
                         </div>
                       ))}
@@ -309,20 +311,20 @@ export default function PackagePage() {
 
           {/* Package Types Section */}
           <div className="mt-16">
-            <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">What are you sending?</h3>
+            <h3 className="text-2xl font-bold text-white mb-8 text-center">What are you sending?</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {packageTypes.map((type) => {
                 const IconComponent = type.icon;
                 return (
                   <div
                     key={type.name}
-                    className="group bg-white rounded-xl p-6 text-center hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 hover:border-gray-300"
+                    className="group otw-card p-6 text-center hover:shadow-otw-lg transition-all duration-300 cursor-pointer hover:border-otw-gold/40"
                   >
-                    <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
-                      <IconComponent className="w-6 h-6 text-white" />
+                    <div className="w-12 h-12 bg-otw-gold rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
+                      <IconComponent className="w-6 h-6 text-otw-black" />
                     </div>
-                    <h4 className="font-semibold text-gray-900 text-sm mb-1">{type.name}</h4>
-                    <p className="text-xs text-gray-500 mb-2">Up to {type.maxWeight}</p>
+                    <h4 className="font-semibold text-white text-sm mb-1 uppercase tracking-wide">{type.name}</h4>
+                    <p className="text-xs text-otw-gold mb-2 font-medium">Up to {type.maxWeight}</p>
                     <p className="text-xs text-gray-400">{type.examples}</p>
                   </div>
                 );
@@ -332,30 +334,30 @@ export default function PackagePage() {
 
           {/* Detailed Booking Form */}
           <div className="max-w-4xl mx-auto mt-16">
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-200">
-              <h3 className="text-2xl font-bold text-gray-900 mb-8">Package details</h3>
+            <div className="otw-card p-8">
+              <h3 className="text-2xl font-bold text-white mb-8">Package details</h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <Label className="text-gray-700 font-medium">Package dimensions</Label>
+                  <Label className="text-gray-300 font-medium">Package dimensions</Label>
                   <div className="grid grid-cols-3 gap-2 mt-2">
-                    <Input placeholder="Length" className="h-12" />
-                    <Input placeholder="Width" className="h-12" />
-                    <Input placeholder="Height" className="h-12" />
+                    <Input placeholder="Length" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
+                    <Input placeholder="Width" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
+                    <Input placeholder="Height" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Dimensions in inches</p>
+                  <p className="text-xs text-gray-400 mt-1">Dimensions in inches</p>
                 </div>
 
                 <div>
-                  <Label className="text-gray-700 font-medium">Weight & Value</Label>
+                  <Label className="text-gray-300 font-medium">Weight & Value</Label>
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     <div className="relative">
                       <Scale className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input placeholder="Weight (lbs)" className="pl-10 h-12" />
+                      <Input placeholder="Weight (lbs)" className="pl-10 h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl py-3 transition-all" />
                     </div>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input placeholder="Value ($)" className="pl-10 h-12" />
+                      <Input placeholder="Value ($)" className="pl-10 h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl py-3 transition-all" />
                     </div>
                   </div>
                 </div>
@@ -363,38 +365,38 @@ export default function PackagePage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <Label className="text-gray-700 font-medium">Pickup details</Label>
+                  <Label className="text-gray-300 font-medium">Pickup details</Label>
                   <div className="space-y-3 mt-2">
-                    <Input placeholder="Contact name" className="h-12" />
-                    <Input placeholder="Phone number" className="h-12" />
+                    <Input placeholder="Contact name" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
+                    <Input placeholder="Phone number" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
                     <Select>
-                      <SelectTrigger className="h-12">
+                      <SelectTrigger className="h-12 bg-otw-black/50 border-gray-600 text-white rounded-xl px-4 py-3 focus:border-otw-gold">
                         <SelectValue placeholder="Pickup time" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="asap">ASAP (within 2 hours)</SelectItem>
-                        <SelectItem value="today">Later today</SelectItem>
-                        <SelectItem value="tomorrow">Tomorrow</SelectItem>
-                        <SelectItem value="scheduled">Schedule for later</SelectItem>
+                      <SelectContent className="bg-otw-black border-gray-600">
+                        <SelectItem value="asap" className="text-white hover:bg-gray-700">ASAP (within 2 hours)</SelectItem>
+                        <SelectItem value="today" className="text-white hover:bg-gray-700">Later today</SelectItem>
+                        <SelectItem value="tomorrow" className="text-white hover:bg-gray-700">Tomorrow</SelectItem>
+                        <SelectItem value="scheduled" className="text-white hover:bg-gray-700">Schedule for later</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
                 <div>
-                  <Label className="text-gray-700 font-medium">Delivery details</Label>
+                  <Label className="text-gray-300 font-medium">Delivery details</Label>
                   <div className="space-y-3 mt-2">
-                    <Input placeholder="Recipient name" className="h-12" />
-                    <Input placeholder="Recipient phone" className="h-12" />
+                    <Input placeholder="Recipient name" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
+                    <Input placeholder="Recipient phone" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
                     <Select>
-                      <SelectTrigger className="h-12">
+                      <SelectTrigger className="h-12 bg-otw-black/50 border-gray-600 text-white rounded-xl px-4 py-3 focus:border-otw-gold">
                         <SelectValue placeholder="Delivery instructions" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="door">Leave at door</SelectItem>
-                        <SelectItem value="person">Hand to person</SelectItem>
-                        <SelectItem value="concierge">Leave with concierge</SelectItem>
-                        <SelectItem value="signature">Signature required</SelectItem>
+                      <SelectContent className="bg-otw-black border-gray-600">
+                        <SelectItem value="door" className="text-white hover:bg-gray-700">Leave at door</SelectItem>
+                        <SelectItem value="person" className="text-white hover:bg-gray-700">Hand to person</SelectItem>
+                        <SelectItem value="concierge" className="text-white hover:bg-gray-700">Leave with concierge</SelectItem>
+                        <SelectItem value="signature" className="text-white hover:bg-gray-700">Signature required</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -402,33 +404,33 @@ export default function PackagePage() {
               </div>
 
               <div className="mb-6">
-                <Label className="text-gray-700 font-medium">Special instructions (optional)</Label>
+                <Label className="text-gray-300 font-medium">Special instructions (optional)</Label>
                 <Textarea
                   placeholder="Any special handling instructions, access codes, or delivery notes..."
-                  className="mt-2 min-h-[100px]"
+                  className="mt-2 min-h-[100px] bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all"
                 />
               </div>
 
-              <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 p-6 rounded-xl mb-8 border border-blue-500/20">
+              <div className="bg-otw-gold/10 border border-otw-gold/20 p-6 rounded-xl mb-8">
                 <div className="flex items-start">
-                  <Info className="w-6 h-6 text-blue-600 mr-3 flex-shrink-0 mt-0.5" />
+                  <Info className="w-6 h-6 text-otw-gold mr-3 flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">What's included</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-700">
+                    <h4 className="font-semibold text-white mb-2 uppercase tracking-wide">What's included</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-300">
                       <div className="flex items-center">
-                        <CheckCircle className="w-4 h-4 text-blue-500 mr-2" />
+                        <CheckCircle className="w-4 h-4 text-otw-gold mr-2" />
                         <span>Real-time GPS tracking</span>
                       </div>
                       <div className="flex items-center">
-                        <CheckCircle className="w-4 h-4 text-blue-500 mr-2" />
+                        <CheckCircle className="w-4 h-4 text-otw-gold mr-2" />
                         <span>Photo confirmation of delivery</span>
                       </div>
                       <div className="flex items-center">
-                        <CheckCircle className="w-4 h-4 text-blue-500 mr-2" />
+                        <CheckCircle className="w-4 h-4 text-otw-gold mr-2" />
                         <span>SMS & email notifications</span>
                       </div>
                       <div className="flex items-center">
-                        <CheckCircle className="w-4 h-4 text-blue-500 mr-2" />
+                        <CheckCircle className="w-4 h-4 text-otw-gold mr-2" />
                         <span>Up to $1000 insurance coverage</span>
                       </div>
                     </div>
@@ -437,11 +439,11 @@ export default function PackagePage() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="outline" className="flex-1 h-12">
+                <Button variant="outline" className="flex-1 h-12 border-gray-600 text-white bg-transparent hover:bg-gray-800 rounded-xl font-semibold uppercase tracking-wide">
                   Save as template
                 </Button>
                 <Link href="/checkout" className="flex-1">
-                  <Button className="w-full h-12 bg-blue-500 hover:bg-blue-600 text-white font-semibold">
+                  <Button className="w-full h-12 bg-otw-gold hover:bg-otw-gold/90 text-otw-black font-bold rounded-xl uppercase tracking-wide">
                     Schedule pickup
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
@@ -453,10 +455,10 @@ export default function PackagePage() {
       </section>
 
       {/* Enhanced Features Section */}
-      <section className="py-20 bg-gray-900">
+      <section className="py-20 bg-otw-black-950">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-4xl font-bold text-white mb-4 uppercase tracking-wide">
               Why choose OTW Package Delivery
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
@@ -466,40 +468,40 @@ export default function PackagePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="group text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Smartphone className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 bg-gradient-to-br from-otw-gold to-otw-gold-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Smartphone className="w-10 h-10 text-otw-black" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">Real-time tracking</h3>
+              <h3 className="text-xl font-bold mb-3 text-white uppercase tracking-wide">Real-time tracking</h3>
               <p className="text-gray-400">
                 Track your package every step of the way with live GPS updates and notifications.
               </p>
             </div>
 
             <div className="group text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Shield className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 bg-gradient-to-br from-otw-gold to-otw-gold-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Shield className="w-10 h-10 text-otw-black" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">Secure handling</h3>
+              <h3 className="text-xl font-bold mb-3 text-white uppercase tracking-wide">Secure handling</h3>
               <p className="text-gray-400">
                 Professional couriers with background checks and secure vehicle storage.
               </p>
             </div>
 
             <div className="group text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Camera className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 bg-gradient-to-br from-otw-gold to-otw-gold-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Camera className="w-10 h-10 text-otw-black" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">Proof of delivery</h3>
+              <h3 className="text-xl font-bold mb-3 text-white uppercase tracking-wide">Proof of delivery</h3>
               <p className="text-gray-400">
                 Photo confirmation and digital signatures for complete peace of mind.
               </p>
             </div>
 
             <div className="group text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Globe className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 bg-gradient-to-br from-otw-gold to-otw-gold-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <Globe className="w-10 h-10 text-otw-black" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-white">City-wide coverage</h3>
+              <h3 className="text-xl font-bold mb-3 text-white uppercase tracking-wide">City-wide coverage</h3>
               <p className="text-gray-400">
                 Delivery anywhere in the metro area with competitive pricing and fast service.
               </p>
@@ -508,22 +510,22 @@ export default function PackagePage() {
 
           {/* Pricing transparency */}
           <div className="mt-16">
-            <div className="bg-white/10 rounded-2xl p-8 border border-white/20">
-              <h3 className="text-2xl font-bold text-white mb-6 text-center">Transparent pricing</h3>
+            <div className="bg-otw-black/50 rounded-2xl p-8 border border-otw-gold/20">
+              <h3 className="text-2xl font-bold text-white mb-6 text-center uppercase tracking-wide">Transparent pricing</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-400 mb-2">$6.99</div>
-                  <div className="text-white font-medium mb-1">Base rate</div>
+                  <div className="text-3xl font-bold text-otw-gold mb-2">$6.99</div>
+                  <div className="text-white font-medium mb-1 uppercase tracking-wide">Base rate</div>
                   <div className="text-gray-400 text-sm">First 5 miles included</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-400 mb-2">$1.50</div>
-                  <div className="text-white font-medium mb-1">Per additional mile</div>
+                  <div className="text-3xl font-bold text-otw-gold mb-2">$1.50</div>
+                  <div className="text-white font-medium mb-1 uppercase tracking-wide">Per additional mile</div>
                   <div className="text-gray-400 text-sm">Beyond 5 mile radius</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-400 mb-2">Free</div>
-                  <div className="text-white font-medium mb-1">Insurance</div>
+                  <div className="text-3xl font-bold text-otw-gold mb-2">Free</div>
+                  <div className="text-white font-medium mb-1 uppercase tracking-wide">Insurance</div>
                   <div className="text-gray-400 text-sm">Up to $1000 coverage</div>
                 </div>
               </div>
@@ -532,12 +534,12 @@ export default function PackagePage() {
 
           {/* Social proof */}
           <div className="mt-16 text-center">
-            <div className="inline-flex items-center bg-white/10 rounded-full px-8 py-4">
+            <div className="inline-flex items-center bg-otw-black/50 border border-otw-gold/20 rounded-full px-8 py-4">
               <div className="flex -space-x-2 mr-4">
-                <div className="w-8 h-8 bg-blue-500 rounded-full border-2 border-white"></div>
-                <div className="w-8 h-8 bg-green-500 rounded-full border-2 border-white"></div>
-                <div className="w-8 h-8 bg-purple-500 rounded-full border-2 border-white"></div>
-                <div className="w-8 h-8 bg-orange-500 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white">+</div>
+                <div className="w-8 h-8 bg-otw-gold rounded-full border-2 border-white"></div>
+                <div className="w-8 h-8 bg-otw-red rounded-full border-2 border-white"></div>
+                <div className="w-8 h-8 bg-otw-gold rounded-full border-2 border-white"></div>
+                <div className="w-8 h-8 bg-otw-red rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white">+</div>
               </div>
               <span className="text-white font-medium">Trusted by 10,000+ customers for secure package delivery</span>
             </div>
