@@ -79,40 +79,45 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   }, [onPlaceSelect]);
 
   return (
-    <div className={`address-autocomplete-container relative z-[9999] ${className}`}>
+    <div className={`address-autocomplete-container relative z-[9999] overflow-visible ${className}`}>
       {label && (
-        <label className="block text-sm font-semibold text-white/95 mb-2 tracking-wide drop-shadow-sm">
+        <label className="block text-sm font-semibold text-[--color-onyx] mb-3 tracking-wide drop-shadow-sm">
           {label}
-          {required && <span className="text-otw-red-400 ml-1">*</span>}
+          {required && <span className="text-[--color-harvest-gold] ml-1" aria-label="required">*</span>}
         </label>
       )}
-      <OTWPlaceAutocompleteElement
-        placeholder={placeholder}
-        disabled={disabled}
-        onPlaceSelect={handlePlaceSelect}
-        error={error}
-        className="w-full px-5 py-4 border-2 rounded-xl transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-offset-0 bg-[--color-input-bg] backdrop-blur-xl border-[--color-border] text-white/95 placeholder:[--color-muted] focus:border-[--color-harvest-gold] focus:ring-2 focus:ring-[--color-harvest-gold]/40 focus:bg-[--color-input-bg] hover:border-[--color-harvest-gold]/25 hover:bg-[--color-input-bg] hover:shadow-2xl hover:shadow-[--color-harvest-gold]/15 focus:shadow-3xl focus:shadow-[--color-harvest-gold]/25 hover:scale-[1.01] focus:scale-[1.02] transition-all duration-300 ease-out font-medium text-base"
-        countryFilter={restrictToCountry}
-        size="md"
-        showIcon={true}
-      />
+      <div className="relative z-[10] overflow-visible">
+        <OTWPlaceAutocompleteElement
+          placeholder={placeholder}
+          disabled={disabled}
+          onPlaceSelect={handlePlaceSelect}
+          error={error}
+          className="input-field"
+          countryFilter={restrictToCountry}
+          size="md"
+          showIcon={true}
+        />
+      </div>
 
       {error && (
-        <div className="mt-2 flex items-start space-x-2 p-3 bg-otw-red-500/10 border border-otw-red-500/20 rounded-lg backdrop-blur-sm">
-          <span className="text-sm text-otw-red-300 font-medium">{error}</span>
+        <div className="mt-3 flex items-start space-x-3 p-4 bg-red-900/20 border border-red-400/30 rounded-xl backdrop-blur-lg shadow-lg">
+          <svg className="w-5 h-5 text-red-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <span className="text-sm text-red-200 font-medium leading-relaxed">{error}</span>
         </div>
       )}
 
       {/* Success indicator with OTW styling */}
       {placeDetails && !error && (
-        <div className="mt-3 p-3 bg-otw-gold-500/10 border border-otw-gold-500/20 rounded-xl shadow-sm backdrop-blur-sm">
+        <div className="mt-3 p-4 bg-[--color-harvest-gold]/10 border border-[--color-harvest-gold]/20 rounded-xl shadow-lg backdrop-blur-lg">
           <div className="flex items-center">
-            <svg className="w-5 h-5 text-otw-gold-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-[--color-harvest-gold] mr-3 flex-shrink-0 drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-white/90">Address Confirmed</p>
-              <p className="text-xs text-white/70 mt-0.5">{placeDetails.address}</p>
+              <p className="text-sm font-semibold text-[--color-onyx] drop-shadow-sm">Address Confirmed</p>
+              <p className="text-xs text-[--color-muted] mt-1 leading-relaxed">{placeDetails.address}</p>
             </div>
           </div>
         </div>

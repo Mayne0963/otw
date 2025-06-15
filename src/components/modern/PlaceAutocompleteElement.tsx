@@ -321,81 +321,70 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
 
     const style = document.createElement('style');
     style.textContent = `
-      /* Custom styling for Google Places Autocomplete dropdown with enhanced visibility */
+      /* Enhanced OTW Google Maps Autocomplete Dropdown Styling */
       .pac-container {
-        background: var(--color-surface) !important;
-        backdrop-filter: blur(24px) !important;
-        -webkit-backdrop-filter: blur(24px) !important;
-        border: 1px solid var(--color-border) !important;
-        border-radius: 16px !important;
-        box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.9), 
-                    0 0 0 1px var(--color-harvest-gold, #d4af37) !important;
-        margin-top: 12px !important;
+        background-color: var(--color-surface) !important;
+        border: 2px solid var(--color-border) !important;
+        border-radius: 0.75rem !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+        margin-top: 0.5rem !important;
         overflow: hidden !important;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        position: absolute !important;
         z-index: 999999 !important;
-        position: fixed !important;
-        min-width: 320px !important;
-        max-width: 600px !important;
-        width: auto !important;
-        animation: dropdownFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        transform-origin: top center !important;
-      }
-      
-      .pac-container:before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, 
-          color-mix(in srgb, var(--color-harvest-gold) 8%, transparent) 0%, 
-          var(--color-surface) 50%, 
-          color-mix(in srgb, var(--color-harvest-gold) 5%, transparent) 100%) !important;
-        z-index: -1;
-        border-radius: inherit;
+        min-width: 100% !important;
+        max-height: 300px !important;
+        overflow-y: auto !important;
       }
       
       .pac-item {
-        background: transparent !important;
-        color: rgba(255, 255, 255, 0.92) !important;
+        background-color: transparent !important;
+        color: var(--color-onyx) !important;
         border-bottom: 1px solid var(--color-border) !important;
         padding: 14px 18px !important;
+        font-size: 14px !important;
+        line-height: 1.6 !important;
         cursor: pointer !important;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
         position: relative !important;
-        font-size: 15px !important;
-        line-height: 1.4 !important;
       }
       
-      .pac-item:hover,
-      .pac-item-selected {
-        background: var(--color-surface-strong) !important;
-        color: rgba(255, 255, 255, 1) !important;
-        transform: translateX(6px) !important;
+      .pac-item:hover {
+        background-color: var(--color-surface-strong) !important;
+        color: var(--color-onyx) !important;
+        transform: translateX(2px) !important;
+      }
+      
+      .pac-item-selected,
+      .pac-item:focus {
+        background-color: var(--color-harvest-gold) !important;
+        background: linear-gradient(135deg, rgba(var(--color-harvest-gold-rgb), 0.15) 0%, rgba(var(--color-harvest-gold-rgb), 0.05) 100%) !important;
+        color: var(--color-onyx) !important;
+        font-weight: 600 !important;
         border-left: 3px solid var(--color-harvest-gold) !important;
-      }
-      
-      .pac-item:first-child {
-        border-top-left-radius: 16px !important;
-        border-top-right-radius: 16px !important;
+        padding-left: 15px !important;
       }
       
       .pac-item:last-child {
         border-bottom: none !important;
-        border-bottom-left-radius: 16px !important;
-        border-bottom-right-radius: 16px !important;
+        border-radius: 0 0 0.75rem 0.75rem !important;
+      }
+      
+      .pac-item:first-child {
+        border-radius: 0.75rem 0.75rem 0 0 !important;
       }
       
       .pac-item-query {
-        color: var(--color-harvest-gold) !important;
+        color: var(--color-onyx) !important;
         font-weight: 600 !important;
       }
       
       .pac-matched {
         color: var(--color-harvest-gold) !important;
         font-weight: 700 !important;
-        text-shadow: 0 0 10px color-mix(in srgb, var(--color-harvest-gold) 40%, transparent) !important;
+        text-shadow: 0 0 8px rgba(var(--color-harvest-gold-rgb), 0.3) !important;
       }
       
       .pac-icon {
@@ -403,71 +392,75 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
         width: 22px !important;
         height: 22px !important;
         margin-right: 14px !important;
-        background: linear-gradient(135deg, var(--color-harvest-gold), color-mix(in srgb, var(--color-harvest-gold) 80%, #ffffff)) !important;
-        border-radius: 6px !important;
+        background: linear-gradient(135deg, var(--color-harvest-gold) 0%, rgba(var(--color-harvest-gold-rgb), 0.8) 100%) !important;
+        border-radius: 50% !important;
         position: relative !important;
-        flex-shrink: 0 !important;
+        box-shadow: 0 2px 8px rgba(var(--color-harvest-gold-rgb), 0.3) !important;
       }
       
-      .pac-icon:before {
-        content: '📍';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 13px;
+      .pac-icon::before {
+        content: "📍" !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        font-size: 12px !important;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)) !important;
       }
       
-      /* Enhanced animation for dropdown appearance */
-      @keyframes dropdownFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-12px) scale(0.96);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-      
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
+      /* Enhanced mobile responsiveness */
+      @media (max-width: 640px) {
         .pac-container {
           min-width: 300px !important;
           max-width: calc(100vw - 32px) !important;
           left: 16px !important;
           right: 16px !important;
-          width: auto !important;
+          margin-top: 8px !important;
         }
         
         .pac-item {
           padding: 12px 16px !important;
-          font-size: 14px !important;
-        }
-      }
-      
-      @media (max-width: 480px) {
-        .pac-container {
-          min-width: 280px !important;
-          max-width: calc(100vw - 24px) !important;
-          left: 12px !important;
-          right: 12px !important;
-        }
-        
-        .pac-item {
-          padding: 10px 14px !important;
           font-size: 13px !important;
         }
+        
+        .pac-icon {
+          width: 20px !important;
+          height: 20px !important;
+          margin-right: 12px !important;
+        }
       }
       
-      /* Ensure dropdown appears above all other elements */
+      /* Critical z-index and positioning fixes */
       .pac-container {
         z-index: 999999 !important;
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
       }
       
-      /* Fix for modal and overlay conflicts */
+      /* Remove Google branding */
       .pac-container.pac-logo:after {
         display: none !important;
+      }
+      
+      /* Scrollbar styling for dropdown */
+      .pac-container::-webkit-scrollbar {
+        width: 6px !important;
+      }
+      
+      .pac-container::-webkit-scrollbar-track {
+        background: var(--color-surface-strong) !important;
+        border-radius: 3px !important;
+      }
+      
+      .pac-container::-webkit-scrollbar-thumb {
+        background: var(--color-harvest-gold) !important;
+        border-radius: 3px !important;
+      }
+      
+      .pac-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(var(--color-harvest-gold-rgb), 0.8) !important;
       }
     `;
     

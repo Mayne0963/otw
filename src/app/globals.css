@@ -95,33 +95,69 @@
 /* OTW Address Autocomplete Utility Classes */
 @layer utilities {
   .input-otw {
-    @apply w-full px-4 py-3 rounded-xl border border-[--color-border] bg-[--color-input-bg] text-[--color-onyx] placeholder:text-[--color-muted] focus:outline-none focus:border-[--color-harvest-gold] transition-all;
+    @apply w-full bg-[--color-input-bg] text-[--color-onyx] border border-[--color-border] placeholder:text-[--color-muted] rounded-xl px-4 py-3 focus:outline-none focus:border-[--color-harvest-gold] transition-all;
+  }
+
+  /* Enhanced input field utility for OTW components */
+  .input-field {
+    @apply w-full rounded-xl px-5 py-4 border-2 font-medium text-base transition-all duration-300 ease-out;
+    @apply focus:outline-none focus:ring-4;
+    background-color: var(--color-input-bg);
+    color: var(--color-onyx);
+    border-color: var(--color-border);
+    backdrop-filter: blur(16px);
+  }
+  
+  .input-field::placeholder {
+    color: var(--color-muted);
+  }
+  
+  .input-field:focus {
+    border-color: var(--color-harvest-gold);
+    box-shadow: 0 0 0 4px rgba(var(--color-harvest-gold-rgb), 0.25);
+  }
+  
+  .input-field:hover {
+    border-color: rgba(var(--color-harvest-gold-rgb), 0.5);
+    box-shadow: 0 10px 25px rgba(var(--color-harvest-gold-rgb), 0.1);
   }
 
   .autocomplete-dropdown {
-    @apply absolute top-full mt-2 w-full rounded-xl border border-[--color-border] bg-[--color-surface] text-[--color-onyx] shadow-xl z-[9999];
+    @apply absolute top-full mt-2 w-full rounded-xl border-2 border-[--color-border] bg-[--color-surface] text-[--color-onyx] shadow-2xl z-[99999] backdrop-blur-lg;
   }
 
   .autocomplete-item {
-    @apply px-4 py-2 cursor-pointer text-sm hover:bg-[--color-surface-strong] transition-colors duration-150;
+    @apply px-4 py-3 cursor-pointer text-sm hover:bg-[--color-surface-strong] transition-all duration-200 ease-out;
   }
 
-  .autocomplete-active {
-    @apply bg-[--color-harvest-gold]/10 font-semibold;
+  .autocomplete-item-active {
+    @apply bg-[--color-harvest-gold]/15 font-semibold border-l-4 border-[--color-harvest-gold] pl-3;
   }
 }
 
-/* Global Google Maps Autocomplete Dropdown Z-Index Fix */
+/* Enhanced Global Google Maps Autocomplete Dropdown Z-Index Fix */
 .pac-container {
-  z-index: 99999 !important;
+  z-index: 999999 !important;
   position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-top: 0.5rem !important;
 }
 
 /* Ensure parent containers don't clip the dropdown */
 .address-autocomplete-container {
-  position: relative;
-  z-index: 9999;
+  position: relative !important;
+  z-index: 9999 !important;
   overflow: visible !important;
+}
+
+/* Fix for form containers that might clip dropdowns */
+.otw-form-container,
+.otw-card,
+.hero-section {
+  overflow: visible !important;
+  z-index: 0 !important;
 }
 
 /* Portal strategy for autocomplete dropdown if needed */
@@ -129,6 +165,23 @@
   position: fixed !important;
   z-index: 999999 !important;
   pointer-events: auto !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+/* Ensure body and root containers allow overflow */
+body,
+#__next,
+.next-root {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+}
+
+/* Fix for any container that might interfere with dropdown positioning */
+.container,
+.max-w-7xl,
+.mx-auto {
+  overflow: visible !important;
 }
 
 /* OTW Buttons Enhancement */
