@@ -307,7 +307,37 @@ export default function DashboardOrdersPage() {
     if (!date) return 'N/A';
     
     try {
-      const dateObj = date.toDate ? date.toDate() : new Date(date);
+      let dateObj: Date;
+      
+      // Handle Firestore Timestamp objects
+      if (date && typeof date === 'object' && typeof date.toDate === 'function') {
+        dateObj = date.toDate();
+      }
+      // Handle Firebase Timestamp-like objects with seconds property
+      else if (date && typeof date === 'object' && date.seconds) {
+        dateObj = new Date(date.seconds * 1000);
+      }
+      // Handle Date objects
+      else if (date instanceof Date) {
+        dateObj = date;
+      }
+      // Handle string dates
+      else if (typeof date === 'string') {
+        dateObj = new Date(date);
+      }
+      // Handle numeric timestamps
+      else if (typeof date === 'number') {
+        dateObj = new Date(date);
+      }
+      else {
+        return 'Invalid Date';
+      }
+      
+      // Validate the resulting date
+      if (isNaN(dateObj.getTime())) {
+        return 'Invalid Date';
+      }
+      
       return dateObj.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -315,7 +345,8 @@ export default function DashboardOrdersPage() {
         hour: '2-digit',
         minute: '2-digit'
       });
-    } catch {
+    } catch (error) {
+      console.warn('Date formatting error:', error, 'for date:', date);
       return 'Invalid Date';
     }
   };

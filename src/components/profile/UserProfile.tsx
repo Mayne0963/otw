@@ -258,11 +258,45 @@ export default function UserProfile() {
                   Order #{order.stripeId?.slice(-6) || i + 1}
                 </span>
                 <span className="text-xs text-gray-400">
-                  {typeof order.createdAt === 'string'
-                    ? new Date(order.createdAt).toLocaleString()
-                    : order.createdAt?.toDate
-                      ? order.createdAt.toDate().toLocaleString()
-                      : 'N/A'}
+                  {(() => {
+                  try {
+                    let dateObj: Date;
+                    
+                    // Handle Firestore Timestamp objects
+                    if (order.createdAt && typeof order.createdAt === 'object' && typeof order.createdAt.toDate === 'function') {
+                      dateObj = order.createdAt.toDate();
+                    }
+                    // Handle Firebase Timestamp-like objects with seconds property
+                    else if (order.createdAt && typeof order.createdAt === 'object' && order.createdAt.seconds) {
+                      dateObj = new Date(order.createdAt.seconds * 1000);
+                    }
+                    // Handle Date objects
+                    else if (order.createdAt instanceof Date) {
+                      dateObj = order.createdAt;
+                    }
+                    // Handle string dates
+                    else if (typeof order.createdAt === 'string') {
+                      dateObj = new Date(order.createdAt);
+                    }
+                    // Handle numeric timestamps
+                    else if (typeof order.createdAt === 'number') {
+                      dateObj = new Date(order.createdAt);
+                    }
+                    else {
+                      return 'N/A';
+                    }
+                    
+                    // Validate the resulting date
+                    if (isNaN(dateObj.getTime())) {
+                      return 'Invalid Date';
+                    }
+                    
+                    return dateObj.toLocaleString();
+                  } catch (error) {
+                    console.warn('Date formatting error:', error, 'for date:', order.createdAt);
+                    return 'N/A';
+                  }
+                })()}
                 </span>
                 <span className="text-sm">
                   ${order.total?.toFixed(2) || '0.00'}

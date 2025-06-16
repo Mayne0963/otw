@@ -118,11 +118,13 @@ service cloud.firestore {
       // Users can read their own orders
       allow read: if isAuthenticated() && 
                      (isOwner(resource.data.userRef) || 
+                      resource.data.userId == request.auth.uid ||
                       hasElevatedPermissions());
       
       // Users can create orders for themselves
       allow create: if isAuthenticated() && 
-                       isOwner(request.resource.data.userRef) &&
+                       (isOwner(request.resource.data.userRef) ||
+                        request.resource.data.userId == request.auth.uid) &&
                        hasRequiredFields(['userRef', 'restaurantId', 'items', 'total', 'status', 'createdAt']) &&
                        request.resource.data.status == 'pending' &&
                        request.resource.data.total > 0 &&
@@ -131,7 +133,8 @@ service cloud.firestore {
       
       // Users can update their own orders (limited fields)
       allow update: if isAuthenticated() && 
-                       isOwner(resource.data.userRef) &&
+                       (isOwner(resource.data.userRef) ||
+                        resource.data.userId == request.auth.uid) &&
                        !isModifying(['userRef', 'restaurantId', 'total', 'createdAt', 'paymentIntentId']) &&
                        (resource.data.status == 'pending' || resource.data.status == 'confirmed');
       
