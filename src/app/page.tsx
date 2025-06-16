@@ -1,374 +1,338 @@
-'use client';
+"use client";
 
-// export const dynamic = "force-dynamic";
+import Image from "next/image";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import Button from "../components/Button";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
-import Button from '../components/Button.jsx';
-import AddressSearch, { PlaceDetails } from '../components/AddressSearch';
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronRightIcon, PhoneIcon, ClockIcon, TruckIcon, ShoppingBagIcon, MapPinIcon, SparklesIcon } from '@heroicons/react/24/outline';
-import { CheckCircleIcon, StarIcon, HeartIcon } from '@heroicons/react/24/solid';
-import TestimonialsSection from '@/components/testimonials/TestimonialsSection';
-import EnhancedHeroSection from '@/components/enhanced/EnhancedHeroSection';
-import EnhancedServiceCards from '@/components/enhanced/EnhancedServiceCards';
-import EnhancedTestimonials from '@/components/enhanced/EnhancedTestimonials';
-import EnhancedAppDownload from '@/components/enhanced/EnhancedAppDownload';
+const MapSearch = dynamic(() => import("../components/maps/MapSearch"), { ssr: false });
 
-const MapSearch = dynamic(() => import('../components/maps/MapSearch'), { ssr: false });
+// Import icon components from lucide-react
+import { Truck as DeliveryTruckIcon, ShoppingCart as ShoppingCartIcon, Car as CarIcon } from "lucide-react";
 
 interface ServiceCardProps {
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
   href: string;
   buttonText: string;
-  buttonVariant: 'primary' | 'secondary';
+  buttonVariant: "primary" | "secondary";
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({
-  icon,
+  icon: Icon,
   title,
   description,
   href,
   buttonText,
   buttonVariant,
 }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-    whileHover={{ scale: 1.02, y: -8 }}
-    whileTap={{ scale: 0.98 }}
-    className="otw-card group relative overflow-hidden transform transition-all duration-500 hover:shadow-2xl hover:shadow-otw-red/20"
-  >
-    <div className="absolute inset-0 bg-gradient-to-br from-otw-red/5 via-transparent to-otw-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-otw-gold/10 to-transparent rounded-full -translate-y-16 translate-x-16 group-hover:scale-150 transition-transform duration-700"></div>
-    <div className="relative z-10 p-8">
-      <div className="w-20 h-20 bg-gradient-to-br from-otw-red to-otw-red/80 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-lg">
-        <span className="text-3xl animate-pulse drop-shadow-sm">{icon}</span>
-      </div>
-      <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-otw-gold transition-colors duration-300">{title}</h3>
-      <p className="text-gray-400 mb-6 group-hover:text-gray-300 transition-colors duration-300 leading-relaxed">{description}</p>
-      <Link href={href}>
-        <Button variant={buttonVariant} className="w-full group-hover:scale-105 transition-transform duration-300">
-          {buttonText}
-        </Button>
-      </Link>
+  <div className="luxe-card group transform hover:scale-102 transition-transform duration-400">
+    <div className="w-16 h-16 bg-gradient-to-br from-luxe-gold-dark to-luxe-gold-light rounded-lg flex items-center justify-center mb-6 shadow-lg">
+      <Icon className="text-luxe-black-primary" />
     </div>
-  </motion.div>
+    <h3 className="text-2xl font-bold text-luxe-text-off-white mb-4" style={{fontFamily: 'Playfair Display, serif'}}>{title}</h3>
+    <p className="text-luxe-text-soft-gray mb-8">{description}</p>
+    <Link href={href}>
+      <Button variant={buttonVariant} className="w-full">
+        {buttonText}
+      </Button>
+    </Link>
+  </div>
 );
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedAddress, setSelectedAddress] = useState<PlaceDetails | null>(null);
-  const [selectedPlace, setSelectedPlace] = useState<PlaceDetails | null>(null);
-
-  const handleAddressSelect = (place: PlaceDetails) => {
-    setSelectedAddress(place);
-    console.log('Selected address:', place.formatted_address);
-    console.log('Coordinates:', place.geometry.location.lat(), place.geometry.location.lng());
-  };
-
   return (
-    <main className="min-h-screen overflow-hidden">
-        {/* Enhanced Hero Section */}
-        <EnhancedHeroSection />
+    <main>
+      <section className="relative bg-luxe-black-primary py-28 px-4 flex flex-col items-center justify-center text-center overflow-hidden luxe-section">
+        <div className="absolute inset-0 bg-gradient-to-br from-luxe-burgundy-primary/20 via-luxe-black-charcoal/90 to-luxe-gold-dark/15 opacity-80 pointer-events-none" />
+        <h1 className="relative z-10 text-5xl md:text-7xl font-bold text-luxe-text-off-white mb-6 leading-tight luxe-gradient-text" style={{fontFamily: 'Playfair Display, serif'}}>
+          On The Way Delivery
+        </h1>
+        <p className="relative z-10 text-xl md:text-2xl text-luxe-text-warm-gray mb-10 max-w-2xl" style={{fontFamily: 'Montserrat, sans-serif'}}>
+          Fast. Local. Real.
+          <br />
+          Soulful delivery, built for the city.
+        </p>
+        <Link href="/restaurants" className="relative z-10">
+          <Button
+            variant="primary"
+            size="lg"
+            className="px-8 py-4 text-lg shadow-md animate-pulse-gold"
+          >
+            Order Now
+          </Button>
+        </Link>
+        <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[120vw] h-32 bg-gradient-to-t from-luxe-black-primary to-transparent opacity-90 pointer-events-none" />
+      </section>
 
-      {/* Enhanced Services Section */}
-      <EnhancedServiceCards />
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-luxe-gold-dark text-center mb-16 luxe-gradient-text" style={{fontFamily: 'Playfair Display, serif'}}>
+          Our Services
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <ServiceCard
+            icon={DeliveryTruckIcon}
+            title="Food Delivery"
+            description="Get your favorite meals delivered right to your door with speed and reliability."
+            href="/restaurants"
+            buttonText="Order Now"
+            buttonVariant="primary"
+          />
+          <ServiceCard
+            icon={ShoppingCartIcon}
+            title="Grocery Shop & Drop"
+            description="Let us handle your grocery shopping and delivery with care and precision."
+            href="/otw"
+            buttonText="Book Service"
+            buttonVariant="secondary"
+          />
+          <ServiceCard
+            icon={CarIcon}
+            title="Local Rides"
+            description="Quick and reliable transportation around town with our trusted drivers."
+            href="/otw"
+            buttonText="Book Ride"
+            buttonVariant="primary"
+          />
+        </div>
+      </section>
 
-      {/* Restaurant Search Section */}
-      <section className="py-24 bg-gradient-to-r from-gray-900/50 to-black/50">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Find Your Perfect Meal
-            </h2>
-            <p className="text-xl text-white/80">
-              Search from 150+ restaurants in Fort Wayne
-            </p>
+      <section className="py-24 px-6 bg-luxe-black-charcoal luxe-section">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8 tracking-wide luxe-gradient-text" style={{fontFamily: 'Playfair Display, serif'}}>
+            Explore Your Area
+          </h2>
+          <p className="text-lg text-center text-luxe-text-soft-gray mb-10 max-w-2xl mx-auto leading-relaxed" style={{fontFamily: 'Montserrat, sans-serif'}}>
+            Find local spots and services near you. Search locations and get directions instantly.
+          </p>
+          <div className="rounded-lg overflow-hidden shadow-2xl border border-luxe-gold-dark/30 bg-luxe-burgundy-dark/10 backdrop-blur-sm">
+            <MapSearch height="450px" showSearchBar={true} />
           </div>
+        </div>
+      </section>
 
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-            <div className="flex flex-col md:flex-row gap-4 mb-6">
-              <input
-                type="text"
-                placeholder="Search restaurants, cuisines, or dishes..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
-              />
-              <div className="md:w-64">
-                <AddressSearch
-                  onPlaceSelect={handleAddressSelect}
-                  placeholder="Enter your address in Fort Wayne, IN..."
-                  className="px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
+      <section className="py-24 px-6 bg-luxe-black-charcoal luxe-section">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-6 tracking-wide luxe-gradient-text" style={{fontFamily: 'Playfair Display, serif'}}>
+            Fort Wayne's Best Restaurants
+          </h2>
+          <p className="text-xl text-center text-luxe-text-off-white mb-12 leading-relaxed" style={{fontFamily: 'Montserrat, sans-serif'}}>
+            Order from your favorite local spots, delivered by OTW
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="luxe-card group">
+              <div className="h-40 relative overflow-hidden rounded-t-lg">
+                <Image
+                  src="/assets/images/placeholder.svg?key=3aeoi"
+                  alt="Broski's Kitchen"
+                  fill
+                  className="object-cover grayscale group-hover:grayscale-0 transition-all duration-400 group-hover:scale-105"
                 />
               </div>
-              <Link href="/restaurants">
-                <Button variant="primary" className="px-8 py-4">
-                  Search
-                </Button>
-              </Link>
-            </div>
-
-            <MapSearch />
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Restaurants Section */}
-{/**   <section className="py-24">
-*        <div className="max-w-7xl mx-auto px-4">
-*          <div className="text-center mb-16">
-*            <h2 className="text-4xl font-bold text-white mb-4">
-*              Featured Restaurants
-*            </h2>
-*            <p className="text-xl text-white/80">
-*              Top-rated spots loved by Fort Wayne
-*            </p>
-*          </div>
-*
-*          <div className="flex flex-wrap justify-center gap-4 mb-12">
-*            {['All', 'Pizza', 'Asian', 'Mexican', 'American', 'Healthy'].map((category) => (
-*              <Link key={category} href={`/restaurants?category=${category.toLowerCase()}`}>
-*                <button
-*                  className="px-6 py-3 bg-white/10 hover:bg-otw-gold/20 border border-white/20 hover:border-otw-gold/50 rounded-full text-white hover:text-otw-gold transition-all duration-300"
-*                >
-*                  {category}
-*                </button>
-*              </Link>
-*            ))}
-*          </div>
-*
-*          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-*            {[
-*              {
-*                name: 'Broskis',
-*                cuisine: 'American',
-*                rating: 4.9,
-*                deliveryTime: '15-25 min',
-*                image: '/restaurants/broskis.jpg',
-*              },
-*            ].map((restaurant, index) => (
-*              <div key={index} className="otw-card group cursor-pointer">
-*                <div className="relative h-48 mb-4 overflow-hidden rounded-xl">
-*                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-*                  <div className="absolute top-4 right-4 z-20 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-*                    {restaurant.deliveryTime}
-*                  </div>
-*                  <div className="w-full h-full bg-gradient-to-br from-otw-red/20 to-otw-gold/20 flex items-center justify-center">
-*                    <span className="text-6xl opacity-50">🍽️</span>
-*                  </div>
-*                </div>
-*                <div className="p-6">
-*                  <h3 className="text-xl font-bold text-white mb-2">{restaurant.name}</h3>
-*                  <p className="text-white/70 mb-3">{restaurant.cuisine}</p>
-*                  <div className="flex items-center justify-between">
-*                    <div className="flex items-center">
-*                      <span className="text-yellow-400 mr-1">⭐</span>
-*                      <span className="text-white font-semibold">{restaurant.rating}</span>
-*                    </div>
-*                    <Link href={`/restaurant/${restaurant.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}>
-*                      <Button variant="primary" className="text-sm px-4 py-2">
-*                        Order Now
-*                      </Button>
-*                    </Link>
-*                  </div>
-*                </div>
-*              </div>
-*            ))}
-*          </div>
-*        </div>
-*      </section>
-*/}
-
-       {/* Enhanced Customer Testimonials */}
-      <EnhancedTestimonials />
-
-      {/* Enhanced App Download Section */}
-      <EnhancedAppDownload />
-
-
-
-      {/* Enhanced Services Section */}
-      <section className="py-24 relative">
-        {/* Background Effects */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-0 w-96 h-96 bg-otw-gold/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-otw-red/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-otw-gold/30 to-transparent" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent">
-                Premium Services
-              </span>
-              <br />
-              <span className="text-white">for Fort Wayne</span>
-            </h2>
-            <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
-              Beyond food delivery - we&apos;re your complete lifestyle solution
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <ServiceCard
-              icon="🥘"
-              title="Catering Services"
-              description="Professional catering for events, meetings, and special occasions with premium presentation."
-              href="/events"
-              buttonText="Plan Event"
-              buttonVariant="primary"
-            />
-            <ServiceCard
-              icon="🛍️"
-              title="Personal Shopping"
-              description="Grocery shopping, pharmacy runs, and retail pickup services delivered to your door."
-              href="/shop"
-              buttonText="Start Shopping"
-              buttonVariant="secondary"
-            />
-            <ServiceCard
-              icon="⭐"
-              title="VIP Membership"
-              description="Exclusive perks, priority delivery, and special discounts for our premium members."
-              href="/tier"
-              buttonText="Join VIP"
-              buttonVariant="primary"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Newsletter Section */}
-      <section className="py-24 bg-gradient-to-br from-otw-red via-otw-red-600 to-otw-gold relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-full opacity-10">
-            <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl animate-float" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-            <div className="absolute top-3/4 left-3/4 w-48 h-48 bg-white rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-          </div>
-        </div>
-        
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <motion.h2 
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-5xl md:text-6xl font-bold text-white mb-8 leading-tight"
-            >
-              Stay in the <span className="relative">
-                <span className="bg-white bg-clip-text text-transparent">Loop</span>
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute -top-2 -right-2 w-8 h-8 border-2 border-white rounded-full border-dashed opacity-60"
-                />
-              </span>
-            </motion.h2>
-            
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-xl md:text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed"
-            >
-              Get <span className="font-semibold text-white">exclusive deals</span>, new restaurant announcements, and <span className="font-semibold text-white">delivery updates</span> straight to your inbox.
-            </motion.p>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="max-w-lg mx-auto"
-          >
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="flex-1 relative">
-                  <input
-                    type="email"
-                    placeholder="Enter your email address"
-                    className="w-full px-6 py-4 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-white/30 transition-all duration-300 text-lg font-medium shadow-lg"
-                  />
-                  <motion.div 
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-luxe-text-off-white tracking-wide" style={{fontFamily: 'Playfair Display, serif'}}>
+                  Broski's Kitchen
+                </h3>
+                <p className="text-sm text-luxe-text-soft-gray">Luxury street gourmet</p>
+                <div className="mt-3 flex justify-between items-center">
+                  <span className="text-sm text-luxe-gold-light font-medium">25-40 min</span>
+                  <Link
+                    href="/restaurants/broskis-kitchen"
+                    className="luxe-button-primary text-sm px-4 py-2"
                   >
-                    ✉️
-                  </motion.div>
+                    Order Now
+                  </Link>
                 </div>
-                <Button 
-                  variant="secondary" 
-                  className="px-8 py-4 rounded-xl bg-white text-otw-red hover:bg-gray-100 font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                >
-                  Subscribe Now
-                </Button>
               </div>
-              
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 1 }}
-                className="mt-6 flex items-center justify-center space-x-6 text-white/80 text-sm"
+            </div>
+
+            <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] hover:border-[#B8860B] transition-all duration-300">
+              <div className="h-40 relative">
+                <Image
+                  src="/assets/images/placeholder.svg?key=3zcfz"
+                  alt="Fort Wayne Pizza Co."
+                  fill
+                  className="object-cover grayscale hover:grayscale-0 transition-all duration-300"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-[#E5E5E5]">
+                  Fort Wayne Pizza Co.
+                </h3>
+                <p className="text-sm text-[#CCCCCC]">Hand-tossed pizzas</p>
+                <div className="mt-3 flex justify-between items-center">
+                  <span className="text-sm text-[#B8860B]">30-45 min</span>
+                  <Link
+                    href="/restaurants/fort-wayne-pizza"
+                    className="text-sm text-[#C1272D] hover:underline"
+                  >
+                    Order Now
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] hover:border-[#B8860B] transition-all duration-300">
+              <div className="h-40 relative">
+                <Image
+                  src="/assets/images/placeholder.svg?key=26tm0"
+                  alt="Taqueria Jalisco"
+                  fill
+                  className="object-cover grayscale hover:grayscale-0 transition-all duration-300"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-[#E5E5E5]">
+                  Taqueria Jalisco
+                </h3>
+                <p className="text-sm text-[#CCCCCC]">Authentic Mexican</p>
+                <div className="mt-3 flex justify-between items-center">
+                  <span className="text-sm text-[#B8860B]">20-35 min</span>
+                  <Link
+                    href="/restaurants/taqueria-jalisco"
+                    className="text-sm text-[#C1272D] hover:underline"
+                  >
+                    Order Now
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] hover:border-[#B8860B] transition-all duration-300">
+              <div className="h-40 relative">
+                <Image
+                  src="/assets/images/placeholder.svg?key=3p6ah"
+                  alt="Seoul Garden"
+                  fill
+                  className="object-cover grayscale hover:grayscale-0 transition-all duration-300"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-[#E5E5E5]">Seoul Garden</h3>
+                <p className="text-sm text-[#CCCCCC]">Korean BBQ</p>
+                <div className="mt-3 flex justify-between items-center">
+                  <span className="text-sm text-[#B8860B]">35-50 min</span>
+                  <Link
+                    href="/restaurants/seoul-garden"
+                    className="text-sm text-[#C1272D] hover:underline"
+                  >
+                    Order Now
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <Link href="/restaurants">
+              <Button variant="primary" className="px-8">View All Restaurants</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 px-6 bg-[#1A1A1A]">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-[#B8860B] text-center mb-6">
+            OTW Membership Tiers
+          </h2>
+          <p className="text-xl text-center text-[#E5E5E5] mb-12">
+            Fast. Local. Real.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-[#111111] rounded-lg p-8 border border-[#333333] hover:border-[#B8860B] transition-all duration-300">
+              <h3 className="text-2xl font-bold text-[#B8860B] mb-4 text-center">
+                Bronze
+              </h3>
+              <div className="text-3xl font-bold text-[#E5E5E5] text-center mb-6">
+                $9.99<span className="text-lg font-normal">/month</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> Free delivery on orders $15+
+                </li>
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> Priority customer service
+                </li>
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> Exclusive monthly offers
+                </li>
+              </ul>
+              <Button
+                variant="primary"
+                className="w-full shadow-sm"
+                onClick={() => console.log("Bronze selected")}
               >
-                <div className="flex items-center space-x-2">
-                  <CheckCircleIcon className="w-5 h-5 text-white" />
-                  <span>No spam, ever</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <CheckCircleIcon className="w-5 h-5 text-white" />
-                  <span>Unsubscribe anytime</span>
-                </div>
-              </motion.div>
+                Select Plan
+              </Button>
             </div>
-          </motion.div>
-          
-          {/* Social Proof */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="mt-12 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-white/80"
-          >
-            <div className="flex items-center space-x-2">
-              <div className="flex -space-x-2">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="w-8 h-8 bg-white/20 rounded-full border-2 border-white" />
-                ))}
+
+            <div className="bg-[#111111] rounded-lg p-8 border border-[#B8860B]">
+              <div className="bg-[#B8860B] text-black font-bold py-1 px-4 rounded-md text-sm inline-block mb-4">
+                Most Popular
               </div>
-              <span className="text-sm font-medium">Join 10,000+ subscribers</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="flex space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <StarIcon key={i} className="w-4 h-4 text-yellow-300 fill-current" />
-                ))}
+              <h3 className="text-2xl font-bold text-[#B8860B] mb-4 text-center">
+                Silver
+              </h3>
+              <div className="text-3xl font-bold text-[#E5E5E5] text-center mb-6">
+                $14.99<span className="text-lg font-normal">/month</span>
               </div>
-              <span className="text-sm font-medium">Rated 4.9/5 by subscribers</span>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> All Bronze benefits
+                </li>
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> Free delivery on all orders
+                </li>
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> 5% discount on all orders
+                </li>
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> Early access to new restaurants
+                </li>
+              </ul>
+              <Button
+                variant="primary"
+                className="w-full shadow-sm"
+                onClick={() => console.log("Silver selected")}
+              >
+                Select Plan
+              </Button>
             </div>
-          </motion.div>
+
+            <div className="bg-[#111111] rounded-lg p-8 border border-[#333333] hover:border-[#B8860B] transition-all duration-300">
+              <h3 className="text-2xl font-bold text-[#B8860B] mb-4 text-center">
+                Gold
+              </h3>
+              <div className="text-3xl font-bold text-[#E5E5E5] text-center mb-6">
+                $24.99<span className="text-lg font-normal">/month</span>
+              </div>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> All Silver benefits
+                </li>
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> 10% discount on all orders
+                </li>
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> Priority delivery scheduling
+                </li>
+                <li className="flex items-center text-[#CCCCCC]">
+                  <span className="mr-2 text-[#C1272D]">✓</span> Exclusive events and tastings
+                </li>
+              </ul>
+              <Button
+                variant="primary"
+                className="w-full shadow-sm"
+                onClick={() => console.log("Gold selected")}
+              >
+                Select Plan
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     </main>

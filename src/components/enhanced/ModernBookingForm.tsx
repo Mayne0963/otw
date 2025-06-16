@@ -463,8 +463,12 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                   onChange={(e) => handleFieldChange('date', e.target.value)}
                   min={minDate}
                   required
+                  aria-label="Select booking date"
+                  aria-describedby={validation.date.message ? 'date-validation' : undefined}
+                  aria-invalid={validation.date.severity === 'error'}
+                  aria-required="true"
                   className={`
-                    w-full pl-10 pr-4 py-3
+                    focus-ring w-full pl-10 pr-4 py-3
                     bg-gray-800 text-white
                     border rounded-lg transition-all duration-200
                     focus:outline-none focus:ring-2 focus:ring-opacity-50
@@ -479,9 +483,14 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                 />
               </div>
               {validation.date.message && (
-                <p className={`mt-1 text-sm ${
-                  validation.date.severity === 'error' ? 'text-red-400' : 'text-green-400'
-                }`}>
+                <p 
+                  id="date-validation"
+                  className={`mt-1 text-sm ${
+                    validation.date.severity === 'error' ? 'text-red-400' : 'text-green-400'
+                  }`}
+                  role="status"
+                  aria-live="polite"
+                >
                   {validation.date.message}
                 </p>
               )}
@@ -503,8 +512,12 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                   onChange={(e) => handleFieldChange('time', e.target.value)}
                   min={minTime}
                   required
+                  aria-label="Select booking time"
+                  aria-describedby={validation.time.message ? 'time-validation' : undefined}
+                  aria-invalid={validation.time.severity === 'error'}
+                  aria-required="true"
                   className={`
-                    w-full pl-10 pr-4 py-3
+                    focus-ring w-full pl-10 pr-4 py-3
                     bg-gray-800 text-white
                     border rounded-lg transition-all duration-200
                     focus:outline-none focus:ring-2 focus:ring-opacity-50
@@ -519,9 +532,14 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                 />
               </div>
               {validation.time.message && (
-                <p className={`mt-1 text-sm ${
-                  validation.time.severity === 'error' ? 'text-red-400' : 'text-green-400'
-                }`}>
+                <p 
+                  id="time-validation"
+                  className={`mt-1 text-sm ${
+                    validation.time.severity === 'error' ? 'text-red-400' : 'text-green-400'
+                  }`}
+                  role="status"
+                  aria-live="polite"
+                >
                   {validation.time.message}
                 </p>
               )}
@@ -550,8 +568,12 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                 value={formData.passengers}
                 onChange={(e) => handleFieldChange('passengers', parseInt(e.target.value))}
                 required
+                aria-label="Select number of passengers"
+                aria-describedby={validation.passengers.message ? 'passengers-validation' : undefined}
+                aria-invalid={validation.passengers.severity === 'error'}
+                aria-required="true"
                 className={`
-                  w-full pl-10 pr-4 py-3
+                  focus-ring w-full pl-10 pr-4 py-3
                   bg-gray-800 text-white
                   border rounded-lg transition-all duration-200
                   focus:outline-none focus:ring-2 focus:ring-opacity-50
@@ -570,7 +592,12 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
               </select>
             </div>
             {validation.passengers.message && (
-              <p className="mt-1 text-sm text-red-400">
+              <p 
+                id="passengers-validation"
+                className="mt-1 text-sm text-red-400"
+                role="status"
+                aria-live="polite"
+              >
                 {validation.passengers.message}
               </p>
             )}
@@ -601,8 +628,13 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                   onChange={(e) => handleFieldChange('customerName', e.target.value)}
                   placeholder="Enter your full name"
                   required
+                  aria-label="Full name"
+                  aria-describedby={validation.customerName.message ? 'customerName-validation' : undefined}
+                  aria-invalid={validation.customerName.severity === 'error'}
+                  aria-required="true"
+                  autoComplete="name"
                   className={`
-                    w-full pl-10 pr-4 py-3
+                    focus-ring w-full pl-10 pr-4 py-3
                     bg-gray-800 text-white placeholder-gray-400
                     border rounded-lg transition-all duration-200
                     focus:outline-none focus:ring-2 focus:ring-opacity-50
@@ -617,9 +649,14 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                 />
               </div>
               {validation.customerName.message && (
-                <p className={`mt-1 text-sm ${
-                  validation.customerName.severity === 'error' ? 'text-red-400' : 'text-green-400'
-                }`}>
+                <p 
+                  id="customerName-validation"
+                  className={`mt-1 text-sm ${
+                    validation.customerName.severity === 'error' ? 'text-red-400' : 'text-green-400'
+                  }`}
+                  role="status"
+                  aria-live="polite"
+                >
                   {validation.customerName.message}
                 </p>
               )}
@@ -641,8 +678,13 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                   onChange={(e) => handleFieldChange('customerPhone', e.target.value)}
                   placeholder="(555) 123-4567"
                   required
+                  aria-label="Phone number"
+                  aria-describedby={validation.customerPhone.message ? 'customerPhone-validation' : undefined}
+                  aria-invalid={validation.customerPhone.severity === 'error'}
+                  aria-required="true"
+                  autoComplete="tel"
                   className={`
-                    w-full pl-10 pr-4 py-3
+                    focus-ring w-full pl-10 pr-4 py-3
                     bg-gray-800 text-white placeholder-gray-400
                     border rounded-lg transition-all duration-200
                     focus:outline-none focus:ring-2 focus:ring-opacity-50
@@ -657,9 +699,14 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                 />
               </div>
               {validation.customerPhone.message && (
-                <p className={`mt-1 text-sm ${
-                  validation.customerPhone.severity === 'error' ? 'text-red-400' : 'text-green-400'
-                }`}>
+                <p 
+                  id="customerPhone-validation"
+                  className={`mt-1 text-sm ${
+                    validation.customerPhone.severity === 'error' ? 'text-red-400' : 'text-green-400'
+                  }`}
+                  role="status"
+                  aria-live="polite"
+                >
                   {validation.customerPhone.message}
                 </p>
               )}
@@ -681,8 +728,13 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                   onChange={(e) => handleFieldChange('customerEmail', e.target.value)}
                   placeholder="your@email.com"
                   required
+                  aria-label="Email address"
+                  aria-describedby={validation.customerEmail.message ? 'customerEmail-validation' : undefined}
+                  aria-invalid={validation.customerEmail.severity === 'error'}
+                  aria-required="true"
+                  autoComplete="email"
                   className={`
-                    w-full pl-10 pr-4 py-3
+                    focus-ring w-full pl-10 pr-4 py-3
                     bg-gray-800 text-white placeholder-gray-400
                     border rounded-lg transition-all duration-200
                     focus:outline-none focus:ring-2 focus:ring-opacity-50
@@ -697,9 +749,14 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
                 />
               </div>
               {validation.customerEmail.message && (
-                <p className={`mt-1 text-sm ${
-                  validation.customerEmail.severity === 'error' ? 'text-red-400' : 'text-green-400'
-                }`}>
+                <p 
+                  id="customerEmail-validation"
+                  className={`mt-1 text-sm ${
+                    validation.customerEmail.severity === 'error' ? 'text-red-400' : 'text-green-400'
+                  }`}
+                  role="status"
+                  aria-live="polite"
+                >
                   {validation.customerEmail.message}
                 </p>
               )}
@@ -720,7 +777,8 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
               id="vehicleType"
               value={formData.vehicleType}
               onChange={(e) => setFormData(prev => ({ ...prev, vehicleType: e.target.value as any }))}
-              className="w-full pl-10 pr-4 py-3 bg-gray-800 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              aria-label="Select vehicle type"
+              className="focus-ring w-full pl-10 pr-4 py-3 bg-gray-800 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             >
               <option value="sedan">Sedan (1-4 passengers)</option>
               <option value="suv">SUV (1-6 passengers)</option>
@@ -741,7 +799,8 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
             onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
             placeholder="Any special requests or additional information..."
             rows={3}
-            className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-vertical"
+            aria-label="Additional notes or special requests"
+            className="focus-ring w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-400 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 resize-vertical"
           />
         </div>
 
@@ -752,18 +811,22 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
             id="isRoundTrip"
             checked={formData.isRoundTrip}
             onChange={(e) => setFormData(prev => ({ ...prev, isRoundTrip: e.target.checked }))}
-            className="h-4 w-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
+            aria-describedby="isRoundTrip-description"
+            className="focus-ring h-4 w-4 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
           />
           <label htmlFor="isRoundTrip" className="text-sm text-gray-300">
             This is a round trip
           </label>
+          <span id="isRoundTrip-description" className="sr-only">
+            Check this box if you need a return trip to your pickup location
+          </span>
         </div>
 
         {/* Submit Error */}
         {submitError && (
-          <div className="bg-red-900/20 border border-red-500 rounded-lg p-4">
+          <div id="submit-error" className="bg-red-900/20 border border-red-500 rounded-lg p-4" role="alert" aria-live="assertive">
             <div className="flex items-center space-x-3">
-              <ExclamationTriangleIcon className="h-5 w-5 text-red-500 flex-shrink-0" />
+              <ExclamationTriangleIcon className="h-5 w-5 text-red-500 flex-shrink-0" aria-hidden="true" />
               <span className="text-red-400">{submitError}</span>
             </div>
           </div>
@@ -773,8 +836,10 @@ const ModernBookingForm: React.FC<ModernBookingFormProps> = ({
         <button
           type="submit"
           disabled={!isFormValid || isSubmitting}
+          aria-disabled={!isFormValid || isSubmitting}
+          aria-describedby={submitError ? 'submit-error' : undefined}
           className={`
-            w-full py-4 px-6 rounded-lg font-semibold text-white
+            focus-ring w-full py-4 px-6 rounded-lg font-semibold text-white
             transition-all duration-200 flex items-center justify-center space-x-2
             ${
               isFormValid && !isSubmitting

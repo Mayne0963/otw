@@ -33,6 +33,8 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const selfieInputRef = useRef<HTMLInputElement>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const errorId = useRef(`verification-error-${Math.random().toString(36).substr(2, 9)}`);
+  const stepDescriptionId = useRef(`step-description-${Math.random().toString(36).substr(2, 9)}`);
 
   // Get current user ID
   useEffect(() => {
@@ -238,33 +240,38 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
               </div>
 
               <div
-                className={`border-2 border-dashed ${idImage ? 'border-emerald-green' : 'border-[#333333]'} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
+                className={`focus-ring border-2 border-dashed ${idImage ? 'border-emerald-green' : 'border-[#333333]'} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
                 onClick={triggerFileInput}
-                onKeyDown={(e) =>
-                  (e.key === 'Enter' || e.key === ' ') && triggerFileInput()
-                }
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    triggerFileInput();
+                  }
+                }}
                 role="button"
                 tabIndex={0}
                 aria-label="Upload ID photo"
+                aria-describedby={`${stepDescriptionId.current} ${error ? errorId.current : ''}`.trim()}
               >
                 {idImage ? (
                   <div className="relative">
                     <div className="relative h-48 w-full">
                       <Image
                         src={idImage || '/placeholder.svg'}
-                        alt="ID"
+                        alt="Uploaded ID document"
                         className="rounded object-contain"
                         fill
                         sizes="(max-width: 768px) 100vw, 400px"
                       />
                     </div>
-                    <div className="absolute top-2 right-2 bg-emerald-green rounded-full p-1">
+                    <div className="absolute top-2 right-2 bg-emerald-green rounded-full p-1" aria-hidden="true">
                       <FaCheck className="text-black" />
                     </div>
+                    <span className="sr-only">ID uploaded successfully</span>
                   </div>
                 ) : (
                   <div className="py-8">
-                    <FaIdCard className="text-4xl text-gray-500 mx-auto mb-4" />
+                    <FaIdCard className="text-4xl text-gray-500 mx-auto mb-4" aria-hidden="true" />
                     <p className="text-gray-400">Click to upload ID</p>
                     <p className="text-xs text-gray-500 mt-2">
                       Supported formats: JPG, PNG
@@ -276,17 +283,24 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
                   ref={fileInputRef}
                   onChange={handleIDUpload}
                   accept="image/*"
-                  className="hidden"
+                  className="sr-only"
+                  aria-label="Select ID image file"
+                  aria-describedby={error ? errorId.current : undefined}
                 />
               </div>
 
               {error && (
-                <div className="bg-blood-red bg-opacity-20 text-blood-red p-3 rounded">
+                <div 
+                  id={errorId.current}
+                  className="bg-blood-red bg-opacity-20 text-blood-red p-3 rounded"
+                  role="alert"
+                  aria-live="assertive"
+                >
                   {error}
                 </div>
               )}
 
-              <div className="text-xs text-gray-500">
+              <div id={stepDescriptionId.current} className="text-xs text-gray-500">
                 <p>
                   Your ID will be securely processed by our AI verification
                   system and will not be stored after verification.
@@ -309,33 +323,38 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
               </div>
 
               <div
-                className={`border-2 border-dashed ${selfieImage ? 'border-emerald-green' : 'border-[#333333]'} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
+                className={`focus-ring border-2 border-dashed ${selfieImage ? 'border-emerald-green' : 'border-[#333333]'} rounded-lg p-6 text-center cursor-pointer hover:border-gold-foil transition-colors`}
                 onClick={triggerSelfieInput}
-                onKeyDown={(e) =>
-                  (e.key === 'Enter' || e.key === ' ') && triggerSelfieInput()
-                }
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    triggerSelfieInput();
+                  }
+                }}
                 role="button"
                 tabIndex={0}
                 aria-label="Take a selfie photo"
+                aria-describedby={`${stepDescriptionId.current} ${error ? errorId.current : ''}`.trim()}
               >
                 {selfieImage ? (
                   <div className="relative">
                     <div className="relative h-48 w-full">
                       <Image
                         src={selfieImage || '/placeholder.svg'}
-                        alt="Selfie"
+                        alt="Uploaded selfie photo"
                         className="rounded object-contain"
                         fill
                         sizes="(max-width: 768px) 100vw, 400px"
                       />
                     </div>
-                    <div className="absolute top-2 right-2 bg-emerald-green rounded-full p-1">
+                    <div className="absolute top-2 right-2 bg-emerald-green rounded-full p-1" aria-hidden="true">
                       <FaCheck className="text-black" />
                     </div>
+                    <span className="sr-only">Selfie uploaded successfully</span>
                   </div>
                 ) : (
                   <div className="py-8">
-                    <FaCamera className="text-4xl text-gray-500 mx-auto mb-4" />
+                    <FaCamera className="text-4xl text-gray-500 mx-auto mb-4" aria-hidden="true" />
                     <p className="text-gray-400">Click to take selfie</p>
                     <p className="text-xs text-gray-500 mt-2">
                       Look directly at the camera in good lighting
@@ -348,7 +367,9 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
                   onChange={handleSelfieUpload}
                   accept="image/*"
                   capture="user"
-                  className="hidden"
+                  className="sr-only"
+                  aria-label="Take selfie photo"
+                  aria-describedby={error ? errorId.current : undefined}
                 />
               </div>
 
@@ -380,14 +401,15 @@ const IDVerificationModal: React.FC<IDVerificationModalProps> = ({
                 older.
               </p>
 
-              <div className="flex flex-col items-center justify-center">
-                <div className="relative w-16 h-16">
+              <div className="flex flex-col items-center justify-center" role="status" aria-live="polite">
+                <div className="relative w-16 h-16" aria-hidden="true">
                   <div className="absolute inset-0 rounded-full border-4 border-[#333333] border-opacity-25"></div>
                   <div className="absolute inset-0 rounded-full border-4 border-gold-foil border-t-transparent animate-spin"></div>
                 </div>
                 <p className="mt-4 text-gray-400">
                   This may take a few moments...
                 </p>
+                <span className="sr-only">Verifying your identity, please wait</span>
               </div>
 
               {error && (

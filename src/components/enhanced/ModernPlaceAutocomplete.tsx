@@ -61,6 +61,10 @@ export interface ModernPlaceAutocompleteProps {
   id?: string;
   'aria-label'?: string;
   'aria-describedby'?: string;
+  'aria-expanded'?: boolean;
+  'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both';
+  'aria-activedescendant'?: string;
+  role?: string;
 }
 
 // AutocompleteSuggestion interface removed - using PlaceAutocompleteElement directly
@@ -107,11 +111,20 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   id,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
+  'aria-expanded': ariaExpanded,
+  'aria-autocomplete': ariaAutocomplete = 'list',
+  'aria-activedescendant': ariaActiveDescendant,
+  role = 'combobox',
 }) => {
   const { isLoaded, loadError, getPlaceDetails } = useModernGoogleMaps();
 
   const [inputValue, setInputValue] = useState(value);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasValidSelection, setHasValidSelection] = useState(false);
+  const [lastValidPlace, setLastValidPlace] = useState<PlaceDetails | null>(null);
+  const [showValidationError, setShowValidationError] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [activeDescendant, setActiveDescendant] = useState<string>('');
   const [validation, setValidation] = useState<ValidationResult>({
     isValid: false,
     message: '',
@@ -121,19 +134,23 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const placeAutocompleteRef = useRef<any>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Generate unique IDs for accessibility
   const componentId = useMemo(() => id || `place-autocomplete-${Math.random().toString(36).substr(2, 9)}`, [id]);
   const errorId = `${componentId}-error`;
   const descriptionId = `${componentId}-description`;
+  const listboxId = `${componentId}-listbox`;
 
   // Sync external value changes
   useEffect(() => {
-    // Only update if the external value is different and not empty
-    // This prevents clearing the input during typing
-    if (value !== inputValue && value !== undefined) {
+    if (value !== undefined && value !== inputValue) {
       setInputValue(value);
+      // Reset validation state when value changes externally
       if (!value) {
+        setHasValidSelection(false);
+        setLastValidPlace(null);
+        setShowValidationError(false);
         setValidation({ isValid: false, message: '', severity: 'success' });
       }
     }
@@ -287,6 +304,11 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     // Update input value
     setInputValue(placeDetails.displayName);
     
+    // Mark as having valid selection
+    setHasValidSelection(true);
+    setLastValidPlace(placeDetails);
+    setShowValidationError(false);
+    
     // Set validation
     const validationResult: ValidationResult = {
       isValid: true,
@@ -300,19 +322,33 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     onPlaceSelect?.(placeDetails);
   }, [countryFilter, serviceAreaCenter, validateServiceArea, serviceAreaRadius, enableAddressValidation, onPlaceSelect, onValidationChange]);
 
-  // Handle input change (simplified since PlaceAutocompleteElement handles suggestions)
+  // Track if user has selected a valid place (state already declared above)
+
+  // Handle input change with validation for free-text prevention
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInputValue(newValue);
+
+    // If user is typing and we had a valid selection, mark as invalid
+    if (hasValidSelection && newValue !== lastValidPlace?.displayName) {
+      setHasValidSelection(false);
+      setValidation({ 
+        isValid: false, 
+        message: '', 
+        severity: 'success' 
+      });
+    }
+
+    // Hide validation error while typing
+    if (showValidationError) {
+      setShowValidationError(false);
+    }
 
     // Reset validation when typing
     if (validation.isValid) {
       setValidation({ isValid: false, message: '', severity: 'success' });
     }
-
-    // Call onInputChange if provided
-    // Note: PlaceAutocompleteElement handles autocomplete suggestions internally
-  }, [validation.isValid]);
+  }, [validation.isValid, hasValidSelection, lastValidPlace, showValidationError]);
 
   // Legacy handlePlaceSelect removed - now handled by handlePlaceSelectFromElement
   // This function is no longer needed since PlaceAutocompleteElement handles place selection directly
@@ -326,19 +362,56 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     // PlaceAutocompleteElement handles other keyboard navigation internally
   }, []);
 
-  // Handle input focus (simplified since PlaceAutocompleteElement handles suggestions)
+  // Handle input focus - show loading state briefly
   const handleInputFocus = useCallback(() => {
-    // PlaceAutocompleteElement handles focus behavior internally
-  }, []);
+    // Show brief loading state to indicate suggestions are loading
+    if (!hasValidSelection && !inputValue.trim()) {
+      setIsLoading(true);
+      setTimeout(() => setIsLoading(false), 800);
+    }
+  }, [hasValidSelection, inputValue]);
 
-  // Handle input blur (simplified since PlaceAutocompleteElement handles suggestions)
+  // Handle input blur - validate free-text entry
   const handleInputBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    // PlaceAutocompleteElement handles blur behavior internally
-  }, []);
+    const currentValue = e.target.value.trim();
+    
+    // If user typed something but didn't select from dropdown
+    if (currentValue && !hasValidSelection) {
+      setShowValidationError(true);
+      setValidation({
+        isValid: false,
+        message: 'Please select an address from the dropdown suggestions',
+        severity: 'error'
+      });
+      onValidationChange?.({
+        isValid: false,
+        message: 'Please select an address from the dropdown suggestions',
+        severity: 'error'
+      });
+    }
+    
+    // If field is required and empty
+    if (required && !currentValue) {
+      setShowValidationError(true);
+      setValidation({
+        isValid: false,
+        message: 'This field is required',
+        severity: 'error'
+      });
+      onValidationChange?.({
+        isValid: false,
+        message: 'This field is required',
+        severity: 'error'
+      });
+    }
+  }, [hasValidSelection, required, onValidationChange]);
 
   // Clear input
   const handleClear = useCallback(() => {
     setInputValue('');
+    setHasValidSelection(false);
+    setLastValidPlace(null);
+    setShowValidationError(false);
     setValidation({ isValid: false, message: '', severity: 'success' });
     onValidationChange?.({ isValid: false, message: '', severity: 'success' });
 
@@ -366,40 +439,40 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   // No cleanup needed since we're using PlaceAutocompleteElement
 
   // Determine validation icon and styling
+  const validationIcon = useMemo(() => {
+    if (isLoading) return null;
+    if ((validation.message && validation.severity === 'error') || showValidationError) {
+      return <ExclamationTriangleIcon className="h-5 w-5 text-otw-red-500" />;
+    }
+    if (validation.isValid && validation.severity === 'success' && hasValidSelection) {
+      return <CheckCircleIcon className="h-5 w-5 text-otw-green-500" />;
+    }
+    return null;
+  }, [isLoading, validation, showValidationError, hasValidSelection]);
+
+  const inputBorderClass = useMemo(() => {
+    if (isLoading) return 'border-otw-gold-300';
+    if ((validation.message && validation.severity === 'error') || showValidationError) {
+      return 'border-otw-red-400 focus:border-otw-red-500';
+    }
+    if (validation.isValid && validation.severity === 'success' && hasValidSelection) {
+      return 'border-otw-green-400 focus:border-otw-green-500';
+    }
+    return 'border-white/20 focus:border-otw-gold-400';
+  }, [isLoading, validation, showValidationError, hasValidSelection]);
+
   const getValidationIcon = () => {
     if (isLoading) {
       return (
-        <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-500 rounded-full" />
+        <div className="animate-spin rounded-full h-5 w-5 border-2 border-otw-gold-300 border-t-otw-gold-600" />
       );
     }
-
-    if (validation.message) {
-      switch (validation.severity) {
-        case 'success':
-          return <CheckIcon className="h-4 w-4 text-green-500" />;
-        case 'warning':
-          return <ExclamationTriangleIcon className="h-4 w-4 text-yellow-500" />;
-        case 'error':
-          return <XMarkIcon className="h-4 w-4 text-red-500" />;
-      }
-    }
-
-    return null;
+    
+    return validationIcon;
   };
 
   const getInputBorderClass = () => {
-    if (error) {return 'border-red-500 focus:border-red-500 focus:ring-red-500';}
-    if (validation.message) {
-      switch (validation.severity) {
-        case 'success':
-          return 'border-green-500 focus:border-green-500 focus:ring-green-500';
-        case 'warning':
-          return 'border-yellow-500 focus:border-yellow-500 focus:ring-yellow-500';
-        case 'error':
-          return 'border-red-500 focus:border-red-500 focus:ring-red-500';
-      }
-    }
-    return 'border-gray-600 focus:border-blue-500 focus:ring-blue-500';
+    return inputBorderClass;
   };
 
   if (loadError) {
@@ -444,6 +517,10 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
             required={required}
             aria-label={ariaLabel || placeholder}
             aria-describedby={`${ariaDescribedBy || ''} ${validation.message ? descriptionId : ''} ${error ? errorId : ''}`.trim()}
+            aria-expanded={ariaExpanded || isDropdownOpen}
+            aria-autocomplete={ariaAutocomplete}
+            aria-activedescendant={ariaActiveDescendant || activeDescendant}
+            role={role}
           />
         </gmp-place-autocomplete>
       )}
@@ -477,6 +554,10 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
             `}
             aria-label={ariaLabel || placeholder}
             aria-describedby={`${ariaDescribedBy || ''} ${validation.message ? descriptionId : ''} ${error ? errorId : ''}`.trim()}
+            aria-expanded={ariaExpanded || isDropdownOpen}
+            aria-autocomplete={ariaAutocomplete}
+            aria-activedescendant={ariaActiveDescendant || activeDescendant}
+            role={role}
           />
         </div>
       )}
@@ -493,8 +574,9 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
           <button
             type="button"
             onClick={handleClear}
-            className="text-gray-400 hover:text-gray-300 transition-colors"
-            aria-label="Clear input"
+            className="focus-ring text-gray-400 hover:text-gray-300 transition-colors rounded-sm p-1"
+            aria-label="Clear address input"
+            tabIndex={0}
           >
             <XMarkIcon className="h-4 w-4" />
           </button>
@@ -502,13 +584,13 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
       </div>
 
       {/* Validation Message */}
-      {validation.message && (
+      {(validation.message || showValidationError) && (
         <div
           id={descriptionId}
           className={`mt-2 text-sm flex items-center space-x-2 ${
-            validation.severity === 'success' ? 'text-green-400' :
+            (validation.severity === 'error' || showValidationError) ? 'text-red-400' :
             validation.severity === 'warning' ? 'text-yellow-400' :
-            'text-red-400'
+            'text-green-400'
           }`}
           role="status"
           aria-live="polite"

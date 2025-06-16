@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 export default function ServiceCard({
   icon,
@@ -10,21 +10,22 @@ export default function ServiceCard({
   linkHref,
 }) {
   return (
-    <div className="service-card group">
-      <div className="h-16 w-16 bg-primary-red rounded-full flex items-center justify-center mb-6 transform group-hover:scale-110 transition-all duration-300">
+    <div className="luxe-card group">
+      <div className="h-16 w-16 bg-gradient-to-br from-luxe-gold-dark to-luxe-gold-light rounded-lg flex items-center justify-center mb-6 transform group-hover:scale-105 group-hover:rotate-1 transition-all duration-400 shadow-lg">
         {icon}
       </div>
-      <h3 className="text-2xl font-bold mb-4 group-hover:text-accent-gold transition-colors duration-300">
+      <h3 className="text-2xl font-bold mb-4 group-hover:text-luxe-gold-light transition-colors duration-400 tracking-wide text-luxe-text-off-white" style={{fontFamily: 'Playfair Display, serif'}}>
         {title}
       </h3>
-      <p className="text-gray-300 mb-6">{description}</p>
+      <p className="text-luxe-text-soft-gray mb-6 leading-relaxed">{description}</p>
       <Link
         href={linkHref}
-        className="text-accent-gold group-hover:text-white flex items-center font-medium transition-colors duration-300"
+        className="text-luxe-gold-dark group-hover:text-luxe-text-off-white flex items-center font-medium transition-all duration-400 tracking-wide text-sm"
+        style={{fontFamily: 'Montserrat, sans-serif'}}
       >
         {linkText}
         <svg
-          className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300"
+          className="w-5 h-5 ml-2 transform group-hover:translate-x-1 group-hover:scale-105 transition-transform duration-400"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

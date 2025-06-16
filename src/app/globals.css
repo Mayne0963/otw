@@ -97,9 +97,64 @@
   animation: float 3s ease-in-out infinite;
 }
 
-/* OTW Focus States */
+/* OTW Focus States - Enhanced Accessibility */
 .otw-focus {
   @apply focus:outline-none focus:ring-2 focus:ring-otw-gold focus:ring-offset-2 focus:ring-offset-otw-black;
+}
+
+/* CSS Variables for Consistent Focus Rings */
+:root {
+  --focus-ring-width: 2px;
+  --focus-ring-color: var(--otw-gold);
+  --focus-ring-offset: 2px;
+  --focus-ring-opacity: 0.6;
+  --focus-ring-style: solid;
+  --focus-transition: all 0.15s ease-in-out;
+}
+
+/* Universal Focus Ring for Accessibility */
+.focus-ring {
+  outline: none;
+  transition: var(--focus-transition);
+}
+
+.focus-ring:focus-visible {
+  outline: var(--focus-ring-width) var(--focus-ring-style) var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  box-shadow: 0 0 0 var(--focus-ring-width) rgba(253, 184, 30, var(--focus-ring-opacity));
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  :root {
+    --focus-ring-width: 3px;
+    --focus-ring-opacity: 1;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .focus-ring {
+    transition: none;
+  }
+}
+
+/* Skip Link for Screen Readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--otw-gold);
+  color: var(--otw-black);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 9999;
+  font-weight: bold;
+}
+
+.skip-link:focus {
+  top: 6px;
 }
 
 /* OTW Address Autocomplete Utility Classes */

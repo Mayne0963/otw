@@ -34,6 +34,7 @@ import {
   Users,
   ArrowRight,
   Navigation,
+  CheckCircle,
 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '../../../components/ui/radio-group';
 import { cn } from '../../../lib/utils';
@@ -77,26 +78,157 @@ export default function RidesPage() {
   const [pickup, setPickup] = useState('');
   const [destination, setDestination] = useState('');
   const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
-  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<string>('standard');
   const [pickupAddress, setPickupAddress] = useState('');
   const [destinationAddress, setDestinationAddress] = useState('');
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<PlaceDetails | null>(null);
   const [selectedDestinationPlace, setSelectedDestinationPlace] = useState<PlaceDetails | null>(null);
   const [selectedService, setSelectedService] = useState<string>('');
+  const [isLoadingFare, setIsLoadingFare] = useState(false);
+  const [fareEstimateData, setFareEstimateData] = useState<any>(null);
+  const [fareError, setFareError] = useState<string | null>(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [bookingSubmitted, setBookingSubmitted] = useState(false);
+  const [bookingId, setBookingId] = useState<string | null>(null);
+
+  const validateBookingForm = (formData: BookingFormData): string | null => {
+    if (!formData.pickup) return 'Pickup location is required';
+    if (!formData.destination) return 'Destination is required';
+    if (!formData.date) return 'Date is required';
+    if (!formData.time) return 'Time is required';
+    if (!formData.customerName.trim()) return 'Customer name is required';
+    if (!formData.customerPhone.trim()) return 'Phone number is required';
+    if (!formData.customerEmail.trim()) return 'Email is required';
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.customerEmail)) return 'Please enter a valid email address';
+    
+    // Basic phone validation
+    const phoneRegex = /^[\d\s\-\(\)\+]{10,}$/;
+    if (!phoneRegex.test(formData.customerPhone.replace(/\s/g, ''))) return 'Please enter a valid phone number';
+    
+    return null;
+  };
 
   const handleBookingSubmit = async (formData: BookingFormData) => {
     console.log('Booking submitted:', formData);
 
-    try {
-      // Here you would typically send the data to your backend API
-      // For now, we'll just simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    // Validate form
+    const validationError = validateBookingForm(formData);
+    if (validationError) {
+      setSubmitError(validationError);
+      return;
+    }
 
-      // Show success message or redirect
-      alert('Ride booking submitted successfully! We will contact you shortly to confirm your ride.');
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      // Prepare booking data
+      const bookingData = {
+        pickup: {
+          address: formData.pickup?.displayName || '',
+          coordinates: {
+            lat: formData.pickup?.geometry?.location?.lat() || 0,
+            lng: formData.pickup?.geometry?.location?.lng() || 0
+          }
+        },
+        destination: {
+          address: formData.destination?.displayName || '',
+          coordinates: {
+            lat: formData.destination?.geometry?.location?.lat() || 0,
+            lng: formData.destination?.geometry?.location?.lng() || 0
+          }
+        },
+        schedule: {
+          date: formData.date,
+          time: formData.time
+        },
+        customer: {
+          name: formData.customerName,
+          phone: formData.customerPhone,
+          email: formData.customerEmail
+        },
+        passengers: formData.passengers,
+        vehicleType: formData.vehicleType,
+        isRoundTrip: formData.isRoundTrip,
+        notes: formData.notes,
+        timestamp: new Date().toISOString()
+      };
+
+      // Submit to backend API
+      const response = await fetch('/api/bookings/ride', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to submit booking');
+      }
+
+      // Success
+      setBookingId(result.bookingId || `RD${Date.now().toString().slice(-6)}`);
+      setBookingSubmitted(true);
     } catch (error) {
       console.error('Ride booking submission error:', error);
-      throw new Error('Failed to submit ride booking. Please try again.');
+      setSubmitError(error instanceof Error ? error.message : 'Failed to submit ride booking. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleFareEstimate = async () => {
+    if (!pickupAddress || !destinationAddress) {
+      setFareError('Please select both pickup and destination locations');
+      return;
+    }
+
+    setIsLoadingFare(true);
+    setFareError(null);
+    setFareEstimateData(null);
+
+    try {
+      const response = await fetch('/api/rides/estimate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pickupLocation: {
+            lat: selectedPickupPlace?.geometry?.location?.lat() || 0,
+            lng: selectedPickupPlace?.geometry?.location?.lng() || 0,
+            address: pickupAddress,
+          },
+          destination: {
+            lat: selectedDestinationPlace?.geometry?.location?.lat() || 0,
+            lng: selectedDestinationPlace?.geometry?.location?.lng() || 0,
+            address: destinationAddress,
+          },
+          vehicleType: selectedVehicle,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFareEstimateData(data.data);
+        setEstimatedFare(data.data.estimatedFare.max); // Keep backward compatibility
+      } else {
+        setFareError(data.error || 'Failed to get fare estimate');
+      }
+    } catch (error) {
+      console.error('Fare estimate error:', error);
+      setFareError('Sorry, we couldn\'t fetch fare—please try again');
+    } finally {
+      setIsLoadingFare(false);
     }
   };
 
@@ -263,16 +395,51 @@ export default function RidesPage() {
                 </div>
 
                 <button
-                  className="btn-ride w-full py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={!pickup || !destination}
+                  onClick={handleFareEstimate}
+                  className="btn-ride w-full py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  disabled={!pickupAddress || !destinationAddress || isLoadingFare}
                 >
-                  Get fare estimate →
+                  {isLoadingFare ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Calculating...
+                    </>
+                  ) : (
+                    'Get fare estimate →'
+                  )}
                 </button>
               </div>
 
-              {estimatedFare && (
-                <div className="mt-6 p-4 bg-[var(--color-harvest-gold)]/10 rounded-xl border border-[var(--color-harvest-gold)]/20">
-                  <p className="text-[var(--color-harvest-gold)] font-semibold">Estimated fare: {estimatedFare}</p>
+              {fareError && (
+                <div className="mt-6 p-4 bg-red-500/10 rounded-xl border border-red-500/20">
+                  <p className="text-red-400 font-semibold">{fareError}</p>
+                </div>
+              )}
+
+              {fareEstimateData && (
+                <div className="mt-6 p-6 bg-[var(--color-harvest-gold)]/10 rounded-xl border border-[var(--color-harvest-gold)]/20">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <p className="text-[var(--color-muted)] text-sm mb-1">Estimated Fare</p>
+                      <p className="text-[var(--color-harvest-gold)] font-bold text-xl">
+                        ${fareEstimateData.estimatedFare.min.toFixed(2)}–${fareEstimateData.estimatedFare.max.toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[var(--color-muted)] text-sm mb-1">Distance</p>
+                      <p className="text-[var(--color-onyx-light)] font-semibold">{fareEstimateData.distance.text}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-[var(--color-muted)] text-sm mb-1">ETA</p>
+                      <p className="text-[var(--color-onyx-light)] font-semibold">{fareEstimateData.eta}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-[var(--color-harvest-gold)]/20">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-[var(--color-muted)]">Vehicle: {fareEstimateData.vehicleInfo.name}</span>
+                      <span className="text-[var(--color-muted)]">Duration: {fareEstimateData.duration.text}</span>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -290,132 +457,153 @@ export default function RidesPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
-            {vehicleTypes.map((vehicle) => {
+          <h3 id="vehicle-selection-heading" className="text-xl font-semibold text-[var(--color-onyx-light)] mb-6">Choose Your Vehicle</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" role="radiogroup" aria-labelledby="vehicle-selection-heading">
+            {vehicleTypes.map((vehicle, index) => {
               const IconComponent = vehicle.icon;
+              const isSelected = selectedVehicle === vehicle.id;
+              
               return (
                 <div
                   key={vehicle.id}
-                  className={`card-vehicle p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm hover:shadow-md transition cursor-pointer ${
-                    selectedVehicle === vehicle.id
-                      ? 'ring-2 ring-[var(--color-harvest-gold)] bg-[var(--color-surface-strong)]'
-                      : 'hover:scale-105'
+                  role="radio"
+                  aria-checked={isSelected}
+                  aria-labelledby={`vehicle-${vehicle.id}-name`}
+                  aria-describedby={`vehicle-${vehicle.id}-description`}
+                  tabIndex={0}
+                  className={`relative card-vehicle p-6 rounded-xl bg-[var(--color-surface)] border transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-harvest-gold)] focus:ring-offset-2 focus:ring-offset-[var(--color-onyx)] ${
+                    isSelected
+                      ? 'ring-2 ring-[var(--color-harvest-gold)] bg-[var(--color-surface-strong)] shadow-lg transform scale-[1.02]'
+                      : 'border-[var(--color-border)] shadow-sm hover:shadow-lg hover:scale-105 hover:border-[var(--color-harvest-gold)]/30'
                   }`}
                   onClick={() => setSelectedVehicle(vehicle.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedVehicle(vehicle.id);
+                    }
+                    // Arrow key navigation
+                    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                      e.preventDefault();
+                      const nextIndex = (index + 1) % vehicleTypes.length;
+                      const nextElement = document.querySelector(`[data-vehicle-index="${nextIndex}"]`) as HTMLElement;
+                      nextElement?.focus();
+                    }
+                    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                      e.preventDefault();
+                      const prevIndex = index === 0 ? vehicleTypes.length - 1 : index - 1;
+                      const prevElement = document.querySelector(`[data-vehicle-index="${prevIndex}"]`) as HTMLElement;
+                      prevElement?.focus();
+                    }
+                  }}
+                  data-vehicle-index={index}
                 >
-                  {selectedVehicle === vehicle.id && (
-                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-[var(--color-harvest-gold)] rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-[var(--color-onyx)]" fill="currentColor" viewBox="0 0 20 20">
+                  {/* Selection indicator */}
+                  {isSelected && (
+                    <div className="absolute -top-3 -right-3 w-8 h-8 bg-[var(--color-harvest-gold)] rounded-full flex items-center justify-center shadow-lg animate-in zoom-in-50 duration-200">
+                      <svg className="w-5 h-5 text-[var(--color-onyx)]" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
                   )}
 
                   <div className="flex items-center justify-between mb-4">
-                    <IconComponent className="text-[var(--color-harvest-gold)] mb-4 w-12 h-12" />
+                    <IconComponent className="text-[var(--color-harvest-gold)] mb-4 w-12 h-12" aria-hidden="true" />
                     <div className="text-right">
                       <div className="text-2xl font-bold text-[var(--color-onyx-light)]">{vehicle.price}</div>
                       <div className="text-sm text-[var(--color-muted)]">{vehicle.eta}</div>
                     </div>
                   </div>
 
-                  <h3 className="font-semibold text-[var(--color-onyx-light)] mb-2">{vehicle.name}</h3>
-                  <p className="text-[var(--color-muted)] text-sm mb-3">{vehicle.description}</p>
+                  <h3 id={`vehicle-${vehicle.id}-name`} className="font-semibold text-[var(--color-onyx-light)] mb-2">{vehicle.name}</h3>
+                  <p id={`vehicle-${vehicle.id}-description`} className="text-[var(--color-muted)] text-sm mb-3">{vehicle.description}</p>
                   <div className="flex items-center text-sm text-[var(--color-muted)]">
-                    <Users className="w-4 h-4 mr-1" />
-                    {vehicle.capacity}
+                    <Users className="w-4 h-4 mr-1" aria-hidden="true" />
+                    <span>{vehicle.capacity}</span>
                   </div>
+                  
+                  {/* Screen reader only selection status */}
+                  <span className="sr-only">
+                    {isSelected ? 'Selected' : 'Not selected'}
+                  </span>
                 </div>
               );
             })}
           </div>
 
-          {/* Detailed Booking Form */}
+          {/* Booking Form or Success Screen */}
           <div className="max-w-3xl mx-auto mt-16">
-            <div className="bg-[var(--color-surface)] rounded-2xl shadow-xl p-8 border border-[var(--color-border)]">
-              <h3 className="text-2xl font-bold text-[var(--color-onyx-light)] mb-8">Complete your booking</h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <Label className="text-[var(--color-muted)] font-medium block text-xs mb-1">When do you need this ride?</Label>
-                  <div className="grid grid-cols-2 gap-3 mt-2">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className="justify-start text-left font-normal h-12 bg-[var(--color-surface-strong)] border-[var(--color-border)] text-[var(--color-onyx-light)] hover:border-[var(--color-harvest-gold)] transition-all">
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          <span>Pick date</span>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0 bg-[var(--color-surface)] border-[var(--color-border)]">
-                        <Calendar mode="single" initialFocus />
-                      </PopoverContent>
-                    </Popover>
-
-                    <Select>
-                      <SelectTrigger className="h-12 bg-[var(--color-surface-strong)] border-[var(--color-border)] text-[var(--color-onyx-light)]">
-                        <SelectValue placeholder="Time" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[var(--color-surface)] border-[var(--color-border)]">
-                        <SelectItem value="asap" className="text-[var(--color-onyx-light)]">ASAP</SelectItem>
-                        <SelectItem value="morning" className="text-[var(--color-onyx-light)]">Morning (8am-12pm)</SelectItem>
-                        <SelectItem value="afternoon" className="text-[var(--color-onyx-light)]">Afternoon (12pm-5pm)</SelectItem>
-                        <SelectItem value="evening" className="text-[var(--color-onyx-light)]">Evening (5pm-9pm)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+            {bookingSubmitted ? (
+              /* Success Screen */
+              <div className="bg-[var(--color-surface)] rounded-2xl shadow-xl p-8 border border-[var(--color-border)] text-center">
+                <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle className="w-10 h-10 text-white" />
                 </div>
-
-                <div>
-                  <Label className="text-[var(--color-muted)] font-medium block text-xs mb-1">Contact Information</Label>
-                  <Input placeholder="Your phone number" className="mt-2 h-12 input-otw" />
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <Label className="text-[var(--color-muted)] font-medium block text-xs mb-1">Special requests (optional)</Label>
-                <Textarea
-                  placeholder="Child seat, wheelchair accessible, pet-friendly, etc."
-                  className="mt-2 min-h-[100px] input-otw"
-                />
-              </div>
-
-              <div className="bg-gradient-to-r from-[var(--color-harvest-gold)]/10 to-[var(--color-harvest-gold)]/5 p-6 rounded-xl mb-8 border border-[var(--color-harvest-gold)]/20">
-                <div className="flex items-start">
-                  <Info className="w-6 h-6 text-[var(--color-harvest-gold)] mr-3 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold text-[var(--color-onyx-light)] mb-2">Fare breakdown</h4>
-                    <div className="space-y-1 text-sm text-[var(--color-muted)]">
-                      <div className="flex justify-between">
-                        <span>Base fare</span>
-                        <span>$8.50</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Distance (4.2 miles)</span>
-                        <span>$4.00</span>
-                      </div>
-                      <div className="flex justify-between font-semibold border-t border-[var(--color-border)] pt-1 mt-2">
-                        <span>Total</span>
-                        <span className="text-[var(--color-harvest-gold)]">$12.50</span>
-                      </div>
+                
+                <h2 className="text-3xl font-bold text-[var(--color-onyx-light)] mb-4">
+                  Ride Booked Successfully!
+                </h2>
+                
+                <p className="text-lg text-[var(--color-muted)] mb-8">
+                  Your ride has been confirmed. We'll contact you shortly with driver details.
+                </p>
+                
+                <div className="bg-[var(--color-surface-strong)] p-6 rounded-lg border border-[var(--color-border)] mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-[var(--color-onyx)]/50 p-4 rounded-lg border border-[var(--color-harvest-gold)]/20">
+                      <p className="text-sm text-gray-400">Booking ID</p>
+                      <p className="font-mono text-lg font-semibold text-[var(--color-harvest-gold)]">#{bookingId}</p>
+                    </div>
+                    
+                    <div className="bg-[var(--color-onyx)]/50 p-4 rounded-lg border border-[var(--color-harvest-gold)]/20">
+                      <p className="text-sm text-gray-400">Estimated Pickup</p>
+                      <p className="font-semibold text-[var(--color-onyx-light)]">15-20 minutes</p>
                     </div>
                   </div>
                 </div>
-              </div>
-
-
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="outline" className="flex-1 h-12 bg-[var(--color-surface-strong)] border-[var(--color-border)] text-[var(--color-onyx-light)] hover:border-[var(--color-harvest-gold)] transition-all">
-                  Save for later
-                </Button>
-                <Link href="/checkout" className="flex-1">
-                  <Button className="btn-ride w-full h-12 font-semibold">
-                    Confirm booking
-                    <ArrowRight className="ml-2 w-5 h-5" />
+                
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    onClick={() => {
+                      setBookingSubmitted(false);
+                      setBookingId(null);
+                      setSubmitError(null);
+                    }}
+                    variant="outline" 
+                    className="flex-1 h-12 bg-[var(--color-surface-strong)] border-[var(--color-border)] text-[var(--color-onyx-light)] hover:border-[var(--color-harvest-gold)] transition-all"
+                  >
+                    Book Another Ride
                   </Button>
-                </Link>
+                  <Link href="/" className="flex-1">
+                    <Button className="btn-ride w-full h-12 font-semibold">
+                      Back to Home
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                  </Link>
+                </div>
               </div>
-            </div>
+            ) : (
+              /* Booking Form */
+              <div className="bg-[var(--color-surface)] rounded-2xl shadow-xl p-8 border border-[var(--color-border)]">
+                <h3 className="text-2xl font-bold text-[var(--color-onyx-light)] mb-8">Complete your booking</h3>
+                
+                <ModernBookingForm
+                  onSubmit={handleBookingSubmit}
+                  initialData={{
+                    pickup: selectedPickupPlace,
+                    destination: selectedDestinationPlace,
+                    vehicleType: selectedVehicle as any
+                  }}
+                  serviceArea={{
+                    center: { lat: 41.0793, lng: -85.1394 },
+                    radius: 50000
+                  }}
+                  enableDestinationField={true}
+                  enableDeliveryField={false}
+                  className="space-y-6"
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -13,6 +13,8 @@ interface AdvancedFileUploadProps {
   onUploadComplete?: (results: UploadResult[]) => void;
   onUploadError?: (error: Error) => void;
   className?: string;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
 }
 
 interface UploadProgress {
@@ -32,11 +34,16 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
   onUploadComplete,
   onUploadError,
   className = '',
+  ariaLabel = 'File upload area',
+  ariaDescribedBy,
 }) => {
   const { user } = useAuth();
   const [uploads, setUploads] = useState<UploadProgress[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropzoneId = useRef(`dropzone-${Math.random().toString(36).substr(2, 9)}`);
+  const statusId = useRef(`upload-status-${Math.random().toString(36).substr(2, 9)}`);
+  const instructionsId = useRef(`upload-instructions-${Math.random().toString(36).substr(2, 9)}`);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -146,6 +153,15 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
     maxSize: maxFileSize,
     multiple,
     disabled: isUploading,
+    onDropAccepted: () => {
+      // Announce to screen readers
+      const announcement = `${multiple ? 'Files' : 'File'} accepted for upload`;
+      toast.success(announcement);
+    },
+    onDropRejected: (rejectedFiles) => {
+      const announcement = `${rejectedFiles.length} file(s) rejected. Please check file type and size requirements.`;
+      toast.error(announcement);
+    },
   });
 
   const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,22 +240,36 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
       {/* Upload Area */}
       <div
         {...getRootProps()}
+        id={dropzoneId.current}
+        role="button"
+        tabIndex={isUploading ? -1 : 0}
+        aria-label={ariaLabel}
+        aria-describedby={`${instructionsId.current} ${ariaDescribedBy || ''}`.trim()}
+        aria-disabled={isUploading}
+        onKeyDown={(e) => {
+          if ((e.key === 'Enter' || e.key === ' ') && !isUploading) {
+            e.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
         className={`
-          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
+          focus-ring border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
           ${isDragActive && !isDragReject ? 'border-blue-400 bg-blue-50' : ''}
           ${isDragReject ? 'border-red-400 bg-red-50' : ''}
           ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-400'}
           ${!isDragActive && !isDragReject ? 'border-gray-300' : ''}
         `}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} aria-hidden="true" />
         <input
           ref={fileInputRef}
           type="file"
           multiple={multiple}
           accept={allowedTypes.join(',')}
           onChange={handleFileInputChange}
-          className="hidden"
+          className="sr-only"
+          aria-label={`Select ${multiple ? 'files' : 'file'} to upload`}
+          disabled={isUploading}
         />
         
         <div className="space-y-2">
@@ -248,6 +278,7 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
             stroke="currentColor"
             fill="none"
             viewBox="0 0 48 48"
+            aria-hidden="true"
           >
             <path
               d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
@@ -258,18 +289,19 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
           </svg>
           
           {isDragActive ? (
-            <p className="text-blue-600">
+            <p className="text-blue-600" role="status" aria-live="polite">
               {isDragReject ? 'Some files are not supported' : 'Drop files here...'}
             </p>
           ) : (
-            <div>
+            <div id={instructionsId.current}>
               <p className="text-gray-600">
                 Drag and drop files here, or{' '}
                 <button
                   type="button"
-                  className="text-blue-600 hover:text-blue-500 font-medium"
+                  className="focus-ring text-blue-600 hover:text-blue-500 font-medium underline"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
+                  aria-describedby={instructionsId.current}
                 >
                   browse
                 </button>
@@ -287,37 +319,39 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
 
       {/* Upload Progress */}
       {uploads.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-4" role="region" aria-labelledby="upload-progress-heading">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-medium text-gray-900">
+            <h3 id="upload-progress-heading" className="text-lg font-medium text-gray-900">
               Upload Progress ({uploads.filter(u => u.status === 'completed').length}/{uploads.length})
             </h3>
             <div className="space-x-2">
               {uploads.some(u => u.status === 'error') && (
                 <button
                   onClick={retryFailedUploads}
-                  className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
+                  className="focus-ring px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 disabled:opacity-50"
                   disabled={isUploading}
+                  aria-label="Retry failed uploads"
                 >
                   Retry Failed
                 </button>
               )}
               <button
                 onClick={clearUploads}
-                className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                className="focus-ring px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 disabled:opacity-50"
                 disabled={isUploading}
+                aria-label="Clear upload list"
               >
                 Clear
               </button>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3" role="list" aria-label="Upload progress list">
             {uploads.map((upload, index) => (
-              <div key={index} className="border rounded-lg p-4">
+              <div key={index} className="border rounded-lg p-4" role="listitem">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-3">
-                    {getStatusIcon(upload.status)}
+                    <span aria-hidden="true">{getStatusIcon(upload.status)}</span>
                     <div>
                       <p className="text-sm font-medium text-gray-900">
                         {upload.file.name}
@@ -325,6 +359,10 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
                       <p className="text-xs text-gray-500">
                         {formatFileSize(upload.file.size)}
                       </p>
+                      <span className="sr-only">
+                        Upload status: {upload.status}
+                        {upload.status === 'uploading' && `, ${upload.progress}% complete`}
+                      </span>
                     </div>
                   </div>
                   
@@ -333,7 +371,8 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
                       href={upload.result.downloadUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-500 text-sm font-medium"
+                      className="focus-ring text-blue-600 hover:text-blue-500 text-sm font-medium underline"
+                      aria-label={`View uploaded file: ${upload.file.name}`}
                     >
                       View
                     </a>
@@ -341,7 +380,7 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
                 </div>
 
                 {upload.status === 'uploading' && (
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2" role="progressbar" aria-valuenow={upload.progress} aria-valuemin={0} aria-valuemax={100} aria-label={`Uploading ${upload.file.name}`}>
                     <div
                       className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${upload.progress}%` }}
@@ -350,7 +389,7 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
                 )}
 
                 {upload.status === 'error' && upload.error && (
-                  <p className="text-sm text-red-600 mt-1">{upload.error}</p>
+                  <p className="text-sm text-red-600 mt-1" role="alert" aria-live="assertive">{upload.error}</p>
                 )}
 
                 {upload.status === 'completed' && upload.result?.thumbnails && (
@@ -363,7 +402,7 @@ const AdvancedFileUpload: React.FC<AdvancedFileUploadProps> = ({
                         <img
                           key={i}
                           src={thumbnail}
-                          alt={`Thumbnail ${i + 1}`}
+                          alt={`Thumbnail ${i + 1} of ${upload.file.name}`}
                           className="w-8 h-8 object-cover rounded border"
                         />
                       ))}

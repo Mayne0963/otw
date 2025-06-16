@@ -48,11 +48,13 @@ export default function GroceryDeliveryPage() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetails | null>(null);
   const [selectedStore, setSelectedStore] = useState('');
-  const [deliveryTime, setDeliveryTime] = useState('');
+  const [deliveryTime, setDeliveryTime] = useState({ date: '', timeSlot: '' });
   const [specificTime, setSpecificTime] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSubmitted, setOrderSubmitted] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadError, setUploadError] = useState<string>('');
 
   const stores = [
     { value: 'fresh-market', label: 'Fresh Market', deliveryFee: '$4.99' },
@@ -62,35 +64,292 @@ export default function GroceryDeliveryPage() {
     { value: 'whole-foods', label: 'Whole Foods Market', deliveryFee: '$6.99' },
   ];
 
-  const timeSlots = [
-    { id: 'asap', time: 'ASAP', available: true },
-    { id: '1hour', time: '1 Hour', available: true },
-    { id: '2hours', time: '2 Hours', available: true },
-    { id: '3hours', time: '3 Hours', available: false },
-    { id: '4hours', time: '4 Hours', available: true },
-    { id: 'evening', time: 'This Evening (6-8 PM)', available: true },
-  ];
+  // Generate dynamic time slots based on current time and store hours
+  const generateTimeSlots = () => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+    const slots = [];
+
+    // Store hours: 8 AM to 10 PM
+    const storeOpenHour = 8;
+    const storeCloseHour = 22;
+
+    // If it's before store hours, start from store opening
+    let startHour = currentHour < storeOpenHour ? storeOpenHour : currentHour;
+    let startMinutes = currentHour < storeOpenHour ? 0 : currentMinutes;
+
+    // Round up to next 30-minute interval
+    if (startMinutes > 0 && startMinutes <= 30) {
+      startMinutes = 30;
+    } else if (startMinutes > 30) {
+      startHour += 1;
+      startMinutes = 0;
+    }
+
+    // Add ASAP option if store is open and it's not too late
+    if (currentHour >= storeOpenHour && currentHour < storeCloseHour - 1) {
+      slots.push({
+        id: 'asap',
+        time: 'ASAP (30-45 min)',
+        available: true,
+        value: 'asap'
+      });
+    }
+
+    // Generate 30-minute slots for today
+    const today = new Date();
+    for (let hour = startHour; hour < storeCloseHour; hour++) {
+      for (let minutes of [0, 30]) {
+        if (hour === startHour && minutes < startMinutes) continue;
+        
+        const slotTime = new Date(today);
+        slotTime.setHours(hour, minutes, 0, 0);
+        
+        // Skip if slot is in the past
+        if (slotTime <= now) continue;
+        
+        const timeString = slotTime.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+        
+        slots.push({
+          id: `today-${hour}-${minutes}`,
+          time: `Today ${timeString}`,
+          available: true,
+          value: `today-${hour}-${minutes}`
+        });
+      }
+    }
+
+    // Add tomorrow slots
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    for (let hour = storeOpenHour; hour < storeCloseHour; hour++) {
+      for (let minutes of [0, 30]) {
+        const slotTime = new Date(tomorrow);
+        slotTime.setHours(hour, minutes, 0, 0);
+        
+        const timeString = slotTime.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+        
+        slots.push({
+          id: `tomorrow-${hour}-${minutes}`,
+          time: `Tomorrow ${timeString}`,
+          available: true,
+          value: `tomorrow-${hour}-${minutes}`
+        });
+      }
+    }
+
+    // Add day after tomorrow slots
+    const dayAfter = new Date(today);
+    dayAfter.setDate(dayAfter.getDate() + 2);
+    const dayAfterName = dayAfter.toLocaleDateString('en-US', { weekday: 'long' });
+    
+    for (let hour = storeOpenHour; hour < storeCloseHour; hour++) {
+      for (let minutes of [0, 30]) {
+        const slotTime = new Date(dayAfter);
+        slotTime.setHours(hour, minutes, 0, 0);
+        
+        const timeString = slotTime.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+        
+        slots.push({
+          id: `dayafter-${hour}-${minutes}`,
+          time: `${dayAfterName} ${timeString}`,
+          available: true,
+          value: `dayafter-${hour}-${minutes}`
+        });
+      }
+    }
+
+    return slots;
+  };
+
+  const timeSlots = generateTimeSlots();
+
+  const validateFile = (file: File): string | null => {
+    // Check file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      return 'Please upload a PNG or JPG file only.';
+    }
+
+    // Check file size (10MB = 10 * 1024 * 1024 bytes)
+    const maxSize = 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return 'File size must be less than 10MB.';
+    }
+
+    return null;
+  };
+
+  const processFile = (file: File) => {
+    const error = validateFile(file);
+    if (error) {
+      setUploadError(error);
+      return;
+    }
+
+    setUploadError('');
+    setReceipt(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setReceiptPreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleReceiptUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setReceipt(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setReceiptPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+      processFile(file);
     }
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      processFile(files[0]);
+    }
+  };
+
+  const handleRemoveReceipt = () => {
+    setReceipt(null);
+    setReceiptPreview('');
+    setUploadError('');
+  };
+
+  const [submitError, setSubmitError] = useState('');
+  const [orderId, setOrderId] = useState('');
+
+  const validateForm = () => {
+    const errors = [];
+    
+    if (!selectedStore) errors.push('Please select a store');
+    if (!customerInfo.name.trim()) errors.push('Please enter your name');
+    if (!customerInfo.phone.trim()) errors.push('Please enter your phone number');
+    if (!customerInfo.email.trim()) errors.push('Please enter your email address');
+    if (!deliveryAddress.trim()) errors.push('Please enter a delivery address');
+    if (!deliveryTime.timeSlot) errors.push('Please select a delivery time');
+    if (groceryList.trim().length === 0) errors.push('Please add items to your grocery list');
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (customerInfo.email && !emailRegex.test(customerInfo.email)) {
+      errors.push('Please enter a valid email address');
+    }
+    
+    // Phone validation (basic)
+    const phoneRegex = /^[\d\s\-\(\)\+]{10,}$/;
+    if (customerInfo.phone && !phoneRegex.test(customerInfo.phone.replace(/\s/g, ''))) {
+      errors.push('Please enter a valid phone number');
+    }
+    
+    return errors;
+  };
+
   const handleSubmitOrder = async () => {
+    setSubmitError('');
+    
+    // Validate form
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      setSubmitError(validationErrors[0]); // Show first error
+      return;
+    }
+    
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      // Prepare order data
+      const orderData = {
+        type: 'grocery-delivery',
+        store: selectedStore,
+        customer: {
+          name: customerInfo.name.trim(),
+          phone: customerInfo.phone.trim(),
+          email: customerInfo.email.trim()
+        },
+        delivery: {
+          address: deliveryAddress,
+          coordinates: selectedPlace ? {
+            lat: selectedPlace.geometry?.location?.lat(),
+            lng: selectedPlace.geometry?.location?.lng()
+          } : null,
+          timeSlot: deliveryTime.timeSlot,
+          timeValue: deliveryTime.date
+        },
+        items: {
+          groceryList: groceryList.trim(),
+          itemCount: groceryList.trim().split('\n').filter(item => item.trim()).length,
+          receipt: receipt ? {
+            name: receipt.name,
+            size: receipt.size,
+            type: receipt.type
+          } : null
+        },
+        specialInstructions: specialInstructions.trim(),
+        serviceFee: 15.00,
+        timestamp: new Date().toISOString()
+      };
 
-    setOrderSubmitted(true);
-    setIsSubmitting(false);
+      // Make API call to submit order
+      const response = await fetch('/api/orders/grocery-delivery', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error occurred' }));
+        throw new Error(errorData.message || `Server error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Set order ID and mark as submitted
+      setOrderId(result.orderId || `GD${Date.now().toString().slice(-6)}`);
+      setOrderSubmitted(true);
+      
+    } catch (error) {
+      console.error('Order submission error:', error);
+      setSubmitError(
+        error instanceof Error 
+          ? error.message 
+          : 'Unable to place order. Please check your connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (orderSubmitted) {
@@ -109,10 +368,10 @@ export default function GroceryDeliveryPage() {
           <div className="text-center space-y-4">
             <div className="bg-otw-black/50 p-4 rounded-lg border border-otw-gold/20">
               <p className="text-sm text-gray-400">Order ID</p>
-              <p className="font-mono text-lg font-semibold text-otw-gold">#GD{Date.now().toString().slice(-6)}</p>
+              <p className="font-mono text-lg font-semibold text-otw-gold">#{orderId}</p>
             </div>
             <p className="text-sm text-gray-400">
-              You'll receive updates via SMS and email. Expected delivery: {deliveryTime}
+              You'll receive updates via SMS and email. Expected delivery: {deliveryTime.date && deliveryTime.timeSlot ? `${deliveryTime.date} ${deliveryTime.timeSlot}` : 'TBD'}
             </p>
             <Button className="w-full bg-otw-red hover:bg-otw-red/80 text-white" onClick={() => window.location.href = '/dashboard'}>
               Track Your Order
@@ -192,10 +451,19 @@ export default function GroceryDeliveryPage() {
               </p>
               <div className="space-y-4">
                 {!receiptPreview ? (
-                  <div className="dropzone-upload">
+                  <div 
+                    className={`dropzone-upload relative ${
+                      isDragOver 
+                        ? 'border-[var(--color-harvest-gold)] bg-[var(--color-harvest-gold)]/10 scale-105' 
+                        : 'border-[var(--color-border)]'
+                    } transition-all duration-300`}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                  >
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/png,image/jpeg,image/jpg"
                       onChange={handleReceiptUpload}
                       className="hidden"
                       id="receipt-upload"
@@ -204,7 +472,9 @@ export default function GroceryDeliveryPage() {
                       <div className="p-4 bg-[var(--color-harvest-gold)]/10 rounded-full mb-3">
                         <Upload className="w-8 h-8 text-[var(--color-harvest-gold)]" />
                       </div>
-                      <p className="text-[var(--color-onyx)] font-medium mb-1">Drop your receipt here or click to browse</p>
+                      <p className="text-[var(--color-onyx)] font-medium mb-1">
+                        {isDragOver ? 'Drop your receipt here' : 'Drop your receipt here or click to browse'}
+                      </p>
                       <p className="text-[var(--color-muted)] text-sm">PNG, JPG up to 10MB</p>
                     </label>
                   </div>
@@ -229,14 +499,20 @@ export default function GroceryDeliveryPage() {
                         variant="outline"
                         size="sm"
                         className="absolute top-2 right-2 bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30"
-                        onClick={() => {
-                          setReceipt(null);
-                          setReceiptPreview('');
-                        }}
+                        onClick={handleRemoveReceipt}
                       >
                         <X className="w-4 h-4" />
                       </Button>
                     </div>
+                  </div>
+                )}
+                
+                {uploadError && (
+                  <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-3">
+                    <p className="text-red-400 text-sm flex items-center">
+                      <AlertCircle className="w-4 h-4 mr-2" />
+                      {uploadError}
+                    </p>
                   </div>
                 )}
               </div>
@@ -373,34 +649,40 @@ export default function GroceryDeliveryPage() {
                 <Clock className="w-5 h-5 text-[var(--color-harvest-gold)]" />
                 <h2 className="text-[var(--color-harvest-gold)] text-sm font-semibold uppercase tracking-wide">Delivery Time</h2>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[var(--color-onyx)] text-sm font-medium mb-2">Preferred Date *</label>
-                  <input
-                    type="date"
-                    value={deliveryTime.date}
-                    onChange={(e) => setDeliveryTime({...deliveryTime, date: e.target.value})}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="input-otw"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[var(--color-onyx)] text-sm font-medium mb-2">Time Slot *</label>
-                  <select
-                    value={deliveryTime.timeSlot}
-                    onChange={(e) => setDeliveryTime({...deliveryTime, timeSlot: e.target.value})}
-                    className="input-otw"
-                    required
-                  >
-                    <option value="">Select a time slot</option>
-                    {timeSlots.map((slot) => (
-                      <option key={slot.id} value={slot.time} disabled={!slot.available}>
-                        {slot.time} {!slot.available && '(Unavailable)'}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div>
+                <label className="block text-[var(--color-onyx)] text-sm font-medium mb-2">Select Delivery Time *</label>
+                <select
+                  value={deliveryTime.timeSlot}
+                  onChange={(e) => {
+                    const selectedSlot = timeSlots.find(slot => slot.value === e.target.value);
+                    setDeliveryTime({
+                      date: selectedSlot ? selectedSlot.value : '',
+                      timeSlot: selectedSlot ? selectedSlot.time : ''
+                    });
+                  }}
+                  onBlur={(e) => {
+                    // Validation on blur
+                    if (!e.target.value) {
+                      e.target.setCustomValidity('Please select a delivery time');
+                    } else {
+                      e.target.setCustomValidity('');
+                    }
+                  }}
+                  className="input-otw"
+                  required
+                >
+                  <option value="">Choose your delivery time</option>
+                  {timeSlots.map((slot) => (
+                    <option key={slot.id} value={slot.value} disabled={!slot.available}>
+                      {slot.time} {!slot.available && '(Unavailable)'}
+                    </option>
+                  ))}
+                </select>
+                {!deliveryTime.timeSlot && (
+                  <p className="text-xs text-[var(--color-muted)] mt-2 italic">
+                    Please select a delivery time to continue
+                  </p>
+                )}
               </div>
               <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <div className="flex items-start gap-2">
@@ -408,8 +690,9 @@ export default function GroceryDeliveryPage() {
                   <div className="text-sm text-blue-800 dark:text-blue-200">
                     <p className="font-medium mb-1">Delivery Information:</p>
                     <ul className="text-xs space-y-1 text-blue-700 dark:text-blue-300">
-                      <li>• Same-day delivery available for orders placed before 2 PM</li>
-                      <li>• 2-hour delivery windows for your convenience</li>
+                      <li>• Dynamic time slots based on store hours (8 AM - 10 PM)</li>
+                      <li>• 30-minute delivery windows for precision</li>
+                      <li>• ASAP option available during store hours</li>
                       <li>• We'll text you 30 minutes before arrival</li>
                     </ul>
                   </div>
@@ -419,36 +702,117 @@ export default function GroceryDeliveryPage() {
 
             {/* Order Summary */}
             <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-              <h2 className="text-[var(--color-harvest-gold)] text-sm font-semibold uppercase mb-2 tracking-wide">Order Summary</h2>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">Store:</span>
-                  <span className="text-[var(--color-onyx)] font-medium">
+              <h2 className="text-[var(--color-harvest-gold)] text-sm font-semibold uppercase mb-4 tracking-wide flex items-center gap-2">
+                <Receipt className="w-4 h-4" />
+                Order Summary
+              </h2>
+              <div className="space-y-3">
+                {/* Store */}
+                <div className="flex justify-between items-start">
+                  <span className="text-[var(--color-muted)] text-sm">Store:</span>
+                  <span className={`font-medium text-right max-w-[60%] ${
+                    selectedStore 
+                      ? 'text-[var(--color-onyx)]' 
+                      : 'text-[var(--color-muted)] italic'
+                  }`}>
                     {selectedStore || 'Not selected'}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">Receipt:</span>
-                  <span className="text-[var(--color-onyx)] font-medium">
-                    {receiptPreview ? 'Receipt uploaded' :
-                      'No receipt uploaded'}
+
+                {/* Items Count */}
+                <div className="flex justify-between items-start">
+                  <span className="text-[var(--color-muted)] text-sm">Items:</span>
+                  <span className={`font-medium ${
+                    groceryList.trim() 
+                      ? 'text-[var(--color-onyx)]' 
+                      : 'text-[var(--color-muted)] italic'
+                  }`}>
+                    {groceryList.trim() 
+                      ? `${groceryList.split('\n').filter(line => line.trim()).length} items` 
+                      : 'Not selected'
+                    }
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">Delivery Time:</span>
-                  <span className="text-[var(--color-onyx)] font-medium">
-                    {deliveryTime === 'Specific Time' && specificTime
-                      ? `${deliveryTime} (${specificTime})`
-                      : deliveryTime || 'Not selected'}
+
+                {/* Receipt Status */}
+                <div className="flex justify-between items-start">
+                  <span className="text-[var(--color-muted)] text-sm">Receipt:</span>
+                  <span className={`font-medium text-right ${
+                    receiptPreview 
+                      ? 'text-green-600' 
+                      : 'text-[var(--color-muted)] italic'
+                  }`}>
+                    {receiptPreview ? '✓ Uploaded' : 'Not selected'}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-[var(--color-muted)]">Address:</span>
-                  <span className="text-[var(--color-onyx)] font-medium text-right">
-                    {deliveryAddress || 'Not set'}
+
+                {/* Customer Info */}
+                <div className="flex justify-between items-start">
+                  <span className="text-[var(--color-muted)] text-sm">Customer:</span>
+                  <span className={`font-medium text-right max-w-[60%] ${
+                    customerInfo.name 
+                      ? 'text-[var(--color-onyx)]' 
+                      : 'text-[var(--color-muted)] italic'
+                  }`}>
+                    {customerInfo.name || 'Not selected'}
                   </span>
                 </div>
-                <div className="border-t border-[var(--color-border)] pt-2 mt-2">
+
+                {/* Phone */}
+                <div className="flex justify-between items-start">
+                  <span className="text-[var(--color-muted)] text-sm">Phone:</span>
+                  <span className={`font-medium text-right ${
+                    customerInfo.phone 
+                      ? 'text-[var(--color-onyx)]' 
+                      : 'text-[var(--color-muted)] italic'
+                  }`}>
+                    {customerInfo.phone || 'Not selected'}
+                  </span>
+                </div>
+
+                {/* Delivery Address */}
+                <div className="flex justify-between items-start">
+                  <span className="text-[var(--color-muted)] text-sm">Address:</span>
+                  <span className={`font-medium text-right max-w-[60%] text-xs leading-relaxed ${
+                    deliveryAddress 
+                      ? 'text-[var(--color-onyx)]' 
+                      : 'text-[var(--color-muted)] italic'
+                  }`}>
+                    {deliveryAddress 
+                      ? deliveryAddress.length > 50 
+                        ? `${deliveryAddress.substring(0, 50)}...` 
+                        : deliveryAddress
+                      : 'Not selected'
+                    }
+                  </span>
+                </div>
+
+                {/* Delivery Time */}
+                <div className="flex justify-between items-start">
+                  <span className="text-[var(--color-muted)] text-sm">Delivery:</span>
+                  <span className={`font-medium text-right max-w-[60%] ${
+                    deliveryTime.timeSlot 
+                      ? 'text-[var(--color-onyx)]' 
+                      : 'text-[var(--color-muted)] italic'
+                  }`}>
+                    {deliveryTime.timeSlot || 'Not selected'}
+                  </span>
+                </div>
+
+                {/* Special Instructions */}
+                {specialInstructions.trim() && (
+                  <div className="flex justify-between items-start">
+                    <span className="text-[var(--color-muted)] text-sm">Instructions:</span>
+                    <span className="font-medium text-right max-w-[60%] text-xs text-[var(--color-onyx)]">
+                      {specialInstructions.length > 40 
+                        ? `${specialInstructions.substring(0, 40)}...` 
+                        : specialInstructions
+                      }
+                    </span>
+                  </div>
+                )}
+
+                <div className="border-t border-[var(--color-border)] pt-3 mt-4">
                   <div className="flex justify-between font-semibold">
                     <span className="text-[var(--color-onyx)]">Service Fee:</span>
                     <span className="text-[var(--color-harvest-gold)]">$15.00</span>
@@ -457,10 +821,23 @@ export default function GroceryDeliveryPage() {
               </div>
             </div>
 
+            {/* Error Display */}
+            {submitError && (
+              <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Unable to Submit Order</h3>
+                    <p className="text-sm text-red-700 dark:text-red-300">{submitError}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Submit Button */}
             <Button
               onClick={handleSubmitOrder}
-              disabled={isSubmitting || !selectedStore || !customerInfo.name || !customerInfo.phone || !deliveryAddress}
+              disabled={isSubmitting || !selectedStore || !customerInfo.name || !customerInfo.phone || !deliveryAddress || !deliveryTime.timeSlot}
               className="w-full py-4 text-lg font-semibold bg-gradient-to-r from-[var(--color-harvest-gold)] to-[var(--otw-gold)] text-black hover:from-[var(--otw-gold)] hover:to-[var(--color-harvest-gold)] transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               {isSubmitting ? (

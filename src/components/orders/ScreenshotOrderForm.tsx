@@ -34,6 +34,9 @@ export default function ScreenshotOrderForm() {
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const formId = useRef(`screenshot-order-form-${Math.random().toString(36).substr(2, 9)}`);
+  const errorId = useRef(`form-error-${Math.random().toString(36).substr(2, 9)}`);
+  const uploadAreaId = useRef(`upload-area-${Math.random().toString(36).substr(2, 9)}`);
 
   const [formData, setFormData] = useState<ScreenshotOrderData>({
     customerName: '',
@@ -245,7 +248,8 @@ export default function ScreenshotOrderForm() {
   }
 
   return (
-    <div className="min-h-screen py-20">
+    <>
+      <div className="min-h-screen py-20">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="mb-8">
           <Button
@@ -256,13 +260,13 @@ export default function ScreenshotOrderForm() {
             <FaArrowLeft className="mr-2" /> Back
           </Button>
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4">Screenshot Order Service</h1>
-            <p className="text-xl text-gray-300 mb-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Screenshot Order Service</h1>
+            <p className="text-lg sm:text-xl text-gray-300 mb-6 px-2">
               Simply upload a screenshot of your order, and we&apos;ll handle everything else!
             </p>
 
             {/* Process Steps */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-lg p-4">
                 <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
                   <span className="text-white text-sm font-bold">1</span>
@@ -296,29 +300,40 @@ export default function ScreenshotOrderForm() {
         </div>
 
         {error && (
-          <Alert className="mb-6 bg-red-500/10 border-red-500/20">
-            <FaExclamationTriangle className="h-4 w-4" />
+          <Alert 
+            id={errorId.current}
+            className="mb-6 bg-red-500/10 border-red-500/20"
+            role="alert"
+            aria-live="assertive"
+          >
+            <FaExclamationTriangle className="h-4 w-4" aria-hidden="true" />
             <AlertDescription className="text-red-300">{error}</AlertDescription>
           </Alert>
         )}
 
         {/* Main Form */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Main Form */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 order-1 lg:order-1">
             <Card className="bg-[#1A1A1A] border-[#333333]">
               <CardHeader>
                 <CardTitle className="text-2xl">Order Information</CardTitle>
                 <p className="text-gray-400">Fill out the details below - we&apos;ll handle the rest!</p>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form 
+                  id={formId.current}
+                  onSubmit={handleSubmit} 
+                  className="space-y-8"
+                  aria-describedby={error ? errorId.current : undefined}
+                  noValidate
+                >
                   {/* Step 1: Customer Information */}
-                  <div className="space-y-6">
-                    <div className="border-l-4 border-orange-500 pl-4">
+                  <fieldset className="space-y-6">
+                    <legend className="border-l-4 border-orange-500 pl-4">
                       <h3 className="text-xl font-semibold mb-2">Step 1: Your Information</h3>
                       <p className="text-gray-400 text-sm">We need this to contact you about your order</p>
-                    </div>
+                    </legend>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
@@ -331,11 +346,14 @@ export default function ScreenshotOrderForm() {
                           type="text"
                           value={formData.customerName}
                           onChange={handleInputChange}
-                          className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerName ? 'border-red-500' : ''}`}
+                          className={`focus-ring bg-[#111111] border-[#333333] h-12 text-base ${errors.customerName ? 'border-red-500' : ''}`}
                           placeholder="John Doe"
+                          required
+                          aria-invalid={errors.customerName ? 'true' : 'false'}
+                          aria-describedby={errors.customerName ? `customerName-error` : undefined}
                         />
                         {errors.customerName && (
-                          <p className="text-red-500 text-sm mt-1">{errors.customerName}</p>
+                          <p id="customerName-error" className="text-red-500 text-sm mt-1" role="alert">{errors.customerName}</p>
                         )}
                       </div>
 
@@ -349,11 +367,14 @@ export default function ScreenshotOrderForm() {
                           type="tel"
                           value={formData.customerPhone}
                           onChange={handleInputChange}
-                          className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerPhone ? 'border-red-500' : ''}`}
+                          className={`focus-ring bg-[#111111] border-[#333333] h-12 text-base ${errors.customerPhone ? 'border-red-500' : ''}`}
                           placeholder="(555) 123-4567"
+                          required
+                          aria-invalid={errors.customerPhone ? 'true' : 'false'}
+                          aria-describedby={errors.customerPhone ? `customerPhone-error` : undefined}
                         />
                         {errors.customerPhone && (
-                          <p className="text-red-500 text-sm mt-1">{errors.customerPhone}</p>
+                          <p id="customerPhone-error" className="text-red-500 text-sm mt-1" role="alert">{errors.customerPhone}</p>
                         )}
                       </div>
                     </div>
@@ -368,21 +389,24 @@ export default function ScreenshotOrderForm() {
                         type="email"
                         value={formData.customerEmail}
                         onChange={handleInputChange}
-                        className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.customerEmail ? 'border-red-500' : ''}`}
+                        className={`focus-ring bg-[#111111] border-[#333333] h-12 text-base ${errors.customerEmail ? 'border-red-500' : ''}`}
                         placeholder="john@example.com"
+                        required
+                        aria-invalid={errors.customerEmail ? 'true' : 'false'}
+                        aria-describedby={errors.customerEmail ? `customerEmail-error` : undefined}
                       />
                       {errors.customerEmail && (
-                        <p className="text-red-500 text-sm mt-1">{errors.customerEmail}</p>
+                        <p id="customerEmail-error" className="text-red-500 text-sm mt-1" role="alert">{errors.customerEmail}</p>
                       )}
                     </div>
-                  </div>
+                  </fieldset>
 
                   {/* Step 2: Restaurant Information */}
-                  <div className="space-y-6">
-                    <div className="border-l-4 border-orange-500 pl-4">
+                  <fieldset className="space-y-6">
+                    <legend className="border-l-4 border-orange-500 pl-4">
                       <h3 className="text-xl font-semibold mb-2">Step 2: Restaurant Details</h3>
                       <p className="text-gray-400 text-sm">Tell us where to pick up your order</p>
-                    </div>
+                    </legend>
 
                     <div>
                       <Label htmlFor="restaurantName" className="text-base font-medium mb-2 block">
@@ -394,11 +418,14 @@ export default function ScreenshotOrderForm() {
                         type="text"
                         value={formData.restaurantName}
                         onChange={handleInputChange}
-                        className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.restaurantName ? 'border-red-500' : ''}`}
-                        placeholder="McDonald&apos;s, Chipotle, etc."
+                        className={`focus-ring bg-[#111111] border-[#333333] h-12 text-base ${errors.restaurantName ? 'border-red-500' : ''}`}
+                        placeholder="McDonald's, Chipotle, etc."
+                        required
+                        aria-invalid={errors.restaurantName ? 'true' : 'false'}
+                        aria-describedby={errors.restaurantName ? `restaurantName-error` : undefined}
                       />
                       {errors.restaurantName && (
-                        <p className="text-red-500 text-sm mt-1">{errors.restaurantName}</p>
+                        <p id="restaurantName-error" className="text-red-500 text-sm mt-1" role="alert">{errors.restaurantName}</p>
                       )}
                     </div>
 
@@ -412,11 +439,14 @@ export default function ScreenshotOrderForm() {
                         type="text"
                         value={formData.pickupLocation}
                         onChange={handleInputChange}
-                        className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.pickupLocation ? 'border-red-500' : ''}`}
+                        className={`focus-ring bg-[#111111] border-[#333333] h-12 text-base ${errors.pickupLocation ? 'border-red-500' : ''}`}
                         placeholder="123 Main St, Fort Wayne, IN"
+                        required
+                        aria-invalid={errors.pickupLocation ? 'true' : 'false'}
+                        aria-describedby={errors.pickupLocation ? `pickupLocation-error` : undefined}
                       />
                       {errors.pickupLocation && (
-                        <p className="text-red-500 text-sm mt-1">{errors.pickupLocation}</p>
+                        <p id="pickupLocation-error" className="text-red-500 text-sm mt-1" role="alert">{errors.pickupLocation}</p>
                       )}
                     </div>
 
@@ -430,22 +460,25 @@ export default function ScreenshotOrderForm() {
                         type="text"
                         value={formData.estimatedTotal}
                         onChange={handleInputChange}
-                        className={`bg-[#111111] border-[#333333] h-12 text-base ${errors.estimatedTotal ? 'border-red-500' : ''}`}
+                        className={`focus-ring bg-[#111111] border-[#333333] h-12 text-base ${errors.estimatedTotal ? 'border-red-500' : ''}`}
                         placeholder="$25.99"
+                        required
+                        aria-invalid={errors.estimatedTotal ? 'true' : 'false'}
+                        aria-describedby={`estimatedTotal-help ${errors.estimatedTotal ? 'estimatedTotal-error' : ''}`.trim()}
                       />
-                      <p className="text-xs text-gray-500 mt-1">Total amount from your order (including tax & tip)</p>
+                      <p id="estimatedTotal-help" className="text-xs text-gray-500 mt-1">Total amount from your order (including tax & tip)</p>
                       {errors.estimatedTotal && (
-                        <p className="text-red-500 text-sm mt-1">{errors.estimatedTotal}</p>
+                        <p id="estimatedTotal-error" className="text-red-500 text-sm mt-1" role="alert">{errors.estimatedTotal}</p>
                       )}
                     </div>
-                  </div>
+                  </fieldset>
 
                   {/* Step 3: Screenshot Upload */}
-                  <div className="space-y-6">
-                    <div className="border-l-4 border-orange-500 pl-4">
+                  <fieldset className="space-y-6">
+                    <legend className="border-l-4 border-orange-500 pl-4">
                       <h3 className="text-xl font-semibold mb-2">Step 3: Upload Screenshot</h3>
                       <p className="text-gray-400 text-sm">Share a clear image of your order details</p>
-                    </div>
+                    </legend>
 
                     {/* Screenshot Tips */}
                     <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
@@ -460,17 +493,28 @@ export default function ScreenshotOrderForm() {
 
                     {!formData.screenshotPreview ? (
                       <div
-                        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                        id={uploadAreaId.current}
+                        className={`focus-ring border-2 border-dashed rounded-lg p-6 sm:p-8 text-center cursor-pointer transition-colors min-h-[120px] sm:min-h-[140px] flex flex-col justify-center ${
                           errors.screenshot ? 'border-red-500 bg-red-500/5' : 'border-[#333333] hover:border-orange-500 hover:bg-orange-500/5'
                         }`}
                         onClick={() => fileInputRef.current?.click()}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            fileInputRef.current?.click();
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Upload order screenshot"
+                        aria-describedby={errors.screenshot ? 'screenshot-error' : undefined}
                       >
-                        <FaUpload className="mx-auto text-4xl text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium mb-2">Upload Your Screenshot</h3>
-                        <p className="text-gray-400 mb-4">
+                        <FaUpload className="mx-auto text-3xl sm:text-4xl text-gray-400 mb-3 sm:mb-4" aria-hidden="true" />
+                        <h3 className="text-base sm:text-lg font-medium mb-2">Upload Your Screenshot</h3>
+                        <p className="text-gray-400 mb-3 sm:mb-4 text-sm sm:text-base px-2">
                           Click here or drag and drop your order screenshot
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs sm:text-sm text-gray-500">
                           Supports: JPG, PNG, WebP (Max 10MB)
                         </p>
                       </div>
@@ -480,7 +524,7 @@ export default function ScreenshotOrderForm() {
                           <div className="relative w-full h-64 mb-4">
                             <img
                               src={formData.screenshotPreview}
-                              alt="Order screenshot"
+                              alt={`Order screenshot from ${formData.restaurantName || 'restaurant'}`}
                               className="w-full h-full object-contain rounded-lg bg-[#111111]"
                             />
                           </div>
@@ -493,7 +537,8 @@ export default function ScreenshotOrderForm() {
                               variant="outline"
                               size="sm"
                               onClick={removeScreenshot}
-                              className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                              className="focus-ring border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                              aria-label="Remove uploaded screenshot"
                             >
                               Remove
                             </Button>
@@ -507,47 +552,55 @@ export default function ScreenshotOrderForm() {
                       type="file"
                       accept="image/*"
                       onChange={handleFileSelect}
-                      className="hidden"
+                      className="sr-only"
+                      aria-label="Select screenshot file"
+                      aria-describedby={uploadAreaId.current}
                     />
                     {errors.screenshot && (
-                      <p className="text-red-500 text-sm">{errors.screenshot}</p>
+                      <p id="screenshot-error" className="text-red-500 text-sm" role="alert">{errors.screenshot}</p>
                     )}
-                  </div>
+                  </fieldset>
 
                   {/* Step 4: Special Instructions */}
-                  <div className="space-y-4">
-                    <div className="border-l-4 border-orange-500 pl-4">
+                  <fieldset className="space-y-4">
+                    <legend className="border-l-4 border-orange-500 pl-4">
                       <h3 className="text-xl font-semibold mb-2">Step 4: Additional Notes (Optional)</h3>
                       <p className="text-gray-400 text-sm">Any special delivery instructions or notes</p>
-                    </div>
+                    </legend>
 
                     <div>
+                      <Label htmlFor="specialInstructions" className="sr-only">
+                        Special delivery instructions
+                      </Label>
                       <Textarea
                         id="specialInstructions"
                         name="specialInstructions"
                         value={formData.specialInstructions}
                         onChange={handleInputChange}
-                        className="bg-[#111111] border-[#333333] min-h-[100px] text-base"
+                        className="focus-ring bg-[#111111] border-[#333333] min-h-[100px] text-base"
                         placeholder="Leave at door, call when arriving, etc."
+                        aria-label="Special delivery instructions"
                       />
                     </div>
-                  </div>
+                  </fieldset>
 
                   {/* Submit Button */}
                   <div className="pt-4">
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg h-auto"
+                      className="focus-ring w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold py-4 text-lg h-auto"
+                      aria-describedby={isSubmitting ? 'submit-status' : undefined}
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" aria-hidden="true"></div>
                           Submitting Order...
+                          <span id="submit-status" className="sr-only">Please wait, submitting your order</span>
                         </>
                       ) : (
                         <>
-                          <FaCheck className="mr-2" />
+                          <FaCheck className="mr-2" aria-hidden="true" />
                           Submit Screenshot Order
                         </>
                       )}
@@ -559,7 +612,7 @@ export default function ScreenshotOrderForm() {
           </div>
 
           {/* Sidebar with helpful information */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-6 order-2 lg:order-2">
             {/* Important Notice */}
             <Card className="bg-yellow-500/10 border-yellow-500/20">
               <CardHeader>
@@ -634,6 +687,7 @@ export default function ScreenshotOrderForm() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -474,20 +474,20 @@ export default function CheckoutPage() {
       ) : (
         /* ======= REGULAR CHECKOUT VIEW ======= */
         <div className="min-h-screen bg-black text-white">
-          <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-3xl font-bold">Checkout</h1>
+          <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 sm:mb-8 gap-4">
+              <h1 className="text-2xl sm:text-3xl font-bold">Checkout</h1>
               <Link
                 href="/cart"
-                className="text-gold-foil hover:underline flex items-center"
+                className="text-gold-foil hover:underline flex items-center self-start sm:self-auto"
               >
                 <FaArrowLeft className="mr-2" /> Back to Cart
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
               {/* Checkout Form */}
-              <div className="lg:col-span-2 bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333]">
+              <div className="lg:col-span-2 bg-[#1A1A1A] rounded-lg overflow-hidden border border-[#333333] order-1 lg:order-1">
                 {/* Checkout Steps */}
                 <div className="bg-[#111111] p-4 border-b border-[#333333]">
                   <div className="flex items-center">
@@ -580,11 +580,11 @@ export default function CheckoutPage() {
                         <div className="grid grid-cols-2 gap-4 mb-6">
                           <button
                             type="button"
-                            className={`p-4 rounded-lg border ${
+                            className={`p-4 sm:p-4 rounded-lg border min-h-[80px] ${
                               formData.orderType === 'delivery'
                                 ? 'border-gold-foil bg-gold-foil bg-opacity-10'
                                 : 'border-[#333333] hover:border-[#555555]'
-                            } flex flex-col items-center`}
+                            } flex flex-col items-center justify-center`}
                             onClick={() => handleOrderTypeChange('delivery')}
                           >
                             <span className="text-xl mb-2">🚚</span>
@@ -592,11 +592,11 @@ export default function CheckoutPage() {
                           </button>
                           <button
                             type="button"
-                            className={`p-4 rounded-lg border ${
+                            className={`p-4 sm:p-4 rounded-lg border min-h-[80px] ${
                               formData.orderType === 'pickup'
                                 ? 'border-gold-foil bg-gold-foil bg-opacity-10'
                                 : 'border-[#333333] hover:border-[#555555]'
-                            } flex flex-col items-center`}
+                            } flex flex-col items-center justify-center`}
                             onClick={() => handleOrderTypeChange('pickup')}
                           >
                             <span className="text-xl mb-2">🏬</span>
@@ -753,7 +753,7 @@ export default function CheckoutPage() {
                             name="pickupLocation"
                             value={formData.pickupLocation}
                             onChange={handleChange}
-                            className="input w-full"
+                            className="input w-full h-12 text-base"
                             required
                           >
                             <option value="">Select a location</option>
@@ -768,9 +768,9 @@ export default function CheckoutPage() {
                       {/* Delivery Time */}
                       <div className="mt-6">
                         <h2 className="text-xl font-bold mb-4">Delivery Time</h2>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <label
-                            className={`p-4 rounded-lg border cursor-pointer ${
+                            className={`p-4 sm:p-4 rounded-lg border cursor-pointer min-h-[80px] flex items-center justify-center ${
                               formData.deliveryTime === 'asap'
                                 ? 'border-gold-foil bg-gold-foil bg-opacity-10'
                                 : 'border-[#333333]'
@@ -794,7 +794,7 @@ export default function CheckoutPage() {
                           </label>
 
                           <label
-                            className={`p-4 rounded-lg border cursor-pointer ${
+                            className={`p-4 sm:p-4 rounded-lg border cursor-pointer min-h-[80px] flex items-center justify-center ${
                               formData.deliveryTime === 'scheduled'
                                 ? 'border-gold-foil bg-gold-foil bg-opacity-10'
                                 : 'border-[#333333]'
@@ -1177,7 +1177,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Order Summary */}
-              <div className="bg-[#1A1A1A] rounded-lg border border-[#333333] p-6 sticky top-32">
+              <div className="bg-[#1A1A1A] rounded-lg border border-[#333333] p-6 order-2 lg:order-2 lg:sticky lg:top-32">
                 <h2 className="text-xl font-bold mb-6">Order Summary</h2>
                 <div className="space-y-4 mb-6">
                   {items.map((item: CartItem) => (
