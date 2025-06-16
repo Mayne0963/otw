@@ -53,6 +53,15 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // OTW CSS Variable Colors
+        "harvest-gold": "var(--color-harvest-gold)",
+        "surface": "var(--color-surface)",
+        "surface-strong": "var(--color-surface-strong)",
+        "onyx": "var(--color-onyx)",
+        "onyx-light": "var(--color-onyx-light)",
+        "input-bg": "var(--color-input-bg)",
+        "otw-border": "var(--color-border)",
+        "otw-muted": "var(--color-muted)",
         // OTW custom colors
         "otw-red": {
           DEFAULT: "#c22126",

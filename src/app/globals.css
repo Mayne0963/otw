@@ -4,20 +4,30 @@
 
 /* OTW Design System - Base Styles */
 :root {
-  --otw-red: #c22126;
-  --otw-gold: #d4af37;
-  --otw-black: #0A0A0A;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+
+  /* OTW Colors */
+  --otw-red: #E31C3D;
+  --otw-gold: #FDB81E;
+  --otw-black: #1B1B1B;
+  --otw-gray: #323A45;
+  --otw-light-gray: #AEB0B5;
   --otw-gradient-text: linear-gradient(135deg, var(--otw-gold) 0%, #ffffff 50%, var(--otw-gold) 100%);
   --otw-gradient-radial: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 10, 0.2) 50%, rgba(10, 10, 10, 0.4) 100%);
-  
-  /* Enhanced OTW Color System */
-  --color-onyx: #0A0A0A;
-  --color-harvest-gold: #d4af37;
-  --color-muted: rgba(255, 255, 255, 0.6);
-  --color-input-bg: rgba(0, 0, 0, 0.5);
-  --color-border: rgba(255, 255, 255, 0.15);
-  --color-surface: rgba(0, 0, 0, 0.9);
-  --color-surface-strong: rgba(255, 255, 255, 0.1);
+
+  /* Enhanced Color System */
+  --color-surface: #1F1F1F;
+  --color-surface-strong: #2A2A2A;
+  --color-surface-hover: #333333;
+  --color-border: rgba(253, 184, 30, 0.3);
+  --color-muted: #B8BCC8;
+  --color-input-bg: rgba(42, 42, 42, 0.8);
+  --color-onyx: #FFFFFF;
+  --color-harvest-gold: #FDB81E;
+  --color-harvest-gold-hover: #E5A619;
+  --color-harvest-gold-rgb: 253, 184, 30;
 }
 
 /* OTW Card Component */
@@ -94,8 +104,41 @@
 
 /* OTW Address Autocomplete Utility Classes */
 @layer utilities {
+  /* Primary Button with OTW Branding */
+  .btn-primary {
+    @apply bg-[var(--color-harvest-gold)] hover:bg-[var(--color-harvest-gold-hover)] text-[var(--color-onyx)] font-bold rounded-full py-4 px-8 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] shadow-md;
+    @apply focus:outline-none focus:ring-2 focus:ring-[var(--color-harvest-gold)] focus:ring-opacity-50 focus:ring-offset-2;
+  }
+
+  /* Form Section with Enhanced Styling */
+  .form-section {
+    @apply bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200;
+    @apply hover:border-[var(--color-harvest-gold)] hover:border-opacity-40;
+  }
+
+  /* Upload Dropzone with Microinteractions */
+  .dropzone-upload {
+    @apply flex items-center justify-center h-32 border-2 border-dashed border-[var(--color-border)] rounded-xl transition-all duration-300;
+    @apply hover:border-[var(--color-harvest-gold)] hover:shadow-lg hover:scale-105 cursor-pointer;
+    @apply bg-[var(--color-surface-strong)] hover:bg-[var(--color-surface-hover)];
+  }
+
+  /* Enhanced Input Styling */
   .input-otw {
-    @apply w-full bg-[--color-input-bg] text-[--color-onyx] border border-[--color-border] placeholder:text-[--color-muted] rounded-xl px-4 py-3 focus:outline-none focus:border-[--color-harvest-gold] transition-all;
+    @apply w-full px-4 py-3 rounded-xl bg-[var(--color-input-bg)] text-[var(--color-onyx)] border border-[var(--color-border)] placeholder:text-[var(--color-muted)];
+    @apply focus:outline-none focus:border-[var(--color-harvest-gold)] focus:ring-2 focus:ring-[var(--color-harvest-gold)] focus:ring-opacity-40 transition-all duration-150;
+    @apply hover:border-[var(--color-harvest-gold)] hover:border-opacity-60;
+  }
+
+  /* Enhanced Textarea Styling */
+  .textarea-otw {
+    @apply w-full px-4 py-3 rounded-xl bg-[var(--color-input-bg)] text-[var(--color-onyx)] border border-[var(--color-border)] placeholder:text-[var(--color-muted)] resize-none;
+    @apply focus:outline-none focus:border-[var(--color-harvest-gold)] focus:ring-2 focus:ring-[var(--color-harvest-gold)] focus:ring-opacity-40 transition-all duration-150;
+    @apply hover:border-[var(--color-harvest-gold)] hover:border-opacity-60;
+  }
+
+  .card-otw {
+    @apply bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 shadow-sm;
   }
 
   /* Enhanced input field utility for OTW components */
@@ -123,19 +166,133 @@
   }
 
   .autocomplete-dropdown {
-    @apply absolute top-full mt-2 w-full rounded-xl border-2 border-[--color-border] bg-[--color-surface] text-[--color-onyx] shadow-2xl z-[99999] backdrop-blur-lg;
+    @apply absolute z-[99999] w-full mt-2 bg-[--color-surface] text-[--color-onyx] border border-[--color-border] rounded-xl shadow-xl;
   }
 
   .autocomplete-item {
-    @apply px-4 py-3 cursor-pointer text-sm hover:bg-[--color-surface-strong] transition-all duration-200 ease-out;
+    @apply px-4 py-2 text-sm cursor-pointer hover:bg-[--color-surface-strong] transition-colors duration-150;
   }
 
   .autocomplete-item-active {
-    @apply bg-[--color-harvest-gold]/15 font-semibold border-l-4 border-[--color-harvest-gold] pl-3;
+    @apply font-semibold border-l-4 border-[--color-harvest-gold] pl-3;
+    background-color: color-mix(in srgb, var(--color-harvest-gold) 15%, transparent);
   }
+  
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .animate-slide-in-from-top {
+    animation: slide-in-from-top 0.5s ease-out;
+  }
+
+  .animate-bounce-in {
+    animation: bounce-in 0.6s ease-out;
+  }
+
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  .cart-item-hover {
+    transition: all 0.2s ease;
+  }
+
+  .cart-item-hover:hover {
+    background-color: var(--color-surface-strong);
+    transform: translateX(4px);
+  }
+
+  .promo-success {
+    animation: bounce-in 0.6s ease-out;
+  }
+
+  .loading-spinner {
+    animation: spin 1s linear infinite;
+  }
+
+  .quantity-button {
+    transition: all 0.15s ease;
+  }
+
+  .quantity-button:hover {
+    transform: scale(1.1);
+    background-color: var(--color-harvest-gold);
+  }
+
+  .remove-button {
+    transition: all 0.2s ease;
+  }
+
+  .remove-button:hover {
+    transform: scale(1.1);
+    color: #ef4444;
+  }
+
+  .cart-dropdown-enter {
+    animation: slide-in-from-top 0.3s ease-out;
+  }
+
+  .cart-item-stagger {
+    animation: fade-in 0.4s ease-out;
+  }
+
+  .cart-item-stagger:nth-child(1) { animation-delay: 0.1s; }
+  .cart-item-stagger:nth-child(2) { animation-delay: 0.2s; }
+  .cart-item-stagger:nth-child(3) { animation-delay: 0.3s; }
+  .cart-item-stagger:nth-child(4) { animation-delay: 0.4s; }
+  .cart-item-stagger:nth-child(5) { animation-delay: 0.5s; }
+
+  .smooth-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-[--color-harvest-gold] focus:ring-opacity-50;
+  }
+
+  .cart-items::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .cart-items::-webkit-scrollbar-track {
+    background: var(--color-surface);
+    border-radius: 3px;
+  }
+
+  .cart-items::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+  }
+
+  .cart-items::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted);
+  }
+
+  /* OTW Ride Service Components */
+  .card-vehicle {
+    @apply p-6 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] shadow-sm transition-shadow hover:shadow-md;
+  }
+
+  .input-otw {
+    @apply w-full rounded-xl bg-[var(--color-surface-strong)] border border-[var(--color-border)] text-[var(--color-onyx-light)] placeholder:text-[var(--color-muted)] px-4 py-3 focus:outline-none focus:border-[var(--color-harvest-gold)] focus:ring-[var(--color-harvest-gold)] focus:ring-opacity-40 focus:ring-2 transition;
+  }
+
+  .btn-ride {
+    @apply bg-gradient-to-r from-[var(--color-harvest-gold)] to-[var(--color-harvest-gold)] text-[var(--color-onyx)] rounded-full py-3 px-6 shadow-md hover:shadow-lg transition-all;
+  }
+
 }
 
-/* Enhanced Global Google Maps Autocomplete Dropdown Z-Index Fix */
+/* Google Maps Autocomplete Dark Mode Overrides */
 .pac-container {
   z-index: 2147483647 !important;
   position: absolute !important;
@@ -151,6 +308,28 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
   backdrop-filter: blur(20px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
+.pac-item {
+  padding: 0.5rem 1rem !important;
+  color: var(--color-onyx-light) !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.pac-item:hover,
+.pac-item-selected {
+  background-color: var(--color-harvest-gold) !important;
+  background-color: color-mix(in srgb, var(--color-harvest-gold) 10%, transparent) !important;
+  font-weight: 600 !important;
+}
+
+.pac-item-query {
+  color: var(--color-onyx-light) !important;
+}
+
+.pac-matched {
+  color: var(--color-harvest-gold) !important;
+  font-weight: 600 !important;
 }
 
 /* Ensure parent containers don't clip the dropdown */
