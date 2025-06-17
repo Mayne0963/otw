@@ -25,7 +25,7 @@ interface TabConfig {
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<TabValue>('overview');
-  const { user, loading: authLoading, initializing } = useAuth();
+  const { user, loading } = useAuth();
 
   const tabs: TabConfig[] = useMemo(() => [
     { id: 'overview', label: 'Overview', component: CustomerOverview, requiresAuth: false },
@@ -42,8 +42,8 @@ export default function DashboardPage() {
   const renderTabContent = useCallback((tab: TabConfig) => {
     const Component = tab.component;
     
-    // Show loading while authentication is initializing
-    if (initializing || authLoading) {
+    // Show loading while authentication is loading
+    if (loading) {
       return <TabLoadingSpinner />;
     }
     
@@ -76,10 +76,10 @@ export default function DashboardPage() {
         <Component />
       </Suspense>
     );
-  }, [user, authLoading, initializing]);
+  }, [user, loading]);
 
-  // Show loading spinner while authentication is initializing
-  if (initializing || authLoading) {
+  // Show loading spinner while authentication is loading
+  if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">

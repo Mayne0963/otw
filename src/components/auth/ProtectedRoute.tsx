@@ -21,18 +21,18 @@ export default function ProtectedRoute({
   redirectTo = '/signin',
   fallback
 }: ProtectedRouteProps) {
-  const { user, loading, initializing } = useAuth();
+  const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     // Only redirect if we're not loading and auth is required but user is not present
-    if (!loading && !initializing && requireAuth && !user) {
+    if (!loading && requireAuth && !user) {
       router.push(redirectTo);
     }
-  }, [user, loading, initializing, requireAuth, redirectTo, router]);
+  }, [user, loading, requireAuth, redirectTo, router]);
 
-  // Show loading while authentication is initializing or loading
-  if (initializing || loading) {
+  // Show loading while authentication is loading
+  if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">

@@ -76,7 +76,7 @@ interface LoyaltyInfo {
 }
 
 export default function CustomerOverview() {
-  const { user, loading: authLoading, initializing } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [loyaltyInfo, setLoyaltyInfo] = useState<LoyaltyInfo | null>(null);
@@ -85,8 +85,8 @@ export default function CustomerOverview() {
   const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
-    // Don't fetch data while auth is still initializing
-    if (initializing || authLoading) {
+    // Don't fetch data while auth is still loading
+    if (authLoading) {
       return;
     }
 
@@ -96,7 +96,7 @@ export default function CustomerOverview() {
       setLoading(false);
       setDataLoading(false);
     }
-  }, [user, initializing, authLoading]);
+  }, [user, authLoading]);
 
   const fetchCustomerData = async () => {
     if (!user?.uid) return;
@@ -205,8 +205,8 @@ export default function CustomerOverview() {
     }
   };
 
-  // Show loading while auth is initializing or data is loading
-  if (initializing || authLoading || loading || dataLoading) {
+  // Show loading while auth is loading or data is loading
+  if (authLoading || loading || dataLoading) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {[...Array(6)].map((_, i) => (

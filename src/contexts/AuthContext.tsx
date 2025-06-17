@@ -48,11 +48,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user was previously signed in to reduce UI flash
-    const expectSignIn = localStorage.getItem('expectSignIn') === 'true';
-    if (expectSignIn) {
-      setLoading(true);
-    }
+    // Set initial loading state
+    setLoading(true);
+    setInitializing(true);
 
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       try {
