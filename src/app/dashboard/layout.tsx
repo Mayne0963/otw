@@ -26,7 +26,7 @@ export default function DashboardLayout({
             onClick={() => setIsSidebarOpen(false)}
           />
           <aside
-            className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 flex w-64 flex-col fixed inset-y-0 pt-16 z-30 transition-transform duration-300 ease-in-out`}
+            className={`${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 flex w-64 flex-col fixed inset-y-0 pt-36 z-30 transition-transform duration-300 ease-in-out`}
           >
             <div className="flex-1 flex flex-col min-h-0 bg-[#1A1A1A] border-r border-white/10">
               <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
@@ -35,7 +35,7 @@ export default function DashboardLayout({
             </div>
           </aside>
           <main className="lg:pl-64 flex-1 overflow-auto">
-            <div className="py-6 min-h-full">
+            <div className="py-6 min-h-full mt-20">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-8">
                 {children}
               </div>
