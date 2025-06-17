@@ -36,7 +36,7 @@ export default function DashboardLayout({
             </div>
           </aside>
           <main className="lg:pl-64 flex-1 overflow-auto">
-            <div className="py-6 min-h-full" style={{ marginTop: 'var(--navbar-height)' }}>
+            <div className="py-6 min-h-full" style={{ marginTop: 'calc(var(--navbar-height) + var(--dashboard-navbar-height))' }}>
               <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-8">
                 {children}
               </div>

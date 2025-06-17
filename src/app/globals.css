@@ -24,8 +24,9 @@
   --background-start-rgb: 0, 0, 0;
   --background-end-rgb: 0, 0, 0;
 
-  /* Navbar Height Variable */
+  /* Navbar Height Variables */
   --navbar-height: 80px;
+  --dashboard-navbar-height: 60px;
 
   /* OTW Colors */
   --otw-red: #E31C3D;
@@ -53,6 +54,10 @@
 /* Global navbar offset styles */
 html {
   scroll-padding-top: var(--navbar-height);
+}
+
+body {
+  padding-top: var(--navbar-height);
 }
 
 /* OTW Card Component */
