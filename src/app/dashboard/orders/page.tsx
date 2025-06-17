@@ -358,26 +358,7 @@ export default function DashboardOrdersPage() {
     }).format(amount || 0);
   };
 
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <Package className="h-16 w-16 text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              Sign In Required
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Please sign in to view your order dashboard.
-            </p>
-            <Button onClick={() => router.push('/signin')}>
-              Sign In
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Note: Authentication is now handled by the layout component
 
   if (loading) {
     return (

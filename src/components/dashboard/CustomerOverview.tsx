@@ -31,6 +31,19 @@ import { db } from '../../lib/firebase-config';
 import { format } from 'date-fns';
 import Link from 'next/link';
 
+function parseFirestoreTimestamp(ts: any): Date | undefined {
+  if (ts?.toDate instanceof Function) {
+    return ts.toDate();
+  }
+  if (typeof ts === 'string' || typeof ts === 'number') {
+    return new Date(ts);
+  }
+  if (ts?._seconds !== undefined) {
+    return new Date(ts._seconds * 1000);
+  }
+  return undefined;
+}
+
 interface UserStats {
   totalOrders: number;
   totalSpent: number;
@@ -63,24 +76,33 @@ interface LoyaltyInfo {
 }
 
 export default function CustomerOverview() {
-  const { user } = useAuth();
+  const { user, loading: authLoading, initializing } = useAuth();
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [loyaltyInfo, setLoyaltyInfo] = useState<LoyaltyInfo | null>(null);
   const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
+    // Don't fetch data while auth is still initializing
+    if (initializing || authLoading) {
+      return;
+    }
+
     if (user?.uid) {
       fetchCustomerData();
+    } else {
+      setLoading(false);
+      setDataLoading(false);
     }
-  }, [user]);
+  }, [user, initializing, authLoading]);
 
   const fetchCustomerData = async () => {
     if (!user?.uid) return;
 
     try {
-      setLoading(true);
+      setDataLoading(true);
 
       // Fetch user profile
       const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -158,6 +180,7 @@ export default function CustomerOverview() {
     } catch (error) {
       console.error('Error fetching customer data:', error);
     } finally {
+      setDataLoading(false);
       setLoading(false);
     }
   };
@@ -182,7 +205,8 @@ export default function CustomerOverview() {
     }
   };
 
-  if (loading) {
+  // Show loading while auth is initializing or data is loading
+  if (initializing || authLoading || loading || dataLoading) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {[...Array(6)].map((_, i) => (
@@ -254,7 +278,7 @@ export default function CustomerOverview() {
                 )}
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  Member since {userProfile?.createdAt ? format(userProfile.createdAt.toDate(), 'MMM yyyy') : 'N/A'}
+                  Member since {userProfile?.createdAt ? (parseFirestoreTimestamp(userProfile.createdAt) ? format(parseFirestoreTimestamp(userProfile.createdAt)!, 'MMM yyyy') : '—') : 'N/A'}
                 </div>
               </div>
             </div>
@@ -272,7 +296,7 @@ export default function CustomerOverview() {
           <CardContent>
             <div className="text-2xl font-bold">{userStats?.totalOrders || 0}</div>
             <p className="text-xs text-muted-foreground">
-              {userStats?.lastOrderAt ? `Last order ${format(userStats.lastOrderAt.toDate(), 'MMM d')}` : 'No orders yet'}
+              {userStats?.lastOrderAt ? (parseFirestoreTimestamp(userStats.lastOrderAt) ? `Last order ${format(parseFirestoreTimestamp(userStats.lastOrderAt)!, 'MMM d')}` : '—') : 'No orders yet'}
             </p>
           </CardContent>
         </Card>
@@ -311,7 +335,7 @@ export default function CustomerOverview() {
           <CardContent>
             <div className="text-2xl font-bold">{userStats?.loginCount || 0}</div>
             <p className="text-xs text-muted-foreground">
-              {userStats?.lastLoginAt ? `Last login ${format(userStats.lastLoginAt.toDate(), 'MMM d')}` : 'First visit'}
+              {userStats?.lastLoginAt ? (parseFirestoreTimestamp(userStats.lastLoginAt) ? `Last login ${format(parseFirestoreTimestamp(userStats.lastLoginAt)!, 'MMM d')}` : '—') : 'First visit'}
             </p>
           </CardContent>
         </Card>
@@ -376,7 +400,7 @@ export default function CustomerOverview() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{activity.description}</p>
                         <p className="text-xs text-muted-foreground">
-                          {activity.timestamp ? format(activity.timestamp.toDate(), 'MMM d, h:mm a') : 'Recently'}
+                          {activity.timestamp ? (parseFirestoreTimestamp(activity.timestamp) ? format(parseFirestoreTimestamp(activity.timestamp)!, 'MMM d, h:mm a') : '—') : 'Recently'}
                           {activity.amount && ` • $${activity.amount.toFixed(2)}`}
                           {activity.status && (
                             <Badge variant="outline" className="ml-2 text-xs">

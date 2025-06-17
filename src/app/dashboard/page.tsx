@@ -25,7 +25,7 @@ interface TabConfig {
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<TabValue>('overview');
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, initializing } = useAuth();
 
   const tabs: TabConfig[] = useMemo(() => [
     { id: 'overview', label: 'Overview', component: CustomerOverview, requiresAuth: false },
@@ -42,8 +42,13 @@ export default function DashboardPage() {
   const renderTabContent = useCallback((tab: TabConfig) => {
     const Component = tab.component;
     
+    // Show loading while authentication is initializing
+    if (initializing || authLoading) {
+      return <TabLoadingSpinner />;
+    }
+    
     // Show auth required message for protected tabs
-    if (tab.requiresAuth && !user && !authLoading) {
+    if (tab.requiresAuth && !user) {
       return (
         <Card className="w-full">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
@@ -54,7 +59,10 @@ export default function DashboardPage() {
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
               Please sign in to access your {tab.label.toLowerCase()}.
             </p>
-            <Button className="flex items-center gap-2">
+            <Button 
+              className="flex items-center gap-2"
+              onClick={() => window.location.href = '/signin'}
+            >
               <LogIn className="h-4 w-4" />
               Sign In
             </Button>
@@ -68,9 +76,10 @@ export default function DashboardPage() {
         <Component />
       </Suspense>
     );
-  }, [user, authLoading]);
+  }, [user, authLoading, initializing]);
 
-  if (authLoading) {
+  // Show loading spinner while authentication is initializing
+  if (initializing || authLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center min-h-[400px]">
@@ -88,7 +97,7 @@ export default function DashboardPage() {
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
           {user 
-            ? `Welcome back! Manage your orders, favorites, and account settings.`
+            ? `Welcome back, ${user.displayName || user.email || 'User'}! Manage your orders, favorites, and account settings.`
             : 'Manage your favorites and tasks, or sign in for full access.'
           }
         </p>
@@ -101,7 +110,7 @@ export default function DashboardPage() {
               key={tab.id} 
               value={tab.id}
               className="relative transition-all duration-200"
-              disabled={tab.requiresAuth && !user && !authLoading}
+              disabled={tab.requiresAuth && !user}
             >
               {tab.label}
               {tab.requiresAuth && !user && (
