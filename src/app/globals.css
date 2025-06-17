@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .btn-primary {
+    @apply font-semibold rounded-full px-6 py-3 shadow-lg hover:shadow-xl transition;
+    background-color: var(--color-harvest-gold);
+    color: var(--color-onyx);
+  }
+  .btn-secondary {
+    @apply font-semibold rounded-full px-6 py-3 transition;
+    border: 1px solid var(--color-onyx-light);
+    color: var(--color-onyx-light);
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-surface-strong);
+  }
+}
+
 /* OTW Design System - Base Styles */
 :root {
   --foreground-rgb: 255, 255, 255;
@@ -25,6 +41,7 @@
   --color-muted: #B8BCC8;
   --color-input-bg: rgba(42, 42, 42, 0.8);
   --color-onyx: #FFFFFF;
+  --color-onyx-light: #F5F5F5;
   --color-harvest-gold: #FDB81E;
   --color-harvest-gold-hover: #E5A619;
   --color-harvest-gold-rgb: 253, 184, 30;

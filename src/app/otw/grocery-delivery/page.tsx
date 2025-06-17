@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
@@ -24,7 +24,15 @@ import {
   Receipt,
   MessageSquare,
   Info,
+  Trash2
 } from 'lucide-react';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useCart } from '../../../lib/context/CartContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { toast } from '@/components/ui/use-toast';
 
 interface CustomerInfo {
   name: string;
@@ -35,9 +43,13 @@ interface CustomerInfo {
 }
 
 export default function GroceryDeliveryPage() {
+  const { user } = useAuth();
+  const { addItem, items: cartItems, itemCount, total } = useCart();
+  
   const [receipt, setReceipt] = useState<File | null>(null);
   const [receiptPreview, setReceiptPreview] = useState<string>('');
   const [groceryList, setGroceryList] = useState<string>('');
+  const [parsedItems, setParsedItems] = useState<Array<{id: string, name: string, quantity: number, price: number}>>([]);
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
     phone: '',
@@ -55,6 +67,19 @@ export default function GroceryDeliveryPage() {
   const [orderSubmitted, setOrderSubmitted] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadError, setUploadError] = useState<string>('');
+  const [showCartIntegration, setShowCartIntegration] = useState(false);
+  
+  // Auto-fill customer info if user is logged in
+  useEffect(() => {
+    if (user) {
+      setCustomerInfo(prev => ({
+        ...prev,
+        name: user.displayName || prev.name,
+        email: user.email || prev.email,
+        phone: user.phoneNumber || prev.phone
+      }));
+    }
+  }, [user]);
 
   const stores = [
     { value: 'fresh-market', label: 'Fresh Market', deliveryFee: '$4.99' },
@@ -177,6 +202,95 @@ export default function GroceryDeliveryPage() {
   };
 
   const timeSlots = generateTimeSlots();
+
+  // Parse grocery list into structured items
+  const parseGroceryList = (text: string) => {
+    const lines = text.split('\n').filter(line => line.trim());
+    const items = lines.map((line, index) => {
+      const trimmedLine = line.trim();
+      
+      // Try to extract quantity and price from common formats
+      // Examples: "2x Apples - $3.50", "Milk $4.99", "3 Bananas", "Bread"
+      const quantityMatch = trimmedLine.match(/^(\d+)\s*[x×]?\s*(.+)/);
+      const priceMatch = trimmedLine.match(/\$([\d.]+)/);
+      
+      let quantity = 1;
+      let name = trimmedLine;
+      let price = 0;
+      
+      if (quantityMatch) {
+        quantity = parseInt(quantityMatch[1]);
+        name = quantityMatch[2].replace(/\s*-\s*\$[\d.]+$/, '').trim();
+      } else {
+        name = trimmedLine.replace(/\s*-\s*\$[\d.]+$/, '').trim();
+      }
+      
+      if (priceMatch) {
+        price = parseFloat(priceMatch[1]);
+      } else {
+        // Estimate price if not provided (this could be enhanced with a product database)
+        price = Math.round((Math.random() * 8 + 2) * 100) / 100; // Random price between $2-$10
+      }
+      
+      return {
+        id: `grocery-${index}-${Date.now()}`,
+        name: name,
+        quantity: quantity,
+        price: price
+      };
+    });
+    
+    return items;
+  };
+
+  // Add parsed items to cart
+  const addItemsToCart = () => {
+    const items = parseGroceryList(groceryList);
+    
+    items.forEach(item => {
+      addItem({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        restaurant: selectedStore || 'Grocery Store',
+        image: undefined,
+        description: 'Grocery item',
+        customizations: {}
+      });
+    });
+    
+    toast({
+      title: "Items Added to Cart",
+      description: `${items.length} items have been added to your cart.`,
+    });
+    
+    setShowCartIntegration(true);
+  };
+
+  // Update grocery list and parse items
+  const handleGroceryListChange = (value: string) => {
+    setGroceryList(value);
+    if (value.trim()) {
+      const items = parseGroceryList(value);
+      setParsedItems(items);
+    } else {
+      setParsedItems([]);
+    }
+  };
+
+  // Handle textarea change with auto-resize
+  const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    
+    // Auto-resize textarea
+    const textarea = e.target as HTMLTextAreaElement;
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.max(200, textarea.scrollHeight) + 'px';
+    
+    // Update grocery list
+    handleGroceryListChange(value);
+  };
 
   const validateFile = (file: File): string | null => {
     // Check file type
@@ -531,13 +645,7 @@ export default function GroceryDeliveryPage() {
                 <textarea
                   placeholder="Enter your grocery list here...&#10;&#10;Example:&#10;• 2 lbs bananas&#10;• 1 gallon milk (2%)&#10;• Bread (whole wheat)&#10;• 6 eggs&#10;• Chicken breast (2 lbs)&#10;• Spinach (1 bag)&#10;• Tomatoes (4 large)"
                   value={groceryList}
-                  onChange={(e) => {
-                    setGroceryList(e.target.value);
-                    // Auto-resize textarea
-                    const textarea = e.target as HTMLTextAreaElement;
-                    textarea.style.height = 'auto';
-                    textarea.style.height = Math.max(200, textarea.scrollHeight) + 'px';
-                  }}
+                  onChange={handleTextareaChange}
                   rows={8}
                   className="textarea-otw min-h-[200px] transition-all duration-200"
                   style={{ resize: 'none' }}
@@ -546,6 +654,44 @@ export default function GroceryDeliveryPage() {
                   {groceryList.split('\n').filter(line => line.trim()).length} items
                 </div>
               </div>
+              
+              {/* Cart Integration Section */}
+              {parsedItems.length > 0 && (
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="font-medium text-gray-900">Parsed Items ({parsedItems.length})</h4>
+                    <Button
+                      type="button"
+                      onClick={addItemsToCart}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm"
+                    >
+                      Add All to Cart
+                    </Button>
+                  </div>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {parsedItems.map((item, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
+                        <div className="flex-1">
+                          <span className="font-medium">{item.name}</span>
+                          <div className="text-sm text-gray-600">
+                            Qty: {item.quantity} • ${item.price.toFixed(2)}
+                          </div>
+                        </div>
+                        <Badge variant="secondary" className="ml-2">
+                          ${(item.quantity * item.price).toFixed(2)}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                  <Separator className="my-3" />
+                  <div className="flex justify-between items-center font-medium">
+                    <span>Estimated Total:</span>
+                    <span className="text-green-600">
+                      ${parsedItems.reduce((sum, item) => sum + (item.quantity * item.price), 0).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+              )}
               <p className="text-xs text-[var(--color-muted)] mt-2 italic">Tip: Be specific with quantities and preferences for better results</p>
             </div>
 

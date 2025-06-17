@@ -1,0 +1,43 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FDB81E;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#FDB81E;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#FDB81E;stop-opacity:0.3" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="transparent"/>
+  
+  <!-- Main Text: ON THE WAY -->
+  <text x="400" y="250" 
+        font-family="Arial, sans-serif" 
+        font-size="72" 
+        font-weight="900" 
+        text-anchor="middle" 
+        fill="url(#textGradient)" 
+        filter="url(#glow)"
+        letter-spacing="8px">
+    ON THE WAY
+  </text>
+  
+  <!-- Decorative underline -->
+  <line x1="200" y1="280" x2="600" y2="280" 
+        stroke="#FDB81E" 
+        stroke-width="4" 
+        stroke-opacity="0.4"/>
+  
+  <!-- Subtle decorative elements -->
+  <circle cx="150" cy="200" r="3" fill="#FDB81E" opacity="0.3"/>
+  <circle cx="650" cy="320" r="3" fill="#FDB81E" opacity="0.3"/>
+  <circle cx="100" cy="350" r="2" fill="#E31C3D" opacity="0.2"/>
+  <circle cx="700" cy="180" r="2" fill="#E31C3D" opacity="0.2"/>
+</svg>
