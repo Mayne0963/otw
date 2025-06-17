@@ -263,7 +263,7 @@ const Navbar = () => {
           {user ? (
             <div className="flex items-center gap-x-3">
               <Link
-                href="/profile"
+                href="/dashboard"
                 className="-m-2.5 p-3 text-white/70 hover:text-otw-gold-400 transition-all duration-300 rounded-xl hover:bg-otw-gold-500/10 border border-transparent hover:border-otw-gold-500/30"
               >
                 <span className="sr-only">Profile</span>

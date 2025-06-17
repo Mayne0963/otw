@@ -34,9 +34,9 @@ export default function DashboardLayout({
               </div>
             </div>
           </aside>
-          <main className="lg:pl-64 flex-1">
-            <div className="py-6">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+          <main className="lg:pl-64 flex-1 overflow-auto">
+            <div className="py-6 min-h-full">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pb-8">
                 {children}
               </div>
             </div>

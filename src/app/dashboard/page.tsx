@@ -81,8 +81,8 @@ export default function DashboardPage() {
   // Show loading spinner while authentication is loading
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
+      <div className="w-full">
+        <div className="flex items-center justify-center py-12">
           <TabLoadingSpinner />
         </div>
       </div>
@@ -90,7 +90,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Dashboard
@@ -120,15 +120,17 @@ export default function DashboardPage() {
           ))}
         </TabsList>
 
-        {tabs.map((tab) => (
-          <TabsContent 
-            key={tab.id} 
-            value={tab.id} 
-            className="mt-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            {activeTab === tab.id && renderTabContent(tab)}
-          </TabsContent>
-        ))}
+        <div className="overflow-auto">
+          {tabs.map((tab) => (
+            <TabsContent 
+              key={tab.id} 
+              value={tab.id} 
+              className="mt-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {activeTab === tab.id && renderTabContent(tab)}
+            </TabsContent>
+          ))}
+        </div>
       </Tabs>
     </div>
   );

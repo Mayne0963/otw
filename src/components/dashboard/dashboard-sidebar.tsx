@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '../../lib/utils';
-import { Home, Package, Settings, Camera } from 'lucide-react';
+import { Home, Package, Settings } from 'lucide-react';
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
@@ -18,11 +18,6 @@ export default function DashboardSidebar() {
       name: 'Orders',
       href: '/dashboard/orders',
       icon: Package,
-    },
-    {
-      name: 'Screenshot Orders',
-      href: '/admin/screenshot-orders',
-      icon: Camera,
     },
     {
       name: 'Settings',
