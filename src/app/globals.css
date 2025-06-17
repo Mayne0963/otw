@@ -24,6 +24,9 @@
   --background-start-rgb: 0, 0, 0;
   --background-end-rgb: 0, 0, 0;
 
+  /* Navbar Height Variable */
+  --navbar-height: 80px;
+
   /* OTW Colors */
   --otw-red: #E31C3D;
   --otw-gold: #FDB81E;
@@ -45,6 +48,11 @@
   --color-harvest-gold: #FDB81E;
   --color-harvest-gold-hover: #E5A619;
   --color-harvest-gold-rgb: 253, 184, 30;
+}
+
+/* Global navbar offset styles */
+html {
+  scroll-padding-top: var(--navbar-height);
 }
 
 /* OTW Card Component */

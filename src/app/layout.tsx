@@ -93,7 +93,7 @@ export default function RootLayout({
             {/* Main content with enhanced styling */}
             <div className="relative z-10 flex flex-col min-h-screen">
               <Navbar />
-              <main className="flex-grow pt-20 relative">
+              <main className="flex-grow relative" style={{ paddingTop: 'var(--navbar-height)' }}>
                 {/* Content backdrop for better readability */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-otw-black/20 to-transparent pointer-events-none" />
                 <div className="relative z-10">{children}</div>

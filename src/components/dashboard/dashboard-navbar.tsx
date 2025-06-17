@@ -28,7 +28,7 @@ export default function DashboardNavbar({
   ];
 
   return (
-    <nav className="flex items-center justify-between px-4 h-16 border-b border-white/10 fixed top-20 left-0 right-0 bg-black z-40">
+    <nav className="flex items-center justify-between px-4 h-16 border-b border-white/10 fixed left-0 right-0 bg-black z-40" style={{ top: 'var(--navbar-height)' }}>
       <div className="flex items-center">
         <Link href="/dashboard" className="text-white font-bold text-xl mr-6">
           EZY-ZIP
