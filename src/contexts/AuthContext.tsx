@@ -64,7 +64,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(userData);
           
           // Store sign-in expectation for future page loads
-          localStorage.setItem('expectSignIn', 'true');
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('expectSignIn', 'true');
+          }
 
           // Create or update user document in Firestore
           try {
@@ -94,12 +96,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setUser(null);
           // Clear sign-in expectation when user signs out
-          localStorage.removeItem('expectSignIn');
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('expectSignIn');
+          }
         }
       } catch (error) {
         console.error('Error in auth state change:', error);
         setUser(null);
-        localStorage.removeItem('expectSignIn');
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('expectSignIn');
+        }
       } finally {
         setLoading(false);
         setInitializing(false);
@@ -113,13 +119,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       // Set expectation before sign in to prevent UI flash
-      localStorage.setItem('expectSignIn', 'true');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('expectSignIn', 'true');
+      }
       await signInWithEmailAndPassword(auth, email, password);
       router.push('/dashboard');
     } catch (error: any) {
       console.error('Sign in error:', error);
       // Clear expectation on error
-      localStorage.removeItem('expectSignIn');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('expectSignIn');
+      }
       setLoading(false);
       throw new Error(error.message || 'Failed to sign in');
     }
@@ -130,7 +140,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       // Set expectation before sign up to prevent UI flash
-      localStorage.setItem('expectSignIn', 'true');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('expectSignIn', 'true');
+      }
       const { user: firebaseUser } = await createUserWithEmailAndPassword(auth, email, password);
 
       // Update the user's display name
@@ -142,7 +154,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       console.error('Sign up error:', error);
       // Clear expectation on error
-      localStorage.removeItem('expectSignIn');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('expectSignIn');
+      }
       setLoading(false);
       throw new Error(error.message || 'Failed to create account');
     }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from 'react';
 import { MapPinIcon, XMarkIcon, CheckIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 
@@ -137,7 +137,8 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Generate unique IDs for accessibility
-  const componentId = useMemo(() => id || `place-autocomplete-${Math.random().toString(36).substr(2, 9)}`, [id]);
+  const generatedId = useId();
+  const componentId = id || `place-autocomplete-${generatedId}`;
   const errorId = `${componentId}-error`;
   const descriptionId = `${componentId}-description`;
   const listboxId = `${componentId}-listbox`;
@@ -202,21 +203,22 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
     }
 
     try {
-      // Create the autocomplete element
-      const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement({
-        fields: ['place_id', 'formatted_address', 'name', 'geometry', 'address_components', 'types'],
-      });
-
-      // Apply country filter if specified
-      if (countryFilter) {
-        const countries = Array.isArray(countryFilter) ? countryFilter : [countryFilter];
-        autocompleteElement.componentRestrictions = { country: countries };
+      // Prepare constructor options
+      const countries = countryFilter ? (Array.isArray(countryFilter) ? countryFilter : [countryFilter]) : undefined;
+      const constructorOptions: any = {};
+      
+      // Add country filter to constructor options if specified
+      if (countries) {
+        constructorOptions.componentRestrictions = { country: countries };
       }
-
-      // Apply type filter if specified
+      
+      // Add type filter to constructor options if specified
       if (types && types.length > 0) {
-        autocompleteElement.types = types;
+        constructorOptions.types = types;
       }
+
+      // Create the autocomplete element with options
+      const autocompleteElement = new window.google.maps.places.PlaceAutocompleteElement(constructorOptions);
 
       // Handle place selection
       autocompleteElement.addEventListener('gmp-placeselect', (event: any) => {

@@ -48,6 +48,12 @@ service firebase.storage {
       allow write: if isAuthenticated() && isValidImageFile() && isValidFileSize();
     }
     
+    // Catering events - authenticated users can upload and read their own catering event files
+    match /catering-events/{userId}/{allPaths=**} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) && isValidFileSize();
+    }
+    
     // Documents and receipts - users can only access their own
     match /documents/{userId}/{allPaths=**} {
       allow read, write: if isOwner(userId) && isValidFileSize();

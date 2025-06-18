@@ -23,12 +23,18 @@ import {
   Leaf,
   Award,
   Loader2,
+  Upload,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from '../../components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import TestimonialsSection from '../../components/testimonials/TestimonialsSection';
+import { useAuth } from '../../contexts/AuthContext';
+import { storage, db } from '../../lib/firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface CateringPackage {
   id: string;
@@ -57,6 +63,8 @@ interface MenuItem {
 // Dynamic state will replace static data
 
 export default function CateringPage() {
+  const { user } = useAuth();
+  
   // Dynamic state for data
   const [cateringPackages, setCateringPackages] = useState<CateringPackage[]>(
     [],
@@ -69,6 +77,8 @@ export default function CateringPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPackage, setSelectedPackage] = useState<string>('');
   const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -80,6 +90,7 @@ export default function CateringPage() {
     dietaryRestrictions: '',
     additionalRequests: '',
   });
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   // Fetch catering data
   useEffect(() => {
@@ -238,17 +249,156 @@ export default function CateringPage() {
     });
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    
+    // Validate file types and sizes
+    const validFiles = files.filter(file => {
+      const isValidType = file.type.startsWith('image/') || file.type === 'application/pdf';
+      const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB limit
+      
+      if (!isValidType) {
+        toast({
+          title: 'Invalid file type',
+          description: `${file.name} must be an image or PDF file.`,
+          variant: 'destructive',
+        });
+        return false;
+      }
+      
+      if (!isValidSize) {
+        toast({
+          title: 'File too large',
+          description: `${file.name} must be less than 10MB.`,
+          variant: 'destructive',
+        });
+        return false;
+      }
+      
+      return true;
+    });
+    
+    setSelectedFiles(prev => [...prev, ...validFiles]);
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadFilesToStorage = async (userId: string, eventId: string): Promise<string[]> => {
+    if (selectedFiles.length === 0) return [];
+    
+    const uploadPromises = selectedFiles.map(async (file, index) => {
+      const fileName = `${Date.now()}_${index}_${file.name}`;
+      const storageRef = ref(storage, `catering-events/${userId}/${eventId}/${fileName}`);
+      
+      const metadata = {
+        contentType: file.type,
+        customMetadata: {
+          userId,
+          eventId,
+          uploadedAt: new Date().toISOString(),
+          originalName: file.name,
+        },
+      };
+      
+      const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+      
+      return new Promise<string>((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(prev => ({ ...prev, [file.name]: progress }));
+          },
+          (error) => {
+            console.error('Upload error:', error);
+            reject(new Error(`Failed to upload ${file.name}: ${error.message}`));
+          },
+          async () => {
+            try {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
+              resolve(downloadURL);
+            } catch (error) {
+              reject(error);
+            }
+          }
+        );
+      });
+    });
+    
+    return Promise.all(uploadPromises);
+  };
+
   const handleSubmitQuote = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!user?.uid) {
+      toast({
+        title: 'Authentication Required',
+        description: 'Please sign in to submit a catering request.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    setUploadProgress({});
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Generate unique event ID
+      const eventId = `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Upload files to Firebase Storage
+      let fileUrls: string[] = [];
+      if (selectedFiles.length > 0) {
+        try {
+          fileUrls = await uploadFilesToStorage(user.uid, eventId);
+        } catch (uploadError) {
+          console.error('File upload error:', uploadError);
+          toast({
+            title: 'Upload Error',
+            description: 'Failed to upload files. Please try again.',
+            variant: 'destructive',
+          });
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      // Save catering event data to Firestore
+      const cateringEventData = {
+        userId: user.uid,
+        eventName: formData.eventType || 'Catering Event',
+        eventDate: formData.eventDate,
+        guestCount: parseInt(formData.guestCount) || 0,
+        contactInfo: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        },
+        eventDetails: {
+          eventType: formData.eventType,
+          budget: formData.budget,
+          dietaryRestrictions: formData.dietaryRestrictions,
+          additionalRequests: formData.additionalRequests,
+        },
+        fileUrls,
+        fileCount: selectedFiles.length,
+        createdAt: serverTimestamp(),
+        status: 'pending',
+        eventId,
+      };
+
+      await addDoc(collection(db, 'cateringEvents'), cateringEventData);
 
       toast({
         title: 'Catering Quote Requested!',
         description: "We'll contact you within 24 hours with a detailed quote.",
       });
 
+      // Reset form
       setShowQuoteForm(false);
       setFormData({
         name: '',
@@ -261,12 +411,18 @@ export default function CateringPage() {
         dietaryRestrictions: '',
         additionalRequests: '',
       });
+      setSelectedFiles([]);
+      setUploadProgress({});
+      
     } catch (error) {
+      console.error('Error submitting catering request:', error);
       toast({
         title: 'Error',
         description: 'Failed to submit quote request. Please try again.',
         variant: 'destructive',
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -307,7 +463,11 @@ export default function CateringPage() {
           </h2>
           <p className="text-gray-300 mb-6">{error}</p>
           <Button
-            onClick={() => window.location.reload()}
+            onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.location.reload();
+                    }
+                  }}
             className="bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold"
           >
             Try Again
@@ -860,20 +1020,125 @@ export default function CateringPage() {
                   />
                 </div>
 
+                {/* File Upload Section */}
+                <div>
+                  <label className="block text-white mb-2">
+                    Attachments (Optional)
+                  </label>
+                  <p className="text-gray-400 text-sm mb-3">
+                    Upload images, menus, or other documents related to your event (Max 10MB per file)
+                  </p>
+                  
+                  {/* File Upload Area */}
+                  <div className="border-2 border-dashed border-otw-gold/30 rounded-lg p-6 text-center hover:border-otw-gold/50 transition-colors">
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*,.pdf"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                      id="file-upload"
+                      disabled={submitting}
+                    />
+                    <label
+                      htmlFor="file-upload"
+                      className="cursor-pointer flex flex-col items-center"
+                    >
+                      <Upload className="w-8 h-8 text-otw-gold mb-2" />
+                      <span className="text-white font-medium">
+                        Click to upload files
+                      </span>
+                      <span className="text-gray-400 text-sm">
+                        Images and PDF files only
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Selected Files List */}
+                  {selectedFiles.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <h4 className="text-white font-medium">Selected Files:</h4>
+                      {selectedFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between bg-otw-black-800 p-3 rounded-lg border border-otw-gold/20"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-otw-gold/20 rounded flex items-center justify-center">
+                              {file.type.startsWith('image/') ? (
+                                <span className="text-otw-gold text-xs">IMG</span>
+                              ) : (
+                                <span className="text-otw-gold text-xs">PDF</span>
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-white text-sm font-medium truncate max-w-[200px]">
+                                {file.name}
+                              </p>
+                              <p className="text-gray-400 text-xs">
+                                {(file.size / 1024 / 1024).toFixed(2)} MB
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2">
+                            {/* Upload Progress */}
+                            {uploadProgress[file.name] !== undefined && (
+                              <div className="flex items-center space-x-2">
+                                <div className="w-16 bg-gray-700 rounded-full h-2">
+                                  <div
+                                    className="bg-otw-gold h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${uploadProgress[file.name]}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs text-gray-400">
+                                  {Math.round(uploadProgress[file.name])}%
+                                </span>
+                              </div>
+                            )}
+                            
+                            {/* Remove Button */}
+                            {!submitting && (
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeFile(index)}
+                                className="text-gray-400 hover:text-red-400 p-1"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <div className="flex gap-4">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setShowQuoteForm(false)}
-                    className="flex-1 border-otw-gold/30 text-otw-gold hover:bg-otw-gold/10"
+                    disabled={submitting}
+                    className="flex-1 border-otw-gold/30 text-otw-gold hover:bg-otw-gold/10 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold"
+                    disabled={submitting}
+                    className="flex-1 bg-gradient-to-r from-otw-gold to-yellow-500 text-black font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit Quote Request
+                    {submitting ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                        <span>Submitting...</span>
+                      </div>
+                    ) : (
+                      "Submit Quote Request"
+                    )}
                   </Button>
                 </div>
               </form>
