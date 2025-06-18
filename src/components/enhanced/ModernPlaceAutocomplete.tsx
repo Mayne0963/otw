@@ -241,8 +241,9 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
 
   // Handle place selection from PlaceAutocompleteElement
   const handlePlaceSelectFromElement = useCallback(async (place: GoogleMapsPlace) => {
-    if (!place || !place.place_id) {
-      console.warn('No valid place selected');
+    // Guard against undefined network responses
+    if (!place || !place.place_id || !place.geometry || !place.geometry.location) {
+      console.warn('No valid place selected or incomplete place data');
       return;
     }
 

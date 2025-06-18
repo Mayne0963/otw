@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
+import { ModernGoogleMapsProvider } from '../../../contexts/ModernGoogleMapsContext';
 import {
   ShoppingCart,
   Camera,
@@ -42,7 +43,7 @@ interface CustomerInfo {
   deliveryInstructions: string;
 }
 
-export default function GroceryDeliveryPage() {
+function GroceryDeliveryPageContent() {
   const { user } = useAuth();
   const { addItem, items: cartItems, itemCount, total } = useCart();
   
@@ -999,5 +1000,13 @@ export default function GroceryDeliveryPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GroceryDeliveryPage() {
+  return (
+    <ModernGoogleMapsProvider>
+      <GroceryDeliveryPageContent />
+    </ModernGoogleMapsProvider>
   );
 }

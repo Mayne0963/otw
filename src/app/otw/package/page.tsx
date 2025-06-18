@@ -6,6 +6,7 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
+import { ModernGoogleMapsProvider } from '../../../contexts/ModernGoogleMapsContext';
 
 import {
   Select,
@@ -87,13 +88,30 @@ import Link from 'next/link';
 import { useState } from 'react';
 import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
 
-export default function PackagePage() {
+function PackagePageContent() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [pickupAddress, setPickupAddress] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [packageType, setPackageType] = useState('');
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<PlaceDetails | null>(null);
   const [selectedDeliveryPlace, setSelectedDeliveryPlace] = useState<PlaceDetails | null>(null);
+  
+  // Form state
+  const [packageWeight, setPackageWeight] = useState('');
+  const [packageValue, setPackageValue] = useState('');
+  const [pickupContactName, setPickupContactName] = useState('');
+  const [pickupContactPhone, setPickupContactPhone] = useState('');
+  const [pickupTime, setPickupTime] = useState('');
+  const [recipientName, setRecipientName] = useState('');
+  const [recipientPhone, setRecipientPhone] = useState('');
+  const [deliveryInstructions, setDeliveryInstructions] = useState('');
+  const [specialInstructions, setSpecialInstructions] = useState('');
+  
+  // Submission state
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [orderSubmitted, setOrderSubmitted] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(null);
 
   const deliveryServices = [
     {
@@ -134,6 +152,106 @@ export default function PackagePage() {
     { name: 'Medium Package', icon: Package, maxWeight: '25 lbs', examples: 'Clothing, household items' },
     { name: 'Large Package', icon: Package, maxWeight: '50 lbs', examples: 'Appliances, furniture parts' },
   ];
+
+  const validateForm = (): string | null => {
+    if (!selectedPickupPlace) return 'Please select a pickup address';
+    if (!selectedDeliveryPlace) return 'Please select a delivery address';
+    if (!packageType) return 'Please select a package type';
+    if (!pickupContactName.trim()) return 'Please enter pickup contact name';
+    if (!pickupContactPhone.trim()) return 'Please enter pickup contact phone';
+    if (!recipientName.trim()) return 'Please enter recipient name';
+    if (!recipientPhone.trim()) return 'Please enter recipient phone';
+    if (!pickupTime) return 'Please select pickup time';
+    
+    // Basic phone validation
+    const phoneRegex = /^[\d\s\-\(\)\+]{10,}$/;
+    if (!phoneRegex.test(pickupContactPhone.replace(/\s/g, ''))) {
+      return 'Please enter a valid pickup contact phone number';
+    }
+    if (!phoneRegex.test(recipientPhone.replace(/\s/g, ''))) {
+      return 'Please enter a valid recipient phone number';
+    }
+    
+    return null;
+  };
+
+  const handleSubmitOrder = async () => {
+    setSubmitError(null);
+    
+    // Validate form
+    const validationError = validateForm();
+    if (validationError) {
+      setSubmitError(validationError);
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Prepare order data
+      const orderData = {
+        type: 'package-delivery',
+        service: selectedService,
+        pickup: {
+          address: selectedPickupPlace?.formatted_address || pickupAddress,
+          coordinates: selectedPickupPlace ? {
+            lat: selectedPickupPlace.geometry?.location?.lat(),
+            lng: selectedPickupPlace.geometry?.location?.lng()
+          } : null,
+          contactName: pickupContactName.trim(),
+          contactPhone: pickupContactPhone.trim(),
+          time: pickupTime
+        },
+        delivery: {
+          address: selectedDeliveryPlace?.formatted_address || deliveryAddress,
+          coordinates: selectedDeliveryPlace ? {
+            lat: selectedDeliveryPlace.geometry?.location?.lat(),
+            lng: selectedDeliveryPlace.geometry?.location?.lng()
+          } : null,
+          recipientName: recipientName.trim(),
+          recipientPhone: recipientPhone.trim(),
+          instructions: deliveryInstructions
+        },
+        package: {
+          type: packageType,
+          weight: packageWeight,
+          value: packageValue
+        },
+        specialInstructions: specialInstructions.trim(),
+        timestamp: new Date().toISOString()
+      };
+      
+      // Submit to backend API
+      const response = await fetch('/api/orders/package-delivery', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error occurred' }));
+        throw new Error(errorData.message || `Server error: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      
+      // Set order ID and mark as submitted
+      setOrderId(result.orderId || `PD${Date.now().toString().slice(-6)}`);
+      setOrderSubmitted(true);
+      
+    } catch (error) {
+      console.error('Package delivery order submission error:', error);
+      setSubmitError(
+        error instanceof Error 
+          ? error.message 
+          : 'Unable to place order. Please check your connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen pb-20 pt-16">
@@ -318,7 +436,10 @@ export default function PackagePage() {
                 return (
                   <div
                     key={type.name}
-                    className="group otw-card p-6 text-center hover:shadow-otw-lg transition-all duration-300 cursor-pointer hover:border-otw-gold/40"
+                    onClick={() => setPackageType(type.name)}
+                    className={`group otw-card p-6 text-center hover:shadow-otw-lg transition-all duration-300 cursor-pointer hover:border-otw-gold/40 ${
+                      packageType === type.name ? 'border-otw-gold bg-otw-gold/10' : ''
+                    }`}
                   >
                     <div className="w-12 h-12 bg-otw-gold rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
                       <IconComponent className="w-6 h-6 text-otw-black" />
@@ -353,11 +474,21 @@ export default function PackagePage() {
                   <div className="grid grid-cols-2 gap-2 mt-2">
                     <div className="relative">
                       <Scale className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input placeholder="Weight (lbs)" className="pl-10 h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl py-3 transition-all" />
+                      <Input 
+                        placeholder="Weight (lbs)" 
+                        value={packageWeight}
+                        onChange={(e) => setPackageWeight(e.target.value)}
+                        className="pl-10 h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl py-3 transition-all" 
+                      />
                     </div>
                     <div className="relative">
                       <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input placeholder="Value ($)" className="pl-10 h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl py-3 transition-all" />
+                      <Input 
+                        placeholder="Value ($)" 
+                        value={packageValue}
+                        onChange={(e) => setPackageValue(e.target.value)}
+                        className="pl-10 h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl py-3 transition-all" 
+                      />
                     </div>
                   </div>
                 </div>
@@ -367,9 +498,19 @@ export default function PackagePage() {
                 <div>
                   <Label className="text-gray-300 font-medium">Pickup details</Label>
                   <div className="space-y-3 mt-2">
-                    <Input placeholder="Contact name" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
-                    <Input placeholder="Phone number" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
-                    <Select>
+                    <Input 
+                      placeholder="Contact name" 
+                      value={pickupContactName}
+                      onChange={(e) => setPickupContactName(e.target.value)}
+                      className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" 
+                    />
+                    <Input 
+                      placeholder="Phone number" 
+                      value={pickupContactPhone}
+                      onChange={(e) => setPickupContactPhone(e.target.value)}
+                      className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" 
+                    />
+                    <Select value={pickupTime} onValueChange={setPickupTime}>
                       <SelectTrigger className="h-12 bg-otw-black/50 border-gray-600 text-white rounded-xl px-4 py-3 focus:border-otw-gold">
                         <SelectValue placeholder="Pickup time" />
                       </SelectTrigger>
@@ -386,9 +527,19 @@ export default function PackagePage() {
                 <div>
                   <Label className="text-gray-300 font-medium">Delivery details</Label>
                   <div className="space-y-3 mt-2">
-                    <Input placeholder="Recipient name" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
-                    <Input placeholder="Recipient phone" className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" />
-                    <Select>
+                    <Input 
+                      placeholder="Recipient name" 
+                      value={recipientName}
+                      onChange={(e) => setRecipientName(e.target.value)}
+                      className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" 
+                    />
+                    <Input 
+                      placeholder="Recipient phone" 
+                      value={recipientPhone}
+                      onChange={(e) => setRecipientPhone(e.target.value)}
+                      className="h-12 bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all" 
+                    />
+                    <Select value={deliveryInstructions} onValueChange={setDeliveryInstructions}>
                       <SelectTrigger className="h-12 bg-otw-black/50 border-gray-600 text-white rounded-xl px-4 py-3 focus:border-otw-gold">
                         <SelectValue placeholder="Delivery instructions" />
                       </SelectTrigger>
@@ -407,6 +558,8 @@ export default function PackagePage() {
                 <Label className="text-gray-300 font-medium">Special instructions (optional)</Label>
                 <Textarea
                   placeholder="Any special handling instructions, access codes, or delivery notes..."
+                  value={specialInstructions}
+                  onChange={(e) => setSpecialInstructions(e.target.value)}
                   className="mt-2 min-h-[100px] bg-otw-black/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-otw-gold rounded-xl px-4 py-3 transition-all"
                 />
               </div>
@@ -438,17 +591,47 @@ export default function PackagePage() {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="outline" className="flex-1 h-12 border-gray-600 text-white bg-transparent hover:bg-gray-800 rounded-xl font-semibold uppercase tracking-wide">
-                  Save as template
-                </Button>
-                <Link href="/checkout" className="flex-1">
-                  <Button className="w-full h-12 bg-otw-gold hover:bg-otw-gold/90 text-otw-black font-bold rounded-xl uppercase tracking-wide">
-                    Schedule pickup
-                    <ArrowRight className="ml-2 w-5 h-5" />
+              {submitError && (
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+                  <p className="text-red-400 text-sm">{submitError}</p>
+                </div>
+              )}
+
+              {orderSubmitted ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Order Placed Successfully!</h3>
+                  <p className="text-gray-400 mb-4">Your package delivery has been scheduled.</p>
+                  {orderId && (
+                    <p className="text-otw-gold font-semibold">Order ID: {orderId}</p>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button variant="outline" className="flex-1 h-12 border-gray-600 text-white bg-transparent hover:bg-gray-800 rounded-xl font-semibold uppercase tracking-wide">
+                    Save as template
                   </Button>
-                </Link>
-              </div>
+                  <Button 
+                    onClick={handleSubmitOrder}
+                    disabled={isSubmitting}
+                    className="flex-1 h-12 bg-otw-gold hover:bg-otw-gold/90 text-otw-black font-bold rounded-xl uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 border-2 border-otw-black border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Processing...
+                      </div>
+                    ) : (
+                      <>
+                        Schedule pickup
+                        <ArrowRight className="ml-2 w-5 h-5" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -568,5 +751,13 @@ export default function PackagePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function PackagePage() {
+  return (
+    <ModernGoogleMapsProvider>
+      <PackagePageContent />
+    </ModernGoogleMapsProvider>
   );
 }

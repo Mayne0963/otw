@@ -2,6 +2,8 @@
 
 // export const dynamic = "force-dynamic";
 
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -20,13 +22,14 @@ interface ServiceCardProps {
   buttonVariant: 'primary' | 'secondary';
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({
+const ServiceCard: React.FC<ServiceCardProps & { handleServiceClick?: (title: string, href: string) => void }> = ({
   icon,
   title,
   description,
   href,
   buttonText,
   buttonVariant,
+  handleServiceClick,
 }) => (
   <div className="otw-card group relative overflow-hidden transform hover:scale-105 transition-all duration-500 hover:shadow-2xl hover:shadow-otw-red/20">
     <div className="absolute inset-0 bg-gradient-to-br from-otw-red/5 via-transparent to-otw-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -36,11 +39,14 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       </div>
       <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-otw-gold transition-colors duration-300">{title}</h3>
       <p className="text-gray-400 mb-6 group-hover:text-gray-300 transition-colors duration-300">{description}</p>
-      <Link href={href}>
-        <Button variant={buttonVariant} className="w-full group-hover:scale-105 transition-transform duration-300">
-          {buttonText}
-        </Button>
-      </Link>
+      <Button 
+        variant={buttonVariant} 
+        className="w-full group-hover:scale-105 transition-transform duration-300"
+        href={href}
+        onClick={() => handleServiceClick && handleServiceClick(title, href)}
+      >
+        {buttonText}
+      </Button>
     </div>
   </div>
 );
@@ -48,11 +54,75 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAddress, setSelectedAddress] = useState<PlaceDetails | null>(null);
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscriptionMessage, setSubscriptionMessage] = useState('');
 
   const handleAddressSelect = (place: PlaceDetails) => {
     setSelectedAddress(place);
     console.log('Selected address:', place.formatted_address);
     console.log('Coordinates:', place.geometry.location.lat(), place.geometry.location.lng());
+  };
+
+  // Analytics and tracking functions
+  const trackButtonClick = (buttonName: string, destination?: string) => {
+    console.log(`Button clicked: ${buttonName}`, { destination, timestamp: new Date().toISOString() });
+    // Here you would integrate with your analytics service (Google Analytics, Mixpanel, etc.)
+  };
+
+  // App download handlers
+  const handleiOSDownload = () => {
+    trackButtonClick('iOS App Download');
+    // For now, show an alert. In production, this would redirect to App Store
+    alert('🚀 iOS app coming soon! We\'ll notify you when it\'s available.');
+  };
+
+  const handleAndroidDownload = () => {
+    trackButtonClick('Android App Download');
+    // For now, show an alert. In production, this would redirect to Google Play Store
+    alert('🚀 Android app coming soon! We\'ll notify you when it\'s available.');
+  };
+
+  // Newsletter subscription handler
+  const handleNewsletterSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setSubscriptionMessage('Please enter your email address.');
+      return;
+    }
+
+    setIsSubscribing(true);
+    trackButtonClick('Newsletter Signup', email);
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setSubscriptionMessage('🎉 Thanks for subscribing! Check your email for exclusive deals.');
+      setEmail('');
+      setPhone('');
+    } catch (error) {
+      setSubscriptionMessage('Something went wrong. Please try again.');
+    } finally {
+      setIsSubscribing(false);
+      setTimeout(() => setSubscriptionMessage(''), 5000);
+    }
+  };
+
+  // Search functionality
+  const handleRestaurantSearch = () => {
+    trackButtonClick('Restaurant Search', searchQuery);
+    if (searchQuery.trim()) {
+      // In a real app, this would filter results or redirect with search params
+      window.location.href = `/restaurants?search=${encodeURIComponent(searchQuery)}&address=${selectedAddress?.formatted_address || ''}`;
+    } else {
+      window.location.href = '/restaurants';
+    }
+  };
+
+  // Service card click handler
+  const handleServiceClick = (serviceName: string, href: string) => {
+    trackButtonClick(`Service: ${serviceName}`, href);
   };
 
   return (
@@ -82,10 +152,20 @@ export default function Home() {
 
             {/* Service Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <Button href="/restaurants" variant="primary" className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300 bg-otw-red hover:bg-otw-red/80">
+              <Button 
+                href="/restaurants" 
+                variant="primary" 
+                className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300 bg-otw-red hover:bg-otw-red/80"
+                onClick={() => trackButtonClick('Hero: Order Broskis', '/restaurants')}
+              >
                 Order Broskis = Free Delivery
               </Button>
-              <Button href="/otw/grocery-delivery" variant="secondary" className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300">
+              <Button 
+                href="/otw/grocery-delivery" 
+                variant="secondary" 
+                className="text-xl px-12 py-6 transform hover:scale-105 transition-all duration-300"
+                onClick={() => trackButtonClick('Hero: Order Groceries', '/otw/grocery-delivery')}
+              >
                 Order Groceries
               </Button>
             </div>
@@ -129,6 +209,7 @@ export default function Home() {
               href="/otw/rides"
               buttonText="Order A Ride"
               buttonVariant="primary"
+              handleServiceClick={handleServiceClick}
             />
             <ServiceCard
               icon="🛒"
@@ -137,6 +218,7 @@ export default function Home() {
               href="/otw/grocery-delivery"
               buttonText="Shop Groceries"
               buttonVariant="secondary"
+              handleServiceClick={handleServiceClick}
             />
             <ServiceCard
               icon="🎉"
@@ -145,6 +227,7 @@ export default function Home() {
               href="/events"
               buttonText="Plan Event"
               buttonVariant="primary"
+              handleServiceClick={handleServiceClick}
             />
           </div>
         </div>
@@ -178,11 +261,13 @@ export default function Home() {
                   className="px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold"
                 />
               </div>
-              <Link href="/restaurants">
-                <Button variant="primary" className="px-8 py-4">
-                  Search
-                </Button>
-              </Link>
+              <Button 
+                variant="primary" 
+                className="px-8 py-4"
+                onClick={handleRestaurantSearch}
+              >
+                Search
+              </Button>
             </div>
 
             <MapSearch />
@@ -364,10 +449,18 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="primary" className="text-lg px-8 py-4">
+                <Button 
+                  variant="primary" 
+                  className="text-lg px-8 py-4"
+                  onClick={handleiOSDownload}
+                >
                   📱 Download for iOS
                 </Button>
-                <Button variant="secondary" className="text-lg px-8 py-4">
+                <Button 
+                  variant="secondary" 
+                  className="text-lg px-8 py-4"
+                  onClick={handleAndroidDownload}
+                >
                   🤖 Download for Android
                 </Button>
               </div>
@@ -410,6 +503,7 @@ export default function Home() {
               href="/events"
               buttonText="Plan Event"
               buttonVariant="primary"
+              handleServiceClick={handleServiceClick}
             />
             <ServiceCard
               icon="🛍️"
@@ -418,6 +512,7 @@ export default function Home() {
               href="/shop"
               buttonText="Start Shopping"
               buttonVariant="secondary"
+              handleServiceClick={handleServiceClick}
             />
             <ServiceCard
               icon="⭐"
@@ -426,13 +521,14 @@ export default function Home() {
               href="/tier"
               buttonText="Join VIP"
               buttonVariant="primary"
+              handleServiceClick={handleServiceClick}
             />
           </div>
         </div>
       </section>
 
       {/* Newsletter Signup */}
-      <section className="py-24 bg-gradient-to-r from-otw-red/20 via-black to-otw-gold/20">
+      <section className="py-24 bg-gradient-to-r from-otw-red/20 via-black to-otw-gold/20 relative">
         {/* Background Effects */}
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-0 w-96 h-96 bg-otw-gold/10 rounded-full blur-3xl" />
@@ -441,7 +537,7 @@ export default function Home() {
           <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-otw-gold/30 to-transparent" />
         </div>
 
-        <div className="max-w-4xl mx-auto relative z-10">
+        <div className="max-w-4xl mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold">
               <span className="bg-gradient-to-r from-otw-gold via-white to-otw-gold bg-clip-text text-transparent">
@@ -455,23 +551,36 @@ export default function Home() {
             </p>
 
             <div className="max-w-md mx-auto">
-              <form className="flex flex-col sm:flex-row gap-4">
+              <form onSubmit={handleNewsletterSignup} className="flex flex-col sm:flex-row gap-4">
                 <input
                   type="email"
                   placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold backdrop-blur-sm"
+                  required
                 />
                 <input
                   type="tel"
                   placeholder="Phone (optional)"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-otw-gold backdrop-blur-sm"
                 />
-                <Link href="/signup">
-                  <Button variant="primary" className="px-8 py-4 whitespace-nowrap">
-                    Join Now
-                  </Button>
-                </Link>
+                <Button 
+                  variant="primary" 
+                  className="px-8 py-4 whitespace-nowrap"
+                  disabled={isSubscribing}
+                  type="submit"
+                >
+                  {isSubscribing ? 'Joining...' : 'Join Now'}
+                </Button>
               </form>
+              {subscriptionMessage && (
+                <div className="mt-4 p-3 bg-white/10 border border-white/20 rounded-lg text-white text-center backdrop-blur-sm">
+                  {subscriptionMessage}
+                </div>
+              )}
             </div>
           </div>
         </div>

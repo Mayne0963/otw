@@ -131,10 +131,10 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
           return;
         }
 
-        // Check if script is already loading
+        // Check if script is already loading or loaded
         const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
         if (existingScript) {
-          // Script is loading, wait for it
+          // Script is loading or loaded, wait for it
           const checkInterval = setInterval(() => {
             if (window.google?.maps?.places?.PlaceAutocompleteElement) {
               setIsApiLoaded(true);
@@ -148,32 +148,23 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
           return;
         }
 
-        // Load the API
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
-        script.async = true;
-        script.onload = () => {
-          // Wait for the API to be fully initialized
-          const checkReady = setInterval(() => {
-            if (window.google?.maps?.places?.PlaceAutocompleteElement) {
-              setIsApiLoaded(true);
-              setLoadError(null);
-              clearInterval(checkReady);
-            }
-          }, 100);
+        // If no script exists, wait for ModernGoogleMapsProvider to load it
+        // Don't load the script here to avoid duplicates
+        const checkProviderLoaded = setInterval(() => {
+          if (window.google?.maps?.places?.PlaceAutocompleteElement) {
+            setIsApiLoaded(true);
+            setLoadError(null);
+            clearInterval(checkProviderLoaded);
+          }
+        }, 100);
 
-          // Clear interval after 5 seconds
-          setTimeout(() => {
-            clearInterval(checkReady);
-            if (!window.google?.maps?.places?.PlaceAutocompleteElement) {
-              setLoadError('Failed to initialize Google Maps Places API');
-            }
-          }, 5000);
-        };
-        script.onerror = () => {
-          setLoadError('Failed to load Google Maps API');
-        };
-        document.head.appendChild(script);
+        // Clear interval after 15 seconds and show error
+        setTimeout(() => {
+          clearInterval(checkProviderLoaded);
+          if (!window.google?.maps?.places?.PlaceAutocompleteElement) {
+            setLoadError('Google Maps API not loaded by provider. Please ensure ModernGoogleMapsProvider is configured.');
+          }
+        }, 15000);
       }
     };
 
@@ -187,8 +178,9 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
     try {
       const place = autocompleteRef.current.getPlace();
 
-      if (!place || !place.place_id) {
-        console.warn('No valid place selected');
+      // Guard against undefined network responses
+      if (!place || !place.place_id || !place.geometry || !place.geometry.location) {
+        console.warn('No valid place selected or incomplete place data');
         return;
       }
 

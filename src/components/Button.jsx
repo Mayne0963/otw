@@ -10,6 +10,7 @@ export default function Button({
   fullWidth = false,
   size = 'md',
   disabled = false,
+  onClick,
   ...props
 }) {
   const baseClasses =
@@ -38,14 +39,24 @@ export default function Button({
 
   if (href && !disabled) {
     return (
-      <Link href={href} className={buttonClasses} {...props}>
+      <Link 
+        href={href} 
+        className={buttonClasses} 
+        onClick={onClick}
+        {...props}
+      >
         {children}
       </Link>
     );
   }
 
   return (
-    <button className={buttonClasses} disabled={disabled} {...props}>
+    <button 
+      className={buttonClasses} 
+      disabled={disabled} 
+      onClick={onClick}
+      {...props}
+    >
       {children}
     </button>
   );
