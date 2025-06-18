@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
 import { ModernGoogleMapsProvider } from '../../../contexts/ModernGoogleMapsContext';
 import {
@@ -43,7 +42,7 @@ interface CustomerInfo {
 
 function GroceryDeliveryPageContent() {
   const { user } = useAuth();
-  const { addItem, items: cartItems, itemCount, total } = useCart();
+  const { addItem } = useCart();
   
   const [receipt, setReceipt] = useState<File | null>(null);
   const [receiptPreview, setReceiptPreview] = useState<string>('');
@@ -66,7 +65,7 @@ function GroceryDeliveryPageContent() {
   const [orderSubmitted, setOrderSubmitted] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadError, setUploadError] = useState<string>('');
-  const [showCartIntegration, setShowCartIntegration] = useState(false);
+  const [showCartIntegration] = useState(false);
   
   // Auto-fill customer info if user is logged in
   useEffect(() => {
@@ -75,24 +74,17 @@ function GroceryDeliveryPageContent() {
         ...prev,
         name: user.displayName || prev.name,
         email: user.email || prev.email,
-        phone: user.phoneNumber || prev.phone
       }));
     }
   }, [user]);
 
-  const stores = [
-    { value: 'fresh-market', label: 'Fresh Market', deliveryFee: '$4.99' },
-    { value: 'supermart', label: 'SuperMart', deliveryFee: '$3.99' },
-    { value: 'organic-foods', label: 'Organic Foods Co.', deliveryFee: '$5.99' },
-    { value: 'quick-stop', label: 'Quick Stop Grocery', deliveryFee: '$2.99' },
-    { value: 'whole-foods', label: 'Whole Foods Market', deliveryFee: '$6.99' },
-  ];
+
 
   // Generate dynamic time slots based on current time and store hours
   const generateTimeSlots = () => {
     const now = new Date();
     const currentHour = now.getHours();
-    let currentMinutes = now.getMinutes();
+    const currentMinutes = now.getMinutes();
     const slots = [];
 
     // Store hours: 8 AM to 10 PM
@@ -264,7 +256,7 @@ function GroceryDeliveryPageContent() {
       description: `${items.length} items have been added to your cart.`,
     });
     
-    setShowCartIntegration(true);
+    _setShowCartIntegration(true);
   };
 
   // Update grocery list and parse items
@@ -377,7 +369,7 @@ function GroceryDeliveryPageContent() {
     if (!customerInfo.email.trim()) {
       errors.push('Please enter your email address');
     }
-    if (!selectedAddress || !selectedAddress.trim()) {
+    if (!deliveryAddress || !deliveryAddress.trim()) {
       errors.push('Please enter a delivery address');
     }
     if (!deliveryTime.timeSlot) {
@@ -418,7 +410,7 @@ function GroceryDeliveryPageContent() {
       // Prepare order data
       const orderData = {
         type: 'grocery-delivery',
-        store: selectedStore,
+        storeId: selectedStore,
         customer: {
           name: customerInfo.name.trim(),
           phone: customerInfo.phone.trim(),
@@ -786,12 +778,12 @@ function GroceryDeliveryPageContent() {
                 onPlaceSelect={(place) => {
                   if (place && place.address) {
                     setSelectedPlace(place);
-                    setDeliveryAddress(place.address);
                     setSelectedAddress(place.address);
+                    setDeliveryAddress(place.address);
                   } else {
                     setSelectedPlace(null);
-                    setDeliveryAddress('');
                     setSelectedAddress('');
+                    setDeliveryAddress('');
                   }
                 }}
                 placeholder="Enter your delivery address"

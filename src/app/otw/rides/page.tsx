@@ -75,20 +75,15 @@ import type { PlaceDetails } from '../../../components/enhanced/ModernPlaceAutoc
 import { BookingFormData } from '../../../components/enhanced/ModernBookingForm';
 
 export default function RidesPage() {
-  const [pickup, setPickup] = useState('');
-  const [destination, setDestination] = useState('');
-  const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
   const [selectedVehicle, setSelectedVehicle] = useState<string>('standard');
-  const [pickupAddress, setPickupAddress] = useState('');
-  const [destinationAddress, setDestinationAddress] = useState('');
   const [selectedPickupAddress, setSelectedPickupAddress] = useState('');
   const [selectedDestinationAddress, setSelectedDestinationAddress] = useState('');
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<PlaceDetails | null>(null);
   const [selectedDestinationPlace, setSelectedDestinationPlace] = useState<PlaceDetails | null>(null);
-  const [selectedService, setSelectedService] = useState<string>('');
   const [isLoadingFare, setIsLoadingFare] = useState(false);
   const [fareEstimateData, setFareEstimateData] = useState<any>(null);
   const [fareError, setFareError] = useState<string | null>(null);
+  const [estimatedFare, setEstimatedFare] = useState<number | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -207,12 +202,12 @@ export default function RidesPage() {
           pickupLocation: {
             lat: selectedPickupPlace?.location?.lat || 0,
             lng: selectedPickupPlace?.location?.lng || 0,
-            address: pickupAddress,
+            address: selectedPickupAddress,
           },
           destination: {
             lat: selectedDestinationPlace?.location?.lat || 0,
             lng: selectedDestinationPlace?.location?.lng || 0,
-            address: destinationAddress,
+            address: selectedDestinationAddress,
           },
           vehicleType: selectedVehicle,
         }),
@@ -337,29 +332,21 @@ export default function RidesPage() {
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-[var(--color-harvest-gold)] rounded-full z-10"></div>
                     <ModernPlaceAutocomplete
-                      label=""
                       placeholder="Enter pickup location"
                       value={selectedPickupAddress}
                       onPlaceSelect={(place) => {
-                        if (place.placeId && place.formattedAddress) {
+                        if (place && place.placeId && place.formattedAddress) {
                           setSelectedPickupPlace(place);
-                          setPickupAddress(place.formattedAddress);
                           setSelectedPickupAddress(place.formattedAddress);
-                          setPickup(place.formattedAddress);
                         } else {
-                          // Handle clear action
                           setSelectedPickupPlace(null);
-                          setPickupAddress('');
                           setSelectedPickupAddress('');
-                          setPickup('');
                         }
                       }}
                       className="w-full"
                       inputClassName="input-otw pl-12 h-14"
-                      serviceArea={{
-                        center: { lat: 41.0793, lng: -85.1394 },
-                        radius: 50000,
-                      }}
+                      serviceAreaCenter={{ lat: 41.0793, lng: -85.1394 }}
+                      serviceAreaRadius={50000}
                       debounceMs={300}
                     />
                     <MapPin className="absolute right-4 top-3 text-[var(--color-muted)]" />
@@ -371,21 +358,15 @@ export default function RidesPage() {
                   <div className="relative">
                     <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-3 h-3 bg-otw-red rounded-full z-10"></div>
                     <ModernPlaceAutocomplete
-                      label=""
                       placeholder="Where to?"
                       value={selectedDestinationAddress}
                       onPlaceSelect={(place) => {
-                        if (place.placeId && place.formattedAddress) {
+                        if (place && place.placeId && place.formattedAddress) {
                           setSelectedDestinationPlace(place);
-                          setDestinationAddress(place.formattedAddress);
                           setSelectedDestinationAddress(place.formattedAddress);
-                          setDestination(place.formattedAddress);
                         } else {
-                          // Handle clear action
                           setSelectedDestinationPlace(null);
-                          setDestinationAddress('');
                           setSelectedDestinationAddress('');
-                          setDestination('');
                         }
                       }}
                       className="w-full"

@@ -40,24 +40,6 @@ import {
   FaGift,
   FaSnowflake,
   FaExclamationTriangle,
-  FaCheckCircle,
-  FaInfoCircle,
-  FaStar,
-  FaThumbsUp,
-  FaHeart,
-  FaShare,
-  FaComment,
-  FaEye,
-  FaDownload,
-  FaPrint,
-  FaEdit,
-  FaTrash,
-  FaPlus,
-  FaMinus,
-  FaArrowLeft,
-  FaArrowRight,
-  FaArrowUp,
-  FaArrowDown,
 } from 'react-icons/fa';
 import {
   CalendarIcon,
@@ -312,12 +294,12 @@ function PackagePageContent() {
                   onPlaceSelect={(place) => {
                     if (place && place.address) {
                       setSelectedPickupPlace(place);
-                      setPickupAddress(place.address);
                       setSelectedPickupAddress(place.address);
+                      setPickupAddress(place.address);
                     } else {
                       setSelectedPickupPlace(null);
-                      setPickupAddress('');
                       setSelectedPickupAddress('');
+                      setPickupAddress('');
                     }
                   }}
                   placeholder="Where should we pick up your package?"
@@ -333,12 +315,12 @@ function PackagePageContent() {
                   onPlaceSelect={(place) => {
                     if (place && place.address) {
                       setSelectedDeliveryPlace(place);
-                      setDeliveryAddress(place.address);
                       setSelectedDeliveryAddress(place.address);
+                      setDeliveryAddress(place.address);
                     } else {
                       setSelectedDeliveryPlace(null);
-                      setDeliveryAddress('');
                       setSelectedDeliveryAddress('');
+                      setDeliveryAddress('');
                     }
                   }}
                   placeholder="Where should we deliver your package?"
@@ -370,7 +352,7 @@ function PackagePageContent() {
                 <Button
                   size="lg"
                   className="w-full h-14 text-lg font-bold bg-otw-gold hover:bg-otw-gold-600 text-otw-black rounded-full transition-all transform hover:scale-105 otw-button"
-                  disabled={!pickupAddress || !deliveryAddress}
+                  disabled={!selectedPickupAddress || !selectedDeliveryAddress}
                 >
                   Calculate price & time
                   <ArrowRight className="ml-2 w-5 h-5" />
