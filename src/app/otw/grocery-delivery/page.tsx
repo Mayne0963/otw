@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import AdvancedAddressAutocomplete, { PlaceDetails } from '../../../components/AdvancedAddressAutocomplete';
 import { ModernGoogleMapsProvider } from '../../../contexts/ModernGoogleMapsContext';
 import {
@@ -29,9 +29,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useCart } from '../../../lib/context/CartContext';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/use-toast';
 
@@ -59,10 +57,10 @@ function GroceryDeliveryPageContent() {
     deliveryInstructions: '',
   });
   const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [selectedAddress, setSelectedAddress] = useState('');
   const [selectedPlace, setSelectedPlace] = useState<PlaceDetails | null>(null);
   const [selectedStore, setSelectedStore] = useState('');
   const [deliveryTime, setDeliveryTime] = useState({ date: '', timeSlot: '' });
-  const [specificTime, setSpecificTime] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderSubmitted, setOrderSubmitted] = useState(false);
@@ -94,7 +92,7 @@ function GroceryDeliveryPageContent() {
   const generateTimeSlots = () => {
     const now = new Date();
     const currentHour = now.getHours();
-    const currentMinutes = now.getMinutes();
+    let currentMinutes = now.getMinutes();
     const slots = [];
 
     // Store hours: 8 AM to 10 PM
@@ -254,7 +252,7 @@ function GroceryDeliveryPageContent() {
         name: item.name,
         price: item.price,
         quantity: item.quantity,
-        restaurant: selectedStore || 'Grocery Store',
+        store: selectedStore || 'Grocery Store',
         image: undefined,
         description: 'Grocery item',
         customizations: {}
@@ -367,13 +365,27 @@ function GroceryDeliveryPageContent() {
   const validateForm = () => {
     const errors = [];
     
-    if (!selectedStore) errors.push('Please select a store');
-    if (!customerInfo.name.trim()) errors.push('Please enter your name');
-    if (!customerInfo.phone.trim()) errors.push('Please enter your phone number');
-    if (!customerInfo.email.trim()) errors.push('Please enter your email address');
-    if (!deliveryAddress.trim()) errors.push('Please enter a delivery address');
-    if (!deliveryTime.timeSlot) errors.push('Please select a delivery time');
-    if (groceryList.trim().length === 0) errors.push('Please add items to your grocery list');
+    if (!selectedStore) {
+      errors.push('Please select a store');
+    }
+    if (!customerInfo.name.trim()) {
+      errors.push('Please enter your name');
+    }
+    if (!customerInfo.phone.trim()) {
+      errors.push('Please enter your phone number');
+    }
+    if (!customerInfo.email.trim()) {
+      errors.push('Please enter your email address');
+    }
+    if (!selectedAddress || !selectedAddress.trim()) {
+      errors.push('Please enter a delivery address');
+    }
+    if (!deliveryTime.timeSlot) {
+      errors.push('Please select a delivery time');
+    }
+    if (groceryList.trim().length === 0) {
+      errors.push('Please add items to your grocery list');
+    }
     
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -415,8 +427,8 @@ function GroceryDeliveryPageContent() {
         delivery: {
           address: deliveryAddress,
           coordinates: selectedPlace ? {
-            lat: selectedPlace.geometry?.location?.lat(),
-            lng: selectedPlace.geometry?.location?.lng()
+            lat: selectedPlace.lat,
+            lng: selectedPlace.lng
           } : null,
           timeSlot: deliveryTime.timeSlot,
           timeValue: deliveryTime.date
@@ -769,9 +781,18 @@ function GroceryDeliveryPageContent() {
                 <h2 className="text-[var(--color-harvest-gold)] text-sm font-semibold uppercase tracking-wide">Delivery Address</h2>
               </div>
               <AdvancedAddressAutocomplete
+                label="Delivery Address"
+                value={selectedAddress}
                 onPlaceSelect={(place) => {
-                  setSelectedPlace(place);
-                  setDeliveryAddress(place.address);
+                  if (place && place.address) {
+                    setSelectedPlace(place);
+                    setDeliveryAddress(place.address);
+                    setSelectedAddress(place.address);
+                  } else {
+                    setSelectedPlace(null);
+                    setDeliveryAddress('');
+                    setSelectedAddress('');
+                  }
                 }}
                 placeholder="Enter your delivery address"
                 className="w-full"

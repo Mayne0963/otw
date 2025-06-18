@@ -81,6 +81,8 @@ export default function RidesPage() {
   const [selectedVehicle, setSelectedVehicle] = useState<string>('standard');
   const [pickupAddress, setPickupAddress] = useState('');
   const [destinationAddress, setDestinationAddress] = useState('');
+  const [selectedPickupAddress, setSelectedPickupAddress] = useState('');
+  const [selectedDestinationAddress, setSelectedDestinationAddress] = useState('');
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<PlaceDetails | null>(null);
   const [selectedDestinationPlace, setSelectedDestinationPlace] = useState<PlaceDetails | null>(null);
   const [selectedService, setSelectedService] = useState<string>('');
@@ -132,16 +134,16 @@ export default function RidesPage() {
         pickup: {
           address: formData.pickup?.displayName || '',
           coordinates: {
-            lat: formData.pickup?.geometry?.location?.lat() || 0,
-            lng: formData.pickup?.geometry?.location?.lng() || 0
-          }
+            lat: formData.pickup?.location?.lat || 0,
+            lng: formData.pickup?.location?.lng || 0,
+          },
         },
         destination: {
           address: formData.destination?.displayName || '',
           coordinates: {
-            lat: formData.destination?.geometry?.location?.lat() || 0,
-            lng: formData.destination?.geometry?.location?.lng() || 0
-          }
+            lat: formData.destination?.location?.lat || 0,
+            lng: formData.destination?.location?.lng || 0,
+          },
         },
         schedule: {
           date: formData.date,
@@ -186,7 +188,7 @@ export default function RidesPage() {
   };
 
   const handleFareEstimate = async () => {
-    if (!pickupAddress || !destinationAddress) {
+    if (!selectedPickupAddress || !selectedPickupAddress.trim() || !selectedDestinationAddress || !selectedDestinationAddress.trim()) {
       setFareError('Please select both pickup and destination locations');
       return;
     }
@@ -203,13 +205,13 @@ export default function RidesPage() {
         },
         body: JSON.stringify({
           pickupLocation: {
-            lat: selectedPickupPlace?.geometry?.location?.lat() || 0,
-            lng: selectedPickupPlace?.geometry?.location?.lng() || 0,
+            lat: selectedPickupPlace?.location?.lat || 0,
+            lng: selectedPickupPlace?.location?.lng || 0,
             address: pickupAddress,
           },
           destination: {
-            lat: selectedDestinationPlace?.geometry?.location?.lat() || 0,
-            lng: selectedDestinationPlace?.geometry?.location?.lng() || 0,
+            lat: selectedDestinationPlace?.location?.lat || 0,
+            lng: selectedDestinationPlace?.location?.lng || 0,
             address: destinationAddress,
           },
           vehicleType: selectedVehicle,
@@ -337,16 +339,18 @@ export default function RidesPage() {
                     <ModernPlaceAutocomplete
                       label=""
                       placeholder="Enter pickup location"
-                      value={pickup}
+                      value={selectedPickupAddress}
                       onPlaceSelect={(place) => {
-                        if (place.placeId) {
+                        if (place.placeId && place.formattedAddress) {
                           setSelectedPickupPlace(place);
                           setPickupAddress(place.formattedAddress);
-                          setPickup(place.displayName);
+                          setSelectedPickupAddress(place.formattedAddress);
+                          setPickup(place.formattedAddress);
                         } else {
                           // Handle clear action
                           setSelectedPickupPlace(null);
                           setPickupAddress('');
+                          setSelectedPickupAddress('');
                           setPickup('');
                         }
                       }}
@@ -369,16 +373,18 @@ export default function RidesPage() {
                     <ModernPlaceAutocomplete
                       label=""
                       placeholder="Where to?"
-                      value={destination}
+                      value={selectedDestinationAddress}
                       onPlaceSelect={(place) => {
-                        if (place.placeId) {
+                        if (place.placeId && place.formattedAddress) {
                           setSelectedDestinationPlace(place);
                           setDestinationAddress(place.formattedAddress);
-                          setDestination(place.displayName);
+                          setSelectedDestinationAddress(place.formattedAddress);
+                          setDestination(place.formattedAddress);
                         } else {
                           // Handle clear action
                           setSelectedDestinationPlace(null);
                           setDestinationAddress('');
+                          setSelectedDestinationAddress('');
                           setDestination('');
                         }
                       }}
@@ -397,7 +403,7 @@ export default function RidesPage() {
                 <button
                   onClick={handleFareEstimate}
                   className="btn-ride w-full py-4 text-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  disabled={!pickupAddress || !destinationAddress || isLoadingFare}
+                  disabled={!selectedPickupAddress || !selectedDestinationAddress || isLoadingFare}
                 >
                   {isLoadingFare ? (
                     <>

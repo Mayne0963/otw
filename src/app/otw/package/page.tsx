@@ -92,6 +92,8 @@ function PackagePageContent() {
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [pickupAddress, setPickupAddress] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [selectedPickupAddress, setSelectedPickupAddress] = useState('');
+  const [selectedDeliveryAddress, setSelectedDeliveryAddress] = useState('');
   const [packageType, setPackageType] = useState('');
   const [selectedPickupPlace, setSelectedPickupPlace] = useState<PlaceDetails | null>(null);
   const [selectedDeliveryPlace, setSelectedDeliveryPlace] = useState<PlaceDetails | null>(null);
@@ -154,8 +156,8 @@ function PackagePageContent() {
   ];
 
   const validateForm = (): string | null => {
-    if (!selectedPickupPlace) return 'Please select a pickup address';
-    if (!selectedDeliveryPlace) return 'Please select a delivery address';
+    if (!selectedPickupAddress || !selectedPickupAddress.trim()) return 'Please select a pickup address';
+    if (!selectedDeliveryAddress || !selectedDeliveryAddress.trim()) return 'Please select a delivery address';
     if (!packageType) return 'Please select a package type';
     if (!pickupContactName.trim()) return 'Please enter pickup contact name';
     if (!pickupContactPhone.trim()) return 'Please enter pickup contact phone';
@@ -193,20 +195,20 @@ function PackagePageContent() {
         type: 'package-delivery',
         service: selectedService,
         pickup: {
-          address: selectedPickupPlace?.formatted_address || pickupAddress,
+          address: selectedPickupAddress || pickupAddress,
           coordinates: selectedPickupPlace ? {
-            lat: selectedPickupPlace.geometry?.location?.lat(),
-            lng: selectedPickupPlace.geometry?.location?.lng()
+            lat: selectedPickupPlace.lat,
+            lng: selectedPickupPlace.lng
           } : null,
           contactName: pickupContactName.trim(),
           contactPhone: pickupContactPhone.trim(),
           time: pickupTime
         },
         delivery: {
-          address: selectedDeliveryPlace?.formatted_address || deliveryAddress,
+          address: selectedDeliveryAddress || deliveryAddress,
           coordinates: selectedDeliveryPlace ? {
-            lat: selectedDeliveryPlace.geometry?.location?.lat(),
-            lng: selectedDeliveryPlace.geometry?.location?.lng()
+            lat: selectedDeliveryPlace.lat,
+            lng: selectedDeliveryPlace.lng
           } : null,
           recipientName: recipientName.trim(),
           recipientPhone: recipientPhone.trim(),
@@ -306,11 +308,17 @@ function PackagePageContent() {
               <div className="space-y-6 overflow-visible relative z-0">
                 <AdvancedAddressAutocomplete
                   label="Pickup Address"
-                  value={pickupAddress}
-                  onChange={setPickupAddress}
+                  value={selectedPickupAddress}
                   onPlaceSelect={(place) => {
-                    setSelectedPickupPlace(place);
-                    setPickupAddress(place.address);
+                    if (place && place.address) {
+                      setSelectedPickupPlace(place);
+                      setPickupAddress(place.address);
+                      setSelectedPickupAddress(place.address);
+                    } else {
+                      setSelectedPickupPlace(null);
+                      setPickupAddress('');
+                      setSelectedPickupAddress('');
+                    }
                   }}
                   placeholder="Where should we pick up your package?"
                   required
@@ -321,11 +329,17 @@ function PackagePageContent() {
 
                 <AdvancedAddressAutocomplete
                   label="Delivery Address"
-                  value={deliveryAddress}
-                  onChange={setDeliveryAddress}
+                  value={selectedDeliveryAddress}
                   onPlaceSelect={(place) => {
-                    setSelectedDeliveryPlace(place);
-                    setDeliveryAddress(place.address);
+                    if (place && place.address) {
+                      setSelectedDeliveryPlace(place);
+                      setDeliveryAddress(place.address);
+                      setSelectedDeliveryAddress(place.address);
+                    } else {
+                      setSelectedDeliveryPlace(null);
+                      setDeliveryAddress('');
+                      setSelectedDeliveryAddress('');
+                    }
                   }}
                   placeholder="Where should we deliver your package?"
                   required

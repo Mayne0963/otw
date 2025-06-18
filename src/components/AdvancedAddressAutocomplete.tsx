@@ -1,7 +1,14 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import PlaceAutocompleteElement, { PlaceDetails as ModernPlaceDetails, OTWPlaceAutocompleteElement, ValidationResult } from '@/components/modern/PlaceAutocompleteElement';
+import { OTWPlaceAutocompleteElement, PlaceDetails as ModernPlaceDetails } from '@/components/modern/PlaceAutocompleteElement';
+
+// Define ValidationResult interface locally since it's not exported from the component
+interface ValidationResult {
+  isValid: boolean;
+  message: string;
+  severity: 'error' | 'warning' | 'info';
+}
 
 // Legacy interface for backward compatibility
 interface PlaceDetails {
@@ -92,7 +99,14 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
       address: modernPlace.formattedAddress,
       lat: modernPlace.location.lat,
       lng: modernPlace.location.lng,
-      addressComponents: modernPlace.addressComponents,
+      addressComponents: {
+        streetNumber: modernPlace.addressComponents.find(c => c.types.includes('street_number'))?.longName,
+        route: modernPlace.addressComponents.find(c => c.types.includes('route'))?.longName,
+        locality: modernPlace.addressComponents.find(c => c.types.includes('locality'))?.longName,
+        administrativeAreaLevel1: modernPlace.addressComponents.find(c => c.types.includes('administrative_area_level_1'))?.longName,
+        postalCode: modernPlace.addressComponents.find(c => c.types.includes('postal_code'))?.longName,
+        country: modernPlace.addressComponents.find(c => c.types.includes('country'))?.longName,
+      },
     };
 
     setPlaceDetails(legacyPlace);
@@ -190,7 +204,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
           disabled={disabled}
           value={inputValue}
           onPlaceSelect={handlePlaceSelect}
-          onValidationChange={handleValidationChange}
+
           onInputChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
