@@ -771,7 +771,7 @@ function GroceryDeliveryPageContent() {
               <AdvancedAddressAutocomplete
                 onPlaceSelect={(place) => {
                   setSelectedPlace(place);
-                  setDeliveryAddress(place.formatted_address);
+                  setDeliveryAddress(place.address);
                 }}
                 placeholder="Enter your delivery address"
                 className="w-full"

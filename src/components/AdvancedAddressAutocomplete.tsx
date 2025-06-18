@@ -89,9 +89,9 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
   const handlePlaceSelect = useCallback((modernPlace: ModernPlaceDetails) => {
     const legacyPlace: PlaceDetails = {
       placeId: modernPlace.placeId,
-      address: modernPlace.address,
-      lat: modernPlace.lat,
-      lng: modernPlace.lng,
+      address: modernPlace.formattedAddress,
+      lat: modernPlace.location.lat,
+      lng: modernPlace.location.lng,
       addressComponents: modernPlace.addressComponents,
     };
 
@@ -99,7 +99,7 @@ const AdvancedAddressAutocomplete: React.FC<AdvancedAddressAutocompleteProps> = 
     setHasValidSelection(true);
     setShowValidationError(false);
     setError(null);
-    setInputValue(modernPlace.address);
+    setInputValue(modernPlace.formattedAddress);
 
     if (onPlaceSelect) {
       onPlaceSelect(legacyPlace);

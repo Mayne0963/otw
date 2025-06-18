@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { MapPinIcon, XMarkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { MapPinIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 // Extend JSX to include the Google Maps web component
 declare global {

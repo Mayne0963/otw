@@ -653,3 +653,13 @@ body,
 .cart-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
 }
+
+/* Google Maps Place Autocomplete - Ensure suggestion pane is never hidden */
+gmp-place-autocomplete {
+  position: relative;
+  z-index: 1000;
+}
+
+gmp-place-autocomplete .pac-container {
+  z-index: 1100 !important;
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, useId } from 'react';
-import { MapPinIcon, XMarkIcon, CheckIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { MapPinIcon, XMarkIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useModernGoogleMaps } from '@/contexts/ModernGoogleMapsContext';
 
 // Extend JSX to include the Google Maps web component
@@ -101,13 +101,13 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   error,
   types = ['address'],
   countryFilter = 'us',
-  bounds,
-  strictBounds = false,
-  maxSuggestions = 5,
+  _bounds,
+  // strictBounds handled by web component
+  // maxSuggestions handled by web component
   enableAddressValidation = true,
   serviceAreaCenter,
   serviceAreaRadius = 50000, // 50km default
-  debounceMs = 300,
+  // debounceMs handled by web component
   id,
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
@@ -123,8 +123,8 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
   const [hasValidSelection, setHasValidSelection] = useState(false);
   const [lastValidPlace, setLastValidPlace] = useState<PlaceDetails | null>(null);
   const [showValidationError, setShowValidationError] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [activeDescendant, setActiveDescendant] = useState<string>('');
+  const [isDropdownOpen] = useState(false);
+  const [activeDescendant] = useState<string>('');
   const [validation, setValidation] = useState<ValidationResult>({
     isValid: false,
     message: '',
@@ -134,14 +134,14 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const placeAutocompleteRef = useRef<any>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  // Dropdown ref handled by web component
 
   // Generate unique IDs for accessibility
   const generatedId = useId();
   const componentId = id || `place-autocomplete-${generatedId}`;
   const errorId = `${componentId}-error`;
   const descriptionId = `${componentId}-description`;
-  const listboxId = `${componentId}-listbox`;
+  // Listbox ID handled by web component
 
   // Sync external value changes
   useEffect(() => {
@@ -495,7 +495,6 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
       {isApiReady && (
         <gmp-place-autocomplete
           ref={placeAutocompleteRef}
-          onPlaceSelect={onPlaceSelect}
           className={`
             w-full
             [&>input]:w-full [&>input]:pl-10 [&>input]:pr-12 [&>input]:py-3
