@@ -537,6 +537,7 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
         <gmp-place-autocomplete
           ref={autocompleteRef}
           id={inputId}
+          onPlaceSelect={onPlaceSelect}
           className={`
             w-full rounded-xl border-2 transition-all duration-500 ease-out
             focus:outline-none focus:ring-4 focus:ring-offset-0
@@ -556,6 +557,9 @@ const PlaceAutocompleteElement: React.FC<PlaceAutocompleteElementProps> = ({
                 : 'hover:shadow-2xl hover:shadow-otw-gold-400/15 focus:shadow-3xl focus:shadow-otw-gold-400/25 hover:scale-[1.01] focus:scale-[1.02]'
             }
           `}
+          placeholder={placeholder}
+          disabled={disabled}
+          value={inputValue}
           aria-label={ariaLabel || (label ? `${label} address input` : 'Address search input')}
           aria-describedby={error ? errorId : ariaDescribedBy}
           aria-labelledby={label ? labelId : undefined}

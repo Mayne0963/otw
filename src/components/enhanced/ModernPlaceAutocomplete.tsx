@@ -495,6 +495,7 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
       {isApiReady && (
         <gmp-place-autocomplete
           ref={placeAutocompleteRef}
+          onPlaceSelect={onPlaceSelect}
           className={`
             w-full
             [&>input]:w-full [&>input]:pl-10 [&>input]:pr-12 [&>input]:py-3
@@ -505,27 +506,16 @@ const ModernPlaceAutocomplete: React.FC<ModernPlaceAutocompleteProps> = ({
             [&>input]:${getInputBorderClass()}
             ${inputClassName}
           `}
-        >
-          <input
-            ref={inputRef}
-            id={componentId}
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
-            placeholder={placeholder}
-            disabled={disabled || !isLoaded}
-            required={required}
-            aria-label={ariaLabel || placeholder}
-            aria-describedby={`${ariaDescribedBy || ''} ${validation.message ? descriptionId : ''} ${error ? errorId : ''}`.trim()}
-            aria-expanded={ariaExpanded || isDropdownOpen}
-            aria-autocomplete={ariaAutocomplete}
-            aria-activedescendant={ariaActiveDescendant || activeDescendant}
-            role={role}
-          />
-        </gmp-place-autocomplete>
+          placeholder={placeholder}
+          disabled={disabled || !isLoaded}
+          required={required}
+          aria-label={ariaLabel || placeholder}
+          aria-describedby={`${ariaDescribedBy || ''} ${validation.message ? descriptionId : ''} ${error ? errorId : ''}`.trim()}
+          aria-expanded={ariaExpanded || isDropdownOpen}
+          aria-autocomplete={ariaAutocomplete}
+          aria-activedescendant={ariaActiveDescendant || activeDescendant}
+          role={role}
+        />
       )}
 
       {/* Fallback input when API is not ready */}
